@@ -16,12 +16,19 @@ import InputField from '../InputField';
 import AllHistory from '../../utils/Chat/Icons/History/AllChatHistory.svg';
 import AllHistory from '../../utils/Chat/Icons/History/AllChatHistory.svg';
 import CustomDropdown from './CustomDropDown';
+import Select from 'react-select';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-const chatTypes = ['All chat history', 'Web summary', 'Youtube summary', 'Doc chat'];
+const chatTypes = [
+  { title: 'All chat history', icon: AllChatIcon },
+  { title: 'Web summary', icon: WebSummeryIcon },
+  { title: 'Youtube summary', icon: YoutubeIcon },
+  { title: 'Doc chat', icon: DocChatIcon },
+  { title: 'Chat', icon: ChatIcon },
+];
 
 const historyData = [
   {
@@ -154,6 +161,9 @@ const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory }) => {
   const [chatsHistory, setChatsHistroy] = useState(historyData);
   const [filesList, setFileList] = useState(filesListData);
   const [isDocChat, setIsDocChat] = useState(false);
+  const [selectedChatType, setSelectedChatType] = useState('All chat history');
+  console.log('selectedChatType', selectedChatType);
+  const [showOptions, setShowOptions] = useState(true);
 
   const [ifOpenDeleteBox, setIfOpenDeleteBox] = useState(false);
   const [isDeleteChatConfirm, setIsDeleteChatConfirm] = useState(false);
@@ -168,12 +178,32 @@ const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory }) => {
     setChatsHistroy(historyData);
   }, []);
 
+  // const handleChatTypeChange = (option) => {
+  //   if (option.value === 'Doc chat') {
+  //     setIsDocChat(true);
+  //   } else {
+  //     setIsDocChat(false);
+  //   }
+  //   let tempArr = Array.from(historyData);
+  //   let newArray = tempArr.filter((item) => item.type === option.value);
+  //   if (option.value === 'All chat history') {
+  //     setChatsHistroy(historyData);
+  //   } else {
+  //     setChatsHistroy(newArray);
+  //   }
+  // };
+
   const handleChatTypeChange = (option) => {
     if (option.value === 'Doc chat') {
       setIsDocChat(true);
+      setShowOptions(false); // Hide options when 'Doc chat' is selected
     } else {
       setIsDocChat(false);
+      setShowOptions(true); // Show options for other chat types
     }
+
+    setSelectedChatType(option.value);
+
     let tempArr = Array.from(historyData);
     let newArray = tempArr.filter((item) => item.type === option.value);
     if (option.value === 'All chat history') {
@@ -234,10 +264,20 @@ const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory }) => {
                   <span>Chat History</span>
                 </div>
                 <div className="cursor-pointer chat-history bg-lightblue1 relative flex text-[12px] w-[165px] items-center gap-2 rounded-full px-[8px] py-[6px]">
-                  <img src={AllChatIcon} />
+                  <img
+                    src={selectedChatType === 'All chat history' ? AllChatIcon : chatsHistory.map((chat) => chat.icon)}
+                  />
                   <Dropdown
                     className="w-full"
-                    options={chatTypes}
+                    options={chatTypes.map((chatType) => ({
+                      value: chatType.title,
+                      label: (
+                        <div className="flex items-center gap-2">
+                          <img src={chatType.icon} alt={chatType.title} />
+                          <span className="">{chatType.title}</span>
+                        </div>
+                      ),
+                    }))}
                     placeholder="All chat history"
                     arrowClosed={
                       <img

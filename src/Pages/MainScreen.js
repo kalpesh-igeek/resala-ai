@@ -962,9 +962,10 @@ const MainScreen = ({
                         </div>
 
                         <div
-                          className={`w-[20px] flex text-[14px] font-medium text-darkBlue whitespace-nowrap justify-center ${
+                          className={`w-[20px] flex text-[14px] font-medium text-darkBlue whitespace-nowrap justify-center cursor-pointer ${
                             !inputButtonBox ? '-rotate-90' : ''
                           }`}
+                          onClick={handleInputButtonBox}
                         >
                           <img src={ArrowDown} />
                         </div>

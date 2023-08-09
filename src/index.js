@@ -3,17 +3,16 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { MemoryRouter } from 'react-router-dom';
 import Panel from './Panel';
-
+import { Provider } from 'react-redux';
+import store from './redux/store';
 
 async function init() {
-  
   // Create div wrapper
   const body = document.body;
 
   // create react app
   const app = document.createElement('div');
   app.id = 'side-bar-extension-root';
-
 
   const linkElement1 = document.createElement('link');
 
@@ -36,9 +35,11 @@ async function init() {
 
   const root = createRoot(app);
   root.render(
-    <MemoryRouter>
-      <Panel />
-    </MemoryRouter>
+    <Provider store={store}>
+      <MemoryRouter>
+        <Panel />
+      </MemoryRouter>
+    </Provider>
   );
 }
 

@@ -65,7 +65,6 @@ export default function Panel() {
   //     setPoistionY(e.clientY);
   //   }
   // }
-  // console.log('selectedText', selectedText);
   function myFunction(e) {
     const selected = window.getSelection();
     if (selected.toString() !== '') {
@@ -102,11 +101,9 @@ export default function Panel() {
 
   document.getElementsByTagName('body')[0].onmouseup = (e) => myFunction(e);
   chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    if (request.greeting === true) {
-      console.log('first');
+     if (request.greeting === true) {
       handleSidebar(QUICKREPLY);
     } else {
-      console.log('last');
       setIsOpen(false);
       setIfConfirmClose(true);
       setIfOpenConfirmBox(false);
