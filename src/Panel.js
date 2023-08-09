@@ -68,7 +68,6 @@ export default function Panel() {
   // console.log('selectedText', selectedText);
   function myFunction(e) {
     const selected = window.getSelection();
-    console.log('selected', selected.toString());
     if (selected.toString() !== '') {
       setSelectedText(selected.toString());
 
