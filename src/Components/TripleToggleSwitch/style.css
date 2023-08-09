@@ -1,0 +1,202 @@
+input[type="radio"] {
+  display: none;
+}
+
+label {
+  z-index: 10;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.black-font {
+  color: black !important;
+}
+
+.main-container {
+  display: inline-block;
+  vertical-align: middle;
+  width: 180px;
+  height: 28px;
+  padding: 2px;
+  border-radius: 100px;
+  background-color: #F3F3F3;
+  position: relative;
+}
+
+.switch {
+  height: 24px;
+  width: 60px;
+  background-color: white;
+  border-radius: 100px;
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  transition: ease-in;
+}
+
+/*---------------- LEFT ------------------- */
+.switch.left-to-center {
+  animation-name: leftToCenter;
+  animation-duration: 0.5s;
+}
+
+.switch.left-to-right {
+  animation-name: leftToRight;
+  animation-duration: 0.5s;
+}
+
+.switch.left-position {
+  left: 3px;
+}
+
+.left-label {
+  position: absolute;
+}
+
+#left + label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 60px;
+  border-radius: 100px;
+}
+
+#left:checked + label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 60px;
+  border-radius: 100px;
+}
+
+@keyframes leftToCenter {
+  from {
+    left: 3px;
+  }
+  to {
+    left: 60px;
+  }
+}
+
+@keyframes leftToRight {
+  from {
+    left: 3px;
+  }
+  to {
+    left: 117px;
+  }
+}
+
+/* -------------------- center ------------------ */
+.switch.center-to-left {
+  animation-name: centerToLeft;
+  animation-duration: 0.5s;
+}
+
+.switch.center-to-right {
+  animation-name: centerToRight;
+  animation-duration: 0.5s;
+}
+
+.switch.center-position {
+  left: 60px;
+}
+
+.center-label {
+  position: absolute;
+  left: 60px;
+}
+
+#center + label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 60px;
+  border-radius: 100px;
+}
+
+#center:checked + label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 60px;
+  border-radius: 100px;
+}
+
+@keyframes centerToLeft {
+  from {
+    left: 60px;
+  }
+  to {
+    left: 3px;
+  }
+}
+
+@keyframes centerToRight {
+  from {
+    left: 60px;
+  }
+  to {
+    right: 1px;
+  }
+}
+
+/* ------------------- RIGHT ------------------- */
+.switch.right-to-left {
+  animation-name: rightToLeft;
+  animation-duration: 0.5s;
+}
+
+.switch.right-to-center {
+  animation-name: rightToCenter;
+  animation-duration: 0.5s;
+}
+
+.switch.right-position {
+  left: 117px;
+}
+
+.right-label {
+  position: absolute;
+  right: 2px;
+}
+
+#right + label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 60px;
+  border-radius: 100px;
+}
+
+#right:checked + label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  width: 60px;
+  border-radius: 100px;
+}
+
+@keyframes rightToLeft {
+  from {
+    left: 117px;
+  }
+  to {
+    left: 3px;
+  }
+}
+
+@keyframes rightToCenter {
+  from {
+    left: 117px;
+  }
+  to {
+    left: 60px;
+  }
+}

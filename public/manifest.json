@@ -1,0 +1,27 @@
+{
+  "short_name": "Risala",
+  "name": "Risala AI Extension",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {},
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["dist/index.4eeece91.css"],
+      "js": ["dist/index.fae8f6eb.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["src/utils/*", "dist/*", "dist/*.ttf"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "permissions": ["storage", "scripting", "tabs"],
+  "icons": {
+    "192": "logo192.png"
+  }
+}
