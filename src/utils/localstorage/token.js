@@ -1,4 +1,4 @@
-const TOKEN_KEY = 'userAccess';
+const TOKEN_KEY = 'userAccessToken';
 const RefreshToken = 'userRefreshToken';
 
 const getToken = () => {
@@ -14,7 +14,7 @@ const getToken = () => {
 
 const setToken = (tokenValue) => {
   if (typeof window !== 'undefined') {
-    localStorage.setItem(TOKEN_KEY, tokenValue);
+    localStorage.setItem(TOKEN_KEY, `Bearer ${tokenValue}`);
     return true;
   }
 };

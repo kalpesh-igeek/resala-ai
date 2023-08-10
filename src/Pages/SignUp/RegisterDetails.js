@@ -56,24 +56,28 @@ const RegisterDetails = () => {
         </div>
         <div className="text-[22px] flex justify-center mb-[40px] font-bold">Tell us about you</div>
         <div className="w-full flex gap-2 items-center justify-center">
-          <InputField
-            className="w-full rounded-md border border-gray px-[15px] py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray2"
-            name="first_name"
-            label="First name"
-            type="text"
-            placeholder="First name"
-            handleChange={(e) => handleChange(e)}
-          />
-          {errors.first_name && <p className="text-red text-[12px]">{errors.first_name}</p>}
-          <InputField
-            className="w-full rounded-md border border-gray px-[15px] py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray2"
-            name="last_name"
-            label="Last name"
-            type="text"
-            placeholder="Last name"
-            handleChange={(e) => handleChange(e)}
-          />
-          {errors.last_name && <p className="text-red text-[12px]">{errors.last_name}</p>}
+          <>
+            <InputField
+              className="w-full rounded-md border border-gray px-[15px] py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray2"
+              name="first_name"
+              label="First name"
+              type="text"
+              placeholder="First name"
+              handleChange={(e) => handleChange(e)}
+            />
+            {errors.first_name && <p className="text-red text-[12px]">{errors.first_name}</p>}
+          </>
+          <>
+            <InputField
+              className="w-full rounded-md border border-gray px-[15px] py-[16px] text-[14px] mb-[9px] text-darkBlue placeholder:text-gray2"
+              name="last_name"
+              label="Last name"
+              type="text"
+              placeholder="Last name"
+              handleChange={(e) => handleChange(e)}
+            />
+            {errors.last_name && <p className="text-red text-[12px]">{errors.last_name}</p>}
+          </>
         </div>
         <InputField
           className="block w-full rounded-md border border-gray px-[15px] py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray2"

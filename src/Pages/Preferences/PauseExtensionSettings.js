@@ -42,7 +42,6 @@ const PauseExtensionSettings = () => {
             icon: siteLogo
         }
         selectedSites.map((item) => {
-            console.log(item.name, '!==', siteTitle)
             if (item.name !== siteTitle) {
                 setCurrentSite(newItem);
             } else {
@@ -54,7 +53,6 @@ const PauseExtensionSettings = () => {
 
 
     const handleAddNewSite = () => {
-        console.log(currentSite);
         let tempArr = Array.from(selectedSites)
         tempArr.push(currentSite)
         setSelectedSites(tempArr)

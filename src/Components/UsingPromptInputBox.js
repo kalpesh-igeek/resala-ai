@@ -45,7 +45,6 @@ const UsingPromptInputBox = ({handleSendMessage, isUsePrompt, setIsUsePrompt, Su
         setNewPrompt(e.target.value)
     }
 
-    console.log(newPrompt)
 
     return (
         <div className={`${isUsePrompt ? "block" : "hidden"}`}>

@@ -66,8 +66,6 @@ const QuickReply = ({
     setIsReplies(!isReplies);
   };
 
-  console.log(selectedTone);
-
   const defaultTone = tones[0];
 
   const TypeWriter = () => {

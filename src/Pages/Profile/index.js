@@ -15,7 +15,6 @@ const Profile = ({ loggedUser, setIsLogout, setIsLogin }) => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        console.log("first");
         
         setIsLogout(true);
         setTimeout(() => {

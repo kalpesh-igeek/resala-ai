@@ -1897,11 +1897,6 @@ cosmiconfig@^7.0.0, cosmiconfig@^7.0.1:
     path-type "^4.0.0"
     yaml "^1.10.0"
 
-country-flag-icons@^1.5.4:
-  version "1.5.7"
-  resolved "https://registry.npmjs.org/country-flag-icons/-/country-flag-icons-1.5.7.tgz"
-  integrity sha512-AdvXhMcmSp7nBSkpGfW4qR/luAdRUutJqya9PuwRbsBzuoknThfultbv7Ib6fWsHXC43Es/4QJ8gzQQdBNm75A==
-
 create-ecdh@^4.0.0:
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/create-ecdh/-/create-ecdh-4.0.4.tgz#d6e7f4bffa66736085a0762fd3a632684dabcc4e"
@@ -2812,13 +2807,6 @@ inherits@2.0.3:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.3.tgz#633c2c83e3da42a502f52466022480f4208261de"
   integrity sha512-x00IRNXNy63jwGkJmzPigoySHbaqpNuzKbBOmzK+g2OdZpQ9w+sxCN+VSB3ja7IAge2OP2qpfxTjeNcyjmW1uw==
 
-input-format@^0.3.8:
-  version "0.3.8"
-  resolved "https://registry.npmjs.org/input-format/-/input-format-0.3.8.tgz"
-  integrity sha512-tLR0XRig1xIcG1PtIpMd/uoltvkAI62CN9OIbtj4/tEJAkqTCQLNHUZ9N4M46w0dopny7Rlt/lRH5Xzp7e6F+g==
-  dependencies:
-    prop-types "^15.8.1"
-
 is-accessor-descriptor@^0.1.6:
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/is-accessor-descriptor/-/is-accessor-descriptor-0.1.6.tgz#a9e12cb3ae8d876727eeef3843f8a0897b5c98d6"
@@ -3066,11 +3054,6 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   version "6.0.3"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
-
-libphonenumber-js@^1.10.39:
-  version "1.10.39"
-  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.10.39.tgz#12dd512621c9ebb13402a694ac81dc78511cd982"
-  integrity sha512-iPMM/NbSNIrdwbr94rAOos6krB7snhfzEptmk/DJUtTPs+P9gOhZ1YXVPcRgjpp3jJByclfm/Igvz45spfJK7g==
 
 lightningcss-darwin-arm64@1.14.0:
   version "1.14.0"
@@ -4155,17 +4138,6 @@ react-phone-input-2@^2.15.1:
     lodash.reduce "^4.6.0"
     lodash.startswith "^4.2.1"
     prop-types "^15.7.2"
-
-react-phone-number-input@^3.3.2:
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/react-phone-number-input/-/react-phone-number-input-3.3.2.tgz#2164e58484ddd08786636b75989f0cace75b9c12"
-  integrity sha512-h/XdyBlmy9DApKqSbmXvvvJYL1nxA3omUsCc1aeeXkt63k2QJs971jE8T/ItV9vgljBLL36BEuKs0pZlJflGew==
-  dependencies:
-    classnames "^2.3.1"
-    country-flag-icons "^1.5.4"
-    input-format "^0.3.8"
-    libphonenumber-js "^1.10.39"
-    prop-types "^15.8.1"
 
 react-popper@^2.2.5:
   version "2.3.0"

@@ -138,7 +138,6 @@ const Billings = () => {
         // setIsUpgrad(false);
     }
 
-    console.log("selectedPlan", selectedPlan)
 
     return (
         <>

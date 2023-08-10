@@ -3,94 +3,126 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Logo from '../../utils/Header/ResalaLogo.svg';
 import WhatsAppIcon from '../../utils/Account/Icons/WhatsAppIcon.svg';
 import WhatsAppIconWhite from '../../utils/Account/Icons/WhatsAppIconWhite.svg';
-// import CountryFlag from "../../Components/CountryFlag";
-import PhoneInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
-import flags from 'react-phone-number-input/flags';
-import Dropdown from 'react-dropdown';
-import ArrowDown from '../../utils/PopupBox/Icons/ArrowDown.svg';
-// import PhoneInput2 from "react-phone-input-2";
-import { useCountries } from 'use-react-countries';
-import InputField from '../../Components/InputField';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css'; // Import the CSS for styling
+import { useDispatch } from 'react-redux';
+import { sendOtpSMS, userDetails } from '../../redux/reducers/authSlice/AuthSlice';
 
-const CountryList = () => {
-  const { countries } = useCountries();
-  const [countriesList, setCountryList] = useState([]);
-  const myCountriesList = [];
-  const { state } = useLocation();
-  const { register } = state; // Read values passed on state
-  console.log('payload', register);
-
-  useEffect(() => {
-    countries.map((country) => {
-      // myCountriesList.push(country.emoji + ' ' + country.name + ' ' + country.countryCallingCode);
-      myCountriesList.push(country.emoji);
-    });
-    setCountryList(myCountriesList);
-  }, []);
-  console.log('countriesList', countriesList);
-
-  const defaultOption = countriesList[1];
-
-  return (
-    <Dropdown
-      className="rounded-md mb-[15px]"
-      options={countriesList}
-      //   options={countriesList.map((countries) => ({
-      //     value: countries.emoji,
-      //     label: (
-      //       <div className="flex items-center gap-2">
-      //         <img src={countries.emoji} alt="not found" />
-      //         <span className="">{countries.countryCallingCode}</span>
-      //       </div>
-      //     ),
-      //   }))}
-      // onChange={this._onSelect}
-      value={defaultOption}
-      arrowClosed={
-        <img className="absolute top-[50%] -translate-y-[50%] right-[15px] w-[16px] h-[16px]" src={ArrowDown} />
-      }
-      arrowOpen={
-        <img
-          className="absolute top-[50%] -translate-y-[50%] right-[15px] w-[16px] h-[16px] rotate-180"
-          src={ArrowDown}
-        />
-      }
-    />
-  );
-};
+//   // const { countries } = useCountries();
+//   // const [countriesList, setCountryList] = useState([]);
+//   // const myCountriesList = [];
+//   // useEffect(() => {
+//   //   countries.map((country) => {
+//   //     // myCountriesList.push(country.emoji + ' ' + country.name + ' ' + country.countryCallingCode);
+//   //     myCountriesList.push(country.emoji);
+//   //   });
+//   //   setCountryList(myCountriesList);
+//   // }, []);
+//   // const defaultOption = countriesList[1];
+//   // return (
+//   //   <Dropdown
+//   //     className="rounded-md mb-[15px]"
+//   //     options={countriesList}
+//   //     //   options={countriesList.map((countries) => ({
+//   //     //     inputValue: countries.emoji,
+//   //     //     label: (
+//   //     //       <div className="flex items-center gap-2">
+//   //     //         <img src={countries.emoji} alt="not found" />
+//   //     //         <span className="">{countries.countryCallingCode}</span>
+//   //     //       </div>
+//   //     //     ),
+//   //     //   }))}
+//   //     // onChange={this._onSelect}
+//   //     inputValue={defaultOption}
+//   //     arrowClosed={
+//   //       <img className="absolute top-[50%] -translate-y-[50%] right-[15px] w-[16px] h-[16px]" src={ArrowDown} />
+//   //     }
+//   //     arrowOpen={
+//   //       <img
+//   //         className="absolute top-[50%] -translate-y-[50%] right-[15px] w-[16px] h-[16px] rotate-180"
+//   //         src={ArrowDown}
+//   //       />
+//   //     }
+//   //   />
+//   // );
+// };
 
 const MobileVerification = () => {
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const { register } = state; // Read values passed on state
+  const dispatch = useDispatch();
 
-  const [value, setValue] = useState();
+  const [phoneNumber, setPhoneNumber] = useState();
+
   const [isVisibleWhatAppButton, setIsVisisbleWhatAppButton] = useState(true);
   const [whatsAppSwitch, setWhatsAppSwitch] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [inputValue, setInputValue] = useState({
+    country_code: '',
+    phone_number: '',
+    is_whatapp: !whatsAppSwitch,
+  });
 
-  // const [phone, setPhone] = useState("");
+  console.log('inputValue', inputValue);
 
   useEffect(() => {
     document.getElementById('whatsappswitch').checked = whatsAppSwitch;
   }, [whatsAppSwitch]);
 
-  const handleSMSbutton = () => {
-    if (whatsAppSwitch) {
-      navigate('/entercode');
-    } else {
-      setWhatsAppSwitch(true);
-      setIsVisisbleWhatAppButton(false);
+  const handleSMSbutton = async (e) => {
+    e.preventDefault();
+    if (inputValue) {
+      const res = await dispatch(sendOtpSMS(inputValue));
+      if (res.payload?.status === 200) {
+        const res = await dispatch(
+          userDetails({
+            ...register,
+            phone_number: inputValue.phone_number,
+            country_code: inputValue.country_code,
+            is_whatapp: inputValue.is_whatapp,
+          })
+        );
+        navigate('/entercode', { state: { phone: res.payload } });
+      }
+    }
+    // else {
+    //   setWhatsAppSwitch(true);
+    //   setIsVisisbleWhatAppButton(false);
+    // }
+  };
+
+  const handleWhatAppButton = async (e) => {
+    e.preventDefault();
+    if (inputValue) {
+      const res = await dispatch(sendOtpSMS(inputValue));
+      if (res.payload?.status === 200) {
+        const res = await dispatch(
+          userDetails({
+            ...register,
+            phone_number: inputValue.phone_number,
+            country_code: inputValue.country_code,
+            is_whatapp: inputValue.is_whatapp,
+          })
+        );
+        navigate('/entercode', { state: { phone: res.payload } });
+      }
     }
   };
-
-  const handleWhatAppButton = () => {
-    navigate('/entercode');
-  };
-
   const handleSwitchOnChange = () => {
     setWhatsAppSwitch(!whatsAppSwitch);
+    setInputValue({ ...inputValue, is_whatapp: whatsAppSwitch });
     setIsVisisbleWhatAppButton(!isVisibleWhatAppButton);
   };
-  console.log('value', value);
+  const handleOnChange = (value, country) => {
+    setPhoneNumber(value);
+    setInputValue({
+      is_whatapp: inputValue.is_whatapp,
+      phone_number: value.slice(country.dialCode?.length),
+      country_code: `+${country.dialCode}`,
+    });
+  };
+
   return (
     <>
       <div className="py-[90px] px-[75px] flex flex-col justify-center">
@@ -99,28 +131,14 @@ const MobileVerification = () => {
           <div className="text-darkgray text-[18px]">Resala.ai</div>
         </div>
         <div className="text-[22px] flex justify-center mb-[40px] font-bold">Verify your phone number</div>
-        {/* <PhoneInput2
-                    country={"us"}
-                    className="marginBottom"
-                    value={phone}
-                    onChange={phone => setPhone(phone)}
-                /> */}
-        {/* <PhoneInput
-                    international
-                    defaultCountry="IN"
-                    value={value}
-                    onChange={setValue}
-                /> */}
+
         <div className="flex gap-2 items-center contrycode relative">
-          {/* <CountryList /> */}
-          <PhoneInput flags={flags} country="US" value={value} onChange={setValue} />
-          {/* <InputField
-            className="block w-full rounded-md border border-gray px-[15px] py-[16px] mb-[12px] text-[14px] text-darkBlue placeholder:text-gray1"
-            name="phone"
-            label="Phone number"
-            type="text"
-            placeholder=""
-          /> */}
+          <PhoneInput
+            country={'us'} // Default country (optional)
+            value={phoneNumber}
+            onChange={handleOnChange}
+          />
+          {/* {errors.phone_number && <p className="text-red text-[12px]">{errors.phone_number}</p>} */}
         </div>
         <div className="flex items-center justify-between">
           <div className="inline-flex items-center gap-1 text-gray2 text-[14px]">
@@ -149,7 +167,7 @@ const MobileVerification = () => {
             {isVisibleWhatAppButton && (
               <button
                 className="w-full rounded-md bg-primaryBlue px-1 py-[16px] text-[12px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
-                onClick={() => handleWhatAppButton()}
+                onClick={(e) => handleWhatAppButton(e)}
               >
                 <div className="inline-flex items-center gap-1">
                   <span>Send code via</span>
@@ -164,7 +182,7 @@ const MobileVerification = () => {
               className={`${
                 !isVisibleWhatAppButton ? 'bg-primaryBlue text-white' : 'bg-transparent text-primaryBlue'
               } w-full rounded-md px-1 py-[16px] text-[12px] font-medium hover:opacity-90 disabled:cursor-none disabled:opacity-50`}
-              onClick={() => handleSMSbutton()}
+              onClick={(e) => handleSMSbutton(e)}
             >
               Send via SMS instead
             </button>

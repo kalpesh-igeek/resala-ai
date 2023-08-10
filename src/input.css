@@ -553,3 +553,46 @@ input[type='number']::-webkit-outer-spin-button {
   border: 1px solid #dfe4ec !important;
   border-radius: 3px !important;
 }
+
+.react-tel-input .form-control {
+  width: 262px !important;
+  height: 52px !important;
+  border-radius: 6px !important;
+  border: 1px solid #dfe4ec !important;
+  color: #dfe4ec !important;
+  margin: 0px 0px 0px 85px !important;
+  padding: 10px 15px !important;
+}
+
+.react-tel-input .selected-flag {
+  width: 80px !important;
+  height: 52px !important;
+  border-radius: 6px !important;
+  border: 1px solid #dfe4ec !important;
+  color: #dfe4ec !important;
+}
+
+.react-tel-input .selected-flag .arrow {
+  width: 0px !important;
+  height: 0px !important;
+  margin-top: -2px !important;
+  position: relative !important;
+  border: solid black !important;
+  border-width: 0px 1px 1px 0 !important;
+  display: inline-block !important;
+  padding: 5px !important;
+  transform: rotate(45deg) !important;
+  -webkit-transform: rotate(45deg) !important;
+  top: -50% !important;
+  left: 44px !important;
+}
+
+.react-tel-input .country-list {
+  width: 350px !important;
+  z-index: 10000px !important;
+}
+
+.px-7 {
+  padding-left: 15px !important;
+  padding-right: 47px !important;
+}

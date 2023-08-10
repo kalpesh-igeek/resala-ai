@@ -162,7 +162,6 @@ const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory }) => {
   const [filesList, setFileList] = useState(filesListData);
   const [isDocChat, setIsDocChat] = useState(false);
   const [selectedChatType, setSelectedChatType] = useState('All chat history');
-  console.log('selectedChatType', selectedChatType);
   const [showOptions, setShowOptions] = useState(true);
 
   const [ifOpenDeleteBox, setIfOpenDeleteBox] = useState(false);

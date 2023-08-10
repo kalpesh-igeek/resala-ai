@@ -18,7 +18,6 @@ const Header = ({ children, handleClick, setIsLogout, setIsLogin }) => {
 
   const [isProfile, setIsProfile] = useState(false);
 
-  console.log(isProfile);
 
   return (
     <div className="h-[100%] font-dmsans">
