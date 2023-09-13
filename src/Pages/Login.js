@@ -1,31 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Logo from '../utils/Header/ResalaLogo.svg';
+// import Logo from '../utils/Header/ResalaLogo.svg';
+import Logo from '../utils/Header/ResLogo.svg';
 import GoogleIcon from '../utils/Account/Icons/GoogleIcon.svg';
 import MicrosoftIcon from '../utils/Account/Icons/MicrosoftIcon.svg';
 import AppleIcon from '../utils/Account/Icons/AppleIcon.svg';
 import InputField from '../Components/InputField';
-import { emailCheck } from '../utils/validation';
+import { emailCheck, passwordCheck } from '../utils/validation';
 import { emailChecking, login } from '../redux/reducers/authSlice/AuthSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { getToken, setToken } from '../utils/localstorage';
+import { GoogleLogin, GoogleLogout } from 'react-google-login';
+import { newChat } from '../redux/reducers/chatSlice/ChatSlice';
+import Toast from '../utils/toast';
+import SocialLogin from '../Components/SocialLogin';
 
-export default function Login({ isLogin, setIsLogin }) {
+export default function Login({ isLogin, setIsLogin, setActiveTab }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [isValidUser, setIsValidUser] = useState(false);
   const [inputValue, setInputValue] = useState({ email: '', password: '' });
+  const [isRegistered, setIsRegistered] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [errors, setErrors] = useState({});
+  const [isSecondStep, setIsSecondStep] = useState(false);
   const { status, isLoading } = useSelector((state) => state.auth);
-  //   const handleSubmit = () => {
-  //     if (!isValidUser) {
-  //       setIsValidUser(true);
-  //     } else {
-  //       setIsLogin(true);
-  //       navigate('/');
-  //     }
-  //   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,41 +42,58 @@ export default function Login({ isLogin, setIsLogin }) {
   };
 
   const handleSubmit = async (e) => {
-    console.log('1');
     e.preventDefault();
-    var errors;
+    let errors;
 
+    // Check email validity
     errors = emailCheck(inputValue);
-    if (Object.keys(errors).length) {
+    if (Object.keys(errors)?.length) {
       setErrors(errors);
       return;
     }
 
-    const res = await dispatch(emailChecking({ email: inputValue.email }));
-    if (!res.payload) {
-      return;
-    }
-    if (res.payload.status === 200) {
-      setDisabled(true);
+    if (!isSecondStep) {
+      // If it's the first step, only check email
+      const res = await dispatch(emailChecking({ email: inputValue.email }));
+      if (res.payload?.status === 200) {
+        setIsRegistered(true);
+        setDisabled(true);
+        setIsSecondStep(true); // Move to the second step
+      }
+    } else {
+      // If it's the second step, check password and login
+      errors = passwordCheck(inputValue);
+      if (Object.keys(errors)?.length) {
+        setErrors(errors);
+        return;
+      }
+
       const payload = {
         email: inputValue.email,
         password: inputValue.password,
       };
-      if (!inputValue.password) {
-        errors = passwordCheck(inputValue);
-        if (Object.keys(errors).length) {
-          setErrors(errors);
-          return;
-        }
-      }
-      if (inputValue.password) {
-        const res = await dispatch(login(payload));
-        if (res.payload.status === 200) {
-          setIsLogin(true);
-          navigate('/');
-        }
+      const res = await dispatch(login(payload));
+      console.log('res', res);
+      if (res.payload.status === 200) {
+        localStorage.setItem('userAccessToken', `Bearer ${res.payload?.Result?.access_token}`);
+
+        Promise.resolve().then(() => {
+          const userToken = getToken();
+          if (userToken) {
+            // Now we are sure that the token is updated in local storage
+            dispatch(newChat());
+            navigate('/');
+          }
+        });
       }
     }
+    // setIsRegistered(false);
+  };
+
+  const handleSignUp = () => {
+    localStorage.removeItem('userAccessToken');
+    sessionStorage.removeItem('chatId');
+    navigate('/signup');
   };
 
   return (
@@ -84,7 +101,7 @@ export default function Login({ isLogin, setIsLogin }) {
       <div className="py-[90px] px-[75px] flex flex-col justify-center">
         <div className="flex items-center justify-center gap-2 mb-[50px]">
           <img src={Logo} alt="logo" className="cursor-pointer h-[32px] w-[32px]" />
-          <div className="text-darkgray text-[18px] font-Poppins font-medium">Resala.ai</div>
+          <div className="text-darkgray text-[18px] font-Poppins font-medium">Resala</div>
         </div>
         <div className="text-[22px] flex justify-center mb-[40px] font-bold">Welcome Back</div>
         <div className="flex justify-center flex-col gap-2">
@@ -94,13 +111,16 @@ export default function Login({ isLogin, setIsLogin }) {
               name="email"
               label="Email Address"
               type="email"
-              placeholder="Email Address"
+              placeholder=" "
               handleChange={(e) => handleChange(e)}
-              disabled={disabled}
-              setDisabled={setDisabled}
+              // disabled={disabled}
+              setIsRegistered={setIsRegistered}
+              setIsSecondStep={setIsSecondStep}
+              isRegistered={isRegistered}
+              value={inputValue.email}
             />
             {errors.email && <p className="text-red text-[12px]">{errors.email}</p>}
-            {status === 200 && (
+            {isRegistered && inputValue.email && (
               <>
                 <InputField
                   className="block w-full rounded-md border border-gray mt-[4px] px-7 py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
@@ -110,21 +130,37 @@ export default function Login({ isLogin, setIsLogin }) {
                   placeholder="Password"
                   isvisible={true}
                   handleChange={(e) => handleChange(e)}
+                  value={inputValue.password}
+                  // isLoading={isLoading}
                 />
                 {errors.password && <p className="text-red text-[12px]">{errors.password}</p>}
+                {/* <div
+                  type="button"
+                  className="flex justify-center bg-transparent text-primaryBlue w-full mb-[24px] rounded-md px-1 py-[5px] text-[14px] font-medium hover:opacity-90 disabled:cursor-none disabled:opacity-50"
+                > */}
                 <button
-                  className="bg-transparent text-primaryBlue w-full mb-[24px] rounded-md px-1 py-[5px] text-[14px] font-medium hover:opacity-90 disabled:cursor-none disabled:opacity-50"
-                  onClick={() => navigate('/forgetpassword')}
+                  type="button"
+                  className={`flex justify-center bg-transparent text-primaryBlue w-full mb-[24px] rounded-md px-1 py-[5px] text-[14px] font-medium hover:opacity-90 disabled:opacity-50  ${
+                    isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                  style={{ cursor: 'unset' }}
+                  disabled={isLoading}
                 >
-                  Forget password?
+                  <span className={`${isLoading ? '' : 'cursor-pointer'}`} onClick={() => navigate('/forgetpassword')}>
+                    Forgot password?
+                  </span>
                 </button>
+                {/* </div> */}
               </>
             )}
             <div className="col-span-full mb-[15px]">
               <div className="flex gap-2 items-center">
                 <button
-                  className="w-full rounded-md bg-primaryBlue px-1 py-[16px] text-[12px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
+                  className={`w-full rounded-md bg-primaryBlue px-1 py-[16px] text-[12px] font-medium text-white hover:opacity-90 focus:outline-none disabled:cursor-none disabled:opacity-50 ${
+                    isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                   type="submit"
+                  disabled={isLoading}
                 >
                   {isLoading ? (
                     <svg
@@ -154,38 +190,15 @@ export default function Login({ isLogin, setIsLogin }) {
         </div>
         <div className="flex justify-center items-center gap-1 mt-[10px]">
           <span>Don’t have account?</span>
-          <button className="text-primaryBlue" onClick={() => navigate('/signup')}>
+          <button
+            className={`text-primaryBlue ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            onClick={handleSignUp}
+            disabled={isLoading}
+          >
             Sign up
           </button>
         </div>
-        {!isValidUser && (
-          <>
-            <div className="flex justify-center relative items-center gap-1 mt-[24px]">
-              <span className="bg-white uppercase px-[10px] z-10">Or</span>
-              <span className="bg-gray h-[1px] absolute w-full"></span>
-            </div>
-            <div className="flex flex-col relative items-center gap-[12px] mt-[24px]">
-              <div className="w-full flex gap-2 items-center">
-                <button className="flex items-center gap-2 w-full text-left rounded-md bg-white px-3 py-[14px] text-[14px] text-gray2 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50">
-                  <img src={GoogleIcon} />
-                  Continue with Google
-                </button>
-              </div>
-              <div className="w-full flex gap-2 items-center">
-                <button className="flex items-center gap-2 w-full text-left rounded-md bg-white px-3 py-[14px] text-[14px] text-gray2 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50">
-                  <img src={MicrosoftIcon} />
-                  Continue with Microsoft Account
-                </button>
-              </div>
-              <div className="w-full flex gap-2 items-center">
-                <button className="flex items-center gap-2 w-full text-left rounded-md bg-white px-3 py-[14px] text-[14px] text-gray2 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50">
-                  <img src={AppleIcon} />
-                  Continue with Apple
-                </button>
-              </div>
-            </div>
-          </>
-        )}
+        {!isRegistered && <SocialLogin />}
       </div>
     </>
   );

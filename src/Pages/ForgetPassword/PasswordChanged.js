@@ -14,7 +14,7 @@ const PasswordChanged = () => {
         Your password has been changed successfully.
       </div>
       <button
-        className="w-full rounded-md bg-primaryBlue px-1 py-[16px] text-[12px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
+        className="w-full focus:outline-none rounded-md bg-primaryBlue px-1 py-[16px] text-[12px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
         onClick={() => navigate('/login')}
       >
         Continue

@@ -1,51 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Logo from '../../utils/Header/ResalaLogo.svg';
+import Logo from '../../utils/Header/ResLogo.svg';
 import WhatsAppIcon from '../../utils/Account/Icons/WhatsAppIcon.svg';
 import WhatsAppIconWhite from '../../utils/Account/Icons/WhatsAppIconWhite.svg';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css'; // Import the CSS for styling
+// import PhoneInput from 'react-phone-number-input';
+// import { getCountries, getCountryCallingCode } from 'react-phone-number-input/input';
+import 'react-phone-number-input/style.css';
 import { useDispatch } from 'react-redux';
 import { sendOtpSMS, userDetails } from '../../redux/reducers/authSlice/AuthSlice';
-
-//   // const { countries } = useCountries();
-//   // const [countriesList, setCountryList] = useState([]);
-//   // const myCountriesList = [];
-//   // useEffect(() => {
-//   //   countries.map((country) => {
-//   //     // myCountriesList.push(country.emoji + ' ' + country.name + ' ' + country.countryCallingCode);
-//   //     myCountriesList.push(country.emoji);
-//   //   });
-//   //   setCountryList(myCountriesList);
-//   // }, []);
-//   // const defaultOption = countriesList[1];
-//   // return (
-//   //   <Dropdown
-//   //     className="rounded-md mb-[15px]"
-//   //     options={countriesList}
-//   //     //   options={countriesList.map((countries) => ({
-//   //     //     inputValue: countries.emoji,
-//   //     //     label: (
-//   //     //       <div className="flex items-center gap-2">
-//   //     //         <img src={countries.emoji} alt="not found" />
-//   //     //         <span className="">{countries.countryCallingCode}</span>
-//   //     //       </div>
-//   //     //     ),
-//   //     //   }))}
-//   //     // onChange={this._onSelect}
-//   //     inputValue={defaultOption}
-//   //     arrowClosed={
-//   //       <img className="absolute top-[50%] -translate-y-[50%] right-[15px] w-[16px] h-[16px]" src={ArrowDown} />
-//   //     }
-//   //     arrowOpen={
-//   //       <img
-//   //         className="absolute top-[50%] -translate-y-[50%] right-[15px] w-[16px] h-[16px] rotate-180"
-//   //         src={ArrowDown}
-//   //       />
-//   //     }
-//   //   />
-//   // );
-// };
+import SelectMobileNumber from '../../Components/PhoneNumberInput/SelectMobileNumber';
 
 const MobileVerification = () => {
   const navigate = useNavigate();
@@ -57,14 +22,17 @@ const MobileVerification = () => {
 
   const [isVisibleWhatAppButton, setIsVisisbleWhatAppButton] = useState(true);
   const [whatsAppSwitch, setWhatsAppSwitch] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState('');
+  const [validationError, setValidationError] = useState('');
   const [inputValue, setInputValue] = useState({
     country_code: '',
     phone_number: '',
-    is_whatapp: !whatsAppSwitch,
+    // is_whatapp: !whatsAppSwitch,
+    is_whatapp: false,
   });
-
-  console.log('inputValue', inputValue);
+  const [countries, setcountries] = useState();
+  console.log('countries', countries);
+  const [country, setCountry] = useState('US');
 
   useEffect(() => {
     document.getElementById('whatsappswitch').checked = whatsAppSwitch;
@@ -80,10 +48,10 @@ const MobileVerification = () => {
             ...register,
             phone_number: inputValue.phone_number,
             country_code: inputValue.country_code,
-            is_whatapp: inputValue.is_whatapp,
+            is_whatapp: false,
           })
         );
-        navigate('/entercode', { state: { phone: res.payload } });
+        navigate('/entercode', { state: { phone: res.payload, register } });
       }
     }
     // else {
@@ -102,7 +70,7 @@ const MobileVerification = () => {
             ...register,
             phone_number: inputValue.phone_number,
             country_code: inputValue.country_code,
-            is_whatapp: inputValue.is_whatapp,
+            is_whatapp: true,
           })
         );
         navigate('/entercode', { state: { phone: res.payload } });
@@ -115,6 +83,16 @@ const MobileVerification = () => {
     setIsVisisbleWhatAppButton(!isVisibleWhatAppButton);
   };
   const handleOnChange = (value, country) => {
+    // const numericValue = value.replace(/[^0-9]/g, '');
+
+    // if (numericValue?.length === 0) {
+    //   setValidationError('Phone number is required.');
+    // } else if (numericValue?.length !== country.dialCode?.length + 10) {
+    //   setValidationError('Invalid phone number length.');
+    // } else {
+    //   setValidationError('');
+    // }
+
     setPhoneNumber(value);
     setInputValue({
       is_whatapp: inputValue.is_whatapp,
@@ -123,24 +101,119 @@ const MobileVerification = () => {
     });
   };
 
+  // useEffect(() => {
+  //   const names = getCountries();
+  //   // const namess = countryNames;
+
+  //   // if (searchInput) {
+  //   //   const filteredData = names.filter((el) => {
+  //   //     if (searchInput === '') {
+  //   //       return el;
+  //   //     } else {
+  //   //       const fi = names.findIndex((data) => data.toLowerCase() == searchInput.toLowerCase());
+  //   //       if (fi >= 0) {
+  //   //         return el.toLowerCase().includes(searchInput.toLowerCase());
+  //   //       } else {
+  //   //         return (
+  //   //           el.toLowerCase().includes(searchInput.toLowerCase()) ||
+  //   //           namess[el].toLowerCase().includes(searchInput.toLowerCase())
+  //   //         );
+  //   //       }
+  //   //     }
+  //   //   });
+  //   //   setcountries(filteredData);
+  //   // } else {
+  //   // }
+  //   setcountries(names);
+  // }, []);
+
   return (
     <>
       <div className="py-[90px] px-[75px] flex flex-col justify-center">
         <div className="flex items-center justify-center gap-2 mb-[50px]">
           <img src={Logo} alt="logo" className="cursor-pointer h-[32px] w-[32px]" />
-          <div className="text-darkgray text-[18px]">Resala.ai</div>
+          <div className="text-darkgray text-[18px]">Resala</div>
         </div>
         <div className="text-[22px] flex justify-center mb-[40px] font-bold">Verify your phone number</div>
 
-        <div className="flex gap-2 items-center contrycode relative">
-          <PhoneInput
-            country={'us'} // Default country (optional)
+        <div className="">
+          {/* <PhoneInput
+            country={'us'}
             value={phoneNumber}
             onChange={handleOnChange}
-          />
-          {/* {errors.phone_number && <p className="text-red text-[12px]">{errors.phone_number}</p>} */}
+            dropdownStyle={{
+              fontSize: '12px',
+              color: '#6D77A0',
+            }}
+            dropdownClass="my-dropdown-class"
+            inputClass="my-input-class" // Add this line
+          /> */}
+          <SelectMobileNumber />
+
+          {/* <PhoneNumberInput
+            // key={i}
+            // number={val?.number}
+            // setNumber={(dsn) => {
+            //   const tempPT = Array.from(phoneData);
+            //   if (tempPT) {
+            //     tempPT[i].number = dsn;
+            //   }
+            //   setPhoneData(tempPT);
+            // }}
+            countries={countries}
+            setcountries={setcountries}
+            // country={val?.country || 'US'}
+            // setCountry={(dsn) => {
+            //   const tempPT = Array.from(phoneData);
+            //   if (tempPT) {
+            //     tempPT[i].country = dsn;
+            //   }
+            //   setPhoneData(tempPT);
+            // }}
+            // countryCode={val?.countryCode || '1'}
+            // setCountryCode={(dsn) => {
+            //   const tempPT = Array.from(phoneData);
+            //   if (tempPT) {
+            //     tempPT[i].countryCode = dsn;
+            //   }
+            //   setPhoneData(tempPT);
+            // }}
+            // isdropdown={isdropdown.length ? isdropdown[i] : false}
+            // setIsdropdown={(dIDD) => {
+            //   const ADIDD = Array.from(isdropdown);
+            //   if (ADIDD.length) {
+            //     const extra = ADIDD.map((madd, ind) => {
+            //       if (ind == i) {
+            //         return dIDD;
+            //       }
+            //       return false;
+            //     });
+            //     setIsdropdown(extra);
+            //   }
+            // }}
+            // isvalid={isvalid.length ? isvalid[i] : true}
+            // setisvalid={(temp) => {
+            //   const info = Array.from(isvalid);
+            //   // console.log(temp, info, "56156156135");
+            //   if (info.length) {
+            //     const message = info.map((madd, ind) => {
+            //       if (ind == i) {
+            //         return temp;
+            //       }
+            //       return madd;
+            //     });
+            //     setisvalid(message);
+            //   }
+            // }}
+            // searchInput={searchInput}
+            // setSearchInput={setSearchInput}
+            // index={i}
+          /> */}
+          {/* <PhoneNumberInput /> */}
+          {/* {errors && <p className="text-red text-[12px]">{errors}</p>} */}
+          {/* {validationError && <p className="text-red text-[12px] mt-1">{validationError}</p>} */}
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mt-[10px]">
           <div className="inline-flex items-center gap-1 text-gray2 text-[14px]">
             <span>Do you have</span>
             <span>
@@ -167,7 +240,7 @@ const MobileVerification = () => {
             {isVisibleWhatAppButton && (
               <button
                 className="w-full rounded-md bg-primaryBlue px-1 py-[16px] text-[12px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
-                onClick={(e) => handleWhatAppButton(e)}
+                // onClick={(e) => handleWhatAppButton(e)}
               >
                 <div className="inline-flex items-center gap-1">
                   <span>Send code via</span>

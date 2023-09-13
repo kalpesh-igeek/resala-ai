@@ -1,4 +1,5 @@
 import { getRequest, postRequest, postReqWithoutToken, patchReqWithoutToken } from '..';
+import Toast from '../../utils/toast';
 // import 'react-toastify/dist/ReactToastify.css';
 // import Toast from '../../utils/toast';
 const AUTH_URL = '/auth';
@@ -9,7 +10,8 @@ const checkMail = async (payload) => {
     return await postReqWithoutToken(checkMailPath, payload);
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
-    console.log('error', error?.response?.data?.message);
+    Toast('error', error.response.data.Message);
+    // console.log('error', error?.response?.data?.message);
   }
 };
 
@@ -19,7 +21,8 @@ const sendOtpSMS = async (payload) => {
     return await postReqWithoutToken(sendOtpPath, payload);
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
-    console.log('error', error?.response?.data?.message);
+    // console.log('error', error?.response?.data?.message);
+    Toast('error', error.response.data.Message);
   }
 };
 
@@ -29,7 +32,8 @@ const signUp = async (payload) => {
     return await postReqWithoutToken(signUpPath, payload);
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
-    console.log('error', error?.response?.data?.message);
+    // console.log('error', error?.response?.data?.message);
+    Toast('error', error.response.data.Message);
   }
 };
 
@@ -39,7 +43,8 @@ const emailChecking = async (payload) => {
     return await postReqWithoutToken(emailCheckPath, payload);
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
-    console.log('error', error?.response?.data?.message);
+    // console.log('error', error?.response?.data?.message);
+    Toast('error', error.response.data.Message);
   }
 };
 
@@ -59,7 +64,8 @@ const otpVerification = async (payload) => {
     return await postReqWithoutToken(otpPath, payload);
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
-    console.log('error', error?.response?.data?.message);
+    // console.log('error', error?.response?.data?.message);
+    Toast('error', error.response.data.Message);
   }
 };
 
@@ -69,7 +75,8 @@ const login = async (payload) => {
     return await postReqWithoutToken(loginPath, payload);
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
-    console.log('error', error?.response?.data?.message);
+    // console.log('error', error?.response?.data?.message);
+    Toast('error', error.response.data.Message);
   }
 };
 
@@ -79,7 +86,8 @@ const forgotPassword = async (payload) => {
     return await patchReqWithoutToken(forgotPassPath, payload);
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
-    console.log('error', error?.response?.data?.message);
+    // console.log('error', error?.response?.data?.message);/
+    Toast('error', error.response.data.Message);
   }
 };
 
@@ -89,7 +97,8 @@ const signUpWithGoogle = async (payload) => {
     return await postReqWithoutToken(signUpGooglePath, payload);
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
-    console.log('error', error?.response?.data?.message);
+    // console.log('error', error?.response?.data?.message);
+    Toast('error', error.response.data.Message);
   }
 };
 
@@ -99,7 +108,8 @@ const signUpWithMicrosoft = async (payload) => {
     return await postReqWithoutToken(signUpMicrosoftPath, payload);
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
-    console.log('error', error?.response?.data?.message);
+    // console.log('error', error?.response?.data?.message);
+    Toast('error', error.response.data.Message);
   }
 };
 
@@ -109,7 +119,8 @@ const signUpWithApple = async (payload) => {
     return await postReqWithoutToken(signUpApplePath, payload);
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
-    console.log('error', error?.response?.data?.message);
+    // console.log('error', error?.response?.data?.message);
+    Toast('error', error.response.data.Message);
   }
 };
 

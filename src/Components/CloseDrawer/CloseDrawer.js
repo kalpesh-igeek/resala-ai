@@ -1,5 +1,5 @@
 import React from 'react';
-import Logo from '../../utils/Header/ResalaLogo.svg';
+import Logo from '../../utils/Header/ResLogo.svg';
 import Close from '../../utils/Header/Close.svg';
 
 const CloseDrawer = () => {

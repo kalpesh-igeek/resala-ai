@@ -6,10 +6,14 @@ const initialState = {
   token: '',
   isUserEmail: '',
   inputDetails: {},
+  forgotPassInfo: {},
+  activity: false,
+  languages: [],
   hasPassword: false,
   status: 0,
   isLoading: false,
   error: null,
+  errorMessage: '',
 };
 
 export const checkMail = createAsyncThunk('auth/checkMail', async (payload) => {
@@ -48,12 +52,37 @@ export const login = createAsyncThunk('auth/login', async (payload) => {
   return data;
 });
 
+export const sendOtpMail = createAsyncThunk('auth/sendOtpMail', async (payload) => {
+  const { data, status } = await authService.sendOtpMail(payload);
+  data.status = status;
+  return data;
+});
+
+export const forgotPassword = createAsyncThunk('auth/forgotPassword', async (payload) => {
+  const { data, status } = await authService.forgotPassword(payload);
+  data.status = status;
+  return data;
+});
+
 export const AuthSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
     userDetails: (state, action) => {
       state.inputDetails = action.payload;
+    },
+    forgotPasswordDetails: (state, action) => {
+      state.forgotPassInfo = action.payload;
+    },
+    clearDisptach: (state) => {
+      state.user = {};
+      state.status = 0;
+    },
+    saveError: (state, action) => {
+      state.error = action.payload;
+    },
+    checkActivity: (state, action) => {
+      state.activity = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -110,7 +139,8 @@ export const AuthSlice = createSlice({
     });
     builder.addCase(otpVerification.rejected, (state, action) => {
       state.isLoading = false;
-      state.error = action.error.message;
+      state.user = action;
+      state.error = action;
       state.hasPassword = false;
     });
     builder.addCase(signUp.pending, (state) => {
@@ -131,13 +161,43 @@ export const AuthSlice = createSlice({
     builder.addCase(login.fulfilled, (state, action) => {
       state.isLoading = false;
       state.user = action.payload;
+      let userPreferences = {
+        Responed_language: action.payload.Result?.Responed_language,
+        preference_language: action.payload.Result?.preference_language,
+        responed_tone: action.payload.Result?.responed_tone,
+      };
+      localStorage.setItem('userPreferences', JSON.stringify(userPreferences));
       state.status = action.payload.status;
     });
     builder.addCase(login.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action;
+    });
+    builder.addCase(sendOtpMail.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(sendOtpMail.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.user = action.payload;
+      state.status = action.payload.status;
+    });
+    builder.addCase(sendOtpMail.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    });
+    builder.addCase(forgotPassword.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(forgotPassword.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.user = action.payload;
+      state.status = action.payload.status;
+    });
+    builder.addCase(forgotPassword.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.error.message;
     });
   },
 });
-export const { userDetails } = AuthSlice.actions;
+export const { userDetails, clearDisptach, saveError, forgotPasswordDetails, checkActivity } = AuthSlice.actions;
 export default AuthSlice.reducer;

@@ -1,11 +1,17 @@
-input[type="radio"] {
+/* input[type='radio'] {
+  display: none;
+} */
+
+#left,
+#center,
+#right {
   display: none;
 }
 
-label {
+#side-bar-extension-root > label {
   z-index: 10;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .black-font {
@@ -19,7 +25,7 @@ label {
   height: 28px;
   padding: 2px;
   border-radius: 100px;
-  background-color: #F3F3F3;
+  background-color: #f3f3f3;
   position: relative;
 }
 

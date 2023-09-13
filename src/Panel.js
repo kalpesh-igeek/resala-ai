@@ -23,6 +23,9 @@ import PopupBox from './PopupBox';
 import QuickButton from './QuickButton';
 
 import SuccessIcon from './utils/Account/Icons/SuccessIcon.svg';
+import { getToken } from './utils/localstorage';
+import Template from './Pages/Templates/Template';
+import { useSelector } from 'react-redux';
 
 const QUICKREPLY = 'quickreply';
 const SELECTION = 'selection';
@@ -38,8 +41,9 @@ const sites = [
 ];
 
 export default function Panel() {
+  const TOKEN = getToken();
   const [isSideBarOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState(QUICKREPLY);
+  const [activeTab, setActiveTab] = useState('');
 
   const [ifConfirmClose, setIfConfirmClose] = useState(false);
   const [ifOpenConfirmBox, setIfOpenConfirmBox] = useState(false);
@@ -48,7 +52,7 @@ export default function Panel() {
   const [isLoadedExtension, setIsLoadedExtension] = useState(false);
   const [selectedSites, setSelectedSites] = useState(sites);
 
-  const [isLogin, setIsLogin] = useState(false);
+  // const [isLogin, setIsLogin] = useState(false);
   const [isLogout, setIsLogout] = useState(false);
 
   const [selectedText, setSelectedText] = useState('');
@@ -56,6 +60,11 @@ export default function Panel() {
   const [positionX, setPoistionX] = useState(0);
   const [positionY, setPoistionY] = useState(0);
   const [backToInbox, setBackToInbox] = useState('');
+  const [isPopupVisible, setIsPopupVisible] = useState(true);
+  const { activity } = useSelector((state) => state.auth);
+  // console.log('activity', activity);
+
+  const [mailId, setMailId] = useState(window.location.hash);
 
   // function myFunction(e) {
   //   const selected = window.getSelection();
@@ -67,18 +76,16 @@ export default function Panel() {
   // }
   function myFunction(e) {
     const selected = window.getSelection();
-    if (selected.toString() !== '') {
+    if (selected.toString()) {
       setSelectedText(selected.toString());
 
       const rect = selected.getRangeAt(0).getBoundingClientRect();
       const positionX = rect.left + window.scrollX + rect.width / 2;
       const positionY = rect.top + window.scrollY + rect.height;
 
-      const offsetX = 0; // Adjust this value based on your design
-      const offsetY = 20; // Adjust this value based on your design
-
-      setPoistionX(positionX - offsetX);
-      setPoistionY(positionY + offsetY);
+      // add the current scroll position to the calculated position
+      setPoistionX(positionX + window.scrollX);
+      setPoistionY(positionY + window.scrollY);
     }
   }
 
@@ -96,13 +103,59 @@ export default function Panel() {
           setRequestedText('hello');
         };
       }
-    }, 4000);
+    }, 2000);
   }, []);
+  // useEffect(() => {
+  //   const checkUrlChange = () => {
+  //     const currentMailId = window.location.hash;
+  //     if (currentMailId !== mailId) {
+  //       setMailId(currentMailId);
+  //     } else {
+  //       setMailId(currentMailId);
+  //     }
+  //   };
+
+  //   // Check for URL changes every second
+  //   const intervalId = setInterval(checkUrlChange, 1000);
+
+  //   return () => clearInterval(intervalId); // Clean up on unmount
+  // }, []);
+
+  // useEffect(() => {
+  //   // Your code here
+  //   // setTimeout(() => {
+  //   const quickReply = document.getElementById('quickButton');
+  //   // console.log('quickReply', quickReply);
+  //   const quickPosition = document.getElementsByClassName('T-I J-J5-Ji T-I-JN L3')[0];
+  //   // console.log('quickPosition', quickPosition);
+  //   if (quickPosition) {
+  //     quickPosition.parentElement?.parentElement?.prepend(quickReply);
+  //     quickReply.onclick = function () {
+  //       handleSidebar(QUICKREPLY);
+  //       setRequestedText('hello');
+  //     };
+  //   }
+  //   // }, 2000); // Wait 2 seconds before running the code
+  // }, [mailId]); // Run this useEffect when mailId changes
+  // useEffect(() => {
+  //   // Your code here
+  //   setTimeout(() => {
+  //     const quickReply = document.getElementById('quickButton');
+  //     const quickPosition = document.querySelectorAll('[data-tooltip="Print all"]')[0];
+  //     if (quickPosition) {
+  //       quickPosition.parentElement?.parentElement?.prepend(quickReply);
+  //       quickReply.onclick = function () {
+  //         handleSidebar(QUICKREPLY);
+  //         setRequestedText('hello');
+  //       };
+  //     }
+  //   }, 2000);
+  // }, [mailId]); // Run this useEffect when mailId changes
 
   document.getElementsByTagName('body')[0].onmouseup = (e) => myFunction(e);
   chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-     if (request.greeting === true) {
-      handleSidebar(QUICKREPLY);
+    if (request.greeting === true) {
+      handleSidebar(CHAT);
     } else {
       setIsOpen(false);
       setIfConfirmClose(true);
@@ -116,6 +169,7 @@ export default function Panel() {
     setActiveTab(tab);
     setIsOpen(true);
     setIsLoadedExtension(true);
+    // setIsPopupVisible(false);
     setRequestedText(selectedText);
     document.querySelectorAll('[style="position: relative;"]')[0].style = 'margin-right: 500px';
   };
@@ -131,7 +185,7 @@ export default function Panel() {
   };
 
   useEffect(() => {
-    if (isLogin) {
+    if (TOKEN) {
       if (isSideBarOpen) {
         const extensionCloseIcon = document.querySelector('.extensionCloseIcon');
         extensionCloseIcon.addEventListener('click', handleClick);
@@ -142,7 +196,7 @@ export default function Panel() {
         }
       }
     }
-  }, [isSideBarOpen, isLogin]);
+  }, [isSideBarOpen, TOKEN]);
 
   // useEffect(() => {
   //   const handleClick = () => {
@@ -155,6 +209,28 @@ export default function Panel() {
   //     extensionIcon.removeEventListener('click', handleClick);
   //   };
   // }, []);
+  // useEffect(() => {
+  //   const handleScroll = (e) => {
+  //     const extensionElement = document.getElementById('extension');
+  //     const isCursorOnExtension = extensionElement.contains(e.target);
+
+  //     if (isCursorOnExtension) {
+  //       e.preventDefault();
+  //     } else {
+  //       const isCursorOnOtherSiteElement = document.getElementById('other-site-element').contains(e.target);
+
+  //       if (isCursorOnOtherSiteElement) {
+  //         e.preventDefault();
+  //       }
+  //     }
+  //   };
+
+  //   window.addEventListener('scroll', handleScroll);
+
+  //   return () => {
+  //     window.removeEventListener('scroll', handleScroll);
+  //   };
+  // }, []);
 
   return (
     <>
@@ -163,6 +239,7 @@ export default function Panel() {
         handleSidebar={handleSidebar}
         selectedText={selectedText}
         setSelectedText={setSelectedText}
+        requestedText={requestedText}
         positionX={positionX}
         positionY={positionY}
       />
@@ -189,6 +266,7 @@ export default function Panel() {
             zIndex: 999999,
           }}
           className={`MAINBODY fixed top-0 right-0 bottom-0 bg-white ease-in-out overflow-y-auto`}
+          id="resala-extension"
         >
           <div
             style={{
@@ -221,9 +299,10 @@ export default function Panel() {
                       path="/"
                       element={
                         <MainScreen
-                          isLogin={isLogin}
+                          // isLogin={isLogin}
                           setIsOpen={setIsOpen}
-                          setIsLogin={setIsLogin}
+                          handleSidebar={handleSidebar}
+                          // setIsLogin={setIsLogin}
                           requestedText={requestedText}
                           setRequestedText={setRequestedText}
                           handleClick={handleClick}
@@ -242,12 +321,25 @@ export default function Panel() {
                           handleSidebar={handleSidebar}
                           setIsOpen={setIsOpen}
                           ifOpenDeleteBox={ifOpenDeleteBox}
+                          setActiveTab={setActiveTab}
                           setIfOpenDeleteBox={setIfOpenDeleteBox}
+                          handleClick={handleClick}
+                          setIsLogout={setIsLogout}
                         />
                       }
                     />
+                    {/* <Route path="/template" element={<Template />} /> */}
                     <Route path="/preferences" element={<Preferences />} />
-                    <Route path="/login" element={<Login isLogin={isLogin} setIsLogin={setIsLogin} />} />
+                    <Route
+                      path="/login"
+                      element={
+                        <Login
+                          setActiveTab={setActiveTab}
+                          // isLogin={isLogin}
+                          // setIsLogin={setIsLogin}
+                        />
+                      }
+                    />
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/registerdetails" element={<RegisterDetails />} />
                     <Route path="/mobileverification" element={<MobileVerification />} />
@@ -268,7 +360,7 @@ export default function Panel() {
                     ifConfirmClose={ifConfirmClose}
                     setIfConfirmClose={setIfConfirmClose}
                   />
-                  <DeletePopup ifOpenDeleteBox={ifOpenDeleteBox} setIfOpenDeleteBox={setIfOpenDeleteBox} />
+                  {/* <DeletePopup ifOpenDeleteBox={ifOpenDeleteBox} setIfOpenDeleteBox={setIfOpenDeleteBox} /> */}
                 </>
               )}
             </>

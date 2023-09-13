@@ -12,11 +12,12 @@ const CustomDropdown = ({ options, onChange }) => {
 
   return (
     <Dropdown
+      className="text-lightblue"
       options={options}
       placeholder="All chat history"
       arrowClosed={<img className="dropdown-arrow" src={ArrowDown} />}
       arrowOpen={<img className="dropdown-arrow rotated" src={ArrowDown} />}
-      onChange={onChange}
+      // onChange={onChange}
       controlClassName="dropdown-control"
       arrowClassName="dropdown-arrow-container"
       menuClassName="dropdown-menu"

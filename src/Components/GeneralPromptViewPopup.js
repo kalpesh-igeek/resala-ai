@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import Close from '../utils/MainScreen/Icons/Close.svg';
 import ApplyPrompt from '../utils/PopupBox/Icons/ApplyPrompt.svg';
+import CopyIcon from '../utils/Chat/Icons/copy.svg';
 
 export default function GeneralPromptViewPopup({
   selectedPrompt,
@@ -57,7 +58,7 @@ export default function GeneralPromptViewPopup({
         <div className="pt-[8px] pb-[20px] text-[22px] font-medium text-darkBlue">
           <div className="flex items-center justify-between">
             <div className="gap-2 flex items-center">
-              <span>{selectedPrompt.title}</span>
+              <span>{selectedPrompt.name}</span>
             </div>
             <div className="cursor-pointer -mt-[30px]" onClick={() => handleDeleteTemplate()}>
               <img src={Close} />
@@ -65,16 +66,21 @@ export default function GeneralPromptViewPopup({
           </div>
         </div>
         <div className="col-span-full mb-[20px]">
-          <div className="text-[14px] text-gray1 mb-[8px]">{selectedPrompt.description}</div>
+          <div className="text-[14px] text-gray1 mb-[8px]">{selectedPrompt.prompt}</div>
         </div>
         <div>
+          <div className="flex justify-between">
+            <label className="text-[14px] text-gray1 font-medium">PROMPT</label>
+            <img src={CopyIcon} className="cursor-pointer" />
+          </div>
           <textarea
+            style={{ resize: 'none' }}
             id="promptText"
             name="promptText"
-            rows="6"
+            rows="10"
             value={inputPrompt.prompt}
-            placeholder="Tell me what to write for you"
-            className="text-[12px] border-gray block w-full rounded-0 border p-[12px]"
+            placeholder="Give me 5 brainstorm ideas about [topic or keyword]."
+            className="text-[14px] border-gray block w-full rounded-0 border p-[12px] mt-[4px] rounded-lg"
             onChange={(e) => handlePromptInput(e)}
           />
         </div>

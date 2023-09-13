@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TypeWriterEffect from 'react-typewriter-effect';
 import SaveTemplatePopup from '../../../Components/SaveTemplatePopup/SaveTemplatePopup';
@@ -10,24 +10,9 @@ import AcknowledgeIcon from '../../../utils/MainScreen/Tab/AcknowledgeIcon.svg';
 import DeclineIcon from '../../../utils/MainScreen/Tab/DeclineIcon.svg';
 
 import Dropdown from 'react-dropdown';
-
-const ideasList = [
-  {
-    icon: RequestIcon,
-    type: 'Request',
-    desc: 'Can you please clarify this email to me as what you are actually requesting for me to do with this?',
-  },
-  {
-    icon: AcknowledgeIcon,
-    type: 'Acknowledge',
-    desc: 'Can you please clarify this email to me as what you are actually requesting for me to do with this?',
-  },
-  {
-    icon: DeclineIcon,
-    type: 'Decline',
-    desc: 'Can you please clarify this email to me as what you are actually requesting for me to do with this?',
-  },
-];
+import { getIdeasReply } from '../../../redux/reducers/QuickReplySlice/QuickReplySlice';
+import { useDispatch } from 'react-redux';
+import Select from 'react-select';
 
 const tones = [
   { value: 'professional', label: 'Professional' },
@@ -56,11 +41,14 @@ const QuickReply = ({
   defaultLanguage,
   selectedTone,
   setSelectionTone,
+  SELECTION,
 }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [isReplies, setIsReplies] = useState(false);
   const [selectedIdea, setSelectedIdea] = useState();
+  const [ideasList, setIdeasList] = useState([]);
 
   const handlePlanInfo = () => {
     setIsReplies(!isReplies);
@@ -74,25 +62,132 @@ const QuickReply = ({
     );
   };
 
-  // console.log(selectedIdea);
+  const fetchIdeasOfReply = async () => {
+    const res = await dispatch(getIdeasReply());
+
+    if (!res.payload) {
+      return;
+    }
+
+    if (res.payload.status === 200) {
+      setIdeasList(res.payload?.Result);
+      // setTotalData(res.payload?.totalCount);
+      // setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (SELECTION === 'quickreply') {
+      fetchIdeasOfReply();
+    }
+  }, []);
 
   return (
     <>
       <div className="px-[20px] py-[12px] relative">
         <div className="flex gap-2 right-[20px] -top-[31px] absolute z-30">
-          <Dropdown
+          {/* <Dropdown
             className="language flex gap-1 items-center justify-center rounded-full border border-primaryBlue px-[6px] py-[3px] bg-white text-[9px] font-medium text-primaryBlue cursor-pointer"
             options={outputlanguages}
             value={defaultLanguage}
             arrowClosed={<img className="w-[10px] h-[10px]" src={ArrowDown} />}
             arrowOpen={<img className="w-[10px] h-[10px] rotate-180" src={ArrowDown} />}
-          />
-          <Dropdown
+          /> */}
+
+          {/* <Dropdown
             className="language flex gap-1 items-center justify-center rounded-full border border-primaryBlue px-[6px] py-[3px] bg-white text-[9px] font-medium text-primaryBlue cursor-pointer"
             options={tones}
             value={defaultTone}
             arrowClosed={<img className="w-[10px] h-[10px]" src={ArrowDown} />}
             arrowOpen={<img className="w-[10px] h-[10px] rotate-180" src={ArrowDown} />}
+          /> */}
+          <Select
+            className="language flex gap-1 items-center justify-center rounded-full border border-primaryBlue px-[6px] py-[3px] bg-white text-[12px] font-medium text-darkBlue cursor-pointer"
+            menuPlacement="top"
+            // defaultValue={}
+            // onChange={setSelectedOption}
+            placeholder="select"
+            options={outputlanguages}
+            // menuIsOpen={true}
+            styles={{
+              control: (base) => ({
+                ...base,
+                height: '21px',
+                minHeight: '21px',
+                border: 0,
+                boxShadow: 'none',
+              }),
+              menu: (base) => ({
+                ...base,
+                width: '121px',
+                minWidth: '121px',
+                right: '-9px',
+              }),
+              option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+                // const color = chroma(data.color);
+                // console.log({ data, isDisabled, isFocused, isSelected });
+                return {
+                  ...styles,
+                  backgroundColor: isFocused ? '#F3F4F8' : null,
+                  color: !isFocused ? '#8C90A5' : '#19224C',
+                  margin: '8px',
+                  width: 'auto',
+                  borderRadius: '4px',
+                  height: '21px',
+                  lineHeight: '7px',
+                  // padding: '4px 0px 4px 8px',
+                  // minWidth: '143px',
+                };
+              },
+              dropdownIndicator: (provided, state) => ({
+                ...provided,
+                transform: state.selectProps.menuIsOpen && 'rotate(180deg)',
+              }),
+            }}
+          />
+          <Select
+            className="language flex gap-1 items-center justify-center rounded-full border border-primaryBlue px-[6px] py-[3px] bg-white text-[12px] font-medium text-darkBlue cursor-pointer"
+            menuPlacement="top"
+            // defaultValue={}
+            // onChange={setSelectedOption}
+            placeholder="select"
+            options={tones}
+            // menuIsOpen={true}
+            styles={{
+              control: (base) => ({
+                ...base,
+                height: '21px',
+                minHeight: '21px',
+                border: 0,
+                boxShadow: 'none',
+              }),
+              menu: (base) => ({
+                ...base,
+                width: '121px',
+                minWidth: '121px',
+                right: '-9px',
+              }),
+              option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+                // const color = chroma(data.color);
+                // console.log({ data, isDisabled, isFocused, isSelected });
+                return {
+                  ...styles,
+                  backgroundColor: isFocused ? '#F3F4F8' : null,
+                  color: !isFocused ? '#8C90A5' : '#19224C',
+                  margin: '8px',
+                  width: 'auto',
+                  borderRadius: '4px',
+                  height: '21px',
+                  lineHeight: '7px',
+                  // padding: '4px 0px 4px 8px',
+                  // minWidth: '143px',
+                };
+              },
+              dropdownIndicator: (provided, state) => ({
+                ...provided,
+                transform: state.selectProps.menuIsOpen && 'rotate(180deg)',
+              }),
+            }}
           />
 
           <button
@@ -106,23 +201,24 @@ const QuickReply = ({
           </button>
         </div>
         <div className="col-span-full mb-[11px]">
-          <label for="input" className="block text-[10px] font-bold leading-6 text-gray1">
+          <label for="input" className="block text-[12px] font-bold leading-6 text-gray1">
             SENDER'S INTENT
           </label>
           <div className="mt-2">
             <textarea
+              style={{ resize: 'none' }}
               id="requestedText"
               name="requestedText"
               rows="7"
               value={requestedText}
               onChange={(e) => handleInputChange(e)}
               placeholder="Lorem ipsum dolor sit amet consectetur."
-              className="text-[10px] border-gray block w-full rounded-md border p-1.5"
+              className="text-[12px] border-gray block w-full rounded-md border p-1.5"
             />
           </div>
         </div>
         <div className="mb-[20px]">
-          <div className="flex px-[10px] py-[12px] bg-lightblue1 items-center justify-between gap-2">
+          <div className="flex px-[10px] py-[12px] bg-lightblue1 font-medium items-center justify-between gap-2">
             <div className="cursor-pointer w-full" onClick={handlePlanInfo}>
               IDEAS FOR REPLY
             </div>
@@ -130,22 +226,23 @@ const QuickReply = ({
           </div>
           {isReplies && (
             <div className="flex flex-col gap-2 border-t border-white py-[10px]">
-              {ideasList.map((idea) => (
+              {ideasList.map((idea, index) => (
                 <div
-                  className="flex text-[14px] p-[15px] bg-lightblue1 items-start gap-2 rounded-[6px] cursor-pointer"
+                  className="flex text-[12px]  p-[15px] bg-lightblue1 items-start gap-2 rounded-[6px] cursor-pointer"
                   onClick={() => setSelectedIdea(idea)}
+                  key={index}
                 >
                   <img src={idea.icon} />
                   <div className="block">
-                    <span className="font-bold mr-[5px]">{idea.type}</span>
-                    {idea.desc}
+                    <span className="text-[12px] font-bold mr-[5px]">{idea.type}</span>
+                    <span className="text-[12px] font-medium">{idea.idea}</span>
                   </div>
                 </div>
               ))}
             </div>
           )}
         </div>
-        <div className="flex relative items-top gap-4 border border-gray p-[10px] mt-[10px] mb-[20px]">
+        <div className="flex relative items-top gap-4 border rounded-md  border-gray p-[10px] mt-[10px] mb-[20px]">
           <div
             className="flex items-center justify-center w-[24px] h-[24px] rounded-full cursor-pointer"
             onClick={() => handleAudioInput()}
@@ -156,12 +253,13 @@ const QuickReply = ({
             <img src={MicrophoneIcon} />
           </div>
           <textarea
+            style={{ resize: 'none' }}
             id="chatText"
             name="chatText"
             rows="1"
             value={speechText}
             placeholder="Tell me what to write for you"
-            className="text-[12px] pt-[5px] block w-full rounded-0 focus:outline-0"
+            className="text-[12px] pt-[5px] block w-full rounded-md focus:outline-0"
             onChange={(e) => handleSpeechInput(e)}
           />
           <button
@@ -174,7 +272,7 @@ const QuickReply = ({
         </div>
         <div className="pb-[20px]">
           <div className="flex justify-between item-center">
-            <label for="input" className="block text-[10px] font-bold leading-6 text-gray1 whitespace-nowrap">
+            <label for="input" className="block text-[12px] font-bold leading-6 text-gray1 whitespace-nowrap">
               REPLY PREVIEW
             </label>
             <div>
@@ -193,7 +291,7 @@ const QuickReply = ({
               <img src={selectedIdea.icon} />
               <div className="block">
                 <span className="font-bold mr-[5px]">{selectedIdea.type}</span>
-                {selectedIdea.desc}
+                {selectedIdea.idea}
               </div>
             </div>
           )}
@@ -203,7 +301,7 @@ const QuickReply = ({
             name="draftPreview"
             rows="22"
             placeholder="Lorem ipsum dolor sit amet consectetur."
-            className={`text-[10px] border-gray block h-[306px] w-full ${
+            className={`text-[12px] border-gray block h-[306px] w-full ${
               selectedIdea ? 'rounded-b-[6px]' : 'rounded-md'
             } border p-1.5 focus:outline-0`}
           >
@@ -213,22 +311,22 @@ const QuickReply = ({
         <div className="mt-1">
           <div className="flex gap-2 items-center">
             <button
-              className="w-full rounded-md bg-white px-1 py-[10px] text-[12px] font-medium text-darkBlue border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
+              className="w-full rounded-md bg-white px-1 focus:outline-none py-[10px] text-[12px] font-medium text-darkBlue border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
               disabled={resultText !== '' ? '' : 'disabled'}
             >
               Regenerate
             </button>
             <button
-              className="w-full rounded-md bg-white px-1 py-[10px] text-[12px] font-medium text-darkBlue border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
+              className="w-full rounded-md bg-white px-1 focus:outline-none py-[10px] text-[12px] font-medium text-darkBlue border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
               disabled={resultText !== '' ? '' : 'disabled'}
             >
               Copy
             </button>
             <button
-              className="w-full rounded-md bg-primaryBlue px-1 py-[10px] text-[12px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
+              className="w-full rounded-md bg-primaryBlue px-1 py-[10px] text-[12px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50 focus:outline-none"
               disabled={resultText !== '' ? '' : 'disabled'}
             >
-              Apply
+              Insert
             </button>
           </div>
         </div>

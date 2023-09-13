@@ -3,7 +3,7 @@ const validate = (values) => {
 
   if (!values.phone_number?.trim()) {
     errors.phone_number = 'Phone number is required';
-  } else if (values.phone_number?.length >= 11) {
+  } else if (values.phone_number??.length >= 11) {
     errors.phone_number = 'Enter valid phone number';
   }
 

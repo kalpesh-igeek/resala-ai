@@ -1,10 +1,14 @@
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
 import { baseUrl } from '../../constant/constant';
+import { saveError } from '../../redux/reducers/authSlice/AuthSlice';
 import { authService } from '../../services/auth.service';
+import Toast from '../toast';
 
 const server = axios.create({
   baseURL: `${baseUrl}`,
 });
+
 let refresh = false;
 
 server.interceptors.response.use(
@@ -12,14 +16,13 @@ server.interceptors.response.use(
     return resp;
   },
   async (error) => {
-    if (typeof window === undefined) return;
-    if (error.response.status === 400) {
-      // Toast('error', error.response.data.message);
-      console.log('error', error);
+    if (error.response?.status === 400) {
+      Toast('error', error.response.data.Message);
+      // console.log('error', error.response.data.Message);
     }
     if (error.response.status === 409) {
       // Toast('error', error.response.data.message);
-      console.log('error', error);
+      Toast('error', error.response.data.Message);
     }
     // if (error.response.status === 401 && !refresh) {
     //   refresh = true;

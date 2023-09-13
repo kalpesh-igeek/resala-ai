@@ -12,7 +12,7 @@ function CountryFlag({ style }) {
                     const country = {
                         code : result.country_calling_code,
                         flag : result.country
-                    }
+                     }
                     setCurrentCountry(country)
                 },
                 (error) => {

@@ -3,13 +3,13 @@ import server from '../utils/interceptors/interceptors';
 import { getToken } from '../utils/localstorage';
 
 // Handling GET request
-const USER_TOKEN = getToken();
+// const USER_TOKEN = getToken();
 
 const getRequest = async (path) => {
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: USER_TOKEN,
+      Authorization: getToken(),
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -31,7 +31,7 @@ const postRequest = async (path, payload) => {
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: USER_TOKEN,
+      Authorization: getToken(),
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -42,7 +42,7 @@ const postReqWithFormData = async (path, formData) => {
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: USER_TOKEN,
+      Authorization: getToken(),
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -64,7 +64,7 @@ const putRequest = async (path, payload) => {
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: USER_TOKEN,
+      Authorization: getToken(),
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -75,7 +75,7 @@ const putReqWithFormData = async (path, formData) => {
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: USER_TOKEN,
+      Authorization: getToken(),
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -83,11 +83,22 @@ const putReqWithFormData = async (path, formData) => {
 };
 
 // Handling PATCH request
+const patchRequest = async (path, payload) => {
+  const AXIOS_CONFIG = {
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      Authorization: getToken(),
+    },
+  };
+  const API_ENDPOINT = `${baseUrl}${path}`;
+  return await server.patch(API_ENDPOINT, payload, AXIOS_CONFIG);
+};
+
 const patchReqWithoutToken = async (path, payload) => {
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: USER_TOKEN,
+      Authorization: getToken(),
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -99,7 +110,7 @@ const deleteRequest = async (path) => {
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: USER_TOKEN,
+      Authorization: getToken(),
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -115,5 +126,6 @@ export {
   putRequest,
   putReqWithFormData,
   patchReqWithoutToken,
+  patchRequest,
   deleteRequest,
 };

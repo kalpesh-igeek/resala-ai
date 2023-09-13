@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import Panel from './Panel';
 import { Provider } from 'react-redux';
 import store from './redux/store';
+import { Toaster } from 'react-hot-toast';
 
 async function init() {
   // Create div wrapper
@@ -37,6 +38,26 @@ async function init() {
   root.render(
     <Provider store={store}>
       <MemoryRouter>
+        <Toaster
+        // position="bottom-right"
+        // toastOptions={{
+        //   // Define default options
+        //   className: '',
+        //   duration: 10000,
+        //   style: {
+        //     zIndex: 100000,
+        //   },
+
+        //   // Default options for specific types
+        //   // success: {
+        //   //   duration: 3000,
+        //   //   theme: {
+        //   //     primary: 'green',
+        //   //     secondary: 'black',
+        //   //   },
+        //   // },
+        // }}
+        />
         <Panel />
       </MemoryRouter>
     </Provider>

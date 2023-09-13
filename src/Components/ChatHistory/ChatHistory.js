@@ -1,9 +1,9 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment, useRef } from 'react';
 import Close from '../../utils/MainScreen/Icons/Close.svg';
 import ArrowDown from '../../utils/PopupBox/Icons/ArrowDown.svg';
 import SearchIcon from '../../utils/Chat/Icons/SearchIcon.svg';
 import AllChatIcon from '../../utils/Chat/Icons/History/AllChatIcon.svg';
-import DeleteIcon from '../../utils/Chat/Icons/History/DeleteIcon.svg';
+import DeleteIcon from '../../utils/Chat/Icons/History/trash.svg';
 import ChatIcon from '../../utils/Chat/Icons/Types/ChatIcon.svg';
 import DocChatIcon from '../../utils/Chat/Icons/Types/DocChatIcon.svg';
 import WebSummeryIcon from '../../utils/Chat/Icons/Types/WebSummeryIcon.svg';
@@ -17,6 +17,13 @@ import AllHistory from '../../utils/Chat/Icons/History/AllChatHistory.svg';
 import AllHistory from '../../utils/Chat/Icons/History/AllChatHistory.svg';
 import CustomDropdown from './CustomDropDown';
 import Select from 'react-select';
+import { selectChat, userChatList } from '../../redux/reducers/chatSlice/ChatSlice';
+import { useDispatch } from 'react-redux';
+import { getDefauPromptList } from '../../redux/reducers/userPromptSlice/UserPromptSlice';
+import Icons from './Icons';
+import { formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
+import Select, { components } from 'react-select';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -28,106 +35,6 @@ const chatTypes = [
   { title: 'Youtube summary', icon: YoutubeIcon },
   { title: 'Doc chat', icon: DocChatIcon },
   { title: 'Chat', icon: ChatIcon },
-];
-
-const historyData = [
-  {
-    icon: WebSummeryIcon,
-    type: 'Web summary',
-    messages: [
-      {
-        msg: 'Chat from history Request Can you please clarify this email to me as what you’re actually requesting',
-        type: 'user',
-      },
-      {
-        msg: 'Chat from history Lorem ipsum dolor sit amet consectetur. Morbi elementum pellentesque pulvinar sagittis consectetur. Mauris a amet bibendum nibh.',
-        type: 'system',
-      },
-      {
-        msg: 'Chat from history Decline Can you pleaase clarify this email to me as what you’re actually requesting for me to do with this?',
-        type: 'user',
-      },
-      {
-        msg: 'Chat from history Lorem ipsum dolor sit amet consectetur. Tellus hendrerit vitae nibh luctus mi id dignissim pharetra convallis. Rhoncus diam risus neque elementum viverra erat lacus in non. Sed rutrum diam aenean hendrerit aliquam ultrices. Posuere in vivamus non vestibulum consectetur tortor vel urna.',
-        type: 'system',
-      },
-    ],
-    description: 'Lorem ipsum dolor sit amet consectetur.',
-    datetime: '10:51 am',
-  },
-  {
-    icon: YoutubeIcon,
-    type: 'Youtube summary',
-    messages: [
-      {
-        msg: 'Chat from history Request Can you please clarify this email to me as what you’re actually requesting',
-        type: 'user',
-      },
-      {
-        msg: 'Chat from history Lorem ipsum dolor sit amet consectetur. Morbi elementum pellentesque pulvinar sagittis consectetur. Mauris a amet bibendum nibh.',
-        type: 'system',
-      },
-      {
-        msg: 'Chat from history Decline Can you pleaase clarify this email to me as what you’re actually requesting for me to do with this?',
-        type: 'user',
-      },
-      {
-        msg: 'Chat from history Lorem ipsum dolor sit amet consectetur. Tellus hendrerit vitae nibh luctus mi id dignissim pharetra convallis. Rhoncus diam risus neque elementum viverra erat lacus in non. Sed rutrum diam aenean hendrerit aliquam ultrices. Posuere in vivamus non vestibulum consectetur tortor vel urna.',
-        type: 'system',
-      },
-    ],
-    description: 'Lorem ipsum dolor sit amet consectetur. Et rutrum auctor neque vel amet sit quis.',
-    datetime: '3 days ago',
-  },
-  {
-    icon: DocChatIcon,
-    type: 'Doc chat',
-    messages: [
-      {
-        msg: 'Chat from history Request Can you please clarify this email to me as what you’re actually requesting',
-        type: 'user',
-      },
-      {
-        msg: 'Chat from history Lorem ipsum dolor sit amet consectetur. Morbi elementum pellentesque pulvinar sagittis consectetur. Mauris a amet bibendum nibh.',
-        type: 'system',
-      },
-      {
-        msg: 'Chat from history Decline Can you pleaase clarify this email to me as what you’re actually requesting for me to do with this?',
-        type: 'user',
-      },
-      {
-        msg: 'Chat from history Lorem ipsum dolor sit amet consectetur. Tellus hendrerit vitae nibh luctus mi id dignissim pharetra convallis. Rhoncus diam risus neque elementum viverra erat lacus in non. Sed rutrum diam aenean hendrerit aliquam ultrices. Posuere in vivamus non vestibulum consectetur tortor vel urna.',
-        type: 'system',
-      },
-    ],
-    description:
-      'Lorem ipsum dolor sit amet consectetur. Elementum vulputate pharetra morbi magna eget at massa nulla.',
-    datetime: '5 days ago',
-  },
-  {
-    icon: ChatIcon,
-    type: 'Chat',
-    messages: [
-      {
-        msg: 'Chat from history Request Can you please clarify this email to me as what you’re actually requesting',
-        type: 'user',
-      },
-      {
-        msg: 'Chat from history Lorem ipsum dolor sit amet consectetur. Morbi elementum pellentesque pulvinar sagittis consectetur. Mauris a amet bibendum nibh.',
-        type: 'system',
-      },
-      {
-        msg: 'Chat from history Decline Can you pleaase clarify this email to me as what you’re actually requesting for me to do with this?',
-        type: 'user',
-      },
-      {
-        msg: 'Chat from history Lorem ipsum dolor sit amet consectetur. Tellus hendrerit vitae nibh luctus mi id dignissim pharetra convallis. Rhoncus diam risus neque elementum viverra erat lacus in non. Sed rutrum diam aenean hendrerit aliquam ultrices. Posuere in vivamus non vestibulum consectetur tortor vel urna.',
-        type: 'system',
-      },
-    ],
-    description: 'Lorem ipsum dolor sit amet consectetur. Velit cras sit sit dignissim.',
-    datetime: '8 days ago',
-  },
 ];
 
 const filesListData = [
@@ -157,8 +64,94 @@ const filesListData = [
   },
 ];
 
-const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory }) => {
-  const [chatsHistory, setChatsHistroy] = useState(historyData);
+const CustomOption = ({ data, ...props }) => (
+  <components.Option {...props}>
+    <div className="flex items-center gap-2">
+      <img src={data.icon} alt={data.label} />
+      <span>{data.label}</span>
+    </div>
+  </components.Option>
+);
+
+const SingleValue = ({ data, ...props }) => (
+  <components.SingleValue {...props}>
+    <div className="flex items-center gap-2">
+      <img src={data.icon} alt={data.label} />
+      <span>{data.label}</span>
+    </div>
+  </components.SingleValue>
+);
+
+const DropdownIndicator = (props) => {
+  return (
+    components.DropdownIndicator && (
+      <components.DropdownIndicator {...props}>
+        <img
+          className="absolute top-[50%] -translate-y-[50%] right-[0] w-[16px] h-[16px]"
+          src={ArrowDown}
+          style={{ transform: props.selectProps.menuIsOpen && 'rotate(180deg)' }}
+        />
+      </components.DropdownIndicator>
+    )
+  );
+};
+
+const customStyles = {
+  control: (base, state) => ({
+    ...base,
+    backgroundColor: 'transparent',
+    padding: 0,
+    border: 'none',
+    boxShadow: state.isFocused ? 0 : 0,
+    '&:hover': {
+      border: 'none',
+    },
+    height: '26px',
+    minHeight: '26px',
+  }),
+  menu: (base) => ({
+    ...base,
+    borderRadius: 0,
+    marginTop: 0,
+    boxShadow: '0px 2px 20px 0px #00000026',
+    width: '182px',
+    minWidth: '182px',
+    right: '2px',
+    top: '38px',
+    // right: '-1px',
+  }),
+  menuList: (base) => ({
+    ...base,
+    padding: 0,
+  }),
+  option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+    // const color = chroma(data.color);
+    // console.log({ data, isDisabled, isFocused, isSelected });
+    return {
+      ...styles,
+      backgroundColor: isFocused ? '#F3F4F8' : null,
+      color: !isFocused ? '#8C90A5' : '#19224C',
+      margin: '8px',
+      width: 'auto',
+      borderRadius: '4px',
+      height: '26px',
+      lineHeight: '7px',
+      padding: '5px 8px',
+
+      // minWidth: '143px',
+    };
+  },
+  dropdownIndicator: (provided, state) => ({
+    ...provided,
+    transform: state.selectProps.menuIsOpen && 'rotate(180deg)',
+    width: '14px',
+    height: '14px',
+  }),
+};
+
+const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory, setIsViewPrompts }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [filesList, setFileList] = useState(filesListData);
   const [isDocChat, setIsDocChat] = useState(false);
   const [selectedChatType, setSelectedChatType] = useState('All chat history');
@@ -173,9 +166,41 @@ const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory }) => {
 
   const [deleteContent, setDeleteContent] = useState('');
 
+  //Shubham
+  const [chatsHistory, setChatsHistroy] = useState([]);
+  const [historyType, setHistoryType] = useState(1);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageRecord, setPagerecords] = useState(10);
+  const chatHisRef = useRef(null);
+  const deleteRef = useRef();
+
+  // useEffect(() => {
+  //   setChatsHistroy(historyData);
+  // }, []);
+
+  const fetchChatHistory = async () => {
+    const res = await dispatch(
+      userChatList({
+        history_type: historyType,
+        page_number: pageNumber,
+        page_record: pageRecord,
+      })
+    );
+
+    if (!res.payload) {
+      return;
+    }
+
+    if (res.payload.status === 200) {
+      setChatsHistroy(res.payload?.Result);
+      // setTotalData(res.payload?.totalCount);
+      // setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    setChatsHistroy(historyData);
-  }, []);
+    fetchChatHistory();
+  }, [historyType, pageNumber, pageRecord]);
 
   // const handleChatTypeChange = (option) => {
   //   if (option.value === 'Doc chat') {
@@ -212,19 +237,22 @@ const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory }) => {
     }
   };
 
-  const handleChatSelection = (chat) => {
-    setChatData(chat);
+  const handleChatSelection = async (chat) => {
+    // setChatData(chat);
+    await dispatch(selectChat(chat?.id));
     setIsChatHistory(false);
+    setIsViewPrompts(false);
+    // navigate('/');
   };
 
-  useEffect(() => {
-    if (isDeleteChatConfirm) {
-      let tempArr = Array.from(chatsHistory);
-      tempArr.splice(deleteChatIndex, 1);
-      setChatsHistroy(tempArr);
-      setIsDeleteChatConfirm(false);
-    }
-  }, [isDeleteChatConfirm]);
+  // useEffect(() => {
+  //   if (isDeleteChatConfirm) {
+  //     let tempArr = Array.from(chatsHistory);
+  //     tempArr.splice(deleteChatIndex, 1);
+  //     setChatsHistroy(tempArr);
+  //     setIsDeleteChatConfirm(false);
+  //   }
+  // }, [isDeleteChatConfirm]);
 
   useEffect(() => {
     if (isDeleteFileConfirm) {
@@ -235,10 +263,17 @@ const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory }) => {
     }
   }, [isDeleteFileConfirm]);
 
-  const handleDeleteChat = (index) => {
-    setDeleteChatIndex(index);
+  const handleDeleteChat = (id, type) => {
+    // const res = dispatch(deleteChatHistory(id));
+    // if (!res.payload) {
+    //   return;
+    // }
+    // if (res.payload?.status === 200) {
+    //   fetchChatHistory();
+    // }
+    setDeleteChatIndex(id);
     setIfOpenDeleteBox(true);
-    setDeleteContent('chat');
+    setDeleteContent(type);
   };
 
   const handleDeleteFile = (index) => {
@@ -247,11 +282,46 @@ const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory }) => {
     setDeleteContent('file');
   };
 
+  //Chat
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        chatHisRef.current &&
+        !chatHisRef.current.contains(event.target) &&
+        !deleteRef.current.contains(event.target) &&
+        !ifOpenDeleteBox
+      ) {
+        setIsChatHistory(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [chatHisRef, setIsChatHistory, ifOpenDeleteBox]);
+  //deletepopup
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (deleteRef.current && !deleteRef.current.contains(event.target)) {
+        setIfOpenDeleteBox(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [deleteRef, setIfOpenDeleteBox]);
+
   return (
     <>
       <div className={`${isChatHistory ? 'block' : 'hidden'}`}>
         <div className="fixed top-0 bottom-0 right-0 w-[500px] bg-black z-[60] opacity-40"></div>
         <div
+          ref={chatHisRef}
           className="absolute rounded-t-[10px] bg-white py-[20px] right-0 bottom-0 z-[70] w-[500px] min-h-[644px]"
           style={{ boxShadow: '0px 10px 30px 0px #3C425726' }}
           // show={open}
@@ -262,35 +332,24 @@ const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory }) => {
                 <div className="gap-2 flex items-center">
                   <span>Chat History</span>
                 </div>
-                <div className="cursor-pointer chat-history bg-lightblue1 relative flex text-[12px] w-[165px] items-center gap-2 rounded-full px-[8px] py-[6px]">
-                  <img
-                    src={selectedChatType === 'All chat history' ? AllChatIcon : chatsHistory.map((chat) => chat.icon)}
-                  />
-                  <Dropdown
+
+                <div className="cursor-pointer chat-history bg-lightblue1 relative flex text-[12px] w-[165px] items-center gap-2 rounded-full py-[6px]">
+                  <Select
                     className="w-full"
+                    components={{ Option: CustomOption, SingleValue, DropdownIndicator }}
                     options={chatTypes.map((chatType) => ({
                       value: chatType.title,
-                      label: (
-                        <div className="flex items-center gap-2">
-                          <img src={chatType.icon} alt={chatType.title} />
-                          <span className="">{chatType.title}</span>
-                        </div>
-                      ),
+                      label: chatType.title,
+                      icon: chatType.icon,
                     }))}
-                    placeholder="All chat history"
-                    arrowClosed={
-                      <img
-                        className="absolute top-[50%] -translate-y-[50%] right-[0] w-[16px] h-[16px]"
-                        src={ArrowDown}
-                      />
-                    }
-                    arrowOpen={
-                      <img
-                        className="absolute top-[50%] -translate-y-[50%] right-[0] w-[16px] h-[16px] rotate-180"
-                        src={ArrowDown}
-                      />
-                    }
-                    onChange={(option) => handleChatTypeChange(option)}
+                    defaultValue={{
+                      value: chatTypes[0].title,
+                      label: chatTypes[0].title,
+                      icon: chatTypes[0].icon,
+                    }}
+                    styles={customStyles}
+                    // menuIsOpen={true}
+                    // onChange={handleChatTypeChange}
                   />
                 </div>
               </div>
@@ -412,7 +471,7 @@ const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory }) => {
             </Tab.Group>
           ) : (
             <>
-              <div className="mx-[20px] border border-gray items-center flex rounded-md px-[9px]">
+              <div className="mx-[20px] border border-gray items-center flex rounded-md px-[9px] py-[4px]">
                 <img src={SearchIcon} />
                 <InputField
                   className="block w-full rounded-md border-0 px-[9px] py-[7px] text-[12px] text-darkBlue placeholder:text-gray1 focus:outline-0"
@@ -422,30 +481,39 @@ const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory }) => {
                   placeholder="Search"
                 />
               </div>
-              <div className="mt-[12px] px-[20px]">
+              <div className="mt-[12px] px-[20px] max-h-[480px] overflow-y-auto">
                 {chatsHistory.map((item, index) => (
-                  <div className="border-b border-gray py-[8px]">
-                    <div className="flex items-center justify-between mb-[8px]">
+                  <div className="border-b border-gray py-[8px] selectText cursor-pointer" key={index}>
+                    <div
+                      className="flex items-center justify-between mb-[8px]"
+                      onClick={() => handleChatSelection(item)}
+                    >
                       <div className="flex items-center gap-2">
                         <div className="icon">
-                          <img src={item.icon} />
+                          <Icons item={item} />
                         </div>
-                        <div
-                          className="text-[14px] font-medium cursor-pointer"
-                          onClick={() => handleChatSelection(item.messages)}
-                        >
-                          {item.type}
+                        <div className="text-[14px] font-medium cursor-pointer">
+                          {item?.Type === 1 ? 'Chat' : item?.Type}
                         </div>
                       </div>
-                      <div className="text-gray1">{item.datetime}</div>
+                      <div className="text-gray1">
+                        {formatDistanceToNow(new Date(item?.created_at), { addSuffix: true })}
+                      </div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="text-gray1">{item.description}</div>
+                      <div
+                        className="text-gray1 max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis"
+                        onClick={() => handleChatSelection(item)}
+                      >
+                        {item.chat_dict?.human_question}
+                      </div>
                       <div
                         className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer"
-                        onClick={() => handleDeleteChat(index)}
+                        onClick={() => handleDeleteChat(item?.id, item?.Type)}
                       >
-                        <img src={DeleteIcon} />
+                        <span className="selectIcon">
+                          <img src={DeleteIcon} />
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -461,6 +529,9 @@ const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory }) => {
         setIsDeleteFileConfirm={setIsDeleteFileConfirm}
         ifOpenDeleteBox={ifOpenDeleteBox}
         setIfOpenDeleteBox={setIfOpenDeleteBox}
+        deleteChatIndex={deleteChatIndex}
+        fetchChatHistory={fetchChatHistory}
+        deleteRef={deleteRef}
       />
     </>
   );

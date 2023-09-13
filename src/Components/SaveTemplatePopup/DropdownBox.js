@@ -2,12 +2,22 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import MoreIcon from '../../utils/SavedTemplates/Icons/MoreIcon.svg';
 import EditTemplateIcon from '../../utils/SavedTemplates/Icons/EditTemplateIcon.svg';
-import DeleteTemplateIcon from '../../utils/SavedTemplates/Icons/DeleteTemplateIcon.svg';
+import DeleteTemplateIcon from '../../utils/SavedTemplates/Icons/trash.svg';
+import { useDispatch } from 'react-redux';
+import { deleteTemplate } from '../../redux/reducers/templateSlice/TemplateSlice';
 
-const DropDownBox = ({ template, shouldOpen, clickHandler, index, ifOpenDeleteBox, setIfOpenDeleteBox }) => {
+const DropDownBox = ({
+  template,
+  shouldOpen,
+  clickHandler,
+  index,
+  ifOpenDeleteBox,
+  setIfOpenDeleteBox,
+  templateObject,
+  setActiveTab,
+}) => {
   const navigate = useNavigate();
-
-  const handleDeleteTmplate = () => {
+  const handleDeleteTmplate = async () => {
     setIfOpenDeleteBox(true);
   };
 
@@ -17,7 +27,7 @@ const DropDownBox = ({ template, shouldOpen, clickHandler, index, ifOpenDeleteBo
         <img src={MoreIcon} />
       </div>
       <div
-        className={`absolute z-20 right-0 top-100 w-44 bg-white px-5 py-4 rounded-lg ${
+        className={`absolute z-20 right-0 top-100 w-44 bg-white px-[20px] py-[16px] rounded-lg ${
           shouldOpen ? 'block' : 'hidden'
         }`}
         style={{
@@ -25,20 +35,7 @@ const DropDownBox = ({ template, shouldOpen, clickHandler, index, ifOpenDeleteBo
         }}
       >
         <div
-          className="text-[14px] font-medium mb-[8px] gap-2 flex items-center cursor-pointer"
-          onClick={() =>
-            navigate('/', {
-              state: {
-                template: template,
-              },
-            })
-          }
-        >
-          <img src={EditTemplateIcon} />
-          <span>Edit Template</span>
-        </div>
-        <div
-          className="text-[14px] font-medium flex gap-2 items-center cursor-pointer"
+          className="text-[14px] text-red font-medium flex gap-2 items-center cursor-pointer"
           onClick={() => handleDeleteTmplate()}
         >
           <img src={DeleteTemplateIcon} />

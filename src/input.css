@@ -167,6 +167,13 @@
   .chats-settings .Dropdown-option.is-selected {
     background-color: #f9f9fb;
   }
+  .chats-settings {
+    transition: all 0.3s ease-in;
+  }
+  .new-btn:hover {
+    opacity: 0.8;
+    transition: opacity 0.3s ease-in-out;
+  }
 
   .Dropdown-menu {
     background-color: white;
@@ -559,7 +566,9 @@ input[type='number']::-webkit-outer-spin-button {
   height: 52px !important;
   border-radius: 6px !important;
   border: 1px solid #dfe4ec !important;
-  color: #dfe4ec !important;
+  color: #6d77a0 !important;
+  font-size: 14px;
+  font-weight: 400;
   margin: 0px 0px 0px 85px !important;
   padding: 10px 15px !important;
 }
@@ -592,7 +601,116 @@ input[type='number']::-webkit-outer-spin-button {
   z-index: 10000px !important;
 }
 
+.my-dropdown-class .country {
+  /* Styles for all dropdown items */
+  /* background-color: #f0f0f0 !important; */
+  color: #19224c !important;
+  font-size: 12px !important;
+}
+.country .flag {
+  margin-right: 10px !important; /* Add space to the right of the flag */
+}
+
+.country .country-name {
+  margin-left: 10px !important; /* Add space to the left of the country name */
+}
+
+.my-dropdown-class .country[data-country-code='af'] {
+  /* Styles for the Afghanistan dropdown item */
+  /* background-color: #f0f0f0 !important; */
+  color: #19224c !important;
+  font-size: 12px !important;
+}
+
 .px-7 {
   padding-left: 15px !important;
   padding-right: 47px !important;
+}
+
+.typewrite-animation {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typewriter 5s steps(20) 1s forwards;
+}
+
+@keyframes typewriter {
+  to {
+    width: 100%;
+  }
+}
+.css-1u9des2-indicatorSeparator {
+  display: none !important;
+}
+.css-1tdyfoe-control {
+  flex-wrap: unset !important;
+}
+.css-w3lxau-control {
+  flex-wrap: unset !important;
+}
+.css-1dljczr-control {
+  flex-wrap: unset !important;
+}
+/* .css-1dimb5e-singleValue {
+  margin-left: -14px !important;
+  color: #19224c !important;
+} */
+
+.css-hlgwow {
+  flex: none !important;
+}
+.css-12plcxw-control {
+  min-height: 24px !important;
+}
+.css-x5lv1x-control {
+  min-height: 24px !important;
+}
+.css-8mmkcg {
+  width: 14px !important;
+  height: 14px !important;
+}
+.css-1nmdiq5-menu {
+  width: 143px !important;
+  right: -9px !important;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 20px 0px !important;
+}
+.css-qr46ko {
+  /* height: 70px !important; */
+  max-height: 216px;
+}
+.css-1vuv9gk-option {
+  width: 0px !important;
+  border-radius: 4px !important;
+  margin: 10px 10px !important;
+}
+.css-jug2qc-control {
+  flex-wrap: unset !important;
+}
+
+.my-phone-input .PhoneInputCountryIcon {
+  margin-right: 10px;
+}
+
+.Dropdown-control {
+  width: 55px !important;
+}
+
+.beta {
+  padding: 1px 5px;
+}
+
+.label {
+  display: inline-flex;
+  background-color: white;
+  font-size: 14px;
+  font-weight: 400;
+  color: #6d77a0;
+  transition: all 0.3s ease;
+  padding-left: 2px;
+  padding-right: 2px;
+  /* other styles... */
+}
+
+.label-focused {
+  transform: translateY(5px);
+  /* other styles... */
 }
