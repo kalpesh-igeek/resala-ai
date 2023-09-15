@@ -104,6 +104,7 @@ import ChatData from '../Components/Chat/ChatData';
 import AudioInput from '../Components/Chat/AudioInput';
 import prevIcon from '../utils/MainScreen/Icons/prev.svg';
 import nextIcon from '../utils/MainScreen/Icons/next.svg';
+import axios from 'axios';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -181,6 +182,7 @@ const MainScreen = ({
   SELECTION,
   setIsOpen,
   handleSidebar,
+  handleCloseClick,
 }) => {
   const TOKEN = getToken();
   const navigate = useNavigate();
@@ -211,12 +213,13 @@ const MainScreen = ({
     { name: selectedTone?.name },
     { name: selectedLanguage?.name },
   ]);
-  const aiToolsLength = selectedItems.filter((data) => data?.name)?.length;
+  var aiToolsLength = selectedItems.filter((data) => data?.name)?.length;
   // console.log('selectedItems', selectedItems.filter((data) => data?.name)?.length);
   const [inputButtonBox, setInputButtonBox] = useState(true);
   const [saveTemplateBox, setSaveTemplateBox] = useState(false);
 
   const [resultText, setResultText] = useState('');
+
   const [speechText, setSpeechText] = useState('');
   const [speechLength, setSpeechLength] = useState(0);
 
@@ -295,11 +298,26 @@ const MainScreen = ({
   const [switchedTabs, setSwitchedTabs] = useState(false);
   const [disableTypewriter, setDisableTypewriter] = useState(false);
   const [isNewDraft, setIsNewDraft] = useState(false);
+  const [loadingMessageIndex, setLoadingMessageIndex] = useState(null);
+  const [compLoading, setCompLoading] = useState(false);
+  const [compRepLoading, setCompRepLoading] = useState(false);
+  const [alreadyStreamed, setAllreadyStreamed] = useState(false);
   const chatContainerRef = useRef(null);
   const promptRef = useRef(null);
   const myPromptRef = useRef(null);
 
   const languageRef = useRef(null);
+
+  useEffect(() => {
+    if (selectTab) {
+      setSelectedAction('');
+      setSelectedFormat('');
+      setSelectedLength('');
+      setSelectedTone('');
+      setSelectedLanguage('');
+      aiToolsLength = 0;
+    }
+  }, [selectTab]);
 
   const updateIsNewFlag = () => {
     const updatedChatData = chatData.map((item) => {
@@ -761,14 +779,80 @@ const MainScreen = ({
         language: selectedLanguage?.name,
       };
 
-      const res = await dispatch(generateDraft(payload));
-      if (!res.payload) {
-        return;
-      }
-      if (res.payload?.status === 200) {
+      // const res = await dispatch(generateDraft(payload));
+      // if (!res.payload) {
+      //   return;
+      // }
+      // if (res.payload?.status === 200) {
+      //   setComposeRes(true);
+      //   setResultText(res.payload?.Result);
+      //   setIsNewDraft(true); // add this line
+      // }
+
+      try {
+        setCompLoading(true);
+        // Call your new API here
+        const response = await fetch('http://192.168.1.10:8000/compose/compose_stream', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: getToken(),
+          },
+          body: JSON.stringify({
+            input_text: selectedText.input_text?.trim(),
+            action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
+            length: selectedLength?.name,
+            tone: selectedTone?.name,
+            language: selectedLanguage?.name,
+            // Include other necessary parameters
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+        }
+
+        // Process the response from your new API here
+        const reader = response.body.getReader();
+        let accumulatedMessage = '';
+
+        while (true) {
+          // setAllreadyStreamed(true);
+          // setCompLoading(false);
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = new TextDecoder().decode(value);
+          const lines = chunk.split('\n');
+          for (const line of lines) {
+            // console.log('chunk', line);
+            // if (line.startsWith('data: ')) {
+            // const data = line.substring(6).trim(); // Remove "data: " prefix and trim spaces
+            // Replace <br><br> with a newline
+            data = line.replace(/#@#/g, '\n');
+            // console.log('data', data);
+            if (line.includes('connection closed')) {
+              setIsTypewriterDone(false);
+              setCompLoading(false);
+
+              // Set the typewriter state to false when "connection closed" is encountered
+            } else {
+              // Exclude lines containing "connection closed" and append the word
+              accumulatedMessage += data + '';
+              console.log('accumulatedMessage', accumulatedMessage);
+              setResultText(accumulatedMessage); // Set the result text here
+            }
+            // }
+          }
+        }
+
+        // Update the chat data with the accumulated message, without the "Loading..." message
         setComposeRes(true);
-        setResultText(res.payload?.Result);
-        setIsNewDraft(true); // add this line
+        // setResultText(accumulatedMessage);
+        setIsNewDraft(true);
+      } catch (error) {
+        console.error('An error occurred:', error);
       }
     }
     if (selectTab === 2 && !state?.edit) {
@@ -792,14 +876,81 @@ const MainScreen = ({
         language: selectedLanguage?.name,
       };
 
-      const res = await dispatch(generateReply(payload));
-      if (!res.payload) {
-        return;
-      }
-      if (res.payload?.status === 200) {
+      // const res = await dispatch(generateReply(payload));
+      // if (!res.payload) {
+      //   return;
+      // }
+      // if (res.payload?.status === 200) {
+      //   setComposeRes(true);
+      //   setResultText(res.payload?.Result);
+      //   setIsNewDraft(true); // add this line
+      // }
+      try {
+        setCompRepLoading(true);
+        // Call your new API here
+        const response = await fetch('http://192.168.1.10:8000/compose/generate_stream_reply', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: getToken(),
+          },
+          body: JSON.stringify({
+            original_text: replyText.original_text?.trim(),
+            what_to_reply: replyText.reply?.trim(),
+            action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
+            length: selectedLength?.name,
+            tone: selectedTone?.name,
+            language: selectedLanguage?.name,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+        }
+
+        // Process the response from your new API here
+        const reader = response.body.getReader();
+        let accumulatedMessage = '';
+
+        while (true) {
+          // setCompLoading(false);
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = new TextDecoder().decode(value);
+          const lines = chunk.split('\n');
+          for (const line of lines) {
+            // console.log('chunk', line);
+            // if (line.startsWith('data: ')) {
+            // const data = line.substring(6).trim(); // Remove "data: " prefix and trim spaces
+            // Replace <br><br> with a newline
+            data = line.replace(/#@#/g, '\n');
+            // console.log('data', data);
+            if (line.includes('connection closed')) {
+              setIsTypewriterDone(false);
+              setCompRepLoading(false);
+              // Set the typewriter state to false when "connection closed" is encountered
+            } else {
+              // Exclude lines containing "connection closed" and append the word
+              accumulatedMessage += data + '';
+              setResultText(accumulatedMessage); // Set the result text here
+            }
+            // }
+          }
+        }
+
+        // Update the chat data with the accumulated message, without the "Loading..." message
         setComposeRes(true);
-        setResultText(res.payload?.Result);
-        setIsNewDraft(true); // add this line
+        // setResultText(accumulatedMessage);
+        setIsNewDraft(true);
+        // setChatData((prevMessages) => [
+        //   ...prevMessages.slice(0, loadingMessageIndex), // Keep all messages before the "Loading..." message
+        //   { msg: accumulatedMessage?.trim(), type: 'ai' }, // Add the new message
+        //   ...prevMessages.slice(loadingMessageIndex + 1), // Keep all messages after the "Loading..." message
+        // ]);
+      } catch (error) {
+        console.error('An error occurred:', error);
       }
     }
     if (state?.edit) {
@@ -861,6 +1012,7 @@ const MainScreen = ({
   };
 
   const handleCopyDraft = () => {
+    console.log('resultText?.output_text', resultText?.output_text);
     navigator.clipboard.writeText(resultText?.output_text);
   };
 
@@ -887,7 +1039,23 @@ const MainScreen = ({
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setSpeechLength(e.target.value?.length);
+    const maxCharacterCount = 4000; // Set your desired character limit here
+    // if (name === 'chatText') {
+    //   if (value.length > maxCharacterCount) {
+    //     // If the input exceeds the character limit, truncate it
+    //     const truncatedValue = value.substring(0, maxCharacterCount);
+    //     e.target.value = truncatedValue;
+    //     setSpeechLength(maxCharacterCount);
+    //   } else {
+    //     setSpeechLength(value.length);
+    //   }
+    // }
+
+    // if (value.length >= maxCharacterCount) {
+    //   e.preventDefault();
+    //   e.stopPropogation();
+    // }
+    // setSpeechLength(e.target.value?.length);
     setChatInput({
       ...chatInput,
       [name]: value,
@@ -912,303 +1080,405 @@ const MainScreen = ({
       return false;
     } else return specialCharacters.includes(word);
   };
+  // const handleSendMessage = async (e, message, language) => {
+  //   // chatContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  //   chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+
+  //   setSpeechLength(0);
+  //   setIsUsePrompt(false);
+  //   setHistoryMessage(false);
+
+  //   // setIsActivity(true);
+  //   await dispatch(checkActivity(true));
+  //   e.preventDefault();
+
+  //   if (chatLoading) {
+  //     return;
+  //   }
+
+  //   // if (message?.name) {
+  //   //   const newMessage = {};
+  //   //   newMessage.msg = message?.name;
+  //   //   newMessage.type = 'user';
+  //   //   newMessage.loading = true;
+  //   //   const loadingMessage = {};
+  //   //   loadingMessage.type = 'loading';
+
+  //   //   const tempChatData = [...chatData, newMessage, loadingMessage];
+  //   //   // setLastUserMessageIndex(tempChatData.length - 1); // Store the index of the last user message
+  //   //   setChatData(tempChatData);
+
+  //   //   let payload = {};
+
+  //   //   payload = {
+  //   //     prompt_id: +message?.id,
+  //   //     chat_id: chatId,
+  //   //     // language: isUsePrompt ? language : selectedOption.value ? selectedOption.value : 'auto',
+  //   //   };
+
+  //   //   setChatLoading(true);
+  //   //   const res = await dispatch(generalPromptChat(payload));
+  //   //   // const resNew = await dispatch(userChatNew(payload));
+  //   //   // console.log('resNew', resNew);
+  //   //   if (!res.payload) {
+  //   //     setChatLoading(false);
+  //   //     return;
+  //   //   }
+  //   //   if (res.payload?.status === 200) {
+  //   //     // if (lastUserMessageIndex !== null) {
+  //   //     //   tempChatData[lastUserMessageIndex].loading = false; // Set loading to false for the last user message
+  //   //     // }
+  //   //     setSelectedOption({ value: 'auto' });
+  //   //     // setAiResponseReceived(false);
+  //   //     // setAiResponseLoading(true);
+
+  //   //     setChatLoading(false);
+  //   //     const aiResponse = {};
+  //   //     aiResponse.msg = res.payload.Result;
+  //   //     aiResponse.loading = false;
+  //   //     aiResponse.type = 'ai';
+  //   //     aiResponse.isNew = true; // add this line
+  //   //     tempChatData.pop();
+  //   //     tempChatData.push(aiResponse);
+  //   //     if (aiResponse) {
+  //   //       // setAiResponseLoading(false);
+  //   //       // setAiResponseReceived(true);
+  //   //     }
+  //   //     setChatData(tempChatData);
+  //   //   }
+  //   //   setChatInput({
+  //   //     ...chatInput,
+  //   //     chatText: '',
+  //   //   });
+  //   // } else {
+  //   //   const trimmedMessage = message.trim();
+  //   //   if (!trimmedMessage) {
+  //   //     return;
+  //   //   }
+
+  //   //   const newMessage = {};
+  //   //   newMessage.msg = message;
+  //   //   newMessage.type = 'user';
+  //   //   newMessage.loading = true;
+  //   //   const loadingMessage = {};
+  //   //   loadingMessage.type = 'loading';
+
+  //   //   const tempChatData = [...chatData, newMessage, loadingMessage];
+  //   //   // setLastUserMessageIndex(tempChatData.length - 1); // Store the index of the last user message
+  //   //   setChatData(tempChatData);
+
+  //   //   let payload = {};
+
+  //   //   payload = {
+  //   //     question: isUsePrompt ? message : chatInput.chatText ? chatInput.chatText : message,
+  //   //     chatId: chatId,
+  //   //     // language: isUsePrompt ? language : selectedOption.value ? selectedOption.value : 'auto',
+  //   //   };
+
+  //   //   setChatLoading(true);
+  //   //   const res = await dispatch(userChat(payload));
+  //   //   // console.log('res', res);
+  //   //   // const resNew = await dispatch(userChatNew(payload));
+  //   //   // console.log('resNew', resNew);
+  //   //   if (!res.payload) {
+  //   //     setChatLoading(false);
+  //   //     return;
+  //   //   }
+  //   //   if (res.payload?.status === 200) {
+  //   //     // if (lastUserMessageIndex !== null) {
+  //   //     //   tempChatData[lastUserMessageIndex].loading = false; // Set loading to false for the last user message
+  //   //     // }
+  //   //     setSelectedOption({ value: 'auto' });
+  //   //     // setAiResponseReceived(false);
+  //   //     // setAiResponseLoading(true);
+
+  //   //     setChatLoading(false);
+  //   //     const aiResponse = {};
+  //   //     aiResponse.msg = res.payload.Result;
+  //   //     aiResponse.loading = false;
+  //   //     aiResponse.type = 'ai';
+  //   //     aiResponse.isNew = true; // add this line
+  //   //     tempChatData.pop();
+  //   //     tempChatData.push(aiResponse);
+  //   //     if (aiResponse) {
+  //   //       // setAiResponseLoading(false);
+  //   //       // setAiResponseReceived(true);
+  //   //     }
+  //   //     setChatData(tempChatData);
+  //   //   }
+  //   //   setChatInput({
+  //   //     ...chatInput,
+  //   //     chatText: '',
+  //   //   });
+  //   // }
+  // };
+
+  //good
+  // const handleSendMessage = async (e, message, language) => {
+  //   // Add the user message to the chat data
+  //   setChatData((prevMessages) => [...prevMessages, { msg: message, type: 'user' }]);
+  //   let accumulatedMessage = ''; // To accumulate words
+  //   // Add the "Loading..." message initially
+  //   setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
+  //   try {
+  //     const response = await fetch('http://192.168.1.10:8000/chat/stream_chat', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Access-Control-Allow-Origin': '*',
+  //         Authorization: getToken(),
+  //       },
+  //       body: JSON.stringify({
+  //         question: message,
+  //         chatId: chatId,
+  //       }),
+  //     });
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+  //     }
+  //     const reader = response.body.getReader();
+  //     // Continuously read and append the streaming response
+  //     while (true) {
+  //       const { done, value } = await reader.read();
+  //       if (done) break;
+  //       const chunk = new TextDecoder().decode(value);
+  //       // Process and display the received message
+  //       const lines = chunk.split('\n');
+  //       for (const line of lines) {
+  //         if (line.startsWith('data: ')) {
+  //           const data = line.substring(6); // Remove "data: " prefix
+  //           // Exclude lines containing "connection closed"
+  //           if (!data.includes('connection closed')) {
+  //             accumulatedMessage += data + ' '; // Append the word
+  //           }
+  //         }
+  //       }
+  //       // Update the chat data with the accumulated message, without the "Loading..." message
+  //       setChatData((prevMessages) => [
+  //         ...prevMessages.slice(0, -1), // Remove the last (Loading...) message
+  //         { msg: accumulatedMessage, type: 'ai' }, // Update the chat data
+  //       ]);
+  //     }
+  //   } catch (error) {
+  //     console.error('An error occurred:', error);
+  //     // Handle the error as needed
+  //   }
+  // };
+
   const handleSendMessage = async (e, message, language) => {
-    console.log('message', message);
-    // chatContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-
-    setSpeechLength(0);
     setIsUsePrompt(false);
-    setHistoryMessage(false);
-
-    // setIsActivity(true);
-    await dispatch(checkActivity(true));
-    e.preventDefault();
-
-    if (chatLoading) {
+    setAllreadyStreamed(true);
+    chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    if (alreadyStreamed) {
       return;
     }
-
-    // let query = message;
-    // let BASE_URL = `http://192.168.1.10:8000/chat/stream_chat?question=${query}&chatId=${chatId}`;
-    // let payload = { question: message, chatId: chatId };
-    // let streamMessage = ''; // to accumulate the stream data
-
-    // try {
-    //   let url = BASE_URL;
-
-    //   setChatData((prevMessages) => [
-    //     ...prevMessages,
-    //     { msg: message, type: 'user' },
-    //     { msg: 'Loading...', type: 'loading' },
-    //   ]);
-
-    //   var es = new EventSource(url, {
-    //     headers: {
-    //       Authorization: getToken(),
-    //     },
-    //   });
-
-    //   es.addEventListener('open', (event) => {
-    //     console.log(event.type);
-    //   });
-
-    //   es.addEventListener('message', (event) => {
-    //     if (!event) {
-    //       console.log('!event');
-    //       es.close();
-    //     } else {
-    //       // let newMessage = isSpecialCharacter(event.data) ? String(event.data) + ' ' : ' ' + String(event.data);
-    //       streamMessage += event.data;
-    //       // lines = streamMessage.replace(' ', '\n'); // accumulate the stream data
-    //       console.log('event.data', event);
-
-    //       // Update the last message in the chatData array
-    //       // Replace the loading message with the AI response in the chatData array
-    //       setChatData((prevMessages) => {
-    //         let updatedMessages = [...prevMessages];
-    //         updatedMessages[updatedMessages.length - 1] = { msg: streamMessage, type: 'ai' };
-    //         return updatedMessages;
-    //       });
-    //     }
-    //   });
-
-    //   es.addEventListener('error', (event) => {
-    //     if (event.type === 'error') {
-    //       console.error('Connection error:', event.message);
-    //       es.close();
-    //     } else if (event.type === 'exception') {
-    //       console.error('Error:', event.message, event.error);
-    //       es.close();
-    //     }
-    //   });
-
-    //   es.addEventListener('close', (event) => {
-    //     console.log('Close SSE connection.', event);
-    //     setIsTypewriterDone(false);
-    //     es.close();
-    //     es.removeAllEventListeners();
-    //   });
-    // } catch (error) {
-    //   console.log('erroror ==>>', error);
-    // }
-
     if (message?.name) {
-      const newMessage = {};
-      newMessage.msg = message?.name;
-      newMessage.type = 'user';
-      newMessage.loading = true;
-      const loadingMessage = {};
-      loadingMessage.type = 'loading';
+      // Add the user message to the chat data
+      setChatData((prevMessages) => [...prevMessages, { msg: message.name, type: 'user' }]);
 
-      const tempChatData = [...chatData, newMessage, loadingMessage];
-      // setLastUserMessageIndex(tempChatData.length - 1); // Store the index of the last user message
-      setChatData(tempChatData);
+      setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
 
-      let payload = {};
+      try {
+        // Call your new API here
+        // const USER_TOKEN = getToken();
+        const response = await fetch('http://192.168.1.10:8000/chat/general_prompt_response_stream', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: getToken(),
+          },
+          body: JSON.stringify({
+            chat_id: chatId,
+            prompt_id: message.id,
+            // Include other necessary parameters
+          }),
+        });
 
-      payload = {
-        prompt_id: +message?.id,
-        chat_id: chatId,
-        // language: isUsePrompt ? language : selectedOption.value ? selectedOption.value : 'auto',
-      };
-
-      setChatLoading(true);
-      const res = await dispatch(generalPromptChat(payload));
-      // const resNew = await dispatch(userChatNew(payload));
-      // console.log('resNew', resNew);
-      if (!res.payload) {
-        setChatLoading(false);
-        return;
-      }
-      if (res.payload?.status === 200) {
-        // if (lastUserMessageIndex !== null) {
-        //   tempChatData[lastUserMessageIndex].loading = false; // Set loading to false for the last user message
-        // }
-        setSelectedOption({ value: 'auto' });
-        // setAiResponseReceived(false);
-        // setAiResponseLoading(true);
-
-        setChatLoading(false);
-        const aiResponse = {};
-        aiResponse.msg = res.payload.Result;
-        aiResponse.loading = false;
-        aiResponse.type = 'ai';
-        aiResponse.isNew = true; // add this line
-        tempChatData.pop();
-        tempChatData.push(aiResponse);
-        if (aiResponse) {
-          // setAiResponseLoading(false);
-          // setAiResponseReceived(true);
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
         }
-        setChatData(tempChatData);
+
+        // Process the response from your new API here
+        const reader = response.body.getReader();
+        let accumulatedMessage = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = new TextDecoder().decode(value);
+          const lines = chunk.split('\n');
+          for (const line of lines) {
+            // console.log('chunk', line);
+            // if (line.startsWith('data: ')) {
+            // const data = line.substring(6).trim(); // Remove "data: " prefix and trim spaces
+            // Replace <br><br> with a newline
+            data = line.replace(/#@#/g, '\n');
+            if (line.includes('connection closed')) {
+              setIsTypewriterDone(false);
+              setAllreadyStreamed(false);
+              // Set the typewriter state to false when "connection closed" is encountered
+            } else {
+              // Exclude lines containing "connection closed" and append the word
+              accumulatedMessage += data + '';
+              setChatData((prevMessages) => [
+                ...prevMessages.slice(0, prevMessages.length - 1), // Keep all but the last (Loading...) message
+                { msg: accumulatedMessage, type: 'ai' }, // Add the new message
+              ]);
+            }
+            // }
+          }
+        }
+
+        // Update the chat data with the accumulated message, without the "Loading..." message
+
+        // setChatData((prevMessages) => [
+        //   ...prevMessages.slice(0, loadingMessageIndex), // Keep all messages before the "Loading..." message
+        //   { msg: accumulatedMessage?.trim(), type: 'ai' }, // Add the new message
+        //   ...prevMessages.slice(loadingMessageIndex + 1), // Keep all messages after the "Loading..." message
+        // ]);
+      } catch (error) {
+        console.error('An error occurred:', error);
       }
-      setChatInput({
-        ...chatInput,
-        chatText: '',
-      });
     } else {
-      const trimmedMessage = message.trim();
-      if (!trimmedMessage) {
-        return;
-      }
+      // Add the user message to the chat data
+      setChatData((prevMessages) => [...prevMessages, { msg: message, type: 'user' }]);
+      let accumulatedMessage = ''; // To accumulate words
+      let isTypewriterDone = false; // Initialize the typewriter state
+      // Add the "Loading..." message initially
+      setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
+      try {
+        const response = await fetch('http://192.168.1.10:8000/chat/stream_chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: getToken(),
+          },
+          body: JSON.stringify({
+            question: message,
+            chatId: chatId,
+          }),
+        });
+        // const payload = {
+        //   question: message,
+        //   chatId: chatId,
+        // };
 
-      const newMessage = {};
-      newMessage.msg = message;
-      newMessage.type = 'user';
-      newMessage.loading = true;
-      const loadingMessage = {};
-      loadingMessage.type = 'loading';
-
-      const tempChatData = [...chatData, newMessage, loadingMessage];
-      // setLastUserMessageIndex(tempChatData.length - 1); // Store the index of the last user message
-      setChatData(tempChatData);
-
-      let payload = {};
-
-      payload = {
-        question: isUsePrompt ? message : chatInput.chatText ? chatInput.chatText : message,
-        chatId: chatId,
-        // language: isUsePrompt ? language : selectedOption.value ? selectedOption.value : 'auto',
-      };
-
-      setChatLoading(true);
-      const res = await dispatch(userChat(payload));
-      // console.log('res', res);
-      // const resNew = await dispatch(userChatNew(payload));
-      // console.log('resNew', resNew);
-      if (!res.payload) {
-        setChatLoading(false);
-        return;
-      }
-      if (res.payload?.status === 200) {
-        // if (lastUserMessageIndex !== null) {
-        //   tempChatData[lastUserMessageIndex].loading = false; // Set loading to false for the last user message
-        // }
-        setSelectedOption({ value: 'auto' });
-        // setAiResponseReceived(false);
-        // setAiResponseLoading(true);
-
-        setChatLoading(false);
-        const aiResponse = {};
-        aiResponse.msg = res.payload.Result;
-        aiResponse.loading = false;
-        aiResponse.type = 'ai';
-        aiResponse.isNew = true; // add this line
-        tempChatData.pop();
-        tempChatData.push(aiResponse);
-        if (aiResponse) {
-          // setAiResponseLoading(false);
-          // setAiResponseReceived(true);
+        // const response = await dispatch(userChatNew(payload));
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
         }
-        setChatData(tempChatData);
+        const reader = response.body.getReader();
+        // Continuously read and append the streaming response
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = new TextDecoder().decode(value);
+          // Process and display the received message
+          const lines = chunk.split('\n');
+          for (const line of lines) {
+            // console.log('chunk', line);
+            // if (line.startsWith('data: ')) {
+            // const data = line.substring(6).trim(); // Remove "data: " prefix and trim spaces
+            // Replace <br><br> with a newline
+            data = line.replace(/#@#/g, '\n');
+            if (line.includes('connection closed')) {
+              // Set the typewriter state to false when "connection closed" is encountered
+              setAllreadyStreamed(false);
+              isTypewriterDone = true;
+            } else {
+              // Exclude lines containing "connection closed" and append the word
+              accumulatedMessage += data + '';
+            }
+            // }
+          }
+          // Update the chat data with the accumulated message, without the "Loading..." message
+          setChatData((prevMessages) => [
+            ...prevMessages.slice(0, -1), // Remove the last (Loading...) message
+            { msg: accumulatedMessage?.trim(), type: 'ai' }, // Update the chat data
+          ]);
+        }
+      } catch (error) {
+        console.error('An error occurred:', error);
+        // Handle the error as needed
       }
-      setChatInput({
-        ...chatInput,
-        chatText: '',
-      });
+      // Set the isTypewriterDone state to false when "connection closed" is encountered
+      if (isTypewriterDone) {
+        setIsTypewriterDone(false);
+      }
     }
   };
 
-  // const handleSendMessage = async (e, message, language) => {
-  //   setChatData((prevMessages) => [
-  //     ...prevMessages,
-  //     { msg: message, type: 'user' },
-  //     { msg: 'Loading...', type: 'loading' },
-  //   ]);
-
-  //   const response = await fetch('http://192.168.1.10:8000/chat/stream_chat', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Access-Control-Allow-Origin': '*',
-  //       Authorization: getToken(),
-  //     },
-  //     body: JSON.stringify({
-  //       question: message,
-  //       chatId: chatId,
-  //     }),
-  //   });
-
-  //   const reader = response.body.getReader();
-  //   const stream = new ReadableStream({
-  //     start(controller) {
-  //       function push() {
-  //         reader.read().then(({ done, value }) => {
-  //           if (done) {
-  //             controller.close();
-  //             return;
-  //           }
-  //           controller.enqueue(value);
-  //           push();
-  //         });
-  //       }
-  //       push();
-  //     },
-  //   });
-
-  //   const streamingResponse = new Response(stream);
-
-  //   streamingResponse
-  //     .text()
-  //     .then((data) => {
-  //       // Process and update your React component with the streaming data
-  //       // console.log('data', data);
-  //       //Process and update your React component with the streaming data
-  //       const formattedData = data
-  //         .split('data: ')
-  //         .filter((line) => line.trim() !== '')
-  //         .join(' ');
-  //       setChatData((prevMessages) => {
-  //         let updatedMessages = [...prevMessages];
-  //         updatedMessages[updatedMessages.length - 1] = { msg: formattedData, type: 'ai' };
-  //         return updatedMessages;
-  //       });
-  //       console.log('formattedData', formattedData);
-  //     })
-  //     .catch((error) => {
-  //       // Handle any errors
-  //       console.log('error', error);
-  //     });
-  // };
-
   const handleRegenerate = async () => {
     const updatedChatData = [...chatData];
+    const loadingMessage = { msg: 'Loading...', type: 'loading' };
 
-    // Remove the last AI response message from the chat data
-    if (updatedChatData?.length) {
+    // Remove the last AI message and add the loading message
+    if (updatedChatData[updatedChatData.length - 1].type === 'ai') {
       updatedChatData.pop();
+      updatedChatData.push(loadingMessage);
     }
 
-    // Create a 'loading' message
-    const loadingMessage = {};
-    loadingMessage.type = 'loading';
-
-    // Add the 'loading' message to the chat data
-    // updatedChatData.pop();
-    updatedChatData.push(loadingMessage);
     setChatData(updatedChatData);
 
-    const payload = {
-      chatId: chatId,
-    };
+    const payload = { chatId: chatId };
 
-    const res = await dispatch(regenerateChat(payload));
+    try {
+      const response = await fetch('http://192.168.1.10:8000/chat/regenerate_stream_response', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: getToken(),
+        },
+        body: JSON.stringify(payload),
+      });
 
-    // Remove the 'loading' message from the chat data
-    if (updatedChatData?.length) {
-      updatedChatData.pop();
-    }
+      // if (updatedChatData?.length) {
+      //   updatedChatData.pop();
+      // }
 
-    if (res.payload?.status === 200) {
-      const aiResponse = {};
-      aiResponse.msg = res.payload.Result;
-      aiResponse.loading = false;
-      aiResponse.type = 'ai';
-      aiResponse.isNew = true; // add this line
+      if (response.ok) {
+        const reader = response.body.getReader();
+        let accumulatedMessage = '';
 
-      // Add the 'ai' response to the chat data
-      setChatData([...updatedChatData, aiResponse]);
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            setIsTypewriterDone(false);
+            break;
+          }
+
+          const chunk = new TextDecoder().decode(value);
+          const lines = chunk.split('\n');
+
+          for (const line of lines) {
+            data = line.replace(/#@#/g, '\n');
+            console.log('data', data);
+            // console.log('data', data);
+            if (line.includes('connection closed')) {
+              break;
+            } else {
+              accumulatedMessage += data + '';
+            }
+          }
+        }
+
+        // Remove the loading message and add the new AI message
+        if (updatedChatData[updatedChatData.length - 1].type === 'loading') {
+          updatedChatData.pop();
+          updatedChatData.push({ msg: accumulatedMessage?.trim(), type: 'ai' });
+        }
+
+        setChatData(updatedChatData);
+      } else {
+        throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
     }
   };
 
@@ -1358,6 +1628,7 @@ const MainScreen = ({
         <Header
           handleClick={handleClick}
           setIsLogout={setIsLogout}
+          handleCloseClick={handleCloseClick}
           // isActivity={isActivity}
           // setIsLogin={setIsLogin}
         >
@@ -1567,48 +1838,76 @@ const MainScreen = ({
                                   {generalPromptList.map((item) =>
                                     item.length === 0 ? (
                                       <div className="suggestion flex flex-col justify-end rounded-[6px] text-darkgray1 bg-lightblue1 p-[9px] text-[14px] cursor-pointer hover:bg-lightblue3">
-                                        <div className="pb-[8px]">{/* <img src={item.icon} /> */}</div>
+                                        <div className="pb-[8px]">{/* <img src={item.image_link} /> */}</div>
                                         <div className="flex items-center justify-between">
                                           {/* <span className="w-full text-[14px] font-medium">{item?.name}</span> */}
                                           No Prompt
-                                          {/* <div className="info relative">
-                                        <img src={InfoIcon} />
-                                        <div
-                                          className="info-box p-[7px] rounded-[6px] bg-white text-[12px] absolute bottom-[170%] right-[50%] translate-x-[50%] whitespace-nowrap border border-primaryBlue"
-                                          onClick={() => handlePromptViewPopup(item)}
-                                        >
-                                          View info
-                                          <span className="h-[10px] w-[10px] bg-white absolute right-0 left-0 m-auto -bottom-[6px] rotate-45 border-b border-r border-primaryBlue"></span>
-                                        </div>
-                                      </div> */}
                                         </div>
                                       </div>
                                     ) : (
+                                      // <div
+                                      //   onClick={(e) => {
+                                      //     // setGeneralPromptRes(true); // Add this line
+
+                                      //     handleSendMessage(e, item);
+                                      //     setIsViewPrompts(false);
+                                      //     setIsTypewriterDone(true);
+                                      //   }}
+                                      //   className="suggestion flex flex-col justify-end rounded-[6px] text-darkgray1 bg-lightblue1 p-[9px] text-[14px] cursor-pointer hover:bg-lightblue3"
+                                      // >
+                                      //   <div className="pb-[8px]">
+                                      //     <img src={item.image_link} />
+                                      //   </div>
+                                      //   <div className="flex items-center justify-between">
+                                      //     <span className="w-full text-[14px] font-medium">{item?.name}</span>
+                                      //     {/* <div className="info relative">
+                                      //     <img src={InfoIcon} />
+                                      //     <div
+                                      //       className="info-box p-[7px] rounded-[6px] bg-white text-[12px] absolute bottom-[170%] right-[50%] translate-x-[50%] whitespace-nowrap border border-primaryBlue"
+                                      //       onClick={() => handlePromptViewPopup(item)}
+                                      //     >
+                                      //       View info
+                                      //       <span className="h-[10px] w-[10px] bg-white absolute right-0 left-0 m-auto -bottom-[6px] rotate-45 border-b border-r border-primaryBlue"></span>
+                                      //     </div>
+                                      //   </div> */}
+                                      //   </div>
+                                      // </div>
                                       <div
                                         onClick={(e) => {
                                           // setGeneralPromptRes(true); // Add this line
-
                                           handleSendMessage(e, item);
                                           setIsViewPrompts(false);
                                           setIsTypewriterDone(true);
                                         }}
-                                        className="suggestion flex flex-col justify-end rounded-[6px] text-darkgray1 bg-lightblue1 p-[9px] text-[14px] cursor-pointer hover:bg-lightblue3"
+                                        className="suggestion rounded-[6px] text-darkgray1 bg-lightblue1 p-[9px] text-[14px] cursor-pointer hover:bg-lightblue3"
+                                        style={{ display: 'flex', flexDirection: 'column' }}
                                       >
-                                        <div className="pb-[8px]">{/* <img src={item.icon} /> */}</div>
+                                        <div className="pb-[8px]">
+                                          <img src={item.image_link} alt={item.name} />
+                                        </div>
                                         <div className="flex items-center justify-between">
                                           <span className="w-full text-[14px] font-medium">{item?.name}</span>
-                                          {/* <div className="info relative">
-                                          <img src={InfoIcon} />
-                                          <div
-                                            className="info-box p-[7px] rounded-[6px] bg-white text-[12px] absolute bottom-[170%] right-[50%] translate-x-[50%] whitespace-nowrap border border-primaryBlue"
-                                            onClick={() => handlePromptViewPopup(item)}
-                                          >
-                                            View info
-                                            <span className="h-[10px] w-[10px] bg-white absolute right-0 left-0 m-auto -bottom-[6px] rotate-45 border-b border-r border-primaryBlue"></span>
-                                          </div>
-                                        </div> */}
                                         </div>
                                       </div>
+                                      // <div
+                                      //   onClick={(e) => {
+                                      //     // setGeneralPromptRes(true); // Add this line
+                                      //     handleSendMessage(e, item);
+                                      //     setIsViewPrompts(false);
+                                      //     setIsTypewriterDone(true);
+                                      //   }}
+                                      //   className={`suggestion rounded-[6px] text-darkgray1 bg-lightblue1 p-[9px] text-[14px] cursor-pointer hover:bg-lightblue3 ${
+                                      //     item.name.includes('Riddle time' || 'Word of the day') ? 'h-[69px]' : ''
+                                      //   } ${item.name.includes('Word of the day') ? 'h-[69px]' : ''}`}
+                                      //   style={{ display: 'grid', gridTemplateRows: 'auto 1fr auto' }}
+                                      // >
+                                      //   <div className="pb-[8px]">
+                                      //     <img src={item.image_link} alt={item.name} />
+                                      //   </div>
+                                      //   <div className="flex items-center justify-between">
+                                      //     <span className="w-full text-[14px] font-medium">{item?.name}</span>
+                                      //   </div>
+                                      // </div>
                                     )
                                   )}
                                 </div>
@@ -2438,7 +2737,7 @@ const MainScreen = ({
                               rows="4"
                               value={editTemplateName?.input_text}
                               onChange={(e) => handleChange(e)}
-                              placeholder="Lorem ipsum dolor sit amet consectetur."
+                              placeholder="Your Template name"
                               className="text-[14px] border-gray block w-full rounded-md border p-1.5 text-darkBlue"
                             />
                           </div>
@@ -2482,6 +2781,7 @@ const MainScreen = ({
                                   name="input_text"
                                   rows="6"
                                   value={selectedText.input_text}
+                                  maxLength="4000"
                                   onChange={(e) => handleChangeCompose(e)}
                                   placeholder="Tell me what to write for you"
                                   className="text-[14px] border-gray block w-full rounded-md border p-1.5 mb-[10px]"
@@ -2734,7 +3034,7 @@ const MainScreen = ({
                             //     : ''
                             // }  `}
                             className={`flex text-[16px] w-full justify-center focus:outline-none rounded-md bg-primaryBlue px-3 py-2 text-sm leading-6 text-white shadow-sm hover:opacity-90  ${
-                              Loading ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
+                              compLoading ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
                             } ${
                               selectTab === 1 &&
                               (!selectedText.input_text || selectedText.input_text.trim() === '' || aiToolsLength !== 4)
@@ -2747,15 +3047,15 @@ const MainScreen = ({
                             }}
                             // disabled={Loading || !selectedText.input_text}
                             disabled={
-                              Loading ||
+                              compLoading ||
                               (selectTab === 1 &&
                                 (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
                               aiToolsLength !== 4
                             }
                           >
                             <div className="">
-                              {Loading ? (
-                                <div className="flex item-center">
+                              {compLoading ? (
+                                <div className="flex items-center">
                                   <svg
                                     aria-hidden="true"
                                     role="status"
@@ -2773,7 +3073,7 @@ const MainScreen = ({
                                       fill="currentColor"
                                     />
                                   </svg>
-                                  <span>Generating...</span>
+                                  <span>Generating</span>
                                 </div>
                               ) : (
                                 'Generate Draft'
@@ -2784,7 +3084,7 @@ const MainScreen = ({
                           <button
                             type="submit"
                             className={`flex text-[16px] w-full focus:outline-none justify-center rounded-md bg-primaryBlue px-3 py-2 text-sm leading-6 text-white shadow-sm hover:opacity-90  ${
-                              Loading ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
+                              compRepLoading ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
                             } 
                              ${
                                (selectTab === 2 && !replyText.original_text) ||
@@ -2801,7 +3101,7 @@ const MainScreen = ({
                             }}
                             // disabled={Loading || !selectedText.input_text}
                             disabled={
-                              Loading ||
+                              compRepLoading ||
                               (selectTab === 2 &&
                                 (!replyText.original_text ||
                                   replyText.original_text.trim() === '' ||
@@ -2811,8 +3111,8 @@ const MainScreen = ({
                             }
                           >
                             <div className="">
-                              {!Loading ? (
-                                <div className="flex item-center">
+                              {compRepLoading ? (
+                                <div className="flex items-center">
                                   <svg
                                     aria-hidden="true"
                                     role="status"
@@ -2830,7 +3130,7 @@ const MainScreen = ({
                                       fill="currentColor"
                                     />
                                   </svg>
-                                  <span>Generating...</span>
+                                  <span>Generating</span>
                                 </div>
                               ) : (
                                 'Generate Draft'
@@ -2839,7 +3139,7 @@ const MainScreen = ({
                           </button>
                         )}
                       </div>
-                      {!composeRes && (
+                      {composeRes && (
                         <div className="pb-[20px]">
                           <div className="flex justify-between item-center">
                             <div className="flex gap-2 items-center">
@@ -2901,7 +3201,7 @@ const MainScreen = ({
                                   ? resultText
                                   : selectedTemplate?.output_text
                               }
-                              delay={30}
+                              delay={10}
                               setIsTypewriterDone={setIsTypewriterDone}
                               setIsDraftPrev={setIsDraftPrev}
                               contentType="compose"
@@ -2911,9 +3211,9 @@ const MainScreen = ({
                               style={{ resize: 'none' }}
                               id="draftPreview"
                               name="draftPreview"
-                              rows="22"
+                              // rows="22"
                               value={resultText ? resultText?.output_text : selectedTemplate?.output_text}
-                              placeholder="Lorem ipsum dolor sit amet consectetur."
+                              placeholder=" "
                               className="text-[14px] border-gray block h-[306px] w-full rounded-md border p-1.5"
                             />
                           )}

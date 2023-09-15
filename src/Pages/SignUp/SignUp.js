@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { checkMail, userDetails } from '../../redux/reducers/authSlice/AuthSlice';
 import SocialLogin from '../../Components/SocialLogin';
 import PasswordRequirements from '../../Components/PasswordRequirement';
+import InforCircleIcon from '../../utils/Account/Icons/info-circle.svg';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const SignUp = () => {
     number: false,
     specialChar: false,
   });
+  const [invalidCred, setInvalidCred] = useState('');
 
   const handleCaptch = () => {
     setIsValidCaptch(true);
@@ -74,6 +76,9 @@ const SignUp = () => {
     const res = await dispatch(checkMail({ email: inputValue.email }));
     if (!res.payload) {
       return;
+    }
+    if (res.payload?.response?.status === 400) {
+      setInvalidCred(res?.payload?.response?.data?.Message);
     }
     if (res.payload.status === 200) {
       setIsEmailChecked(true);
@@ -155,6 +160,14 @@ const SignUp = () => {
                   <label for="link-checkbox" class="ml-2 text-sm font-medium text-primaryBlue">
                     I’m not robot
                   </label>
+                </div>
+              </div>
+            )}
+            {invalidCred && !isLoading && (
+              <div className="bg-red1 mt-[4px] mb-[16px] rounded-md">
+                <div className="flex gap-2 items-center py-[12px] px-[10px]">
+                  <img src={InforCircleIcon} className="" />
+                  <span className="text-[12px] text-red">{invalidCred}</span>
                 </div>
               </div>
             )}

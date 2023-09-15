@@ -10,7 +10,8 @@ const checkMail = async (payload) => {
     return await postReqWithoutToken(checkMailPath, payload);
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
-    Toast('error', error.response.data.Message);
+    // Toast('error', error.response.data.Message);
+    return error;
     // console.log('error', error?.response?.data?.message);
   }
 };
@@ -44,7 +45,8 @@ const emailChecking = async (payload) => {
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
     // console.log('error', error?.response?.data?.message);
-    Toast('error', error.response.data.Message);
+    // Toast('error', error.response.data.Message);
+    return error;
   }
 };
 
@@ -65,7 +67,7 @@ const otpVerification = async (payload) => {
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
     // console.log('error', error?.response?.data?.message);
-    Toast('error', error.response.data.Message);
+    // Toast('error', error.response.data.Message);
   }
 };
 
@@ -76,7 +78,8 @@ const login = async (payload) => {
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
     // console.log('error', error?.response?.data?.message);
-    Toast('error', error.response.data.Message);
+    // Toast('error', error.response.data.Message);
+    return error;
   }
 };
 

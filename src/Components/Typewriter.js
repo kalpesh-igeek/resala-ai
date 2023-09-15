@@ -17,6 +17,11 @@ const Typewriter = ({ text, delay, setIsTypewriterDone, contentType, setIsDraftP
     }, delay);
     return () => clearInterval(interval);
   }, [text, delay]);
+  function adjustTextareaHeight(textarea) {
+    textarea.style.minHeight = '0';
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }
   return (
     <>
       {contentType === 'chat' ? (
@@ -26,10 +31,10 @@ const Typewriter = ({ text, delay, setIsTypewriterDone, contentType, setIsDraftP
           style={{ resize: 'none' }}
           id="draftPreview"
           name="draftPreview"
-          rows="22"
+          rows="6"
           value={displayText}
-          // placeholder="Lorem ipsum dolor sit amet consectetur."
-          className="text-[14px] border-gray block h-[306px] w-full rounded-md border p-1.5"
+          className="text-[14px] border-gray block h-auto w-full rounded-md border p-1.5"
+          // onInput={(e) => adjustTextareaHeight(e.target)}
         />
       )}
     </>

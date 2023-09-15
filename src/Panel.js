@@ -25,7 +25,8 @@ import QuickButton from './QuickButton';
 import SuccessIcon from './utils/Account/Icons/SuccessIcon.svg';
 import { getToken } from './utils/localstorage';
 import Template from './Pages/Templates/Template';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkActivity } from './redux/reducers/authSlice/AuthSlice';
 
 const QUICKREPLY = 'quickreply';
 const SELECTION = 'selection';
@@ -42,6 +43,7 @@ const sites = [
 
 export default function Panel() {
   const TOKEN = getToken();
+  const dispatch = useDispatch();
   const [isSideBarOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('');
 
@@ -58,6 +60,7 @@ export default function Panel() {
   const [selectedText, setSelectedText] = useState('');
   const [requestedText, setRequestedText] = useState('');
   const [positionX, setPoistionX] = useState(0);
+  // console.log('positionX', positionX);
   const [positionY, setPoistionY] = useState(0);
   const [backToInbox, setBackToInbox] = useState('');
   const [isPopupVisible, setIsPopupVisible] = useState(true);
@@ -74,6 +77,21 @@ export default function Panel() {
   //     setPoistionY(e.clientY);
   //   }
   // }
+  // function myFunction(e) {
+  //   const selected = window.getSelection();
+  //   if (selected.toString()) {
+  //     setSelectedText(selected.toString());
+
+  //     const rect = selected.getRangeAt(0).getBoundingClientRect();
+  //     const positionX = rect.left + window.scrollX + rect.width / 2;
+  //     const positionY = rect.top + window.scrollY + rect.height;
+
+  //     // add the current scroll position to the calculated position
+  //     setPoistionX(positionX + window.scrollX);
+  //     setPoistionY(positionY + window.scrollY);
+  //   }
+  // }
+
   function myFunction(e) {
     const selected = window.getSelection();
     if (selected.toString()) {
@@ -81,9 +99,9 @@ export default function Panel() {
 
       const rect = selected.getRangeAt(0).getBoundingClientRect();
       const positionX = rect.left + window.scrollX + rect.width / 2;
-      const positionY = rect.top + window.scrollY + rect.height;
+      // Add the height of the element to position it below the selected text
+      const positionY = rect.top + window.scrollY + rect.height + 20;
 
-      // add the current scroll position to the calculated position
       setPoistionX(positionX + window.scrollX);
       setPoistionY(positionY + window.scrollY);
     }
@@ -95,7 +113,9 @@ export default function Panel() {
     // };
     setTimeout(() => {
       const quickReply = document.getElementById('quickButton');
-      const quickPosition = document.querySelectorAll('[data-tooltip="Print all"]')[0];
+      // console.log('quickReply', quickReply);
+      const quickPosition = document.querySelectorAll('[aria-label="Print all"]')[0];
+      // console.log('quickPosition', quickPosition);
       if (quickPosition) {
         quickPosition.parentElement?.parentElement?.prepend(quickReply);
         quickReply.onclick = function () {
@@ -103,8 +123,30 @@ export default function Panel() {
           setRequestedText('hello');
         };
       }
-    }, 2000);
+    }, 4000);
   }, []);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     const quickReply = document.getElementById('quickButton');
+  //     // console.log('quickReply', quickReply);
+  //     const toolbar = document.getElementsByClassName('pYTkkf-JX-I pYTkkf-JX-I-ql-ay5-ays bHI'); // replace with actual id
+  //     console.log('toolbar', toolbar);
+  //     if (toolbar) {
+  //       const printButton = Array.from(toolbar.children).find(
+  //         (child) => child.getAttribute('data-tooltip-id') === 'ucc-0'
+  //       );
+  //       console.log('printButton', printButton);
+  //       if (printButton) {
+  //         printButton.parentElement?.parentElement?.prepend(quickReply);
+  //         quickReply.onclick = function () {
+  //           handleSidebar(QUICKREPLY);
+  //           setRequestedText('hello');
+  //         };
+  //       }
+  //     }
+  //   }, 2000);
+  // }, []);
   // useEffect(() => {
   //   const checkUrlChange = () => {
   //     const currentMailId = window.location.hash;
@@ -182,6 +224,15 @@ export default function Panel() {
     setIfOpenConfirmBox(true);
     setIsLoadedExtension(false);
     document.querySelectorAll('[style="margin-right: 500px;"]')[0].style = 'position: relative;';
+    dispatch(checkActivity(false));
+  };
+
+  const handleCloseClick = () => {
+    // setIfOpenConfirmBox(true);
+    setIsOpen(false);
+    setIsLoadedExtension(false);
+    document.querySelectorAll('[style="margin-right: 500px;"]')[0].style = 'position: relative;';
+    dispatch(checkActivity(false));
   };
 
   useEffect(() => {
@@ -306,6 +357,7 @@ export default function Panel() {
                           requestedText={requestedText}
                           setRequestedText={setRequestedText}
                           handleClick={handleClick}
+                          handleCloseClick={handleCloseClick}
                           setIsLogout={setIsLogout}
                           activeTab={activeTab}
                           CHAT={CHAT}

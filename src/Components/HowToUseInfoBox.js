@@ -1,13 +1,29 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Close from '../utils/MainScreen/Icons/Close.svg';
 import HowToIconBg from '../utils/Chat/Icons/HowToIconBg.svg';
 
 const HowToUseInfoBox = ({ setIsAudioInfoPopup }) => {
+  const myPromptRef = useRef();
   const handleClose = () => {
     setIsAudioInfoPopup(false);
   };
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (myPromptRef.current && !myPromptRef.current.contains(event.target)) {
+        setIsAudioInfoPopup(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [myPromptRef, setIsAudioInfoPopup]);
   return (
     <div
+      ref={myPromptRef}
       className="absolute rounded-[10px] bg-white p-[20px] left-0 bottom-[100%] z-50 w-[460px]"
       style={{ boxShadow: '0px 10px 30px 0px #3C425726' }}
       // show={open}

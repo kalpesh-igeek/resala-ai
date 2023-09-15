@@ -15,11 +15,9 @@ const ChatData = ({
 }) => {
   const renderMessage = (item) => {
     if (activeTabSub === 'chat' && item.isNew) {
-      // console.log('1');
       // Display typewriter component
       return <Typewriter text={item.msg} delay={50} setIsTypewriterDone={setIsTypewriterDone} contentType="chat" />;
     } else {
-      // console.log('2');
       // Display normal message from chatData
       return <>{item.msg}</>;
     }

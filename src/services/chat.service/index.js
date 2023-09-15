@@ -17,7 +17,7 @@ const newChat = async () => {
 
 const userChat = async (payload) => {
   try {
-    const userChatPath = `${CHAT_URL}/user_chat`;
+    const userChatPath = `${CHAT_URL}/stream_chat`;
     return await postRequest(userChatPath, payload);
   } catch (error) {
     console.log('error', error);
@@ -130,4 +130,3 @@ export const chatService = {
   deleteChatHistory,
   respondeLanguage,
 };
-

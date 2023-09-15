@@ -170,9 +170,11 @@
   .chats-settings {
     transition: all 0.3s ease-in;
   }
+  .new-btn {
+    transition: all 0.3s ease-in;
+  }
   .new-btn:hover {
-    opacity: 0.8;
-    transition: opacity 0.3s ease-in-out;
+    transform: scale(1.1);
   }
 
   .Dropdown-menu {

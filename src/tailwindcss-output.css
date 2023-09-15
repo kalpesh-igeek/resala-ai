@@ -815,8 +815,8 @@ video {
   .h-\[16px\] {
     height: 16px;
   }
-  .h-\[306px\] {
-    height: 306px;
+  .h-auto {
+    height: auto;
   }
   .h-\[14px\] {
     height: 14px;
@@ -839,11 +839,17 @@ video {
   .h-\[10px\] {
     height: 10px;
   }
+  .h-\[69px\] {
+    height: 69px;
+  }
   .h-\[305px\] {
     height: 305px;
   }
   .h-\[18px\] {
     height: 18px;
+  }
+  .h-\[306px\] {
+    height: 306px;
   }
   .h-\[40px\] {
     height: 40px;
@@ -1173,6 +1179,11 @@ video {
   .overflow-y-auto {
     overflow-y: auto;
   }
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .text-ellipsis {
     text-overflow: ellipsis;
   }
@@ -1355,6 +1366,10 @@ video {
   .bg-transparent {
     background-color: transparent;
   }
+  .bg-red1 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(254 232 232 / var(--tw-bg-opacity));
+  }
   .bg-gray4 {
     --tw-bg-opacity: 1;
     background-color: rgb(243 244 248 / var(--tw-bg-opacity));
@@ -1394,10 +1409,6 @@ video {
   .bg-gray {
     --tw-bg-opacity: 1;
     background-color: rgb(223 228 236 / var(--tw-bg-opacity));
-  }
-  .bg-red1 {
-    --tw-bg-opacity: 1;
-    background-color: rgb(254 232 232 / var(--tw-bg-opacity));
   }
   .bg-lightgray1 {
     --tw-bg-opacity: 1;
@@ -1991,9 +2002,11 @@ video {
   .chats-settings {
     transition: all 0.3s ease-in;
   }
+  .new-btn {
+    transition: all 0.3s ease-in;
+  }
   .new-btn:hover {
-    opacity: 0.8;
-    transition: opacity 0.3s ease-in-out;
+    transform: scale(1.1);
   }
   .Dropdown-menu {
     background-color: white;

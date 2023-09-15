@@ -87,9 +87,14 @@ const DropdownIndicator = (props) => {
     components.DropdownIndicator && (
       <components.DropdownIndicator {...props}>
         <img
-          className="absolute top-[50%] -translate-y-[50%] right-[0] w-[16px] h-[16px]"
+          className={`absolute w-[16px] h-[16px]`}
+          style={{
+            right: props.selectProps.menuIsOpen ? '-10px' : '10px',
+            top: props.selectProps.menuIsOpen ? ' 0px' : '22%',
+            transform: props.selectProps.menuIsOpen && 'rotate(180deg)',
+          }}
           src={ArrowDown}
-          style={{ transform: props.selectProps.menuIsOpen && 'rotate(180deg)' }}
+          // style={{ transform: props.selectProps.menuIsOpen && 'rotate(180deg)' }}
         />
       </components.DropdownIndicator>
     )
@@ -146,6 +151,7 @@ const customStyles = {
     transform: state.selectProps.menuIsOpen && 'rotate(180deg)',
     width: '14px',
     height: '14px',
+    // right: '5px',
   }),
 };
 
@@ -335,6 +341,7 @@ const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory, setIsViewPr
 
                 <div className="cursor-pointer chat-history bg-lightblue1 relative flex text-[12px] w-[165px] items-center gap-2 rounded-full py-[6px]">
                   <Select
+                    id="history"
                     className="w-full"
                     components={{ Option: CustomOption, SingleValue, DropdownIndicator }}
                     options={chatTypes.map((chatType) => ({

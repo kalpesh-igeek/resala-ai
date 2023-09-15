@@ -17,12 +17,12 @@ server.interceptors.response.use(
   },
   async (error) => {
     if (error.response?.status === 400) {
-      Toast('error', error.response.data.Message);
+      // Toast('error', error.response.data.Message);
       // console.log('error', error.response.data.Message);
     }
     if (error.response.status === 409) {
       // Toast('error', error.response.data.message);
-      Toast('error', error.response.data.Message);
+      // Toast('error', error.response.data.Message);
     }
     // if (error.response.status === 401 && !refresh) {
     //   refresh = true;

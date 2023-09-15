@@ -19,6 +19,7 @@ const loggedUser = {
 const Header = ({
   children,
   handleClick,
+  handleCloseClick,
   setIsLogout,
   isActivity,
   position,
@@ -37,6 +38,7 @@ const Header = ({
       handleClick();
     } else {
       dispatch(checkActivity(false));
+      handleCloseClick();
     }
   };
 

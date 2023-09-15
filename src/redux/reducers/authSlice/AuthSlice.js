@@ -17,15 +17,15 @@ const initialState = {
 };
 
 export const checkMail = createAsyncThunk('auth/checkMail', async (payload) => {
-  const { data, status } = await authService.checkMail(payload);
-  data.status = status;
-  return data;
+  const res = await authService.checkMail(payload);
+  // data.status = status;
+  return res;
 });
 
 export const emailChecking = createAsyncThunk('auth/emailChecking', async (payload) => {
-  const { data, status } = await authService.emailChecking(payload);
-  data.status = status;
-  return data;
+  const res = await authService.emailChecking(payload);
+  // data.status = status;
+  return res;
 });
 
 export const sendOtpSMS = createAsyncThunk('auth/sendOtpSMS', async (payload) => {
@@ -47,9 +47,11 @@ export const signUp = createAsyncThunk('auth/signUp', async (payload) => {
 });
 
 export const login = createAsyncThunk('auth/login', async (payload) => {
-  const { data, status } = await authService.login(payload);
-  data.status = status;
-  return data;
+  const res = await authService.login(payload);
+  // data.status = status;
+  // data.response = response;
+  // console.log('response', response);
+  return res;
 });
 
 export const sendOtpMail = createAsyncThunk('auth/sendOtpMail', async (payload) => {
@@ -160,7 +162,7 @@ export const AuthSlice = createSlice({
     });
     builder.addCase(login.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.user = action.payload;
+      state.user = action.payload.data?.data;
       let userPreferences = {
         Responed_language: action.payload.Result?.Responed_language,
         preference_language: action.payload.Result?.preference_language,
@@ -170,6 +172,7 @@ export const AuthSlice = createSlice({
       state.status = action.payload.status;
     });
     builder.addCase(login.rejected, (state, action) => {
+      console.log('action', action);
       state.isLoading = false;
       state.error = action;
     });

@@ -14,6 +14,7 @@ import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import { newChat } from '../redux/reducers/chatSlice/ChatSlice';
 import Toast from '../utils/toast';
 import SocialLogin from '../Components/SocialLogin';
+import InforCircleIcon from '../utils/Account/Icons/info-circle.svg';
 
 export default function Login({ isLogin, setIsLogin, setActiveTab }) {
   const navigate = useNavigate();
@@ -26,6 +27,8 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
   const [errors, setErrors] = useState({});
   const [isSecondStep, setIsSecondStep] = useState(false);
   const { status, isLoading } = useSelector((state) => state.auth);
+  const [invalidCred, setInvalidCred] = useState('');
+  const [invalidCredTime, setInvalidCredTime] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,7 +58,12 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
     if (!isSecondStep) {
       // If it's the first step, only check email
       const res = await dispatch(emailChecking({ email: inputValue.email }));
+      if (res.payload?.response?.status === 400) {
+        setInvalidCred(res?.payload?.response?.data?.Message);
+        // setTimeout(()=>{},4000)
+      }
       if (res.payload?.status === 200) {
+        setInvalidCred('');
         setIsRegistered(true);
         setDisabled(true);
         setIsSecondStep(true); // Move to the second step
@@ -73,9 +81,13 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
         password: inputValue.password,
       };
       const res = await dispatch(login(payload));
-      console.log('res', res);
+
+      if (res.payload?.response?.status === 400) {
+         setInvalidCred(res?.payload?.response?.data?.Message);
+      }
       if (res.payload.status === 200) {
-        localStorage.setItem('userAccessToken', `Bearer ${res.payload?.Result?.access_token}`);
+        setInvalidCred('');
+        localStorage.setItem('userAccessToken', `Bearer ${res.payload?.data?.Result?.access_token}`);
 
         Promise.resolve().then(() => {
           const userToken = getToken();
@@ -152,6 +164,14 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
                 </button>
                 {/* </div> */}
               </>
+            )}
+            {invalidCred && !isLoading && isRegistered && (
+              <div className="bg-red1 mt-[4px] mb-[16px] rounded-md">
+                <div className="flex gap-2 items-center py-[12px] px-[10px]">
+                  <img src={InforCircleIcon} className="" />
+                  <span className="text-[12px] text-red">{invalidCred}</span>
+                </div>
+              </div>
             )}
             <div className="col-span-full mb-[15px]">
               <div className="flex gap-2 items-center">
