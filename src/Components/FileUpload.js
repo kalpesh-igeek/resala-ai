@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getToken } from '../utils/localstorage';
 
 const fileContents = `Lorem ipsum dolor sit amet consectetur. 
 Tellus hendrerit vitae nibh luctus mi id dignissim pharetra convallis. 
@@ -40,30 +41,91 @@ const FileUpload = ({
   const [summeriseContent, setSummeriseContent] = useState([]);
 
   const hiddenFileInput = React.useRef(null);
+  const chatId = sessionStorage.getItem('chatId');
 
   const handleClick = () => {
     hiddenFileInput.current.click();
     setIsUploadDocument(true);
   };
 
+  console.log('selectedFile', selectedFile);
   const handleChange = (e) => {
     const fileUploaded = e.target.files[0];
     setSelectedFile(fileUploaded);
     // props.handleFile(fileUploaded);
   };
 
-  const handleSummeriseFile = () => {
+  const handleSummeriseFile = async () => {
+    console.log('fileContents', fileContents);
     setIsUploadDocument(false);
-    setSummeriseContent([
-      {
-        msg: 'Summarizing : ' + selectedFile.name,
-        type: 'system',
-      },
-      {
-        msg: fileContents,
-        type: 'system',
-      },
-    ]);
+
+    const payload = { chat_id: chatId, document: selectedFile };
+
+    try {
+      const response = await fetch('http://192.168.1.10:8000/doc_chat/document_summrize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: getToken(),
+        },
+        body: JSON.stringify(payload),
+      });
+
+      // if (updatedChatData?.length) {
+      //   updatedChatData.pop();
+      // }
+
+      if (response.ok) {
+        const reader = response.body.getReader();
+        let accumulatedMessage = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            // setIsTypewriterDone(false);
+            break;
+          }
+
+          const chunk = new TextDecoder().decode(value);
+          const lines = chunk.split('\n');
+
+          for (const line of lines) {
+            data = line.replace(/#@#/g, '\n');
+            console.log('data', data);
+            // console.log('data', data);
+            if (line.includes('connection closed')) {
+              break;
+            } else {
+              accumulatedMessage += data + '';
+            }
+          }
+        }
+
+        // Remove the loading message and add the new AI message
+        // if (updatedChatData[updatedChatData.length - 1].type === 'loading') {
+        //   updatedChatData.pop();
+        //   updatedChatData.push({ msg: accumulatedMessage?.trim(), type: 'ai' });
+        // }
+
+        // setChatData(updatedChatData);
+      } else {
+        throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+    // setSummeriseContent([
+    //   {
+    //     msg: 'Summarizing : ' + selectedFile.name,
+    //     type: 'system',
+    //   },
+    //   {
+    //     msg: fileContents,
+    //     type: 'system',
+    //   },
+    // ]);
     setIsViewPrompts(false);
     setSelectedFile();
   };
@@ -102,13 +164,13 @@ const FileUpload = ({
           <div className="text-[14px] mb-[8px]"> {selectedFile.name}</div>
           <div className="flex justify-center gap-2">
             <button
-              className="rounded-md bg-white px-[16px] py-[10px] text-[12px] font-medium text-darkBlue border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
+              className="rounded-md bg-white px-[16px] py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
               onClick={() => handleSummeriseFile()}
             >
               Summarize
             </button>
             <button
-              className="rounded-md bg-white px-[16px] py-[10px] text-[12px] font-medium text-darkBlue border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
+              className="rounded-md bg-white px-[16px] py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
               onClick={() => handleStartChatFile()}
             >
               Let’s Chat

@@ -1498,6 +1498,7 @@ const MainScreen = ({
     }
     if (id === 'doc') {
       setIsUploadDocument(true);
+      dispatch(newChat());
     }
   };
 

@@ -59,12 +59,14 @@ const UploadDocumentPopup = ({ setIsViewPrompts, chatData, setChatData, isUpload
               setIsUploadDocument={setIsUploadDocument}
             />
           </div>
-          <button
-            className="flex w-full justify-center rounded-md bg-primaryBlue px-3 py-2 text-sm leading-6 text-white shadow-sm hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            // onClick={() => handleGenerateDraft()}
-          >
-            Upload
-          </button>
+          {!selectedFile && (
+            <button
+              className="flex w-full justify-center rounded-md bg-primaryBlue px-3 py-2 text-sm leading-6 text-white shadow-sm hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              // onClick={() => handleGenerateDraft()}
+            >
+              Upload
+            </button>
+          )}
         </div>
       </div>
     </div>
