@@ -24,7 +24,7 @@ import docChatIcon from '../utils/MainScreen/Icons/document-text.svg';
 import hoverChat from '../utils/MainScreen/Icons/hover-message.svg';
 import hoverBook from '../utils/MainScreen/Icons/hover-book.svg';
 import hoverDoc from '../utils/MainScreen/Icons/hover-document-text.svg';
-import stopIcon from '../utils/MainScreen/Icons/stop.svg';
+
 import CalenderIcon from '../utils/Chat/Icons/Suggestions/CalenderIcon.svg';
 import FunIcon from '../utils/Chat/Icons/Suggestions/FunIcon.svg';
 import HealthIcon from '../utils/Chat/Icons/Suggestions/HealthIcon.svg';
@@ -77,6 +77,7 @@ import {
   regenerateChat,
   userChat,
   userChatHistory,
+  userChatList,
   userChatNew,
 } from '../redux/reducers/chatSlice/ChatSlice';
 import LoadingGif from '../utils/Chat/Gif/loader.gif';
@@ -105,6 +106,7 @@ import AudioInput from '../Components/Chat/AudioInput';
 import prevIcon from '../utils/MainScreen/Icons/prev.svg';
 import nextIcon from '../utils/MainScreen/Icons/next.svg';
 import axios from 'axios';
+import stopIcon from '../utils/MainScreen/Icons/stop.svg';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -302,11 +304,42 @@ const MainScreen = ({
   const [compLoading, setCompLoading] = useState(false);
   const [compRepLoading, setCompRepLoading] = useState(false);
   const [alreadyStreamed, setAllreadyStreamed] = useState(false);
+
+  const [chatsHistory, setChatsHistroy] = useState([]);
+  const [historyType, setHistoryType] = useState(1);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageRecord, setPagerecords] = useState(10);
+  const [isDocChat, setIsDocChat] = useState(false);
+
   const chatContainerRef = useRef(null);
   const promptRef = useRef(null);
   const myPromptRef = useRef(null);
 
   const languageRef = useRef(null);
+
+  const fetchChatHistoryList = async () => {
+    const res = await dispatch(
+      userChatList({
+        history_type: historyType,
+        page_number: pageNumber,
+        page_record: pageRecord,
+      })
+    );
+
+    if (!res.payload) {
+      return;
+    }
+
+    if (res.payload.status === 200) {
+      setChatsHistroy(res.payload?.Result);
+      // setTotalData(res.payload?.totalCount);
+      // setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchChatHistoryList();
+  }, [historyType, pageNumber, pageRecord]);
 
   useEffect(() => {
     if (selectTab) {
@@ -515,11 +548,11 @@ const MainScreen = ({
   }, [TOKEN, debouncedSearch]);
 
   const handleMouseEnter = (id) => {
-    setItems(items.map((item) => (item.id === id ? { ...item, isHovered: true } : item)));
+    setItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, isHovered: true } : item)));
   };
 
   const handleMouseLeave = (id) => {
-    setItems(items.map((item) => (item.id === id ? { ...item, isHovered: false } : item)));
+    setItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, isHovered: false } : item)));
   };
 
   const fetchChatHistory = async () => {
@@ -1264,7 +1297,6 @@ const MainScreen = ({
   //     // Handle the error as needed
   //   }
   // };
-
   const handleSendMessage = async (e, message, language) => {
     setIsUsePrompt(false);
     setAllreadyStreamed(true);
@@ -1298,7 +1330,6 @@ const MainScreen = ({
         if (!response.ok) {
           throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
         }
-
         // Process the response from your new API here
         const reader = response.body.getReader();
         let accumulatedMessage = '';
@@ -1341,7 +1372,7 @@ const MainScreen = ({
       } catch (error) {
         console.error('An error occurred:', error);
       }
-    } else {
+    } else if (message && !isDocChat) {
       // Add the user message to the chat data
       setChatData((prevMessages) => [...prevMessages, { msg: message, type: 'user' }]);
       let accumulatedMessage = ''; // To accumulate words
@@ -1361,10 +1392,69 @@ const MainScreen = ({
             chatId: chatId,
           }),
         });
-        // const payload = {
-        //   question: message,
-        //   chatId: chatId,
-        // };
+
+        // const response = await dispatch(userChatNew(payload));
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+        }
+        const reader = response.body.getReader();
+        // Continuously read and append the streaming response
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = new TextDecoder().decode(value);
+          // Process and display the received message
+          const lines = chunk.split('\n');
+          for (const line of lines) {
+            // console.log('chunk', line);
+            // if (line.startsWith('data: ')) {
+            // const data = line.substring(6).trim(); // Remove "data: " prefix and trim spaces
+            // Replace <br><br> with a newline
+            data = line.replace(/#@#/g, '\n');
+            if (line.includes('connection closed')) {
+              // Set the typewriter state to false when "connection closed" is encountered
+              setAllreadyStreamed(false);
+              isTypewriterDone = true;
+            } else {
+              // Exclude lines containing "connection closed" and append the word
+              accumulatedMessage += data + '';
+            }
+            // }
+          }
+          // Update the chat data with the accumulated message, without the "Loading..." message
+          setChatData((prevMessages) => [
+            ...prevMessages.slice(0, -1), // Remove the last (Loading...) message
+            { msg: accumulatedMessage?.trim(), type: 'ai' }, // Update the chat data
+          ]);
+        }
+      } catch (error) {
+        console.error('An error occurred:', error);
+        // Handle the error as needed
+      }
+      // Set the isTypewriterDone state to false when "connection closed" is encountered
+      if (isTypewriterDone) {
+        setIsTypewriterDone(false);
+      }
+    } else if (message && isDocChat) {
+      console.log('chatdata', chatData);
+      setChatData((prevMessages) => [...prevMessages, { msg: message, type: 'user' }]);
+      let accumulatedMessage = ''; // To accumulate words
+      let isTypewriterDone = false; // Initialize the typewriter state
+      // Add the "Loading..." message initially
+      setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
+      try {
+        const response = await fetch('http://192.168.1.10:8000/doc_chat/chat_document', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: getToken(),
+          },
+          body: JSON.stringify({
+            question: message,
+            chatId: chatId,
+          }),
+        });
 
         // const response = await dispatch(userChatNew(payload));
         if (!response.ok) {
@@ -1409,6 +1499,11 @@ const MainScreen = ({
         setIsTypewriterDone(false);
       }
     }
+  };
+  const closeConnection = (abortController) => {
+    console.log('abortController', abortController);
+    abortController.abort(); // Cancel the connection
+    // Additional code to handle closing the connection, if needed
   };
 
   const handleRegenerate = async () => {
@@ -1490,6 +1585,7 @@ const MainScreen = ({
     if (res.payload?.status === 200) {
       setChatInput({ chatText: '' });
       setChatData([]);
+      setIsDocChat(false);
     }
   };
   const handleSelectItems = (id) => {
@@ -1499,6 +1595,8 @@ const MainScreen = ({
     if (id === 'doc') {
       setIsUploadDocument(true);
       dispatch(newChat());
+      setChatData([]);
+      setIsDocChat(false);
     }
   };
 
@@ -1579,6 +1677,7 @@ const MainScreen = ({
     setIsChatHistory(true);
     setAddPromptBox(false);
     setSettingsPopupBox(false);
+    fetchChatHistoryList();
   };
 
   const handleClose = () => {
@@ -2019,12 +2118,20 @@ const MainScreen = ({
                       activeTabSub={activeTabSub}
                       switchedTabs={switchedTabs}
                     />
-                    {/* <div className="border border-primaryBlue">
-                      <div className="flex gap-2">
+                    <div
+                      className="border rounded-md border-primaryBlue w-[138px] cursor-pointer"
+                      style={{
+                        position: 'absolute',
+                        right: '178px',
+                        top: '-45px',
+                      }}
+                      onClick={closeConnection}
+                    >
+                      <div className="flex gap-2 items-center px-[8px] py-[10px]">
                         <img src={stopIcon} />
                         <p className="text-primaryBlue text-[12px] font-medium">Stop Generating</p>
                       </div>
-                    </div> */}
+                    </div>
 
                     {/* {!isTypewriterDone && chatData?.length >= 2 && (
                       <div
@@ -2066,7 +2173,8 @@ const MainScreen = ({
                             {items.map((item) => (
                               <div
                                 key={item.id}
-                                className="flex new-btn p-[5px] items-center gap-1 bg-gray4 rounded-md cursor-pointer"
+                                className="flex new-btn p-[5px] items-center gap-1 bg-gray4 rounded-md cursor-pointer transition-transform duration-400"
+                                // className="flex new-btn p-[5px] items-center gap-1 bg-gray4 rounded-md cursor-pointer"
                                 onMouseEnter={() => handleMouseEnter(item.id)}
                                 onMouseLeave={() => handleMouseLeave(item.id)}
                                 onClick={() => handleSelectItems(item.id)}
@@ -2158,7 +2266,7 @@ const MainScreen = ({
                                 <div className="text-[12px] font-medium text-gray1 px-[8px] py-[4px]">CHAT SETTING</div>
                                 <div className="text-[14px] flex items-center gap-2 text-darkblue bg-gray4 px-[8px] py-[4px] rounded-[4px]">
                                   <img src={TranslateIcon} />
-                                  Respond Language
+                                  Response Language
                                 </div>
                                 {/* <Dropdown
                                   className="border border-gray rounded-md text-[10px] p-[4px]"
@@ -3335,6 +3443,7 @@ const MainScreen = ({
               setChatData={setChatData}
               isUploadDocument={isUploadDocument}
               setIsUploadDocument={setIsUploadDocument}
+              setIsDocChat={setIsDocChat}
             />
             <ChatHistory
               chatData={chatData}
@@ -3342,6 +3451,9 @@ const MainScreen = ({
               isChatHistory={isChatHistory}
               setIsChatHistory={setIsChatHistory}
               setIsViewPrompts={setIsViewPrompts}
+              setChatsHistroy={setChatsHistroy}
+              chatsHistory={chatsHistory}
+              fetchChatHistoryList={fetchChatHistoryList}
             />
           </div>
         </Header>

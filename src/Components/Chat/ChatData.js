@@ -13,12 +13,42 @@ const ChatData = ({
   chatContainerRef,
   activeTabSub,
 }) => {
+  // const renderMessage = (item) => {
+  //   if (activeTabSub === 'chat' && item.isNew) {
+  //     // Display typewriter component
+  //     return <Typewriter text={item.msg} delay={50} setIsTypewriterDone={setIsTypewriterDone} contentType="chat" />;
+  //   } else {
+  //     // Display normal message from chatData
+  //     return <>{item.msg}</>;
+  //   }
+  // };
   const renderMessage = (item) => {
     if (activeTabSub === 'chat' && item.isNew) {
       // Display typewriter component
       return <Typewriter text={item.msg} delay={50} setIsTypewriterDone={setIsTypewriterDone} contentType="chat" />;
     } else {
       // Display normal message from chatData
+      const messages = item.msg.split('\n'); // Split the message by new lines
+      const summarizingString = 'Summarizing : '; // Replace this with the format of your summarizing string
+
+      // Check if the first message starts with the summarizing string
+      if (messages[0].startsWith(summarizingString)) {
+        console.log('123', messages[0].startsWith(summarizingString));
+        // If there is a new line after the summarizing string, create a new message
+        if (messages[0].indexOf(summarizingString) + summarizingString.length < messages[0].length) {
+          console.log(
+            'yestdgjsfd',
+            messages[0].indexOf(summarizingString) + summarizingString.length < messages[0].length
+          );
+          return (
+            <>
+              <div>{messages[0]}</div>
+              <div>{messages.slice(1).join('\n')}</div>
+            </>
+          );
+        }
+      }
+
       return <>{item.msg}</>;
     }
   };

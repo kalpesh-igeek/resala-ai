@@ -83,7 +83,7 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
       const res = await dispatch(login(payload));
 
       if (res.payload?.response?.status === 400) {
-         setInvalidCred(res?.payload?.response?.data?.Message);
+        setInvalidCred(res?.payload?.response?.data?.Message);
       }
       if (res.payload.status === 200) {
         setInvalidCred('');
@@ -131,7 +131,15 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
               isRegistered={isRegistered}
               value={inputValue.email}
             />
-            {errors.email && <p className="text-red text-[12px]">{errors.email}</p>}
+            {/* {errors.email && <p className="text-red text-[12px]">{errors.email}</p>} */}
+            {errors.email && (
+              <div className="bg-red1 mt-[4px] mb-[16px] rounded-md">
+                <div className="flex gap-2 items-center py-[12px] px-[10px]">
+                  <img src={InforCircleIcon} className="" />
+                  <span className="text-[12px] text-red">{errors.email}</span>
+                </div>
+              </div>
+            )}
             {isRegistered && inputValue.email && (
               <>
                 <InputField
@@ -140,7 +148,7 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
                   label="Password"
                   type="password"
                   placeholder="Password"
-                  isvisible={true}
+                  // isvisible={true}
                   handleChange={(e) => handleChange(e)}
                   value={inputValue.password}
                   // isLoading={isLoading}

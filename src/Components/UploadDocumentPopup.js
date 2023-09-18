@@ -5,7 +5,14 @@ import FileUpload from '../Components/FileUpload';
 import DocumentUploadBg from '../utils/Chat/Icons/DocumentUploadBg.svg';
 import Close from '../utils/MainScreen/Icons/Close.svg';
 
-const UploadDocumentPopup = ({ setIsViewPrompts, chatData, setChatData, isUploadDocument, setIsUploadDocument }) => {
+const UploadDocumentPopup = ({
+  setIsViewPrompts,
+  chatData,
+  setChatData,
+  isUploadDocument,
+  setIsUploadDocument,
+  setIsDocChat,
+}) => {
   const [selectedFile, setSelectedFile] = useState();
   const docRef = useRef(null);
 
@@ -57,6 +64,7 @@ const UploadDocumentPopup = ({ setIsViewPrompts, chatData, setChatData, isUpload
               selectedFile={selectedFile}
               setSelectedFile={setSelectedFile}
               setIsUploadDocument={setIsUploadDocument}
+              setIsDocChat={setIsDocChat}
             />
           </div>
           {!selectedFile && (

@@ -155,7 +155,15 @@ const customStyles = {
   }),
 };
 
-const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory, setIsViewPrompts }) => {
+const ChatHistory = ({
+  setChatData,
+  isChatHistory,
+  setIsChatHistory,
+  setIsViewPrompts,
+  setChatsHistroy,
+  chatsHistory,
+  fetchChatHistoryList,
+}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [filesList, setFileList] = useState(filesListData);
@@ -173,40 +181,13 @@ const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory, setIsViewPr
   const [deleteContent, setDeleteContent] = useState('');
 
   //Shubham
-  const [chatsHistory, setChatsHistroy] = useState([]);
-  const [historyType, setHistoryType] = useState(1);
-  const [pageNumber, setPageNumber] = useState(1);
-  const [pageRecord, setPagerecords] = useState(10);
+
   const chatHisRef = useRef(null);
   const deleteRef = useRef();
 
   // useEffect(() => {
   //   setChatsHistroy(historyData);
   // }, []);
-
-  const fetchChatHistory = async () => {
-    const res = await dispatch(
-      userChatList({
-        history_type: historyType,
-        page_number: pageNumber,
-        page_record: pageRecord,
-      })
-    );
-
-    if (!res.payload) {
-      return;
-    }
-
-    if (res.payload.status === 200) {
-      setChatsHistroy(res.payload?.Result);
-      // setTotalData(res.payload?.totalCount);
-      // setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchChatHistory();
-  }, [historyType, pageNumber, pageRecord]);
 
   // const handleChatTypeChange = (option) => {
   //   if (option.value === 'Doc chat') {
@@ -537,7 +518,7 @@ const ChatHistory = ({ setChatData, isChatHistory, setIsChatHistory, setIsViewPr
         ifOpenDeleteBox={ifOpenDeleteBox}
         setIfOpenDeleteBox={setIfOpenDeleteBox}
         deleteChatIndex={deleteChatIndex}
-        fetchChatHistory={fetchChatHistory}
+        fetchChatHistory={fetchChatHistoryList}
         deleteRef={deleteRef}
       />
     </>

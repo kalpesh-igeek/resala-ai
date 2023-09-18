@@ -73,7 +73,7 @@ const InputField = ({
             value={value}
             onChange={handleChange}
             placeholder={placeholder}
-            required={type === 'email' || type === 'password' ? true : false}
+            // required={type === 'email' || type === 'password' ? true : false}
             disabled={isLoading}
           />
         )}
