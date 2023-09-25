@@ -25,6 +25,7 @@ const AITools = ({ inputButtonBox, handleInputButtonBox, selectedAction, setSele
           <img src={ArrowDown} />
         </div>
       </div>
+      
       <div className={!inputButtonBox ? `hidden` : `block`}>
         <div className="pb-[20px]">
           <div className="flex gap-1 items-center">

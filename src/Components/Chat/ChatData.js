@@ -12,6 +12,7 @@ const ChatData = ({
   handleRegenerate,
   chatContainerRef,
   activeTabSub,
+  isStreaming,
 }) => {
   // const renderMessage = (item) => {
   //   if (activeTabSub === 'chat' && item.isNew) {
@@ -55,7 +56,10 @@ const ChatData = ({
 
   return (
     <>
-      <div ref={chatContainerRef} className="text-[12px] max-h-[440px] overflow-y-auto flex flex-col-reverse">
+      <div
+        ref={chatContainerRef}
+        className={`text-[12px] max-h-[440px] overflow-y-auto flex flex-col-reverse ${isStreaming ? 'mb-[55px]' : ''} `}
+      >
         <div className="">
           {chatData.map((item, index) => {
             switch (item.type) {
@@ -110,7 +114,7 @@ const ChatData = ({
       </div>
 
       {!isTypewriterDone && chatData?.length >= 2 && (
-        <div className="text-[12px] text-lightgray2 mb-[20px]">
+        <div className="text-[12px] text-lightgray2 mb-[30px]">
           <span
             className="flex items-center gap-2"
             onClick={() => {

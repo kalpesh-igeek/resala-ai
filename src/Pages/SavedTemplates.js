@@ -174,51 +174,45 @@ const SavedTemplates = ({
               </Tab.List>
             </Tab.Group>
 
-            {saveTemplates
-              .filter((template) => selectTab === 0 || template.type.id === selectTab)
-              .map((template, index) => (
-                <div
-                  className="p-[11px] bg-white border rounded-[6px] border-gray mb-[15px] flex items-center justify-between"
-                  key={index}
-                >
+            {saveTemplates.length === 0 ? (
+              <div className="text-center text-gray1">No data found</div>
+            ) : (
+              saveTemplates
+                .filter((template) => selectTab === 0 || template.type.id === selectTab)
+                .map((template, index) => (
                   <div
-                    className="flex items-center gap-2 cursor-pointer"
-                    onClick={() => handleSelectTemplate(index, template)}
+                    className="p-[11px] bg-white border rounded-[6px] border-gray mb-[15px] flex items-center justify-between"
+                    key={index}
                   >
-                    <div className="h-[40px] w-[40px] bg-lightgray flex items-center justify-center rounded-full">
-                      <img src={TemplateDocIcon} />
+                    <div
+                      className="flex items-center gap-2 cursor-pointer"
+                      onClick={() => handleSelectTemplate(index, template)}
+                    >
+                      <div className="h-[40px] w-[40px] bg-lightgray flex items-center justify-center rounded-full">
+                        <img src={TemplateDocIcon} />
+                      </div>
+                      <div className="flex flex-col gap-[4px]">
+                        <div className="text-[16px] text-darkblue">{template.name}</div>
+                        <div className="text-sm text-darkgray1">{template.type?.name}</div>
+                      </div>
                     </div>
-                    <div className="flex flex-col gap-[4px]">
-                      <div className="text-[16px] text-darkblue">{template.name}</div>
-                      <div className="text-sm text-darkgray1">{template.type?.name}</div>
-                    </div>
+
+                    <DropDownBox
+                      template={template}
+                      templateObject={selectedTemplate}
+                      dropDown={dropDown}
+                      shouldOpen={index == openIndex && dropDown ? true : false}
+                      clickHandler={() => {
+                        handleItemOpen(index, template);
+                      }}
+                      setActiveTab={setActiveTab}
+                      index={openIndex}
+                      ifOpenDeleteBox={ifOpenDeleteBox}
+                      setIfOpenDeleteBox={setIfOpenDeleteBox}
+                    />
                   </div>
-                  {/* <DropDownBox
-                template={template}
-                dropDown={dropDown}
-                shouldOpen={template?.id == openIndex && dropDown ? true : false}
-                clickHandler={() => {
-                  handleItemOpen(template?.id, template);
-                }}
-                index={openIndex}
-                ifOpenDeleteBox={ifOpenDeleteBox}
-                setIfOpenDeleteBox={setIfOpenDeleteBox}
-              /> */}
-                  <DropDownBox
-                    template={template}
-                    templateObject={selectedTemplate}
-                    dropDown={dropDown}
-                    shouldOpen={index == openIndex && dropDown ? true : false}
-                    clickHandler={() => {
-                      handleItemOpen(index, template);
-                    }}
-                    setActiveTab={setActiveTab}
-                    index={openIndex}
-                    ifOpenDeleteBox={ifOpenDeleteBox}
-                    setIfOpenDeleteBox={setIfOpenDeleteBox}
-                  />
-                </div>
-              ))}
+                ))
+            )}
           </div>
         )}
         <DeletePopup

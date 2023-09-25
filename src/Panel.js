@@ -61,6 +61,7 @@ export default function Panel() {
   const [requestedText, setRequestedText] = useState('');
   const [positionX, setPoistionX] = useState(0);
   // console.log('positionX', positionX);
+  const [selectedAction, setSelectedAction] = useState();
   const [positionY, setPoistionY] = useState(0);
   const [backToInbox, setBackToInbox] = useState('');
   const [isPopupVisible, setIsPopupVisible] = useState(true);
@@ -207,10 +208,12 @@ export default function Panel() {
     sendResponse('Request : ' + JSON.stringify('request'));
   });
 
-  const handleSidebar = (tab) => {
+  const handleSidebar = (tab,tool=undefined) => {
+    console.log({tab,tool});
     setActiveTab(tab);
     setIsOpen(true);
     setIsLoadedExtension(true);
+    setSelectedAction({ name: tool });
     // setIsPopupVisible(false);
     setRequestedText(selectedText);
     document.querySelectorAll('[style="position: relative;"]')[0].style = 'margin-right: 500px';
@@ -363,6 +366,8 @@ export default function Panel() {
                           CHAT={CHAT}
                           SELECTION={SELECTION}
                           QUICKREPLY={QUICKREPLY}
+                          selectedAction={selectedAction}
+                          setSelectedAction={setSelectedAction}
                         />
                       }
                     />

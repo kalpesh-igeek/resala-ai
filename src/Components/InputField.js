@@ -17,6 +17,7 @@ const InputField = ({
   isRegistered,
   setIsSecondStep,
   displayValue,
+  isFixedLabel = false,
   // isLoading,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -89,11 +90,13 @@ const InputField = ({
 
         <label
           className={`input-label bg-white inline-flex absolute text-[14px] font-normal leading-6 text-gray2 px-[2px] ${
-            (type === 'email' || type === 'password') && (value || isFocused) ? 'filled text-[12px]' : ''
+            ((type === 'email' || type === 'password') && (value || isFocused)) || (type === 'text' && isFixedLabel)
+              ? 'filled text-[12px]'
+              : ''
           } 
             ${type === 'date' && 'right-[15px]'}
             ${type === 'number' && 'hidden'}
-            ${type === 'text' && 'hidden'}
+            ${type === 'text' && !isFixedLabel && 'hidden'}
             `}
         >
           {label}

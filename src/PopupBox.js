@@ -98,7 +98,7 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
       <div
         id="selectmenu"
         className={status ? 'absolute z-10 block' : 'absolute z-10 hidden'}
-        style={{ transform: `translate(${positionX}px, ${positionY + 20}px)` }}
+        // style={{ transform: `translate(${positionX}px, ${positionY + 20}px)` }}
       >
         <div className="inline-flex relative" onMouseEnter={handleMenu} onMouseLeave={handleMenu}>
           <div className="flex bg-white items-center gap-2 p-1 pr-1.5 border border-solid border-slate-300 rounded-full">
@@ -114,7 +114,7 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
                         <div
                           key={index}
                           className="flex justify-center items-center gap-2 cursor-pointer"
-                          onClick={() => handleSidebar(SELECTION)}
+                          onClick={() => handleSidebar(SELECTION,pin.name)}
                         >
                           <img src={pin.icon} />
                           <span>{pin.name}</span>
@@ -147,7 +147,7 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
                   >
                     <div
                       className="flex justify-center items-center gap-2 cursor-pointer"
-                      onClick={() => handleSidebar(SELECTION)}
+                      onClick={() => handleSidebar(SELECTION,pin.name)}
                     >
                       <img src={pin.icon} />
                       <span>{pin.name}</span>
@@ -171,14 +171,14 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
                 <div className="bg-slate-300 h-px my-0.5"></div>
                 <div
                   className="py-1 font-dmsans text-xs flex items-center gap-2 cursor-pointer"
-                  onClick={() => handleSidebar(SELECTION)}
+                  onClick={() => handleSidebar(SELECTION,'Summarize')}
                 >
                   <img src={SummarizeIcon} />
                   <span>Summarize</span>
                 </div>
                 <div
                   className="py-1 font-dmsans text-xs flex items-center gap-2 cursor-pointer"
-                  onClick={() => handleSidebar(SELECTION)}
+                  onClick={() => handleSidebar(SELECTION,'Explain')}
                 >
                   <img src={ExplainIcon} />
                   <span>Explain</span>

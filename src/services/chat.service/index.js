@@ -75,8 +75,8 @@ const userChatHistory = async (id) => {
 
 const userChatList = async (queryParams) => {
   try {
-    const { history_type, page_number, page_record } = queryParams;
-    const userChatHisList = `${CHAT_URL}/user_chat_history?history_type=${history_type}&page_number=${page_number}&page_record=${page_record}`;
+    const { history_type, page_number, page_record, query } = queryParams;
+    const userChatHisList = `${CHAT_URL}/user_chat_history?history_type=${history_type}&page_number=${page_number}&page_record=${page_record}&query=${query}`;
     return await getRequest(userChatHisList);
   } catch (error) {
     // Toast('error', error?.response?.data?.message);

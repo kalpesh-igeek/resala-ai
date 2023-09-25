@@ -1,8 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import MoreIcon from '../../utils/SavedTemplates/Icons/MoreIcon.svg';
-import EditTemplateIcon from '../../utils/SavedTemplates/Icons/EditTemplateIcon.svg';
-import DeleteTemplateIcon from '../../utils/SavedTemplates/Icons/trash.svg';
+import DeleteIcon from '../../utils/Chat/Icons/History/trash.svg';
 import { useDispatch } from 'react-redux';
 import { deleteTemplate } from '../../redux/reducers/templateSlice/TemplateSlice';
 
@@ -38,7 +37,7 @@ const DropDownBox = ({
           className="text-[14px] text-red font-medium flex gap-2 items-center cursor-pointer"
           onClick={() => handleDeleteTmplate()}
         >
-          <img src={DeleteTemplateIcon} />
+          <img src={DeleteIcon} />
           <span>Delete</span>
         </div>
       </div>

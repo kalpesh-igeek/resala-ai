@@ -7,7 +7,7 @@ import { isValidPhoneNumber } from 'react-phone-number-input';
 import arrowIcon from '../../utils/Account/Icons/arrow-down.svg';
 import searchIcon from '../../utils/Account/Icons/Icons.svg';
 
-const SelectMobileNumber = () => {
+const SelectMobileNumber = ({ setInputValue }) => {
   const [number, setNumber] = useState(`+${getCountryCallingCode('US')}`);
   console.log('number', number);
   const [countries, setCountries] = useState([]);
@@ -58,6 +58,12 @@ const SelectMobileNumber = () => {
     const value = e.target.value;
     setNumber(value);
     setIsValid(value.length > 2 && isValidPhoneNumber(value));
+    setInputValue((prev) => {
+      return {
+        ...prev,
+        phone_number: value,
+      };
+    });
   };
 
   const handleOnChangeSearch = (e) => {
@@ -125,6 +131,12 @@ const SelectMobileNumber = () => {
                         setIsDropdown(false);
                         setCountryCode(getCountryCallingCode(itm));
                         setNumber(`+${getCountryCallingCode(itm)}`);
+                        setInputValue((prev) => {
+                          return {
+                            ...prev,
+                            country_code: `+${getCountryCallingCode(itm)}`,
+                          };
+                        });
                       }}
                     >
                       <div className="flex gap-2 items-center">

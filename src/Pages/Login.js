@@ -13,6 +13,8 @@ import { getToken, setToken } from '../utils/localstorage';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import { newChat } from '../redux/reducers/chatSlice/ChatSlice';
 import Toast from '../utils/toast';
+import EyeClose from '../utils/Account/Icons/EyeClose.svg';
+import EyeOpen from '../utils/Account/Icons/Eye.svg';
 import SocialLogin from '../Components/SocialLogin';
 import InforCircleIcon from '../utils/Account/Icons/info-circle.svg';
 
@@ -29,6 +31,7 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
   const { status, isLoading } = useSelector((state) => state.auth);
   const [invalidCred, setInvalidCred] = useState('');
   const [invalidCredTime, setInvalidCredTime] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -101,7 +104,7 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
     }
     // setIsRegistered(false);
   };
-
+console.log('invalidCred', invalidCred);
   const handleSignUp = () => {
     localStorage.removeItem('userAccessToken');
     sessionStorage.removeItem('chatId');
@@ -140,20 +143,46 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
                 </div>
               </div>
             )}
+            {!isSecondStep && invalidCred && !isLoading && isRegistered && (
+              <div className="bg-red1 mt-[4px] mb-[16px] rounded-md">
+                <div className="flex gap-2 items-center py-[12px] px-[10px]">
+                  <img src={InforCircleIcon} className="" />
+                  <span className="text-[12px] text-red">{invalidCred}</span>
+                </div>
+              </div>
+            )}
             {isRegistered && inputValue.email && (
-              <>
+              <div className="relative">
                 <InputField
+                  isFixedLabel
                   className="block w-full rounded-md border border-gray mt-[4px] px-7 py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
                   name="password"
                   label="Password"
-                  type="password"
+                  type={isPasswordVisible ? 'text' : 'password'}
                   placeholder="Password"
                   // isvisible={true}
                   handleChange={(e) => handleChange(e)}
                   value={inputValue.password}
                   // isLoading={isLoading}
                 />
+                <div
+                  className="absolute right-[15px] top-[15px] cursor-pointer"
+                  onClick={() => {
+                    setIsPasswordVisible(!isPasswordVisible);
+                  }}
+                >
+                  <img className="" src={isPasswordVisible ? EyeClose : EyeOpen} alt="EyeOpen" />
+                </div>
+
                 {errors.password && <p className="text-red text-[12px]">{errors.password}</p>}
+                {invalidCred && !isLoading && isRegistered && (
+                  <div className="bg-red1 mt-[4px] mb-[16px] rounded-md">
+                    <div className="flex gap-2 items-center py-[12px] px-[10px]">
+                      <img src={InforCircleIcon} className="" />
+                      <span className="text-[12px] text-red">{invalidCred}</span>
+                    </div>
+                  </div>
+                )}
                 {/* <div
                   type="button"
                   className="flex justify-center bg-transparent text-primaryBlue w-full mb-[24px] rounded-md px-1 py-[5px] text-[14px] font-medium hover:opacity-90 disabled:cursor-none disabled:opacity-50"
@@ -171,16 +200,9 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
                   </span>
                 </button>
                 {/* </div> */}
-              </>
-            )}
-            {invalidCred && !isLoading && isRegistered && (
-              <div className="bg-red1 mt-[4px] mb-[16px] rounded-md">
-                <div className="flex gap-2 items-center py-[12px] px-[10px]">
-                  <img src={InforCircleIcon} className="" />
-                  <span className="text-[12px] text-red">{invalidCred}</span>
-                </div>
               </div>
             )}
+
             <div className="col-span-full mb-[15px]">
               <div className="flex gap-2 items-center">
                 <button
@@ -216,8 +238,8 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
             </div>
           </form>
         </div>
-        <div className="flex justify-center items-center gap-1 mt-[10px]">
-          <span>Don’t have account?</span>
+        <div className="flex justify-center items-center gap-1 mt-[10px] text-[14px]">
+          <span className="text-gray2">Don’t have account?</span>
           <button
             className={`text-primaryBlue ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={handleSignUp}

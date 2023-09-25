@@ -176,6 +176,9 @@
   .new-btn:hover {
     transform: scale(1.1);
   }
+  .new-btn-without-scale {
+    transition: all 0.3s ease-in;
+  }
 
   .Dropdown-menu {
     background-color: white;
@@ -715,4 +718,57 @@ input[type='number']::-webkit-outer-spin-button {
 .label-focused {
   transform: translateY(5px);
   /* other styles... */
+}
+
+.textarea-container {
+  max-height: 300px; /* Adjust this to your desired maximum height */
+  overflow-y: auto;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+}
+
+.textarea-container::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* Define a CSS class for the hover effect */
+.hovered-idea {
+  background-color: #d9ebff;
+}
+
+/* Use CSS attribute selectors to apply the class on hover */
+[id^='idea-']:hover {
+  /* Apply the hover effect class to the hovered idea */
+  background-color: #d9ebff;
+}
+.new-btn span {
+  opacity: 0;
+  visibility: hidden;
+  max-width: 0;
+  max-height: 18px;
+  overflow: hidden;
+  transition: all 0.25s ease-out;
+}
+.new-btn:hover span {
+  opacity: 1;
+  max-width: 110px;
+  max-height: 18px;
+  visibility: visible;
+  overflow: hidden;
+}
+.new-btn-without-scale span {
+  opacity: 0;
+  visibility: hidden;
+  max-width: 0;
+  max-height: 18px;
+  overflow: hidden;
+  transition: all 0.25s ease-out;
+}
+.new-btn-without-scale:hover span {
+  opacity: 1;
+  max-width: 110px;
+  max-height: 18px;
+  visibility: visible;
+  overflow: hidden;
 }

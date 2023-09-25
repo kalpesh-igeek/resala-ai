@@ -185,7 +185,10 @@ const MainScreen = ({
   setIsOpen,
   handleSidebar,
   handleCloseClick,
+  selectedAction,
+  setSelectedAction,
 }) => {
+  console.log('selectedAction', selectedAction);
   const TOKEN = getToken();
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -198,12 +201,13 @@ const MainScreen = ({
   // const [suggestionBox, setSuggestionBox] = useState(true);
 
   const [selectedTemplate, setSelectedTempate] = useState(state?.template);
+  console.log({ selectedTemplate });
   const [isUsePrompt, setIsUsePrompt] = useState(false);
 
   const myRef = document.getElementById('#draftPreview');
   const [selectTab, setSelectTab] = useState(1);
 
-  const [selectedAction, setSelectedAction] = useState();
+  // const [selectedAction, setSelectedAction] = useState();
   const [selectedFormat, setSelectedFormat] = useState();
   const [selectedLength, setSelectedLength] = useState();
   const [selectedTone, setSelectedTone] = useState();
@@ -215,12 +219,14 @@ const MainScreen = ({
     { name: selectedTone?.name },
     { name: selectedLanguage?.name },
   ]);
-  var aiToolsLength = selectedItems.filter((data) => data?.name)?.length;
+  const [aiToolsLength, setAiToolsLength] = useState(selectedItems.filter((data) => data?.name)?.length);
+
   // console.log('selectedItems', selectedItems.filter((data) => data?.name)?.length);
   const [inputButtonBox, setInputButtonBox] = useState(true);
   const [saveTemplateBox, setSaveTemplateBox] = useState(false);
 
-  const [resultText, setResultText] = useState('');
+  const [resultText, setResultText] = useState([]);
+  const [resultTextRep, setResultTextRep] = useState([]);
 
   const [speechText, setSpeechText] = useState('');
   const [speechLength, setSpeechLength] = useState(0);
@@ -306,10 +312,22 @@ const MainScreen = ({
   const [alreadyStreamed, setAllreadyStreamed] = useState(false);
 
   const [chatsHistory, setChatsHistroy] = useState([]);
-  const [historyType, setHistoryType] = useState(1);
+  const [historyType, setHistoryType] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageRecord, setPagerecords] = useState(10);
+  const [searchChatHis, setSearchChatHis] = useState('');
+  const ChatHistorySearch = useDebounce(searchChatHis, 1000);
   const [isDocChat, setIsDocChat] = useState(false);
+  const [controller, setController] = useState(new AbortController());
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [isStreamingComp, setIsStreamingComp] = useState(false);
+  const [abortController, setAbortController] = useState(null);
+  // const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [currentPageIndexTab1, setCurrentPageIndexTab1] = useState(0);
+  const [currentPageIndexTab2, setCurrentPageIndexTab2] = useState(0);
+  const [chatType, setChatType] = useState('');
+  const [hasResultText, setHasResultText] = useState(false);
+  const [hasResultTextRep, setHasResultTextRep] = useState(false);
 
   const chatContainerRef = useRef(null);
   const promptRef = useRef(null);
@@ -317,12 +335,20 @@ const MainScreen = ({
 
   const languageRef = useRef(null);
 
+  const draftPreviewTextareaRef = useRef(null);
+
+  useEffect(() => {
+    // Recalculate aiToolsLength when selectedItems changes
+    setAiToolsLength(selectedItems.filter((data) => data?.name)?.length);
+  }, [selectedItems]);
+
   const fetchChatHistoryList = async () => {
     const res = await dispatch(
       userChatList({
         history_type: historyType,
         page_number: pageNumber,
         page_record: pageRecord,
+        query: searchChatHis,
       })
     );
 
@@ -339,16 +365,15 @@ const MainScreen = ({
 
   useEffect(() => {
     fetchChatHistoryList();
-  }, [historyType, pageNumber, pageRecord]);
+  }, [historyType, pageNumber, pageRecord, ChatHistorySearch]);
 
   useEffect(() => {
     if (selectTab) {
-      setSelectedAction('');
+      // setSelectedAction('');
       setSelectedFormat('');
       setSelectedLength('');
       setSelectedTone('');
       setSelectedLanguage('');
-      aiToolsLength = 0;
     }
   }, [selectTab]);
 
@@ -496,7 +521,13 @@ const MainScreen = ({
 
   //compose
   const [selectedText, setSelectedText] = useState({ input_text: requestedText });
+  console.log({ selectedText, requestedText });
   const [replyText, setReplyText] = useState({ original_text: '', reply: '' });
+
+  useEffect(() => {
+    setSelectedText({ input_text: requestedText });
+    handleInputAction(selectedAction);
+  }, [requestedText]);
 
   const fetchprompts = async () => {
     const res = await dispatch(getPromptList());
@@ -511,11 +542,15 @@ const MainScreen = ({
       // setIsLoading(false);
     }
   };
+
   const handleSelectTab = (id) => {
+    setAiToolsLength(0);
     setSelectTab(id);
-    setComposeRes(false);
+    // setComposeRes(false);
     setErrors({});
   };
+
+  console.log('aiToolsLength', aiToolsLength);
 
   const fetchGeneralPrompts = async () => {
     const res = await dispatch(
@@ -547,12 +582,23 @@ const MainScreen = ({
     }
   }, [TOKEN, debouncedSearch]);
 
-  const handleMouseEnter = (id) => {
-    setItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, isHovered: true } : item)));
-  };
+  // const handleMouseEnter = (id) => {
+  //   setItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, isHovered: true } : item)));
+  // };
 
-  const handleMouseLeave = (id) => {
-    setItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, isHovered: false } : item)));
+  // const handleMouseLeave = (id) => {
+  //   setItems((prevItems) => prevItems.map((item) => (item.id === id ? { ...item, isHovered: false } : item)));
+  // };
+
+  const handleMouseEnterLeave = (id, isEntering) => {
+    setItems((prevItems) =>
+      prevItems.map((item) => {
+        if (item.id === id) {
+          return { ...item, isHovered: isEntering };
+        }
+        return item;
+      })
+    );
   };
 
   const fetchChatHistory = async () => {
@@ -752,9 +798,10 @@ const MainScreen = ({
     setSpeechText(e.target.value);
   };
 
-  const handleInputAction = (e, index, action) => {
+  const handleInputAction = (action) => {
     let tempArr = Array.from(selectedItems);
     tempArr[0].name = action.name;
+    console.log(action.name);
     setSelectedItems(tempArr);
   };
   // const handleInputFormat = (e, index, action) => {
@@ -788,10 +835,25 @@ const MainScreen = ({
   const handleGenerateDraft = async (e) => {
     // setIsActivity(true);
     setIsDraftPrev(true);
+    setIsStreamingComp(true);
 
     await dispatch(checkActivity(true));
     // setInputButtonBox(false);
     e.preventDefault();
+
+    // Check if there's an ongoing fetch request and abort it
+    if (abortController) {
+      abortController.abort();
+      setAbortController(null); // Clear the abort controller
+    }
+
+    if (alreadyStreamed) {
+      return;
+    }
+
+    // Create a new AbortController instance for this fetch request
+    const controller = new AbortController();
+    setAbortController(controller);
     if (selectTab === 1 && !state?.edit) {
       setIsTypewriterDone(true);
       let errors;
@@ -804,28 +866,10 @@ const MainScreen = ({
         return;
       }
 
-      const payload = {
-        input_text: selectedText.input_text?.trim(),
-        action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
-        length: selectedLength?.name,
-        tone: selectedTone?.name,
-        language: selectedLanguage?.name,
-      };
-
-      // const res = await dispatch(generateDraft(payload));
-      // if (!res.payload) {
-      //   return;
-      // }
-      // if (res.payload?.status === 200) {
-      //   setComposeRes(true);
-      //   setResultText(res.payload?.Result);
-      //   setIsNewDraft(true); // add this line
-      // }
-
       try {
         setCompLoading(true);
         // Call your new API here
-        const response = await fetch('http://192.168.1.10:8000/compose/compose_stream', {
+        const response = await fetch('https://api-qa.resala.ai/compose/compose_stream', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -840,6 +884,7 @@ const MainScreen = ({
             language: selectedLanguage?.name,
             // Include other necessary parameters
           }),
+          signal: controller.signal,
         });
 
         if (!response.ok) {
@@ -849,6 +894,7 @@ const MainScreen = ({
         // Process the response from your new API here
         const reader = response.body.getReader();
         let accumulatedMessage = '';
+        let newResultText = [];
 
         while (true) {
           // setAllreadyStreamed(true);
@@ -859,69 +905,59 @@ const MainScreen = ({
           const chunk = new TextDecoder().decode(value);
           const lines = chunk.split('\n');
           for (const line of lines) {
+            setComposeRes(true);
+            setIsNewDraft(true);
             // console.log('chunk', line);
             // if (line.startsWith('data: ')) {
             // const data = line.substring(6).trim(); // Remove "data: " prefix and trim spaces
             // Replace <br><br> with a newline
             data = line.replace(/#@#/g, '\n');
+            console.log('data', data);
             // console.log('data', data);
             if (line.includes('connection closed')) {
               setIsTypewriterDone(false);
+              setIsStreamingComp(false);
               setCompLoading(false);
 
               // Set the typewriter state to false when "connection closed" is encountered
             } else {
               // Exclude lines containing "connection closed" and append the word
               accumulatedMessage += data + '';
-              console.log('accumulatedMessage', accumulatedMessage);
-              setResultText(accumulatedMessage); // Set the result text here
+              // setResultText((prevResultText) => [...prevResultText, { output_text: accumulatedMessage }]);
             }
             // }
           }
+          newResultText = [
+            ...resultText,
+            { output_text: accumulatedMessage.trim() }, // Trim to remove trailing spaces
+          ];
+          setCurrentPageIndexTab1(newResultText.length - 1); // Use the updated result text length
+
+          // Update the state with the new result text
+          setResultText(newResultText);
+          setHasResultText(true);
         }
 
-        // Update the chat data with the accumulated message, without the "Loading..." message
-        setComposeRes(true);
-        // setResultText(accumulatedMessage);
-        setIsNewDraft(true);
+        // setResultText((prevResultText) => [
+        //   ...prevResultText,
+        //   { output_text: accumulatedMessage.trim() }, // Trim to remove trailing spaces
+        // ]);
+        // }
       } catch (error) {
         console.error('An error occurred:', error);
       }
     }
     if (selectTab === 2 && !state?.edit) {
       setIsTypewriterDone(true);
-      // Check if input_text is empty or contains only whitespace
-      // if ( !selectedText.input_text || !selectedText.input_text.trim()) {
-      //   return;
-      // }
 
-      // Check if reply is empty or contains only whitespace
       if (!replyText.reply || !replyText.reply.trim() || !replyText.original_text || !replyText.original_text.trim()) {
         return;
       }
 
-      const payload = {
-        original_text: replyText.original_text?.trim(),
-        what_to_reply: replyText.reply?.trim(),
-        action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
-        length: selectedLength?.name,
-        tone: selectedTone?.name,
-        language: selectedLanguage?.name,
-      };
-
-      // const res = await dispatch(generateReply(payload));
-      // if (!res.payload) {
-      //   return;
-      // }
-      // if (res.payload?.status === 200) {
-      //   setComposeRes(true);
-      //   setResultText(res.payload?.Result);
-      //   setIsNewDraft(true); // add this line
-      // }
       try {
         setCompRepLoading(true);
         // Call your new API here
-        const response = await fetch('http://192.168.1.10:8000/compose/generate_stream_reply', {
+        const response = await fetch('https://api-qa.resala.ai/compose/generate_stream_reply', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -936,6 +972,7 @@ const MainScreen = ({
             tone: selectedTone?.name,
             language: selectedLanguage?.name,
           }),
+          signal: controller.signal,
         });
 
         if (!response.ok) {
@@ -945,6 +982,7 @@ const MainScreen = ({
         // Process the response from your new API here
         const reader = response.body.getReader();
         let accumulatedMessage = '';
+        let newResultText = [];
 
         while (true) {
           // setCompLoading(false);
@@ -954,6 +992,8 @@ const MainScreen = ({
           const chunk = new TextDecoder().decode(value);
           const lines = chunk.split('\n');
           for (const line of lines) {
+            setComposeRes(true);
+            setIsNewDraft(true);
             // console.log('chunk', line);
             // if (line.startsWith('data: ')) {
             // const data = line.substring(6).trim(); // Remove "data: " prefix and trim spaces
@@ -962,26 +1002,25 @@ const MainScreen = ({
             // console.log('data', data);
             if (line.includes('connection closed')) {
               setIsTypewriterDone(false);
+              setIsStreamingComp(false);
               setCompRepLoading(false);
               // Set the typewriter state to false when "connection closed" is encountered
             } else {
               // Exclude lines containing "connection closed" and append the word
               accumulatedMessage += data + '';
-              setResultText(accumulatedMessage); // Set the result text here
             }
             // }
           }
-        }
+          newResultText = [
+            ...resultTextRep,
+            { output_text: accumulatedMessage.trim() }, // Trim to remove trailing spaces
+          ];
+          setCurrentPageIndexTab2(newResultText.length - 1); // Use the updated result text length
 
-        // Update the chat data with the accumulated message, without the "Loading..." message
-        setComposeRes(true);
-        // setResultText(accumulatedMessage);
-        setIsNewDraft(true);
-        // setChatData((prevMessages) => [
-        //   ...prevMessages.slice(0, loadingMessageIndex), // Keep all messages before the "Loading..." message
-        //   { msg: accumulatedMessage?.trim(), type: 'ai' }, // Add the new message
-        //   ...prevMessages.slice(loadingMessageIndex + 1), // Keep all messages after the "Loading..." message
-        // ]);
+          // Update the state with the new result text
+          setResultTextRep(newResultText);
+          setHasResultTextRep(true);
+        }
       } catch (error) {
         console.error('An error occurred:', error);
       }
@@ -1012,6 +1051,21 @@ const MainScreen = ({
     // );
   };
 
+  const handleStopDraft = () => {
+    // Check if there's an ongoing fetch request and abort it
+    if (abortController) {
+      abortController.abort();
+      setAbortController(null); // Clear the abort controller
+
+      if (selectTab === 1 && isStreamingComp) {
+        setCompLoading(false);
+      }
+      if (selectTab === 2 && isStreamingComp) {
+        setCompRepLoading(false);
+      }
+    }
+  };
+
   //update template
 
   const handleUpdateTemplate = async (e) => {
@@ -1021,7 +1075,11 @@ const MainScreen = ({
       payload: {
         name: editTemplateName?.templatename,
         input_text: editTemplateName.input_text,
-        output_text: resultText?.output_text ? resultText?.output_text : selectedTemplate?.output_text,
+        output_text: resultText?.output_text
+          ? resultText?.output_text
+          : resultTextRep?.output_text
+          ? resultTextRep?.output_text
+          : selectedTemplate?.output_text,
         type: selectedTemplateType?.value ? selectedTemplateType?.value : selectedTemplate?.type?.id,
         action: selectedAction?.name,
         length: selectedLength?.name,
@@ -1046,7 +1104,9 @@ const MainScreen = ({
 
   const handleCopyDraft = () => {
     console.log('resultText?.output_text', resultText?.output_text);
+
     navigator.clipboard.writeText(resultText?.output_text);
+    navigator.clipboard.writeText(resultTextRep?.output_text);
   };
 
   const handlePromptViewPopup = (prompt) => {
@@ -1073,21 +1133,21 @@ const MainScreen = ({
   const handleChange = (e) => {
     const { name, value } = e.target;
     const maxCharacterCount = 4000; // Set your desired character limit here
-    // if (name === 'chatText') {
-    //   if (value.length > maxCharacterCount) {
-    //     // If the input exceeds the character limit, truncate it
-    //     const truncatedValue = value.substring(0, maxCharacterCount);
-    //     e.target.value = truncatedValue;
-    //     setSpeechLength(maxCharacterCount);
-    //   } else {
-    //     setSpeechLength(value.length);
-    //   }
-    // }
+    if (name === 'chatText') {
+      if (value.length > maxCharacterCount) {
+        // If the input exceeds the character limit, truncate it
+        const truncatedValue = value.substring(0, maxCharacterCount);
+        e.target.value = truncatedValue;
+        setSpeechLength(maxCharacterCount);
+      } else {
+        setSpeechLength(value.length);
+      }
+    }
 
-    // if (value.length >= maxCharacterCount) {
-    //   e.preventDefault();
-    //   e.stopPropogation();
-    // }
+    if (value.length >= maxCharacterCount) {
+      e.preventDefault();
+      e.stopPropogation();
+    }
     // setSpeechLength(e.target.value?.length);
     setChatInput({
       ...chatInput,
@@ -1106,204 +1166,34 @@ const MainScreen = ({
       });
   };
 
-  const isSpecialCharacter = (word) => {
-    const specialCharacters = '!#$%^&*()_+{}[]|\\;:,.?/';
-    const apostrophe = "'";
-    if (apostrophe.includes(word)) {
-      return false;
-    } else return specialCharacters.includes(word);
-  };
-  // const handleSendMessage = async (e, message, language) => {
-  //   // chatContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  //   chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-
-  //   setSpeechLength(0);
-  //   setIsUsePrompt(false);
-  //   setHistoryMessage(false);
-
-  //   // setIsActivity(true);
-  //   await dispatch(checkActivity(true));
-  //   e.preventDefault();
-
-  //   if (chatLoading) {
-  //     return;
-  //   }
-
-  //   // if (message?.name) {
-  //   //   const newMessage = {};
-  //   //   newMessage.msg = message?.name;
-  //   //   newMessage.type = 'user';
-  //   //   newMessage.loading = true;
-  //   //   const loadingMessage = {};
-  //   //   loadingMessage.type = 'loading';
-
-  //   //   const tempChatData = [...chatData, newMessage, loadingMessage];
-  //   //   // setLastUserMessageIndex(tempChatData.length - 1); // Store the index of the last user message
-  //   //   setChatData(tempChatData);
-
-  //   //   let payload = {};
-
-  //   //   payload = {
-  //   //     prompt_id: +message?.id,
-  //   //     chat_id: chatId,
-  //   //     // language: isUsePrompt ? language : selectedOption.value ? selectedOption.value : 'auto',
-  //   //   };
-
-  //   //   setChatLoading(true);
-  //   //   const res = await dispatch(generalPromptChat(payload));
-  //   //   // const resNew = await dispatch(userChatNew(payload));
-  //   //   // console.log('resNew', resNew);
-  //   //   if (!res.payload) {
-  //   //     setChatLoading(false);
-  //   //     return;
-  //   //   }
-  //   //   if (res.payload?.status === 200) {
-  //   //     // if (lastUserMessageIndex !== null) {
-  //   //     //   tempChatData[lastUserMessageIndex].loading = false; // Set loading to false for the last user message
-  //   //     // }
-  //   //     setSelectedOption({ value: 'auto' });
-  //   //     // setAiResponseReceived(false);
-  //   //     // setAiResponseLoading(true);
-
-  //   //     setChatLoading(false);
-  //   //     const aiResponse = {};
-  //   //     aiResponse.msg = res.payload.Result;
-  //   //     aiResponse.loading = false;
-  //   //     aiResponse.type = 'ai';
-  //   //     aiResponse.isNew = true; // add this line
-  //   //     tempChatData.pop();
-  //   //     tempChatData.push(aiResponse);
-  //   //     if (aiResponse) {
-  //   //       // setAiResponseLoading(false);
-  //   //       // setAiResponseReceived(true);
-  //   //     }
-  //   //     setChatData(tempChatData);
-  //   //   }
-  //   //   setChatInput({
-  //   //     ...chatInput,
-  //   //     chatText: '',
-  //   //   });
-  //   // } else {
-  //   //   const trimmedMessage = message.trim();
-  //   //   if (!trimmedMessage) {
-  //   //     return;
-  //   //   }
-
-  //   //   const newMessage = {};
-  //   //   newMessage.msg = message;
-  //   //   newMessage.type = 'user';
-  //   //   newMessage.loading = true;
-  //   //   const loadingMessage = {};
-  //   //   loadingMessage.type = 'loading';
-
-  //   //   const tempChatData = [...chatData, newMessage, loadingMessage];
-  //   //   // setLastUserMessageIndex(tempChatData.length - 1); // Store the index of the last user message
-  //   //   setChatData(tempChatData);
-
-  //   //   let payload = {};
-
-  //   //   payload = {
-  //   //     question: isUsePrompt ? message : chatInput.chatText ? chatInput.chatText : message,
-  //   //     chatId: chatId,
-  //   //     // language: isUsePrompt ? language : selectedOption.value ? selectedOption.value : 'auto',
-  //   //   };
-
-  //   //   setChatLoading(true);
-  //   //   const res = await dispatch(userChat(payload));
-  //   //   // console.log('res', res);
-  //   //   // const resNew = await dispatch(userChatNew(payload));
-  //   //   // console.log('resNew', resNew);
-  //   //   if (!res.payload) {
-  //   //     setChatLoading(false);
-  //   //     return;
-  //   //   }
-  //   //   if (res.payload?.status === 200) {
-  //   //     // if (lastUserMessageIndex !== null) {
-  //   //     //   tempChatData[lastUserMessageIndex].loading = false; // Set loading to false for the last user message
-  //   //     // }
-  //   //     setSelectedOption({ value: 'auto' });
-  //   //     // setAiResponseReceived(false);
-  //   //     // setAiResponseLoading(true);
-
-  //   //     setChatLoading(false);
-  //   //     const aiResponse = {};
-  //   //     aiResponse.msg = res.payload.Result;
-  //   //     aiResponse.loading = false;
-  //   //     aiResponse.type = 'ai';
-  //   //     aiResponse.isNew = true; // add this line
-  //   //     tempChatData.pop();
-  //   //     tempChatData.push(aiResponse);
-  //   //     if (aiResponse) {
-  //   //       // setAiResponseLoading(false);
-  //   //       // setAiResponseReceived(true);
-  //   //     }
-  //   //     setChatData(tempChatData);
-  //   //   }
-  //   //   setChatInput({
-  //   //     ...chatInput,
-  //   //     chatText: '',
-  //   //   });
-  //   // }
-  // };
-
-  //good
-  // const handleSendMessage = async (e, message, language) => {
-  //   // Add the user message to the chat data
-  //   setChatData((prevMessages) => [...prevMessages, { msg: message, type: 'user' }]);
-  //   let accumulatedMessage = ''; // To accumulate words
-  //   // Add the "Loading..." message initially
-  //   setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
-  //   try {
-  //     const response = await fetch('http://192.168.1.10:8000/chat/stream_chat', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Access-Control-Allow-Origin': '*',
-  //         Authorization: getToken(),
-  //       },
-  //       body: JSON.stringify({
-  //         question: message,
-  //         chatId: chatId,
-  //       }),
-  //     });
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
-  //     }
-  //     const reader = response.body.getReader();
-  //     // Continuously read and append the streaming response
-  //     while (true) {
-  //       const { done, value } = await reader.read();
-  //       if (done) break;
-  //       const chunk = new TextDecoder().decode(value);
-  //       // Process and display the received message
-  //       const lines = chunk.split('\n');
-  //       for (const line of lines) {
-  //         if (line.startsWith('data: ')) {
-  //           const data = line.substring(6); // Remove "data: " prefix
-  //           // Exclude lines containing "connection closed"
-  //           if (!data.includes('connection closed')) {
-  //             accumulatedMessage += data + ' '; // Append the word
-  //           }
-  //         }
-  //       }
-  //       // Update the chat data with the accumulated message, without the "Loading..." message
-  //       setChatData((prevMessages) => [
-  //         ...prevMessages.slice(0, -1), // Remove the last (Loading...) message
-  //         { msg: accumulatedMessage, type: 'ai' }, // Update the chat data
-  //       ]);
-  //     }
-  //   } catch (error) {
-  //     console.error('An error occurred:', error);
-  //     // Handle the error as needed
-  //   }
-  // };
   const handleSendMessage = async (e, message, language) => {
-    setIsUsePrompt(false);
-    setAllreadyStreamed(true);
+    if (message || message?.trim()) {
+      setIsUsePrompt(false);
+      setAllreadyStreamed(true);
+      setIsStreaming(true);
+    }
+
     chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     if (alreadyStreamed) {
       return;
     }
+
+    // Check if there's an ongoing fetch request and abort it
+    if (abortController) {
+      abortController.abort();
+      setAbortController(null); // Clear the abort controller
+    }
+
+    if (alreadyStreamed) {
+      return;
+    }
+    if (isStreaming && message) {
+      return;
+    }
+    // Create a new AbortController instance for this fetch request
+    const controller = new AbortController();
+    setAbortController(controller);
+
     if (message?.name) {
       // Add the user message to the chat data
       setChatData((prevMessages) => [...prevMessages, { msg: message.name, type: 'user' }]);
@@ -1313,11 +1203,11 @@ const MainScreen = ({
       try {
         // Call your new API here
         // const USER_TOKEN = getToken();
-        const response = await fetch('http://192.168.1.10:8000/chat/general_prompt_response_stream', {
+        const response = await fetch('https://api-qa.resala.ai/chat/general_prompt_response_stream', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
+            // 'Access-Control-Allow-Origin': '*',
             Authorization: getToken(),
           },
           body: JSON.stringify({
@@ -1325,6 +1215,7 @@ const MainScreen = ({
             prompt_id: message.id,
             // Include other necessary parameters
           }),
+          signal: controller.signal, // Associate the AbortController with the request
         });
 
         if (!response.ok) {
@@ -1349,6 +1240,7 @@ const MainScreen = ({
             if (line.includes('connection closed')) {
               setIsTypewriterDone(false);
               setAllreadyStreamed(false);
+              setIsStreaming(false);
               // Set the typewriter state to false when "connection closed" is encountered
             } else {
               // Exclude lines containing "connection closed" and append the word
@@ -1361,14 +1253,6 @@ const MainScreen = ({
             // }
           }
         }
-
-        // Update the chat data with the accumulated message, without the "Loading..." message
-
-        // setChatData((prevMessages) => [
-        //   ...prevMessages.slice(0, loadingMessageIndex), // Keep all messages before the "Loading..." message
-        //   { msg: accumulatedMessage?.trim(), type: 'ai' }, // Add the new message
-        //   ...prevMessages.slice(loadingMessageIndex + 1), // Keep all messages after the "Loading..." message
-        // ]);
       } catch (error) {
         console.error('An error occurred:', error);
       }
@@ -1380,17 +1264,18 @@ const MainScreen = ({
       // Add the "Loading..." message initially
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       try {
-        const response = await fetch('http://192.168.1.10:8000/chat/stream_chat', {
+        const response = await fetch('https://api-qa.resala.ai/chat/stream_chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
+            // 'Access-Control-Allow-Origin': '*',
             Authorization: getToken(),
           },
           body: JSON.stringify({
             question: message,
             chatId: chatId,
           }),
+          signal: controller.signal, // Associate the AbortController with the request
         });
 
         // const response = await dispatch(userChatNew(payload));
@@ -1414,6 +1299,7 @@ const MainScreen = ({
             if (line.includes('connection closed')) {
               // Set the typewriter state to false when "connection closed" is encountered
               setAllreadyStreamed(false);
+              setIsStreaming(false);
               isTypewriterDone = true;
             } else {
               // Exclude lines containing "connection closed" and append the word
@@ -1436,24 +1322,24 @@ const MainScreen = ({
         setIsTypewriterDone(false);
       }
     } else if (message && isDocChat) {
-      console.log('chatdata', chatData);
       setChatData((prevMessages) => [...prevMessages, { msg: message, type: 'user' }]);
       let accumulatedMessage = ''; // To accumulate words
       let isTypewriterDone = false; // Initialize the typewriter state
       // Add the "Loading..." message initially
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       try {
-        const response = await fetch('http://192.168.1.10:8000/doc_chat/chat_document', {
+        const response = await fetch('https://api-qa.resala.ai/doc_chat/chat_document', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
+            // 'Access-Control-Allow-Origin': '*',
             Authorization: getToken(),
           },
           body: JSON.stringify({
             question: message,
             chatId: chatId,
           }),
+          signal: controller.signal, // Associate the AbortController with the request
         });
 
         // const response = await dispatch(userChatNew(payload));
@@ -1477,6 +1363,7 @@ const MainScreen = ({
             if (line.includes('connection closed')) {
               // Set the typewriter state to false when "connection closed" is encountered
               setAllreadyStreamed(false);
+              setIsStreaming(false);
               isTypewriterDone = true;
             } else {
               // Exclude lines containing "connection closed" and append the word
@@ -1500,15 +1387,24 @@ const MainScreen = ({
       }
     }
   };
-  const closeConnection = (abortController) => {
-    console.log('abortController', abortController);
-    abortController.abort(); // Cancel the connection
-    // Additional code to handle closing the connection, if needed
+
+  const handleStopButtonClick = () => {
+    // Check if there's an ongoing fetch request and abort it
+    if (abortController) {
+      const removedLoadingObj = Array.from(chatData).filter((itm) => itm.type !== 'loading');
+      setChatData(removedLoadingObj);
+      abortController.abort();
+      setAbortController(null); // Clear the abort controller
+      setIsTypewriterDone(false);
+      setAllreadyStreamed(false);
+      setIsStreaming(false);
+    }
   };
 
   const handleRegenerate = async () => {
     const updatedChatData = [...chatData];
     const loadingMessage = { msg: 'Loading...', type: 'loading' };
+    setIsStreaming(true);
 
     // Remove the last AI message and add the loading message
     if (updatedChatData[updatedChatData.length - 1].type === 'ai') {
@@ -1521,7 +1417,7 @@ const MainScreen = ({
     const payload = { chatId: chatId };
 
     try {
-      const response = await fetch('http://192.168.1.10:8000/chat/regenerate_stream_response', {
+      const response = await fetch('https://api-qa.resala.ai/chat/regenerate_stream_response', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1555,20 +1451,22 @@ const MainScreen = ({
             console.log('data', data);
             // console.log('data', data);
             if (line.includes('connection closed')) {
+              setIsStreaming(false);
               break;
             } else {
               accumulatedMessage += data + '';
             }
           }
-        }
+          // Remove the loading message and add the new AI message
+          // if (updatedChatData[updatedChatData.length - 1].type === 'loading') {
 
-        // Remove the loading message and add the new AI message
-        if (updatedChatData[updatedChatData.length - 1].type === 'loading') {
+          // }
           updatedChatData.pop();
           updatedChatData.push({ msg: accumulatedMessage?.trim(), type: 'ai' });
+          setChatData(updatedChatData);
         }
 
-        setChatData(updatedChatData);
+        // setIsStreaming(true);
       } else {
         throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
       }
@@ -1585,17 +1483,23 @@ const MainScreen = ({
     if (res.payload?.status === 200) {
       setChatInput({ chatText: '' });
       setChatData([]);
+      setIsStreaming(false);
+      setIsStreamingComp(false);
       setIsDocChat(false);
     }
   };
   const handleSelectItems = (id) => {
     if (id === 'chat') {
       handleNewChat();
+      setIsStreaming(false);
+      setIsStreamingComp(false);
     }
     if (id === 'doc') {
       setIsUploadDocument(true);
       dispatch(newChat());
       setChatData([]);
+      setIsStreaming(false);
+      setIsStreamingComp(false);
       setIsDocChat(false);
     }
   };
@@ -1666,11 +1570,13 @@ const MainScreen = ({
   const handleOpenPrompt = () => {
     setSettingsPopupBox(false);
     setAddPromptBox(!addPromptBox);
+    setIsViewPrompts(false);
   };
 
   const handleOpenSettings = () => {
     setAddPromptBox(false);
     setSettingsPopupBox(!settingsPopupBox);
+    setIsViewPrompts(false);
   };
 
   const handleChatHistory = () => {
@@ -1678,6 +1584,7 @@ const MainScreen = ({
     setAddPromptBox(false);
     setSettingsPopupBox(false);
     fetchChatHistoryList();
+    setIsViewPrompts(false);
   };
 
   const handleClose = () => {
@@ -1716,6 +1623,45 @@ const MainScreen = ({
     // Remove the event listener to prevent unnecessary calls
     document.removeEventListener('focusin', handleInputFieldFocus);
   };
+
+  const calculateTextareaRows = () => {
+    const content =
+      resultText[currentPageIndexTab1]?.output_text ||
+      resultTextRep[currentPageIndexTab2]?.output_text ||
+      selectedTemplate?.output_text ||
+      '';
+    const maxRows = 10; // Define your maximum number of rows
+    const lineBreaks = (content.match(/\n/g) || []).length;
+    const numRows = Math.min(maxRows, lineBreaks + 1); // Minimum is 1 row
+
+    return numRows;
+  };
+
+  useEffect(() => {
+    // Update the rows attribute when content changes
+    const numRows = calculateTextareaRows();
+    if (draftPreviewTextareaRef.current) {
+      draftPreviewTextareaRef.current.rows = numRows;
+    }
+  }, [resultText, resultTextRep, currentPageIndexTab1, currentPageIndexTab2, selectedTemplate]);
+
+  useEffect(() => {
+    const textarea = draftPreviewTextareaRef.current;
+
+    if (textarea) {
+      textarea.style.height = 'auto'; // Reset height to auto
+      textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to match the content
+    }
+  }, [resultText, resultTextRep, currentPageIndexTab1, currentPageIndexTab2, selectedTemplate]);
+
+  // useEffect(() => {
+  //   const textareaContainer = draftPreviewTextareaRef.current.parentNode;
+
+  //   if (textareaContainer) {
+  //     // Scroll down to the bottom of the container
+  //     textareaContainer.scrollTop = textareaContainer.scrollHeight;
+  //   }
+  // }, [resultText, currentPageIndex, selectedTemplate]);
 
   return (
     <>
@@ -1975,9 +1921,15 @@ const MainScreen = ({
                                       <div
                                         onClick={(e) => {
                                           // setGeneralPromptRes(true); // Add this line
+                                          // if (!isStreaming) {
+                                          // setController(new AbortController());
+                                          // setIsStreaming(true);
                                           handleSendMessage(e, item);
+
+                                          setIsViewPrompts(false);
                                           setIsViewPrompts(false);
                                           setIsTypewriterDone(true);
+                                          // }
                                         }}
                                         className="suggestion rounded-[6px] text-darkgray1 bg-lightblue1 p-[9px] text-[14px] cursor-pointer hover:bg-lightblue3"
                                         style={{ display: 'flex', flexDirection: 'column' }}
@@ -2047,68 +1999,6 @@ const MainScreen = ({
                     )}
                   </div>
                   <div className="bg-white w-[500px] items-center fixed right-0 bottom-0 p-[20px]">
-                    {/* <div
-                      ref={chatContainerRef}
-                      className="text-[12px] max-h-[440px] overflow-y-auto flex flex-col-reverse"
-                    >
-                      <div className="">
-                        {chatData.map((item) => {
-                          switch (item.type) {
-                            case 'user':
-                              return (
-                                <div id="chat-container" className="flex justify-end">
-                                  <div
-                                    className="bg-lightblue1 text-darkBlue max-w-[370px] p-[12px] flex flex-col rounded-tl-[6px] rounded-tr-[6px] rounded-br-0 rounded-bl-[6px] mb-[16px] text-[14px] "
-                                    style={{
-                                      boxShadow: '0px 2px 4px 0px #0000000D',
-                                      overflowWrap: 'break-word',
-                                    }}
-                                  >
-                                    {item.msg}
-                                  </div>
-                                </div>
-                              );
-                            case 'ai':
-                              return (
-                                <div id="chat-container" className="flex justify-start">
-                                  <div
-                                    className="message  bg-white max-w-[370px] border border-gray p-[12px] flex flex-col mb-[16px] rounded-tl-[6px] rounded-tr-[6px] rounded-br-[6px] rounded-br-0 rounded-bl-0 relative "
-                                    style={{
-                                      boxShadow: '0px 2px 4px 0px #0000000D',
-                                    }}
-                                  >
-                                    <div className="option flex items-center gap-2 bg-white absolute right-0 -top-[23px] border border-gray p-[8px] rounded-[6px]">
-                                      <span className="cursor-pointer">
-                                        <img src={ReadIcon} />
-                                      </span>
-                                      <span className="cursor-pointer">
-                                        <img src={CopyIcon} />
-                                      </span>
-                                    </div>
-
-                                    <pre className="font-dmsans" style={{ textWrap: 'wrap' }}>
-                                      {item.isNew && activeTab === 'chat' ? (
-                                        <Typewriter
-                                          text={item.msg}
-                                          delay={50}
-                                          setIsTypewriterDone={setIsTypewriterDone}
-                                          contentType="chat"
-                                        />
-                                      ) : (
-                                        <>{item.msg}</>
-                                      )}
-                                    </pre>
-                                  </div>
-                                </div>
-                              );
-                            case 'loading':
-                              return <img id="chat-container" className="w-[100px]" src={LoadingGif} />;
-                            default:
-                              return null;
-                          }
-                        })}
-                      </div>
-                    </div> */}
                     <ChatData
                       chatData={chatData}
                       setIsTypewriterDone={setIsTypewriterDone}
@@ -2117,36 +2007,9 @@ const MainScreen = ({
                       chatContainerRef={chatContainerRef}
                       activeTabSub={activeTabSub}
                       switchedTabs={switchedTabs}
+                      isStreaming={isStreaming}
                     />
-                    <div
-                      className="border rounded-md border-primaryBlue w-[138px] cursor-pointer"
-                      style={{
-                        position: 'absolute',
-                        right: '178px',
-                        top: '-45px',
-                      }}
-                      onClick={closeConnection}
-                    >
-                      <div className="flex gap-2 items-center px-[8px] py-[10px]">
-                        <img src={stopIcon} />
-                        <p className="text-primaryBlue text-[12px] font-medium">Stop Generating</p>
-                      </div>
-                    </div>
 
-                    {/* {!isTypewriterDone && chatData?.length >= 2 && (
-                      <div
-                        className="text-[12px] text-lightgray2 flex items-center gap-2 mb-[20px] cursor-pointer"
-                        onClick={() => {
-                          handleRegenerate();
-                          setIsTypewriterDone(true);
-                        }}
-                      >
-                        <span>
-                          <img src={RegenerateIcon} />
-                        </span>
-                        <span>Regenerate</span>
-                      </div>
-                    )} */}
                     {isUsePrompt ? (
                       <UsingPromptInputBox
                         handleSendMessage={handleSendMessage}
@@ -2162,27 +2025,23 @@ const MainScreen = ({
                     ) : (
                       <>
                         <div className="flex justify-between">
-                          {/* <button
-                            className="flex gap-1 items-center rounded-md bg-primaryBlue px-[6px] py-[6px] text-[12px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
-                            onClick={handleNewChat}
-                          >
-                            <img src={NewChatIcon} />
-                            New Chat
-                          </button> */}
                           <div className="flex gap-1">
                             {items.map((item) => (
                               <div
                                 key={item.id}
-                                className="flex new-btn p-[5px] items-center gap-1 bg-gray4 rounded-md cursor-pointer transition-transform duration-400"
+                                className="flex new-btn-without-scale p-[5px] items-center gap-1 bg-gray4 rounded-md cursor-pointer"
                                 // className="flex new-btn p-[5px] items-center gap-1 bg-gray4 rounded-md cursor-pointer"
-                                onMouseEnter={() => handleMouseEnter(item.id)}
-                                onMouseLeave={() => handleMouseLeave(item.id)}
+                                onMouseEnter={() => handleMouseEnterLeave(item.id, true)}
+                                onMouseLeave={() => handleMouseEnterLeave(item.id, false)}
                                 onClick={() => handleSelectItems(item.id)}
                               >
-                                <img className="w-[18px] h-[18px]" src={item.isHovered ? item.hoverImg : item.img} />
-                                {item.isHovered && <p className="text-[12px] text-darkblue">{item.label}</p>}
+                                <img
+                                  className={`w-[18px] h-[18px] ${item.isHovered ? 'hovered' : ''}`}
+                                  src={item.isHovered ? item.hoverImg : item.img}
+                                />
+                                <span className={`text-[12px]`}>{item.label}</span>
                               </div>
-                            ))}
+                            ))}{' '}
                           </div>
                           <div className="flex gap-[15px] items-center">
                             <button className="w-[20px] h-[20px]" onClick={handleChatHistory}>
@@ -2264,29 +2123,11 @@ const MainScreen = ({
                                 }}
                               >
                                 <div className="text-[12px] font-medium text-gray1 px-[8px] py-[4px]">CHAT SETTING</div>
-                                <div className="text-[14px] flex items-center gap-2 text-darkblue bg-gray4 px-[8px] py-[4px] rounded-[4px]">
+                                <div className="text-[14px] flex items-center gap-2 text-darkblue bg-gray4 px-[6px] py-[4px] rounded-[4px]">
                                   <img src={TranslateIcon} />
                                   Response Language
                                 </div>
-                                {/* <Dropdown
-                                  className="border border-gray rounded-md text-[10px] p-[4px]"
-                                  options={outputlanguages}
-                                  // onChange={this._onSelect}
-                                  value={defaultLanguage}
-                                  placeholder="Select template type"
-                                  arrowClosed={
-                                    <img
-                                      className="absolute top-[50%] -translate-y-[50%] right-[0] w-[16px] h-[16px]"
-                                      src={ArrowDown}
-                                    />
-                                  }
-                                  arrowOpen={
-                                    <img
-                                      className="absolute top-[50%] -translate-y-[50%] right-[0] w-[16px] h-[16px] rotate-180"
-                                      src={ArrowDown}
-                                    />
-                                  }
-                                /> */}
+
                                 <div ref={selectRef}>
                                   <Select
                                     className="border border-gray text-gray1 hover:text-darkBlue rounded-md text-[14px] py-[4px] px-[6px]"
@@ -2338,43 +2179,15 @@ const MainScreen = ({
                                     }}
                                   />
                                 </div>
-                                {/* <div className="relative">
-                                  <select
-                                    id="languages"
-                                    className="appearance-none h-5 border border-gray text-[10px] rounded-[4px] block w-full pl-2.5 pr-8 bg-white hover:bg-gray-100 focus:ring"
-                                  >
-                                    <option selected value="EN">
-                                      English
-                                    </option>
-                                    <option value="ARB" className="bg-blue-100 hover:bg-lightgray1">
-                                      Arabic
-                                    </option>
-                                    <option value="FR" className="bg-green-100 hover:bg-lightgray1">
-                                      France
-                                    </option>
-                                    <option value="DE" className="bg-yellow-100 hover:bg-lightgray1">
-                                      Germany
-                                    </option>
-                                  </select>
-                                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray pointer-events-none">
-                                    <svg
-                                      className="w-4 h-4"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 20 20"
-                                      fill="#19224C"
-                                    >
-                                      <path
-                                        fill-rule="evenodd"
-                                        d="M6.293 7.293a1 1 0 011.414 0L10 9.586l2.293-2.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-                                        clip-rule="evenodd"
-                                      />
-                                    </svg>
-                                  </div>
-                                </div> */}
                               </div>
                             </div>
 
-                            <button className="w-[20px] h-[20px]">
+                            <button
+                              onClick={() => {
+                                setIsViewPrompts(false);
+                              }}
+                              className="w-[20px] h-[20px]"
+                            >
                               <img src={MuteIcon} />
                             </button>
                           </div>
@@ -2382,6 +2195,10 @@ const MainScreen = ({
                         <div className="mt-2 relative">
                           <form
                             onSubmit={(e) => {
+                              // if (!isStreaming) {
+                              // setController(new AbortController());
+                              // setIsStreaming(true);
+
                               handleSendMessage(e, chatInput.chatText);
                               setChatInput({
                                 ...chatInput,
@@ -2389,6 +2206,7 @@ const MainScreen = ({
                               });
                               setIsViewPrompts(false);
                               setIsTypewriterDone(true);
+                              // }
                             }}
                             className="mb-[10px]"
                           >
@@ -2417,23 +2235,7 @@ const MainScreen = ({
                                     {isAudioInfoPopup && <HowToUseInfoBox setIsAudioInfoPopup={setIsAudioInfoPopup} />}
                                     <div className="inputLanguage flex items-center gap-2 text-[12px] relative text-darkBlue">
                                       <div className="">Language</div>
-                                      {/* <Dropdown
-                                        className=" border border-gray rounded-md text-[10px] p-[4px] w-[100px]"
-                                        options={outputlanguages}
-                                        value={defaultLanguage}
-                                        arrowClosed={
-                                          <img
-                                            className="absolute top-[50%] -translate-y-[50%] right-[0] w-[16px] h-[16px]"
-                                            src={ArrowDown}
-                                          />
-                                        }
-                                        arrowOpen={
-                                          <img
-                                            className="absolute top-[50%] -translate-y-[50%] right-[0] w-[16px] h-[16px] rotate-180"
-                                            src={ArrowDown}
-                                          />
-                                        }
-                                      /> */}
+
                                       <div ref={selectRef}>
                                         <Select
                                           className="border border-gray rounded-md text-[12px]"
@@ -2488,12 +2290,7 @@ const MainScreen = ({
                                     </div>
                                   </div>
                                 </div>
-                                {/* <SpeechToText /> */}
-                                {/* <div
-                                  className={`flex justify-between gap-2 items-center bg-primaryBlue px-[8px] py-[12px] text-[12px] text-white rounded-[6px] ${
-                                    isMicEnabled ? '' : 'opacity-40'
-                                  }`}
-                                > */}
+
                                 {(micPermission === 'granted' || micPermission !== 'granted') &&
                                   startSpeech &&
                                   !micClicked && (
@@ -2572,9 +2369,13 @@ const MainScreen = ({
                                       className="flex gap-2 items-center"
                                       // onClick={() => handleSelectVoice(transcript)}
                                       onClick={(e) => {
+                                        // if (!isStreaming) {
+                                        // setController(new AbortController());
+                                        // setIsStreaming(true);
+
                                         handleSendMessage(e, transcript);
                                         setIsTypewriterDone(true);
-
+                                        setIsViewPrompts(false);
                                         setAudioInput(false);
                                         setMicClicked(false);
                                         setAudioInput(false);
@@ -2587,6 +2388,7 @@ const MainScreen = ({
                                         setMicClicked(false);
                                         resetTranscript();
                                         setIsViewPrompts(false);
+                                        // }
                                       }}
                                     >
                                       <img src={MicrophoneWhiteIcon} />
@@ -2605,35 +2407,6 @@ const MainScreen = ({
                                     </div>
                                   </div>
                                 )}
-                                {/* <div className="flex justify-between gap-2 items-center bg-yellow px-[8px] py-[12px] text-[12px] text-white rounded-[6px]">
-                                    <div className="flex gap-2 items-center">
-                                      <img src={MicrophoneWhiteIcon} />
-                                      Please allow Resala to use your microphone
-                                    </div>
-                                    <div onClick={() => console.log("closed")}>
-                                      <img src={SmallClose} />
-                                    </div>
-                                  </div> */}
-                                {/* <div className="flex justify-between gap-2 items-center bg-green px-[8px] py-[12px] text-[12px] text-white rounded-[6px]">
-                                    <div className="flex gap-2 items-center">
-                                      <img src={MicrophoneWhiteIcon} />
-                                      Listening. Click again to submit, Esc to cancel
-                                    </div>
-                                    <div onClick={() => console.log("closed")}>
-                                      <img src={SmallClose} />
-                                    </div>
-                                  </div> */}
-                                {/* <div className="flex justify-between gap-2 items-center bg-green px-[8px] py-[12px] text-[12px] text-white rounded-[6px]">
-                                    <div className="flex gap-2 items-center">
-                                      <img src={MicrophoneWhiteIcon} />
-                                      <div className="cursor-pointer" onClick={(e) => handleInputFromAudio(e)}>
-                                        Hello, How are you?
-                                      </div>
-                                    </div>
-                                    <div onClick={() => console.log("closed")}>
-                                      <img src={SmallClose} />
-                                    </div>
-                                  </div> */}
                               </div>
                             ) : (
                               // <AudioInput
@@ -2649,10 +2422,16 @@ const MainScreen = ({
                               //   handleSendMessage={handleSendMessage}
                               //   setIsTypewriterDone={setIsTypewriterDone}
                               // />
-                              <div className="flex items-top gap-4 border border-gray p-[10px] rounded-lg">
+                              <div
+                                className={`flex items-top gap-4 border border-gray p-[10px] rounded-lg ${
+                                  chatType === 'summarize' ? 'blur-sm shadow-md pointer-events-none' : '' // Add the blur class conditionally
+                                }`}
+                              >
                                 <div
-                                  className="flex items-center justify-center w-[24px] h-[24px] rounded-full cursor-pointer"
-                                  onClick={() => handleAudioInput()}
+                                  className={`flex items-center justify-center w-[24px] h-[24px] rounded-full cursor-pointer ${
+                                    isStreaming ? 'disabled cursor-default' : ''
+                                  }`}
+                                  onClick={() => !isStreaming && handleAudioInput()} // Conditionally set the onClick handler
                                   style={{
                                     boxShadow: '0px 0px 10px 0px #00000026',
                                   }}
@@ -2660,7 +2439,7 @@ const MainScreen = ({
                                   <img src={MicrophoneIcon} />
                                 </div>
                                 <textarea
-                                  style={{ resize: 'none' }}
+                                  style={{ resize: 'none', backgroundColor: isStreaming ? 'white' : '' }}
                                   id="chatText"
                                   name="chatText"
                                   rows="5"
@@ -2669,8 +2448,12 @@ const MainScreen = ({
                                   className="text-[14px] pt-[5px] block w-[349px] rounded-lg focus:outline-0"
                                   onChange={(e) => handleChange(e)}
                                   onKeyDown={(e) => {
+                                    // if (!isStreaming) {
                                     if (e.key === 'Enter' && !e.shiftKey) {
                                       e.preventDefault();
+                                      // setController(new AbortController());
+                                      // setIsStreaming(true);
+
                                       handleSendMessage(e, chatInput.chatText);
                                       setChatInput({
                                         ...chatInput,
@@ -2679,10 +2462,12 @@ const MainScreen = ({
                                       setIsViewPrompts(false);
                                       setIsTypewriterDone(true);
                                     }
+                                    // }
                                   }}
+                                  disabled={isStreaming}
                                 />
                                 {/* {errors.chatText && <p className="text-red text-[12px]">{errors.chatText}</p>} */}
-                                {!chatLoading && (
+                                {!isStreaming && !chatLoading && (
                                   <button
                                     className={`absolute top-[12px] right-[12px] w-[20px] h-[20px] cursor-pointer focus:outline-0  ${
                                       chatLoading ? 'opacity-50 cursor-not-allowed' : ''
@@ -2704,6 +2489,25 @@ const MainScreen = ({
                       </>
                     )}
                   </div>
+                  {isStreaming && (
+                    <div
+                      className="border rounded-md border-primaryBlue w-[138px] cursor-pointer"
+                      style={{
+                        position: 'absolute',
+                        right: '178px',
+                        bottom: '200px',
+                        boxShadow: '0px 10px 30px 0px #3C425726',
+                      }}
+                      onClick={() => {
+                        handleStopButtonClick();
+                      }}
+                    >
+                      <div className="flex gap-2 items-center px-[8px] py-[10px]">
+                        <img src={stopIcon} />
+                        <p className="text-primaryBlue text-[12px] font-medium">Stop Generating</p>
+                      </div>
+                    </div>
+                  )}
                 </Tab.Panel>
                 {activeTab !== QUICKREPLY && (
                   <Tab.Panel key="compose" data-headlessui-state="selected">
@@ -2720,7 +2524,7 @@ const MainScreen = ({
                               position: 'sticky',
                               top: '57px',
                               zIndex: '20px',
-                              boxShadow: '0px 2px 8px 0px #0000000D',
+                              // boxShadow: '0px 2px 8px 0px #0000000D',
                             }}
                           >
                             <img src={TemplatesIcon} />
@@ -2979,7 +2783,7 @@ const MainScreen = ({
                                       name="action"
                                       key={action?.name}
                                       value={action}
-                                      onClick={(e) => handleInputAction(e, index, action)}
+                                      onClick={(e) => handleInputAction(action)}
                                       className={({ checked }) =>
                                         classNames(
                                           'cursor-pointer text-darkBlue',
@@ -3011,7 +2815,7 @@ const MainScreen = ({
                                       name="action"
                                       key={action?.name}
                                       value={action}
-                                      onClick={(e) => handleInputAction(e, index, action)}
+                                      onClick={(e) => handleInputAction(action)}
                                       className={({ checked }) =>
                                         classNames(
                                           'cursor-pointer text-darkBlue',
@@ -3131,17 +2935,6 @@ const MainScreen = ({
                         {selectTab === 1 ? (
                           <button
                             type="submit"
-                            // className={`flex text-[16px] w-full justify-center rounded-md bg-primaryBlue px-3 py-2 text-sm leading-6 text-white shadow-sm hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
-                            //   Loading ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
-                            // } ${
-                            //   selectTab === 1 && !selectedText.input_text
-                            //     ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
-                            //     : ''
-                            // } ${
-                            //   selectTab === 2 && (!selectedText.input_text || !replyText.reply)
-                            //     ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
-                            //     : ''
-                            // }  `}
                             className={`flex text-[16px] w-full justify-center focus:outline-none rounded-md bg-primaryBlue px-3 py-2 text-sm leading-6 text-white shadow-sm hover:opacity-90  ${
                               compLoading ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
                             } ${
@@ -3248,7 +3041,7 @@ const MainScreen = ({
                           </button>
                         )}
                       </div>
-                      {composeRes && (
+                      {composeRes && hasResultText && selectTab === 1 && (
                         <div className="pb-[20px]">
                           <div className="flex justify-between item-center">
                             <div className="flex gap-2 items-center">
@@ -3258,21 +3051,35 @@ const MainScreen = ({
                               >
                                 DRAFT PREVIEW
                               </label>
-                              <div className="flex gap-1">
-                                <div className="cursor-pointer">
-                                  <img className="w-[16px] h-[16px]" src={prevIcon} />
+                              {resultText.length > 1 && (
+                                <div className="flex gap-1">
+                                  <div
+                                    className="cursor-pointer"
+                                    onClick={() => setCurrentPageIndexTab1((prevIndex) => Math.max(prevIndex - 1, 0))}
+                                  >
+                                    <img className="w-[16px] h-[16px]" src={prevIcon} alt="Previous" />
+                                  </div>
+                                  <div className="text-[12px] flex items-center">
+                                    <div className="text-darkBlue font-medium w-[18px] text-center">
+                                      {currentPageIndexTab1 + 1}
+                                    </div>
+                                    <div className="text-gray1 w-[4px] text-center">/</div>
+                                    <div className="text-gray1 w-[18px] text-center"> {resultText.length}</div>
+                                  </div>
+                                  <div
+                                    className="cursor-pointer"
+                                    onClick={() =>
+                                      setCurrentPageIndexTab1((prevIndex) =>
+                                        Math.min(prevIndex + 1, resultText.length - 1)
+                                      )
+                                    }
+                                  >
+                                    <img className="w-[16px] h-[16px]" src={nextIcon} alt="Next" />
+                                  </div>
                                 </div>
-                                <div className="text-[12px]">
-                                  <span className="text-darkBlue font-medium">1 </span>
-                                  <span className="text-gray1">/</span>
-                                  <span className="text-gray1"> 3</span>
-                                </div>
-                                <div className="cursor-pointer">
-                                  <img className="w-[16px] h-[16px]" src={nextIcon} />
-                                </div>
-                              </div>
+                              )}
                             </div>
-                            {!isDraftPrev && (
+                            {!isStreamingComp && (
                               <div>
                                 <button
                                   className="flex gap-1 items-center w-full rounded-md bg-white text-[12px] font-medium text-primaryBlue"
@@ -3288,11 +3095,13 @@ const MainScreen = ({
                                 />
                               </div>
                             )}
-                            {isDraftPrev && (
+                            {isStreamingComp && (
                               <div>
                                 <button
                                   className="flex gap-1 items-center w-full rounded-md bg-white text-[12px] font-medium text-primaryBlue"
-                                  // onClick={() => setSaveTemplateBox(true)}
+                                  onClick={() => {
+                                    handleStopDraft;
+                                  }}
                                 >
                                   <span className="text-primaryBlue">Stop</span>
                                   <img src={StopResIcon} />
@@ -3302,36 +3111,42 @@ const MainScreen = ({
                           </div>
                           {/* {!selectedTemplate ? ( */}
                           {activeTab === 'chat' && isNewDraft ? (
-                            <Typewriter
-                              text={
-                                resultText.output_text
-                                  ? resultText.output_text
-                                  : resultText
-                                  ? resultText
+                            // <div className="textarea-container">
+                            <textarea
+                              ref={draftPreviewTextareaRef}
+                              style={{ resize: 'none', minHeight: '3em' }}
+                              id="draftPreview"
+                              name="draftPreview"
+                              // rows={calculateTextareaRows() || 2}
+                              value={
+                                resultText[currentPageIndexTab1]?.output_text
+                                  ? resultText[currentPageIndexTab1]?.output_text
                                   : selectedTemplate?.output_text
                               }
-                              delay={10}
-                              setIsTypewriterDone={setIsTypewriterDone}
-                              setIsDraftPrev={setIsDraftPrev}
-                              contentType="compose"
+                              placeholder=" "
+                              className="text-[14px] border-gray block w-full rounded-md border p-1.5"
                             />
                           ) : (
+                            // </div>
                             <textarea
-                              style={{ resize: 'none' }}
+                              ref={draftPreviewTextareaRef}
+                              style={{ resize: 'none', minHeight: '3em', maxHeight: '300px' }}
                               id="draftPreview"
                               name="draftPreview"
                               // rows="22"
-                              value={resultText ? resultText?.output_text : selectedTemplate?.output_text}
+                              // rows={calculateTextareaRows() || 2}
+                              value={
+                                resultText[currentPageIndexTab1]?.output_text
+                                  ? resultText[currentPageIndexTab1]?.output_text
+                                  : selectedTemplate?.output_text
+                              }
                               placeholder=" "
                               className="text-[14px] border-gray block h-[306px] w-full rounded-md border p-1.5"
                             />
                           )}
-                          {/* ) : ( */}
-
-                          {/* )} */}
                         </div>
                       )}
-                      {composeRes && !state?.edit && (
+                      {composeRes && hasResultText && !state?.edit && selectTab === 1 && (
                         <div className="mt-1">
                           <div className="flex gap-2 items-center">
                             <button
@@ -3354,6 +3169,142 @@ const MainScreen = ({
                             <button
                               className="w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 disabled:cursor-none disabled:opacity-50"
                               disabled={resultText !== '' ? '' : 'disabled'}
+                              onClick={handleApply}
+                              type="button"
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {composeRes && hasResultTextRep && selectTab === 2 && (
+                        <div className="pb-[20px]">
+                          <div className="flex justify-between item-center">
+                            <div className="flex gap-2 items-center">
+                              <label
+                                for="input"
+                                className="block text-[12px] font-bold leading-6 text-gray1 whitespace-nowrap"
+                              >
+                                DRAFT PREVIEW
+                              </label>
+                              {resultTextRep.length > 1 && (
+                                <div className="flex gap-1">
+                                  <div
+                                    className="cursor-pointer"
+                                    onClick={() => setCurrentPageIndexTab2((prevIndex) => Math.max(prevIndex - 1, 0))}
+                                  >
+                                    <img className="w-[16px] h-[16px]" src={prevIcon} alt="Previous" />
+                                  </div>
+                                  <div className="text-[12px]  flex items-center">
+                                    <div className="text-darkBlue font-medium w-[18px] text-center">
+                                      {currentPageIndexTab2 + 1}
+                                    </div>
+                                    <div className="text-gray1 w-[4px] text-center">/</div>
+                                    <div className="text-gray1 w-[18px] text-center"> {resultTextRep.length}</div>
+                                  </div>
+                                  <div
+                                    className="cursor-pointer"
+                                    onClick={() =>
+                                      setCurrentPageIndexTab2((prevIndex) =>
+                                        Math.min(prevIndex + 1, resultTextRep.length - 1)
+                                      )
+                                    }
+                                  >
+                                    <img className="w-[16px] h-[16px]" src={nextIcon} alt="Next" />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                            {!isStreamingComp && (
+                              <div>
+                                <button
+                                  className="flex gap-1 items-center w-full rounded-md bg-white text-[12px] font-medium text-primaryBlue"
+                                  onClick={() => setSaveTemplateBox(true)}
+                                >
+                                  <span className="text-primaryBlue">Save Template</span>
+                                  <img src={SaveTemplate} />
+                                </button>
+                                <SaveTemplatePopup
+                                  setSaveTemplateBox={setSaveTemplateBox}
+                                  saveTemplateBox={saveTemplateBox}
+                                  draftResponse={resultTextRep}
+                                />
+                              </div>
+                            )}
+                            {isStreamingComp && (
+                              <div>
+                                <button
+                                  className="flex gap-1 items-center w-full rounded-md bg-white text-[12px] font-medium text-primaryBlue"
+                                  onClick={() => {
+                                    handleStopDraft;
+                                  }}
+                                >
+                                  <span className="text-primaryBlue">Stop</span>
+                                  <img src={StopResIcon} />
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                          {/* {!selectedTemplate ? ( */}
+                          {activeTab === 'chat' && isNewDraft ? (
+                            <textarea
+                              ref={draftPreviewTextareaRef}
+                              style={{ resize: 'none', minHeight: '3em' }}
+                              id="draftPreview"
+                              name="draftPreview"
+                              rows="5"
+                              value={
+                                resultTextRep[currentPageIndexTab2]?.output_text
+                                  ? resultTextRep[currentPageIndexTab2]?.output_text
+                                  : selectedTemplate?.output_text
+                              }
+                              placeholder=" "
+                              className="text-[14px] border-gray block w-full rounded-md border p-1.5"
+                            />
+                          ) : (
+                            <textarea
+                              style={{ resize: 'none' }}
+                              id="draftPreview"
+                              name="draftPreview"
+                              // rows="22"
+                              value={
+                                resultTextRep[currentPageIndexTab2]?.output_text
+                                  ? resultTextRep[currentPageIndexTab2]?.output_text
+                                  : selectedTemplate?.output_text
+                              }
+                              placeholder=" "
+                              className="text-[14px] border-gray block h-[306px] w-full rounded-md border p-1.5"
+                            />
+                          )}
+                          {/* ) : ( */}
+
+                          {/* )} */}
+                        </div>
+                      )}
+                      {composeRes && hasResultTextRep && !state?.edit && selectTab === 2 && (
+                        <div className="mt-1">
+                          <div className="flex gap-2 items-center">
+                            <button
+                              className="w-full rounded-md focus:outline-none bg-white px-1 py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
+                              onClick={(e) => {
+                                handleGenerateDraft(e);
+                                setComposeRes(false);
+                              }}
+                              disabled={resultTextRep !== '' ? '' : 'disabled'}
+                            >
+                              Regenerate
+                            </button>
+                            <button
+                              className="w-full rounded-md bg-white px-1 focus:outline-none py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
+                              disabled={resultTextRep !== '' ? '' : 'disabled'}
+                              onClick={handleCopyDraft}
+                            >
+                              Copy
+                            </button>
+                            <button
+                              className="w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 disabled:cursor-none disabled:opacity-50"
+                              disabled={resultTextRep !== '' ? '' : 'disabled'}
                               onClick={handleApply}
                               type="button"
                             >
@@ -3444,6 +3395,13 @@ const MainScreen = ({
               isUploadDocument={isUploadDocument}
               setIsUploadDocument={setIsUploadDocument}
               setIsDocChat={setIsDocChat}
+              setIsStreaming={setIsStreaming}
+              isStreaming={isStreaming}
+              abortController={abortController}
+              setAbortController={setAbortController}
+              setAllreadyStreamed={setAllreadyStreamed}
+              alreadyStreamed={alreadyStreamed}
+              setChatType={setChatType}
             />
             <ChatHistory
               chatData={chatData}
@@ -3454,6 +3412,8 @@ const MainScreen = ({
               setChatsHistroy={setChatsHistroy}
               chatsHistory={chatsHistory}
               fetchChatHistoryList={fetchChatHistoryList}
+              setHistoryType={setHistoryType}
+              setSearchChatHis={setSearchChatHis}
             />
           </div>
         </Header>
