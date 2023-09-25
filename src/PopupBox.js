@@ -10,6 +10,7 @@ import ExplainIcon from './utils/PopupBox/Icons/ExplainIcon.svg';
 import TranslateIcon from './utils/PopupBox/Icons/TranslateIcon.svg';
 import TemplateIcon from './utils/PopupBox/Icons/TemplateIcon.svg';
 import ArrowDown from './utils/PopupBox/Icons/ArrowDown.svg';
+import ResalaIcon from './utils/ResalaIcon.svg';
 import PinIcon from './utils/PopupBox/Icons/PinIcon.svg';
 import PinnedIcon from './utils/PopupBox/Icons/PinnedIcon.svg';
 import { useNavigate } from 'react-router-dom';
@@ -37,6 +38,16 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
     },
   ]);
 
+  useEffect(() => {
+    let localPinnedItems =  localStorage.getItem('pinnedItems')
+    let localAreItemsPinned =  localStorage.getItem('areItemsPinned')
+    if(localPinnedItems){
+      localPinnedItems = JSON.parse(localPinnedItems);
+      setPinnedItems(localPinnedItems)
+      setItemsPinned(localAreItemsPinned);
+    }
+  }, []);
+
   const [menuClasses, setMenuClasses] = useState(
     'absolute top-full right-0 z-50 w-44 bg-white px-5 py-4 rounded-lg hidden'
   );
@@ -57,17 +68,22 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
         icon: icon,
         name: title,
       };
-      setItemsPinned(areItemsPinned + 1);
+      let newAreItemsPinned = parseInt(areItemsPinned) - 1;
+      localStorage.setItem('areItemsPinned',newAreItemsPinned);
+      setItemsPinned(newAreItemsPinned);
     } else {
       newItem = {
         pinned: true,
         icon: icon,
         name: title,
       };
-      setItemsPinned(areItemsPinned - 1);
+      let newAreItemsPinned = parseInt(areItemsPinned) + 1;
+      localStorage.setItem('areItemsPinned',newAreItemsPinned);
+      setItemsPinned(newAreItemsPinned);
     }
-
+    
     tempArr[index] = newItem;
+    localStorage.setItem('pinnedItems',JSON.stringify(tempArr));
     setPinnedItems(tempArr);
   };
 
@@ -90,7 +106,7 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
     position: 'absolute',
     top: positionY,
     left: positionX,
-    transform: 'translate(-50%, 0)',
+    // transform: 'translate(-50%, 0)',
   };
 
   return (
@@ -103,10 +119,10 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
         <div className="inline-flex relative" onMouseEnter={handleMenu} onMouseLeave={handleMenu}>
           <div className="flex bg-white items-center gap-2 p-1 pr-1.5 border border-solid border-slate-300 rounded-full">
             <div className="flex items-center gap-2">
-              <div className="rounded-full bg-primaryBlue w-5 h-5 flex items-center justify-center text-xs text-white cursor-pointer">
-                L
+              <div className="rounded-full w-8 h-5 flex items-center justify-center text-xs text-white cursor-pointer">
+              <img className="ml-[8px] w-[24px] min-w-[24px] h-[24px] mr-[16px]" src={ResalaIcon} />
               </div>
-              <div className="text-xs inline-flex justify-center items-center gap-2 ">
+              <div className={`text-xs inline-flex justify-center items-center gap-2 ${pinnedItems.some(item => !item.pinned) ? 'min-w-[12px]': ''}`}>
                 {pinnedItems.map((pin, index) => (
                   <React.Fragment key={index}>
                     {pin.pinned ? (
@@ -116,15 +132,15 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
                           className="flex justify-center items-center gap-2 cursor-pointer"
                           onClick={() => handleSidebar(SELECTION,pin.name)}
                         >
-                          <img src={pin.icon} />
-                          <span>{pin.name}</span>
+                          <img src={pin.icon} className='min-w-[12px] min-h-[12px]' />
+                          { pinnedItems.some(item => !item.pinned) ? <span>{pin.name}</span> : ''}
                         </div>
                         {pinnedItems?.length - 1 !== index ? <div className="bg-slate-300 w-px h-3 mx-0.5"></div> : ''}
                       </>
                     ) : null}
                   </React.Fragment>
                 ))}
-                {areItemsPinned == 0 ? <div className="cursor-pointer">Select</div> : ''}
+                {areItemsPinned == 0 ? <div className="cursor-pointer flex mr-[8px]">Select <img className='ml-[4px]' src={ArrowDown} /> </div> : <img className='ml-[4px]' src={ArrowDown} />}
               </div>
             </div>
             <div className="arrow cursor-pointer">

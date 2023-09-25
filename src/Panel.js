@@ -103,8 +103,11 @@ export default function Panel() {
       // Add the height of the element to position it below the selected text
       const positionY = rect.top + window.scrollY + rect.height + 20;
 
+      document.getElementById('selectmenu').style.display = 'block'
       setPoistionX(positionX + window.scrollX);
       setPoistionY(positionY + window.scrollY);
+    }else{
+      document.getElementById('selectmenu').style.display = 'none'
     }
   }
 
