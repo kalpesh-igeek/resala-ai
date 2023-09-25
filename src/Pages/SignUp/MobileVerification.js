@@ -83,16 +83,6 @@ const MobileVerification = () => {
     setIsVisisbleWhatAppButton(!isVisibleWhatAppButton);
   };
   const handleOnChange = (value, country) => {
-    // const numericValue = value.replace(/[^0-9]/g, '');
-
-    // if (numericValue?.length === 0) {
-    //   setValidationError('Phone number is required.');
-    // } else if (numericValue?.length !== country.dialCode?.length + 10) {
-    //   setValidationError('Invalid phone number length.');
-    // } else {
-    //   setValidationError('');
-    // }
-
     setPhoneNumber(value);
     setInputValue({
       is_whatapp: inputValue.is_whatapp,
@@ -100,32 +90,6 @@ const MobileVerification = () => {
       country_code: `+${country.dialCode}`,
     });
   };
-
-  // useEffect(() => {
-  //   const names = getCountries();
-  //   // const namess = countryNames;
-
-  //   // if (searchInput) {
-  //   //   const filteredData = names.filter((el) => {
-  //   //     if (searchInput === '') {
-  //   //       return el;
-  //   //     } else {
-  //   //       const fi = names.findIndex((data) => data.toLowerCase() == searchInput.toLowerCase());
-  //   //       if (fi >= 0) {
-  //   //         return el.toLowerCase().includes(searchInput.toLowerCase());
-  //   //       } else {
-  //   //         return (
-  //   //           el.toLowerCase().includes(searchInput.toLowerCase()) ||
-  //   //           namess[el].toLowerCase().includes(searchInput.toLowerCase())
-  //   //         );
-  //   //       }
-  //   //     }
-  //   //   });
-  //   //   setcountries(filteredData);
-  //   // } else {
-  //   // }
-  //   setcountries(names);
-  // }, []);
 
   return (
     <>
@@ -149,69 +113,6 @@ const MobileVerification = () => {
             inputClass="my-input-class" // Add this line
           /> */}
           <SelectMobileNumber />
-
-          {/* <PhoneNumberInput
-            // key={i}
-            // number={val?.number}
-            // setNumber={(dsn) => {
-            //   const tempPT = Array.from(phoneData);
-            //   if (tempPT) {
-            //     tempPT[i].number = dsn;
-            //   }
-            //   setPhoneData(tempPT);
-            // }}
-            countries={countries}
-            setcountries={setcountries}
-            // country={val?.country || 'US'}
-            // setCountry={(dsn) => {
-            //   const tempPT = Array.from(phoneData);
-            //   if (tempPT) {
-            //     tempPT[i].country = dsn;
-            //   }
-            //   setPhoneData(tempPT);
-            // }}
-            // countryCode={val?.countryCode || '1'}
-            // setCountryCode={(dsn) => {
-            //   const tempPT = Array.from(phoneData);
-            //   if (tempPT) {
-            //     tempPT[i].countryCode = dsn;
-            //   }
-            //   setPhoneData(tempPT);
-            // }}
-            // isdropdown={isdropdown.length ? isdropdown[i] : false}
-            // setIsdropdown={(dIDD) => {
-            //   const ADIDD = Array.from(isdropdown);
-            //   if (ADIDD.length) {
-            //     const extra = ADIDD.map((madd, ind) => {
-            //       if (ind == i) {
-            //         return dIDD;
-            //       }
-            //       return false;
-            //     });
-            //     setIsdropdown(extra);
-            //   }
-            // }}
-            // isvalid={isvalid.length ? isvalid[i] : true}
-            // setisvalid={(temp) => {
-            //   const info = Array.from(isvalid);
-            //   // console.log(temp, info, "56156156135");
-            //   if (info.length) {
-            //     const message = info.map((madd, ind) => {
-            //       if (ind == i) {
-            //         return temp;
-            //       }
-            //       return madd;
-            //     });
-            //     setisvalid(message);
-            //   }
-            // }}
-            // searchInput={searchInput}
-            // setSearchInput={setSearchInput}
-            // index={i}
-          /> */}
-          {/* <PhoneNumberInput /> */}
-          {/* {errors && <p className="text-red text-[12px]">{errors}</p>} */}
-          {/* {validationError && <p className="text-red text-[12px] mt-1">{validationError}</p>} */}
         </div>
         <div className="flex items-center justify-between mt-[10px]">
           <div className="inline-flex items-center gap-1 text-gray2 text-[14px]">

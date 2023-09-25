@@ -18,7 +18,7 @@ export default function DeletePopup({
 
   const handleDeleteTemplate = async (e) => {
     e.stopPropagation();
-    if (deleteContent == '1') {
+    if (deleteChatIndex) {
       const res = await dispatch(deleteChatHistory(deleteChatIndex));
       if (!res.payload) {
         return;

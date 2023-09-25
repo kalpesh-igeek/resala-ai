@@ -24,6 +24,8 @@ import Icons from './Icons';
 import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import Select, { components } from 'react-select';
+import { formatDistanceToNow } from 'date-fns';
+import { utcToZonedTime, format } from 'date-fns-tz';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -31,10 +33,10 @@ function classNames(...classes) {
 
 const chatTypes = [
   { title: 'All chat history', icon: AllChatIcon },
+  { title: 'Chat', icon: ChatIcon },
+  { title: 'Doc chat', icon: DocChatIcon },
   { title: 'Web summary', icon: WebSummeryIcon },
   { title: 'Youtube summary', icon: YoutubeIcon },
-  { title: 'Doc chat', icon: DocChatIcon },
-  { title: 'Chat', icon: ChatIcon },
 ];
 
 const filesListData = [
@@ -163,6 +165,8 @@ const ChatHistory = ({
   setChatsHistroy,
   chatsHistory,
   fetchChatHistoryList,
+  setHistoryType,
+  setSearchChatHis,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -204,25 +208,25 @@ const ChatHistory = ({
   //   }
   // };
 
-  const handleChatTypeChange = (option) => {
-    if (option.value === 'Doc chat') {
-      setIsDocChat(true);
-      setShowOptions(false); // Hide options when 'Doc chat' is selected
-    } else {
-      setIsDocChat(false);
-      setShowOptions(true); // Show options for other chat types
-    }
+  // const handleChatTypeChange = (option) => {
+  //   if (option.value === 'Doc chat') {
+  //     setIsDocChat(true);
+  //     setShowOptions(false); // Hide options when 'Doc chat' is selected
+  //   } else {
+  //     setIsDocChat(false);
+  //     setShowOptions(true); // Show options for other chat types
+  //   }
 
-    setSelectedChatType(option.value);
+  //   setSelectedChatType(option.value);
 
-    let tempArr = Array.from(historyData);
-    let newArray = tempArr.filter((item) => item.type === option.value);
-    if (option.value === 'All chat history') {
-      setChatsHistroy(historyData);
-    } else {
-      setChatsHistroy(newArray);
-    }
-  };
+  //   let tempArr = Array.from(historyData);
+  //   let newArray = tempArr.filter((item) => item.type === option.value);
+  //   if (option.value === 'All chat history') {
+  //     setChatsHistroy(historyData);
+  //   } else {
+  //     setChatsHistroy(newArray);
+  //   }
+  // };
 
   const handleChatSelection = async (chat) => {
     // setChatData(chat);
@@ -303,6 +307,16 @@ const ChatHistory = ({
     };
   }, [deleteRef, setIfOpenDeleteBox]);
 
+  const handleChatTypeChange = (selectedOption) => {
+    // Find the selected option's index in the chatTypes array
+    const selectedIndex = chatTypes.findIndex((chatType) => chatType.title === selectedOption.value);
+
+    // If the selected option exists in chatTypes, set the corresponding historyType
+    if (selectedIndex !== -1) {
+      setHistoryType(selectedIndex);
+    }
+  };
+
   return (
     <>
       <div className={`${isChatHistory ? 'block' : 'hidden'}`}>
@@ -336,6 +350,7 @@ const ChatHistory = ({
                       icon: chatTypes[0].icon,
                     }}
                     styles={customStyles}
+                    onChange={handleChatTypeChange}
                     // menuIsOpen={true}
                     // onChange={handleChatTypeChange}
                   />
@@ -461,51 +476,67 @@ const ChatHistory = ({
             <>
               <div className="mx-[20px] border border-gray items-center flex rounded-md px-[9px] py-[4px]">
                 <img src={SearchIcon} />
-                <InputField
+                {/* <InputField
                   className="block w-full rounded-md border-0 px-[9px] py-[7px] text-[12px] text-darkBlue placeholder:text-gray1 focus:outline-0"
                   name="search"
                   label=""
                   type="text"
                   placeholder="Search"
+                  handleChange={setSearchChatHis}
+                /> */}
+                <input
+                  className="block w-full rounded-md border-0 px-[9px] py-[7px] text-[12px] text-darkBlue placeholder:text-gray1 focus:outline-0"
+                  name="search"
+                  label=""
+                  type="text"
+                  placeholder="Search"
+                  onChange={(e) => setSearchChatHis(e.target.value)}
                 />
               </div>
               <div className="mt-[12px] px-[20px] max-h-[480px] overflow-y-auto">
-                {chatsHistory.map((item, index) => (
-                  <div className="border-b border-gray py-[8px] selectText cursor-pointer" key={index}>
-                    <div
-                      className="flex items-center justify-between mb-[8px]"
-                      onClick={() => handleChatSelection(item)}
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className="icon">
-                          <Icons item={item} />
-                        </div>
-                        <div className="text-[14px] font-medium cursor-pointer">
-                          {item?.Type === 1 ? 'Chat' : item?.Type}
-                        </div>
-                      </div>
-                      <div className="text-gray1">
-                        {formatDistanceToNow(new Date(item?.created_at), { addSuffix: true })}
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
+                {chatsHistory.length === 0 ? (
+                  <div className="text-gray1 text-center py-4">No data found</div>
+                ) : (
+                  chatsHistory.map((item, index) => (
+                    <div className="border-b border-gray py-[8px] selectText cursor-pointer" key={index}>
                       <div
-                        className="text-gray1 max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis"
+                        className="flex items-center justify-between mb-[8px]"
                         onClick={() => handleChatSelection(item)}
                       >
-                        {item.chat_dict?.human_question}
+                        <div className="flex items-center gap-2">
+                          <div className="icon">
+                            <Icons item={item} />
+                          </div>
+                          <div className="text-[14px] font-medium cursor-pointer max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis">
+                            {item?.Type === 1 ? item.chat_dict?.human_question : 'Doc chat'}
+                          </div>
+                        </div>
+                        <div className="text-gray1">
+                          {formatDistanceToNow(new Date(item?.created_at), { addSuffix: true, timeZone: 'Etc/UTC' })}
+                          {/* {formatDistanceToNow(utcToZonedTime(new Date(item?.created_at), 'Asia/Kolkata'), {
+                            addSuffix: true,
+                          })} */}
+                        </div>
                       </div>
-                      <div
-                        className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer"
-                        onClick={() => handleDeleteChat(item?.id, item?.Type)}
-                      >
-                        <span className="selectIcon">
-                          <img src={DeleteIcon} />
-                        </span>
+                      <div className="flex items-center justify-between">
+                        <div
+                          className="text-gray1 max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis"
+                          onClick={() => handleChatSelection(item)}
+                        >
+                          {item.chat_dict?.ai_answer}
+                        </div>
+                        <div
+                          className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer"
+                          onClick={() => handleDeleteChat(item?.id, item?.Type)}
+                        >
+                          <span className="selectIcon">
+                            <img src={DeleteIcon} />
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </>
           )}

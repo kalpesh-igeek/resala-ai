@@ -12,6 +12,13 @@ const UploadDocumentPopup = ({
   isUploadDocument,
   setIsUploadDocument,
   setIsDocChat,
+  isStreaming,
+  setIsStreaming,
+  setAbortController,
+  abortController,
+  alreadyStreamed,
+  setAllreadyStreamed,
+  setChatType,
 }) => {
   const [selectedFile, setSelectedFile] = useState();
   const docRef = useRef(null);
@@ -65,6 +72,13 @@ const UploadDocumentPopup = ({
               setSelectedFile={setSelectedFile}
               setIsUploadDocument={setIsUploadDocument}
               setIsDocChat={setIsDocChat}
+              setIsStreaming={setIsStreaming}
+              isStreaming={isStreaming}
+              abortController={abortController}
+              setAbortController={setAbortController}
+              setAllreadyStreamed={setAllreadyStreamed}
+              alreadyStreamed={alreadyStreamed}
+              setChatType={setChatType}
             />
           </div>
           {!selectedFile && (

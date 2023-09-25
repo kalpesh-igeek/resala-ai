@@ -9,7 +9,7 @@ import { templateCheck } from '../../utils/validation';
 import { addTemplate, getTemplateType } from '../../redux/reducers/templateSlice/TemplateSlice';
 import { useNavigate } from 'react-router-dom';
 
-export default function SaveTemplatePopup({ saveTemplateBox, setSaveTemplateBox, draftResponse }) {
+export default function SaveTemplatePopup({ saveTemplateBox, setSaveTemplateBox, draftResponse, type }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState();

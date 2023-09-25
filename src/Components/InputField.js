@@ -65,7 +65,7 @@ const InputField = ({
         ) : (
           <input
             ref={inputRef}
-            className={className}
+            className={`appearance-none ${className}`}
             name={name}
             type={(name === 'password' || name === 're_password') && showPassword ? 'text' : type}
             onFocus={() => setIsFocused(true)}

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { newChat } from '../redux/reducers/chatSlice/ChatSlice';
 import { getToken } from '../utils/localstorage';
 
 const fileContents2 = `Article summary
@@ -19,11 +21,19 @@ const FileUpload = ({
   setSelectedFile,
   setIsUploadDocument,
   setIsDocChat,
+  setIsStreaming,
+  isStreaming,
+  setAbortController,
+  abortController,
+  alreadyStreamed,
+  setAllreadyStreamed,
+  setChatType,
 }) => {
   const [summeriseContent, setSummeriseContent] = useState([]);
 
   const hiddenFileInput = React.useRef(null);
   const chatId = sessionStorage.getItem('chatId');
+  const dispatch = useDispatch();
 
   const handleClick = () => {
     hiddenFileInput.current.click();
@@ -78,9 +88,27 @@ const FileUpload = ({
   };
 
   const handleSummeriseFile = async () => {
+    setChatType('summarize');
     setIsUploadDocument(false);
     setIsViewPrompts(false);
     setIsDocChat(true);
+    if (selectedFile) {
+      setIsStreaming(true);
+      setAllreadyStreamed(true);
+    }
+
+    if (abortController) {
+      abortController.abort();
+      setAbortController(null); // Clear the abort controller
+    }
+
+    if (alreadyStreamed) {
+      return;
+    }
+
+    // Create a new AbortController instance for this fetch request
+    const controller = new AbortController();
+    setAbortController(controller);
     const formData = new FormData();
 
     formData.append('chat_id', chatId);
@@ -95,6 +123,7 @@ const FileUpload = ({
           Authorization: getToken(),
         },
         body: formData,
+        signal: controller.signal,
       });
 
       if (response.ok) {
@@ -115,9 +144,11 @@ const FileUpload = ({
 
           for (const line of lines) {
             data = line.replace(/#@#/g, '\n');
-            console.log('data', data);
+            // console.log('data', data);
 
             if (line.includes('connection closed')) {
+              setAllreadyStreamed(false);
+              setIsStreaming(false);
               break;
             } else if (line.startsWith('Summarizing : ')) {
               // If the line starts with the summarizing string, skip it
@@ -150,8 +181,26 @@ const FileUpload = ({
   };
 
   const handleStartChatFile = async () => {
+    setChatType('let-chat');
     setIsUploadDocument(false);
     setIsViewPrompts(false);
+    if (selectedFile) {
+      setIsStreaming(true);
+    }
+
+    if (abortController) {
+      abortController.abort();
+      setAbortController(null); // Clear the abort controller
+    }
+
+    if (alreadyStreamed) {
+      return;
+    }
+    if (isStreaming) {
+      return;
+    }
+    const controller = new AbortController();
+    setAbortController(controller);
     const formData = new FormData();
 
     formData.append('chat_id', chatId);
@@ -166,6 +215,7 @@ const FileUpload = ({
           Authorization: getToken(),
         },
         body: formData,
+        signal: controller.signal,
       });
 
       if (response.ok) {
@@ -186,9 +236,10 @@ const FileUpload = ({
 
           for (const line of lines) {
             data = line.replace(/#@#/g, '\n');
-            console.log('data', data);
+            // console.log('data', data);
 
             if (line.includes('connection closed')) {
+              setIsStreaming(false);
               break;
             } else {
               accumulatedMessage += data + ''; // Add the line to the accumulated message
@@ -201,9 +252,10 @@ const FileUpload = ({
           ]);
           // Create a new message with the accumulated message
         }
-
+        // setIsStreaming(false);
         // Update state variables
         // ...
+        // await dispatch(newChat());
       } else {
         throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
       }
