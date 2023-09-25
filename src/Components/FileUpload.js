@@ -116,7 +116,7 @@ const FileUpload = ({
     setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
 
     try {
-      const response = await fetch('http://192.168.1.10:8000/doc_chat/document_summrize', {
+      const response = await fetch('https://api-qa.resala.ai/doc_chat/document_summrize', {
         method: 'POST',
         headers: {
           'Access-Control-Allow-Origin': '*',
@@ -208,7 +208,7 @@ const FileUpload = ({
     setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
 
     try {
-      const response = await fetch('http://192.168.1.10:8000/doc_chat/document_chat_stream', {
+      const response = await fetch('https://api-qa.resala.ai/doc_chat/document_chat_stream', {
         method: 'POST',
         headers: {
           'Access-Control-Allow-Origin': '*',

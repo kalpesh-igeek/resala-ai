@@ -185,7 +185,10 @@ const MainScreen = ({
   setIsOpen,
   handleSidebar,
   handleCloseClick,
+  selectedAction,
+  setSelectedAction,
 }) => {
+  console.log('selectedAction', selectedAction);
   const TOKEN = getToken();
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -198,12 +201,13 @@ const MainScreen = ({
   // const [suggestionBox, setSuggestionBox] = useState(true);
 
   const [selectedTemplate, setSelectedTempate] = useState(state?.template);
+  console.log({ selectedTemplate });
   const [isUsePrompt, setIsUsePrompt] = useState(false);
 
   const myRef = document.getElementById('#draftPreview');
   const [selectTab, setSelectTab] = useState(1);
 
-  const [selectedAction, setSelectedAction] = useState();
+  // const [selectedAction, setSelectedAction] = useState();
   const [selectedFormat, setSelectedFormat] = useState();
   const [selectedLength, setSelectedLength] = useState();
   const [selectedTone, setSelectedTone] = useState();
@@ -374,7 +378,7 @@ const MainScreen = ({
 
   useEffect(() => {
     if (selectTab) {
-      setSelectedAction('');
+      // setSelectedAction('');
       setSelectedFormat('');
       setSelectedLength('');
       setSelectedTone('');
@@ -526,7 +530,13 @@ const MainScreen = ({
 
   //compose
   const [selectedText, setSelectedText] = useState({ input_text: requestedText });
+  console.log({ selectedText, requestedText });
   const [replyText, setReplyText] = useState({ original_text: '', reply: '' });
+
+  useEffect(() => {
+    setSelectedText({ input_text: requestedText });
+    handleInputAction(selectedAction);
+  }, [requestedText]);
 
   const fetchprompts = async () => {
     const res = await dispatch(getPromptList());
@@ -796,7 +806,7 @@ const MainScreen = ({
     setSpeechText(e.target.value);
   };
 
-  const handleInputAction = (e, index, action) => {
+  const handleInputAction = (action) => {
     let tempArr = Array.from(selectedItems);
     tempArr[0].name = action?.name;
     setSelectedItems(tempArr);
@@ -866,7 +876,7 @@ const MainScreen = ({
       try {
         setCompLoading(true);
         // Call your new API here
-        const response = await fetch('http://192.168.1.10:8000/compose/compose_stream', {
+        const response = await fetch('https://api-qa.resala.ai/compose/compose_stream', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -909,6 +919,7 @@ const MainScreen = ({
             // const data = line.substring(6).trim(); // Remove "data: " prefix and trim spaces
             // Replace <br><br> with a newline
             data = line.replace(/#@#/g, '\n');
+            console.log('data', data);
             // console.log('data', data);
             // console.log('data', data);
             if (line.includes('connection closed')) {
@@ -957,7 +968,7 @@ const MainScreen = ({
       try {
         setCompRepLoading(true);
         // Call your new API here
-        const response = await fetch('http://192.168.1.10:8000/compose/generate_stream_reply', {
+        const response = await fetch('https://api-qa.resala.ai/compose/generate_stream_reply', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1205,7 +1216,7 @@ const MainScreen = ({
       try {
         // Call your new API here
         // const USER_TOKEN = getToken();
-        const response = await fetch('http://192.168.1.10:8000/chat/general_prompt_response_stream', {
+        const response = await fetch('https://api-qa.resala.ai/chat/general_prompt_response_stream', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1266,7 +1277,7 @@ const MainScreen = ({
       // Add the "Loading..." message initially
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       try {
-        const response = await fetch('http://192.168.1.10:8000/chat/stream_chat', {
+        const response = await fetch('https://api-qa.resala.ai/chat/stream_chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1330,7 +1341,7 @@ const MainScreen = ({
       // Add the "Loading..." message initially
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       try {
-        const response = await fetch('http://192.168.1.10:8000/doc_chat/chat_document', {
+        const response = await fetch('https://api-qa.resala.ai/doc_chat/chat_document', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1389,9 +1400,12 @@ const MainScreen = ({
       }
     }
   };
+
   const handleStopButtonClick = () => {
     // Check if there's an ongoing fetch request and abort it
     if (abortController) {
+      const removedLoadingObj = Array.from(chatData).filter((itm) => itm.type !== 'loading');
+      setChatData(removedLoadingObj);
       abortController.abort();
       setAbortController(null); // Clear the abort controller
       setIsTypewriterDone(false);
@@ -1416,7 +1430,7 @@ const MainScreen = ({
     const payload = { chatId: chatId };
 
     try {
-      const response = await fetch('http://192.168.1.10:8000/chat/regenerate_stream_response', {
+      const response = await fetch('https://api-qa.resala.ai/chat/regenerate_stream_response', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1570,11 +1584,13 @@ const MainScreen = ({
   const handleOpenPrompt = () => {
     setSettingsPopupBox(false);
     setAddPromptBox(!addPromptBox);
+    setIsViewPrompts(false);
   };
 
   const handleOpenSettings = () => {
     setAddPromptBox(false);
     setSettingsPopupBox(!settingsPopupBox);
+    setIsViewPrompts(false);
   };
 
   const handleChatHistory = () => {
@@ -1582,6 +1598,7 @@ const MainScreen = ({
     setAddPromptBox(false);
     setSettingsPopupBox(false);
     fetchChatHistoryList();
+    setIsViewPrompts(false);
   };
 
   const handleClose = () => {
@@ -2026,7 +2043,7 @@ const MainScreen = ({
                             {items.map((item) => (
                               <div
                                 key={item.id}
-                                className="flex new-btn p-[5px] items-center gap-1 bg-gray4 rounded-md cursor-pointer"
+                                className="flex new-btn-without-scale p-[5px] items-center gap-1 bg-gray4 rounded-md cursor-pointer"
                                 // className="flex new-btn p-[5px] items-center gap-1 bg-gray4 rounded-md cursor-pointer"
                                 onMouseEnter={() => handleMouseEnterLeave(item.id, true)}
                                 onMouseLeave={() => handleMouseEnterLeave(item.id, false)}
@@ -2038,7 +2055,7 @@ const MainScreen = ({
                                 />
                                 <span className={`text-[12px]`}>{item.label}</span>
                               </div>
-                            ))}
+                            ))}{' '}
                           </div>
                           <div className="flex gap-[15px] items-center">
                             <button className="w-[20px] h-[20px]" onClick={handleChatHistory}>
@@ -2179,7 +2196,12 @@ const MainScreen = ({
                               </div>
                             </div>
 
-                            <button className="w-[20px] h-[20px]">
+                            <button
+                              onClick={() => {
+                                setIsViewPrompts(false);
+                              }}
+                              className="w-[20px] h-[20px]"
+                            >
                               <img src={MuteIcon} />
                             </button>
                           </div>
@@ -2516,7 +2538,7 @@ const MainScreen = ({
                               position: 'sticky',
                               top: '57px',
                               zIndex: '20px',
-                              boxShadow: '0px 2px 8px 0px #0000000D',
+                              // boxShadow: '0px 2px 8px 0px #0000000D',
                             }}
                           >
                             <img src={TemplatesIcon} />
@@ -2775,7 +2797,7 @@ const MainScreen = ({
                                       name="action"
                                       key={action?.name}
                                       value={action}
-                                      onClick={(e) => handleInputAction(e, index, action)}
+                                      onClick={(e) => handleInputAction(action)}
                                       className={({ checked }) =>
                                         classNames(
                                           'cursor-pointer text-darkBlue',
@@ -2807,7 +2829,7 @@ const MainScreen = ({
                                       name="action"
                                       key={action?.name}
                                       value={action}
-                                      onClick={(e) => handleInputAction(e, index, action)}
+                                      onClick={(e) => handleInputAction(action)}
                                       className={({ checked }) =>
                                         classNames(
                                           'cursor-pointer text-darkBlue',
@@ -3052,10 +3074,12 @@ const MainScreen = ({
                                   >
                                     <img className="w-[16px] h-[16px]" src={prevIcon} alt="Previous" />
                                   </div>
-                                  <div className="text-[12px]">
-                                    <span className="text-darkBlue font-medium">{currentPageIndexTab1 + 1} </span>
-                                    <span className="text-gray1">/</span>
-                                    <span className="text-gray1"> {resultText.length}</span>
+                                  <div className="text-[12px] flex items-center">
+                                    <div className="text-darkBlue font-medium w-[18px] text-center">
+                                      {currentPageIndexTab1 + 1}
+                                    </div>
+                                    <div className="text-gray1 w-[4px] text-center">/</div>
+                                    <div className="text-gray1 w-[18px] text-center"> {resultText.length}</div>
                                   </div>
                                   <div
                                     className="cursor-pointer"
@@ -3100,7 +3124,6 @@ const MainScreen = ({
                           </div>
                           {/* {!selectedTemplate ? ( */}
                           {activeTab === 'chat' && isNewDraft ? (
-                            // <div className="textarea-container">
                             <textarea
                               ref={draftPreviewTextareaRef}
                               style={{ resize: 'none', minHeight: '3em' }}
@@ -3158,14 +3181,14 @@ const MainScreen = ({
                             </button>
                             <button
                               className="w-full rounded-md bg-white px-1 focus:outline-none py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
-                              disabled={resultText !== '' ? '' : 'disabled'}
+                              disabled={resultTextRep !== '' ? '' : 'disabled'}
                               onClick={handleCopyDraft}
                             >
                               Copy
                             </button>
                             <button
                               className="w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 disabled:cursor-none disabled:opacity-50"
-                              disabled={resultText !== '' ? '' : 'disabled'}
+                              disabled={resultTextRep !== '' ? '' : 'disabled'}
                               onClick={handleApply}
                               type="button"
                             >

@@ -18,7 +18,7 @@ const AppleSocialLogin = () => {
           <button
             onClick={renderProps.onClick}
             disabled={renderProps.disabled}
-            className="flex items-center gap-2 w-full text-left rounded-md bg-white px-3 py-[14px] text-[14px] text-gray2 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
+            className="flex items-center gap-2 w-full text-left rounded-md bg-white px-[15px] py-[14px] text-[14px] text-gray2 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
           >
             <img src={AppleIcon} />
             Continue with Apple

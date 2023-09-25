@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Logo from '../../utils/Header/ResLogo.svg';
 import InputField from '../../Components/InputField';
+import EyeOpen from "../../utils/Account/Icons/Eye.svg"
 import { forgotPassword } from '../../redux/reducers/authSlice/AuthSlice';
 import { resetPasswordCheck } from '../../utils/validation';
 import { useDispatch, useSelector } from 'react-redux';
@@ -142,8 +143,8 @@ const EnterNewPassword = () => {
               </div>
             </div>
           </form>
-          <div className="flex justify-center items-center text-gray2 gap-1 mt-[23px]">
-            <span>Don’t have account?</span>
+          <div className="flex justify-center items-center text-gray2 gap-1 mt-[23px] text-[14px]">
+            <span className="text-gray2">Don’t have account?</span>
             <button className="text-primaryBlue font-bold" onClick={() => navigate('/login')}>
               Sign up
             </button>

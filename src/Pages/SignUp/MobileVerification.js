@@ -41,7 +41,7 @@ const MobileVerification = () => {
   const handleSMSbutton = async (e) => {
     e.preventDefault();
     if (inputValue) {
-      const res = await dispatch(sendOtpSMS(inputValue));
+      const res = await dispatch(sendOtpSMS({ ...inputValue, is_whatapp: false }));
       if (res.payload?.status === 200) {
         const res = await dispatch(
           userDetails({
@@ -63,7 +63,7 @@ const MobileVerification = () => {
   const handleWhatAppButton = async (e) => {
     e.preventDefault();
     if (inputValue) {
-      const res = await dispatch(sendOtpSMS(inputValue));
+      const res = await dispatch(sendOtpSMS({ ...inputValue, is_whatapp: true }));
       if (res.payload?.status === 200) {
         const res = await dispatch(
           userDetails({
@@ -112,7 +112,7 @@ const MobileVerification = () => {
             dropdownClass="my-dropdown-class"
             inputClass="my-input-class" // Add this line
           /> */}
-          <SelectMobileNumber />
+          <SelectMobileNumber setInputValue={setInputValue} />
         </div>
         <div className="flex items-center justify-between mt-[10px]">
           <div className="inline-flex items-center gap-1 text-gray2 text-[14px]">

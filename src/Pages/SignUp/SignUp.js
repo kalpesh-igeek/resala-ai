@@ -214,8 +214,8 @@ const SignUp = () => {
               </div>
             </div>
           </form>
-          <div className="flex justify-center items-center gap-1 mt-[24px]">
-            <span>Already have an account?</span>
+          <div className="flex justify-center items-center gap-1 mt-[24px] text-[14px]">
+            <span className="text-gray2">Already have an account?</span>
             <button
               className={`text-primaryBlue ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               onClick={() => navigate('/login')}
