@@ -14,6 +14,12 @@ export const addTemplate = createAsyncThunk('template/addTemplate', async (paylo
   return data;
 });
 
+export const addTemplateQuickReply = createAsyncThunk('template/addTemplateQuickReply', async (payload) => {
+  const { data, status } = await templateService.addTemplateQuickReply(payload);
+  data.status = status;
+  return data;
+});
+
 export const getTemplateList = createAsyncThunk('template/getTemplateList', async (payload) => {
   const { data, status } = await templateService.getTemplateList(payload);
   data.status = status;
@@ -33,7 +39,6 @@ export const getTemplateType = createAsyncThunk('template/getTemplateType', asyn
 });
 
 export const updateTemplate = createAsyncThunk('template/updateTemplate', async (payload) => {
-  console.log('payload0', payload);
   const { data, status } = await templateService.updateTemplate(payload.payload, payload?.id);
   data.status = status;
   return data;
@@ -72,6 +77,19 @@ export const TemplateSlice = createSlice({
       state.status = action.payload.status;
     });
     builder.addCase(addTemplate.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    });
+
+    builder.addCase(addTemplateQuickReply.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(addTemplateQuickReply.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.template = action.payload;
+      state.status = action.payload.status;
+    });
+    builder.addCase(addTemplateQuickReply.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.error.message;
     });

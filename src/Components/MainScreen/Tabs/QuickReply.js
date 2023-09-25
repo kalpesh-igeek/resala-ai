@@ -75,12 +75,20 @@ const QuickReply = ({
   const [transcript, setTranscript] = useState('');
   const [replyResponse, setReplyResponse] = useState({
     tone: '',
-    language: 'auto',
+    language: 'Auto',
     sender_intent: '',
     generate_mail: '',
   });
   // console.log('replyResponse', replyResponse);
   const [isPermissionGranted, setIsPermissionGranted] = useState(false);
+  const [templatePayload, setTemplatePayload] = useState({
+    template_name: '',
+    template_type: '',
+    tone: '',
+    language: '',
+    sender_intent: '',
+    generate_mail: '',
+  });
   const draftPreviewTextareaRef = useRef(null);
 
   const handlePlanInfo = () => {
@@ -147,7 +155,7 @@ const QuickReply = ({
       const content = emailContentElement.textContent.trim().replace(/\s+/g, ' '); // Replace multiple spaces and line breaks with a single space
 
       try {
-        const response = await fetch('https://api-qa.resala.ai/quick_reply/stream_sender_intent', {
+        const response = await fetch('http://192.168.1.10:8000/quick_reply/stream_sender_intent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -219,7 +227,7 @@ const QuickReply = ({
     try {
       // setCompLoading(true);
       // Call your new API here
-      const response = await fetch('https://api-qa.resala.ai/quick_reply/generate_stream_email', {
+      const response = await fetch('http://192.168.1.10:8000/quick_reply/generate_stream_email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -228,8 +236,8 @@ const QuickReply = ({
         },
         body: JSON.stringify({
           sender_intent: senderIntent.trim(),
-          tone: selectedOption?.value,
-          language: 'auto',
+          tone: selectedOption?.label,
+          language: 'Auto',
           ideas_of_replay: idea?.idea || idea,
           // Include other necessary parameters
         }),
@@ -268,6 +276,12 @@ const QuickReply = ({
           }
           // }
         }
+        setTemplatePayload({
+          tone: selectedOption?.label,
+          language: 'Auto',
+          sender_intent: senderIntent.trim(),
+          generate_mail: accumulatedMessage,
+        });
         newResultText = [
           ...resultText,
           { output_text: accumulatedMessage.trim() }, // Trim to remove trailing spaces
@@ -278,8 +292,8 @@ const QuickReply = ({
         // Update the state with the new result text
         setResultText(newResultText);
         setReplyResponse({
-          tone: selectedOption?.value,
-          language: 'auto',
+          tone: selectedOption?.label,
+          language: 'Auto',
           sender_intent: senderIntent.trim(),
           generate_mail: resultText[newResultText?.length],
         });
@@ -692,7 +706,12 @@ const QuickReply = ({
                     <span className="text-primaryBlue">Save Template</span>
                     <img src={SaveTemplate} />
                   </button>
-                  <SaveTemplatePopup setSaveTemplateBox={setSaveTemplateBox} saveTemplateBox={saveTemplateBox} />
+                  <SaveTemplatePopup
+                    setSaveTemplateBox={setSaveTemplateBox}
+                    saveTemplateBox={saveTemplateBox}
+                    draftResponse={templatePayload}
+                    module="quickReply"
+                  />
                 </div>
               )}
               {isStreamingComp && (

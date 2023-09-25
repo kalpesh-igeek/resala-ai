@@ -103,11 +103,11 @@ export default function Panel() {
       // Add the height of the element to position it below the selected text
       const positionY = rect.top + window.scrollY + rect.height + 20;
 
-      document.getElementById('selectmenu').style.display = 'block'
+      document.getElementById('selectmenu').style.display = 'block';
       setPoistionX(positionX + window.scrollX);
       setPoistionY(positionY + window.scrollY);
-    }else{
-      document.getElementById('selectmenu').style.display = 'none'
+    } else {
+      document.getElementById('selectmenu').style.display = 'none';
     }
   }
 
@@ -211,8 +211,8 @@ export default function Panel() {
     sendResponse('Request : ' + JSON.stringify('request'));
   });
 
-  const handleSidebar = (tab,tool=undefined) => {
-    console.log({tab,tool});
+  const handleSidebar = (tab, tool = undefined) => {
+    console.log({ tab, tool });
     setActiveTab(tab);
     setIsOpen(true);
     setIsLoadedExtension(true);

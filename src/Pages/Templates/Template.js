@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Typewriter from '../../Components/Typewriter';
 // import SaveTemplate from '../utils/SavedTemplates/Icons/SaveTemplate.svg';
 import EditIcon from '../../utils/SavedTemplates/Icons/edit-2.svg';
 
 const Template = ({ selectedTemplate, setActiveTab }) => {
+  const [copied, setCopied] = useState(false); // State to track if text is copied
   const navigate = useNavigate();
+
+  const handleCopyDraft = () => {
+    navigator.clipboard.writeText(selectedTemplate?.output_text);
+    setCopied(true); // Set copied state to true when text is copied
+    setTimeout(() => {
+      setCopied(false); // Revert copied state to false after 2 seconds
+    }, 2000);
+  };
   return (
     <div className="px-[20px] py-[12px] relative mt-[12px]">
       <div className="col-span-full">
@@ -51,6 +60,7 @@ const Template = ({ selectedTemplate, setActiveTab }) => {
                     state: {
                       template: selectedTemplate,
                       edit: true,
+                      pathName: '/savedtemplates',
                     },
                   });
                   setActiveTab('selection');
@@ -79,9 +89,9 @@ const Template = ({ selectedTemplate, setActiveTab }) => {
           <button
             className="w-full rounded-md bg-white px-1 py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
             // disabled={resultText !== '' ? '' : 'disabled'}
-            // onClick={handleCopyDraft}
+            onClick={handleCopyDraft}
           >
-            Copy
+            {copied ? 'Copied!' : 'Copy'}
           </button>
           <button
             className="w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useRoutes } from 'react-router-dom';
 import { RadioGroup } from '@headlessui/react';
 import TypeWriterEffect from 'react-typewriter-effect';
 import Header from '../Layout/Header';
@@ -188,10 +188,12 @@ const MainScreen = ({
   selectedAction,
   setSelectedAction,
 }) => {
-  console.log('selectedAction', selectedAction);
+  // console.log('selectedAction', selectedAction);
   const TOKEN = getToken();
   const navigate = useNavigate();
+
   const { state } = useLocation();
+
   const { isLoading, historyId } = useSelector((state) => state.chat);
   const { Loading } = useSelector((state) => state.compose);
   const { user } = useSelector((state) => state.auth);
@@ -201,7 +203,7 @@ const MainScreen = ({
   // const [suggestionBox, setSuggestionBox] = useState(true);
 
   const [selectedTemplate, setSelectedTempate] = useState(state?.template);
-  console.log({ selectedTemplate });
+
   const [isUsePrompt, setIsUsePrompt] = useState(false);
 
   const myRef = document.getElementById('#draftPreview');
@@ -219,6 +221,7 @@ const MainScreen = ({
     { name: selectedTone?.name },
     { name: selectedLanguage?.name },
   ]);
+
   const [aiToolsLength, setAiToolsLength] = useState(selectedItems.filter((data) => data?.name)?.length);
 
   // console.log('selectedItems', selectedItems.filter((data) => data?.name)?.length);
@@ -317,6 +320,7 @@ const MainScreen = ({
   const [isNewDraft, setIsNewDraft] = useState(false);
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(null);
   const [compLoading, setCompLoading] = useState(false);
+
   const [compRepLoading, setCompRepLoading] = useState(false);
   const [alreadyStreamed, setAllreadyStreamed] = useState(false);
 
@@ -337,6 +341,7 @@ const MainScreen = ({
   const [chatType, setChatType] = useState('');
   const [hasResultText, setHasResultText] = useState(false);
   const [hasResultTextRep, setHasResultTextRep] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const chatContainerRef = useRef(null);
   const promptRef = useRef(null);
@@ -530,7 +535,7 @@ const MainScreen = ({
 
   //compose
   const [selectedText, setSelectedText] = useState({ input_text: requestedText });
-  console.log({ selectedText, requestedText });
+
   const [replyText, setReplyText] = useState({ original_text: '', reply: '' });
 
   useEffect(() => {
@@ -779,7 +784,7 @@ const MainScreen = ({
 
   useEffect(() => {
     if (selectedTemplate) {
-      setInputButtonBox(!inputButtonBox);
+      setInputButtonBox(true);
       setRequestedText(selectedTemplate?.input);
       setSelectedAction({ name: selectedTemplate?.action });
       setSelectedFormat({ name: selectedTemplate?.action });
@@ -876,7 +881,7 @@ const MainScreen = ({
       try {
         setCompLoading(true);
         // Call your new API here
-        const response = await fetch('https://api-qa.resala.ai/compose/compose_stream', {
+        const response = await fetch('http://192.168.1.10:8000/compose/compose_stream', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -919,7 +924,7 @@ const MainScreen = ({
             // const data = line.substring(6).trim(); // Remove "data: " prefix and trim spaces
             // Replace <br><br> with a newline
             data = line.replace(/#@#/g, '\n');
-            console.log('data', data);
+            // console.log('data', data);
             // console.log('data', data);
             // console.log('data', data);
             if (line.includes('connection closed')) {
@@ -968,7 +973,7 @@ const MainScreen = ({
       try {
         setCompRepLoading(true);
         // Call your new API here
-        const response = await fetch('https://api-qa.resala.ai/compose/generate_stream_reply', {
+        const response = await fetch('http://192.168.1.10:8000/compose/generate_stream_reply', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1037,23 +1042,107 @@ const MainScreen = ({
       }
     }
     if (state?.edit) {
-      setIsTypewriterDone(true);
-      const payload = {
-        input_text: editTemplateName.input_text,
-        action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
-        length: selectedLength?.name,
-        tone: selectedTone?.name,
-        language: selectedLanguage?.name,
-      };
+      // setIsTypewriterDone(true);
+      // const payload = {
+      //   input_text: editTemplateName.input_text,
+      //   action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
+      //   length: selectedLength?.name,
+      //   tone: selectedTone?.name,
+      //   language: selectedLanguage?.name,
+      // };
 
-      const res = await dispatch(generateDraft(payload));
-      if (!res.payload) {
-        return;
-      }
-      if (res.payload?.status === 200) {
-        setComposeRes(true);
-        setResultText(res.payload?.Result);
-        setIsNewDraft(true); // add this line
+      // const res = await dispatch(generateDraft(payload));
+      // if (!res.payload) {
+      //   return;
+      // }
+      // if (res.payload?.status === 200) {
+      //   setComposeRes(true);
+      //   setResultText(res.payload?.Result);
+      //   setIsNewDraft(true); // add this line
+      // }
+
+      try {
+        setCompLoading(true);
+        // Call your new API here
+        const response = await fetch('http://192.168.1.10:8000/compose/compose_stream', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: getToken(),
+          },
+          body: JSON.stringify({
+            input_text: editTemplateName.input_text,
+            action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
+            length: selectedLength?.name,
+            tone: selectedTone?.name,
+            language: selectedLanguage?.name,
+            // Include other necessary parameters
+          }),
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+        }
+
+        // Process the response from your new API here
+        const reader = response.body.getReader();
+        let accumulatedMessage = '';
+        let newResultText = [];
+
+        while (true) {
+          // setAllreadyStreamed(true);
+          // setCompLoading(false);
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = new TextDecoder().decode(value);
+          const lines = chunk.split('\n');
+          for (const line of lines) {
+            setComposeRes(true);
+            setIsNewDraft(true);
+            // console.log('chunk', line);
+            // if (line.startsWith('data: ')) {
+            // const data = line.substring(6).trim(); // Remove "data: " prefix and trim spaces
+            // Replace <br><br> with a newline
+            data = line.replace(/#@#/g, '\n');
+            // console.log('data', data);
+            // console.log('data', data);
+            if (line.includes('connection closed')) {
+              setIsTypewriterDone(false);
+              setIsStreamingComp(false);
+              setCompLoading(false);
+
+              // Set the typewriter state to false when "connection closed" is encountered
+            } else {
+              // Exclude lines containing "connection closed" and append the word
+              accumulatedMessage += data + '';
+              // setResultText((prevResultText) => [...prevResultText, { output_text: accumulatedMessage }]);
+            }
+            // }
+          }
+          // console.log('accumulatedMessage', accumulatedMessage);
+          setTemplatePayload({
+            input_text: selectedText.input_text?.trim(),
+            action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
+            length: selectedLength?.name,
+            tone: selectedTone?.name,
+            language: selectedLanguage?.name,
+            output_text: accumulatedMessage,
+          });
+          newResultText = [
+            ...resultText,
+            { output_text: accumulatedMessage.trim() }, // Trim to remove trailing spaces
+          ];
+          setCurrentPageIndexTab1(newResultText.length - 1); // Use the updated result text length
+
+          // Update the state with the new result text
+          setResultText(newResultText);
+          setHasResultText(true);
+        }
+      } catch (error) {
+        console.error('An error occurred:', error);
       }
     }
 
@@ -1088,11 +1177,7 @@ const MainScreen = ({
       payload: {
         name: editTemplateName?.templatename,
         input_text: editTemplateName.input_text,
-        output_text: resultText?.output_text
-          ? resultText?.output_text
-          : resultTextRep?.output_text
-          ? resultTextRep?.output_text
-          : selectedTemplate?.output_text,
+        output_text: templatePayload?.output_text ? templatePayload?.output_text : selectedTemplate?.output_text,
         type: selectedTemplateType?.value ? selectedTemplateType?.value : selectedTemplate?.type?.id,
         action: selectedAction?.name,
         length: selectedLength?.name,
@@ -1106,7 +1191,7 @@ const MainScreen = ({
       return;
     }
     if (res.payload?.status === 200) {
-      Toast('success', 'Template updated successfully');
+      // Toast('success', 'Template updated successfully');
       navigate('/savedtemplates');
     }
   };
@@ -1116,10 +1201,22 @@ const MainScreen = ({
   };
 
   const handleCopyDraft = () => {
-    console.log('resultText?.output_text', resultText?.output_text);
+    navigator.clipboard.writeText(
+      templatePayload?.output_text ? templatePayload?.output_text : selectedTemplate?.output_text
+    );
+    // navigator.clipboard.writeText(resultTextRep?.output_text);
 
-    navigator.clipboard.writeText(resultText?.output_text);
-    navigator.clipboard.writeText(resultTextRep?.output_text);
+    setCopied(true); // Set copied state to true when text is copied
+    setTimeout(() => {
+      setCopied(false); // Revert copied state to false after 2 seconds
+    }, 2000);
+  };
+
+  // const loadedTextContent = 'Your loaded text content goes here'; // Replace with your loaded text content.
+
+  const handleApply = () => {
+    // Send a message to the background script with the loaded text content.
+    // chrome.runtime.sendMessage({ applyText: loadedTextContent });
   };
 
   const handlePromptViewPopup = (prompt) => {
@@ -1216,7 +1313,7 @@ const MainScreen = ({
       try {
         // Call your new API here
         // const USER_TOKEN = getToken();
-        const response = await fetch('https://api-qa.resala.ai/chat/general_prompt_response_stream', {
+        const response = await fetch('http://192.168.1.10:8000/chat/general_prompt_response_stream', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1277,7 +1374,7 @@ const MainScreen = ({
       // Add the "Loading..." message initially
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       try {
-        const response = await fetch('https://api-qa.resala.ai/chat/stream_chat', {
+        const response = await fetch('http://192.168.1.10:8000/chat/stream_chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1341,7 +1438,7 @@ const MainScreen = ({
       // Add the "Loading..." message initially
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       try {
-        const response = await fetch('https://api-qa.resala.ai/doc_chat/chat_document', {
+        const response = await fetch('http://192.168.1.10:8000/doc_chat/chat_document', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1430,7 +1527,7 @@ const MainScreen = ({
     const payload = { chatId: chatId };
 
     try {
-      const response = await fetch('https://api-qa.resala.ai/chat/regenerate_stream_response', {
+      const response = await fetch('http://192.168.1.10:8000/chat/regenerate_stream_response', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1461,7 +1558,6 @@ const MainScreen = ({
 
           for (const line of lines) {
             data = line.replace(/#@#/g, '\n');
-            console.log('data', data);
             // console.log('data', data);
             if (line.includes('connection closed')) {
               setIsStreaming(false);
@@ -1614,16 +1710,16 @@ const MainScreen = ({
   //     focusedElement.value = resultText.output_text || resultText || selectedTemplate?.output_text;
   //   }
   // };
-  const handleApply = () => {
-    // Step 2: Retrieve the generated draft text (resultText)
-    //   const generatedDraft = resultText.output_text || resultText || selectedTemplate?.output_text;
-    // Step 3: Detect when a user focuses on an input field outside your extension
-    // You can add an event listener for input field focus
-    document.addEventListener('focusin', handleInputFieldFocus);
-    // Step 4: Store the generated draft text in a state or a variable
-    // For example, you can use React state to store the generated draft text
-    // ... code to set the generated draft text in state
-  };
+  // const handleApply = () => {
+  //   // Step 2: Retrieve the generated draft text (resultText)
+  //   //   const generatedDraft = resultText.output_text || resultText || selectedTemplate?.output_text;
+  //   // Step 3: Detect when a user focuses on an input field outside your extension
+  //   // You can add an event listener for input field focus
+  //   document.addEventListener('focusin', handleInputFieldFocus);
+  //   // Step 4: Store the generated draft text in a state or a variable
+  //   // For example, you can use React state to store the generated draft text
+  //   // ... code to set the generated draft text in state
+  // };
   // Step 3: Handle input field focus
   const handleInputFieldFocus = (event) => {
     const target = event.target;
@@ -1793,6 +1889,7 @@ const MainScreen = ({
                         // } else {
                         //   navigate('/');
                         // }
+                        setAiToolsLength(0);
                         navigate('/savedtemplates');
                       }}
                     >
@@ -2952,9 +3049,14 @@ const MainScreen = ({
                             className={`flex text-[16px] w-full justify-center focus:outline-none rounded-md bg-primaryBlue px-3 py-2 text-sm leading-6 text-white shadow-sm hover:opacity-90  ${
                               compLoading ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
                             } ${
-                              (selectTab === 1 &&
-                                (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
-                              aiToolsLength !== 4
+                              !state?.edit
+                                ? (selectTab === 1 &&
+                                    (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                  // !editTemplateName?.input_text
+                                  aiToolsLength !== 4
+                                  ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
+                                  : ''
+                                : !editTemplateName?.input_text || aiToolsLength !== 4
                                 ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
                                 : ''
                             } `}
@@ -2962,12 +3064,13 @@ const MainScreen = ({
                               handleGenerateDraft(e);
                               setComposeRes(false);
                             }}
-                            // disabled={Loading || !selectedText.input_text}
                             disabled={
                               compLoading ||
-                              (selectTab === 1 &&
-                                (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
-                              aiToolsLength !== 4
+                              (!state?.edit
+                                ? (selectTab === 1 &&
+                                    (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                  aiToolsLength !== 4
+                                : !editTemplateName?.input_text || aiToolsLength !== 4)
                             }
                           >
                             <div className="">
@@ -3056,7 +3159,7 @@ const MainScreen = ({
                           </button>
                         )}
                       </div>
-                      {composeRes && hasResultText && selectTab === 1 && (
+                      {((composeRes && hasResultText && selectTab === 1) || state?.edit) && (
                         <div className="pb-[20px]">
                           <div className="flex justify-between item-center">
                             <div className="flex gap-2 items-center">
@@ -3094,7 +3197,7 @@ const MainScreen = ({
                                 </div>
                               )}
                             </div>
-                            {!isStreamingComp && (
+                            {!isStreamingComp && !state?.edit && (
                               <div>
                                 <button
                                   className="flex gap-1 items-center w-full rounded-md bg-white text-[12px] font-medium text-primaryBlue"
@@ -3184,7 +3287,7 @@ const MainScreen = ({
                               disabled={resultTextRep !== '' ? '' : 'disabled'}
                               onClick={handleCopyDraft}
                             >
-                              Copy
+                              {copied ? 'Copied!' : 'Copy'}
                             </button>
                             <button
                               className="w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 disabled:cursor-none disabled:opacity-50"
@@ -3234,7 +3337,7 @@ const MainScreen = ({
                                 </div>
                               )}
                             </div>
-                            {!isStreamingComp && (
+                            {!isStreamingComp && !state?.edit && (
                               <div>
                                 <button
                                   className="flex gap-1 items-center w-full rounded-md bg-white text-[12px] font-medium text-primaryBlue"
@@ -3316,7 +3419,7 @@ const MainScreen = ({
                               disabled={resultTextRep !== '' ? '' : 'disabled'}
                               onClick={handleCopyDraft}
                             >
-                              Copy
+                              {copied ? 'Copied!' : 'Copy'}
                             </button>
                             <button
                               className="w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 disabled:cursor-none disabled:opacity-50"
@@ -3347,11 +3450,29 @@ const MainScreen = ({
                               // disabled={resultText !== '' ? '' : 'disabled'}
                               onClick={handleCopyDraft}
                             >
-                              Copy
+                              {copied ? 'Copied!' : 'Copy'}
                             </button>
                             <button
-                              className="w-full rounded-md bg-primaryBlue px-1 focus:outline-none py-[10px] text-[16px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
-                              // disabled={resultText !== '' ? '' : 'disabled'}
+                              className={`w-full rounded-md bg-primaryBlue px-1 focus:outline-none py-[10px] text-[16px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50 ${
+                                !state?.edit
+                                  ? (selectTab === 1 &&
+                                      (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                    // !editTemplateName?.input_text
+                                    aiToolsLength !== 4
+                                    ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
+                                    : ''
+                                  : !editTemplateName?.input_text || aiToolsLength !== 4
+                                  ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
+                                  : ''
+                              } `}
+                              disabled={
+                                compLoading ||
+                                (!state?.edit
+                                  ? (selectTab === 1 &&
+                                      (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                    aiToolsLength !== 4
+                                  : !editTemplateName?.input_text || aiToolsLength !== 4)
+                              }
                               onClick={(e) => handleUpdateTemplate(e)}
                             >
                               Update
