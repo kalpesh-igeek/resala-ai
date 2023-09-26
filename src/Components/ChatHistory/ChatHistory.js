@@ -5,9 +5,13 @@ import SearchIcon from '../../utils/Chat/Icons/SearchIcon.svg';
 import AllChatIcon from '../../utils/Chat/Icons/History/AllChatIcon.svg';
 import DeleteIcon from '../../utils/Chat/Icons/History/trash.svg';
 import ChatIcon from '../../utils/Chat/Icons/Types/ChatIcon.svg';
+import ChatIconA from '../../utils/Chat/Icons/Types/ChatIcon-active.svg';
 import DocChatIcon from '../../utils/Chat/Icons/Types/DocChatIcon.svg';
+import DocChatIconA from '../../utils/Chat/Icons/Types/DocChatIcon-active.svg';
 import WebSummeryIcon from '../../utils/Chat/Icons/Types/WebSummeryIcon.svg';
+import WebSummeryIconA from '../../utils/Chat/Icons/Types/WebSummeryIcon-active.svg';
 import YoutubeIcon from '../../utils/Chat/Icons/Types/YoutubeIcon.svg';
+import YoutubeIconA from '../../utils/Chat/Icons/Types/YoutubeIcon-active.svg';
 import FileIcon from '../../utils/Chat/Icons/FileIcon.svg';
 import Dropdown from 'react-dropdown';
 import { Tab } from '@headlessui/react';
@@ -26,17 +30,18 @@ import { useNavigate } from 'react-router-dom';
 import Select, { components } from 'react-select';
 import { formatDistanceToNow } from 'date-fns';
 import { utcToZonedTime, format } from 'date-fns-tz';
-
+import { getDateDisplay } from '../../Helpers/dateFormater';
+// -active
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
 const chatTypes = [
-  { title: 'All chat history', icon: AllChatIcon },
-  { title: 'Chat', icon: ChatIcon },
-  { title: 'Doc chat', icon: DocChatIcon },
-  { title: 'Web summary', icon: WebSummeryIcon },
-  { title: 'Youtube summary', icon: YoutubeIcon },
+  { title: 'All chat history', icon: AllChatIcon, active: AllChatIcon },
+  { title: 'Chat', icon: ChatIcon, active: ChatIconA },
+  { title: 'Doc chat', icon: DocChatIcon, active: DocChatIconA },
+  { title: 'Web summary', icon: WebSummeryIcon, active: WebSummeryIconA },
+  { title: 'Youtube summary', icon: YoutubeIcon, active: YoutubeIconA },
 ];
 
 const filesListData = [
@@ -77,8 +82,8 @@ const CustomOption = ({ data, ...props }) => (
 
 const SingleValue = ({ data, ...props }) => (
   <components.SingleValue {...props}>
-    <div className="flex items-center gap-2">
-      <img src={data.icon} alt={data.label} />
+    <div className="flex items-center gap-2 text-[#1678F2]">
+      <img src={data.active} alt={data.label} />
       <span>{data.label}</span>
     </div>
   </components.SingleValue>
@@ -113,6 +118,7 @@ const customStyles = {
     '&:hover': {
       border: 'none',
     },
+    color: '#1678F2',
     height: '26px',
     minHeight: '26px',
   }),
@@ -343,11 +349,13 @@ const ChatHistory = ({
                       value: chatType.title,
                       label: chatType.title,
                       icon: chatType.icon,
+                      active: chatType.active,
                     }))}
                     defaultValue={{
                       value: chatTypes[0].title,
                       label: chatTypes[0].title,
                       icon: chatTypes[0].icon,
+                      active: chatTypes[0].active,
                     }}
                     styles={customStyles}
                     onChange={handleChatTypeChange}
@@ -511,8 +519,9 @@ const ChatHistory = ({
                             {item?.Type === 1 ? item.chat_dict?.human_question : 'Doc chat'}
                           </div>
                         </div>
-                        <div className="text-gray1">
-                          {formatDistanceToNow(new Date(item?.created_at), { addSuffix: true, timeZone: 'Etc/UTC' })}
+                        <div className="text-gray1 lowercase whitespace-nowrap">
+                          {getDateDisplay(new Date(item?.created_at))}
+                          {/* {formatDistanceToNow(new Date(item?.created_at), { addSuffix: true, timeZone: 'Etc/UTC' })} */}
                           {/* {formatDistanceToNow(utcToZonedTime(new Date(item?.created_at), 'Asia/Kolkata'), {
                             addSuffix: true,
                           })} */}

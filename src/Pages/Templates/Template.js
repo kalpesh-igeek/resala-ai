@@ -1,11 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Typewriter from '../../Components/Typewriter';
 // import SaveTemplate from '../utils/SavedTemplates/Icons/SaveTemplate.svg';
 import EditIcon from '../../utils/SavedTemplates/Icons/edit-2.svg';
+import Select from 'react-select';
+import { getTemplateType } from '../../redux/reducers/templateSlice/TemplateSlice';
+import { useDispatch } from 'react-redux';
 
 const Template = ({ selectedTemplate, setActiveTab }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [options, setOptions] = useState([]);
+  console.log('selected', selectedTemplate);
+
+  const fetchTemplateType = async () => {
+    const res = await dispatch(getTemplateType());
+
+    if (!res.payload) {
+      return;
+    }
+
+    if (res.payload.status === 200) {
+      setOptions(res.payload?.Result);
+    }
+  };
+
+  useEffect(() => {
+    fetchTemplateType();
+  }, []);
+
   return (
     <div className="px-[20px] py-[12px] relative mt-[12px]">
       <div className="col-span-full">
@@ -24,9 +47,60 @@ const Template = ({ selectedTemplate, setActiveTab }) => {
             />
           </div>
           <div className="w-full">
-            <label for="input" className="block text-[12px] font-bold leading-6 text-gray1">
+            <label for="input" className="block text-[12px] font-bold leading-6 text-gray1 mb-[4px]">
               TEMPLATE TYPE
             </label>
+            {/* align-items: center; width: 100%; height: 52px; display: inline-grid; */}
+            {/* <Select
+              className="border border-gray rounded-md p-[9px] h-[52px] w-full inline-grid text-[14px] placeholder:text-gray1"
+              menuPlacement="bottom"
+              name="templateType"
+              defaultValue={{
+                label: selectedTemplate?.type?.name,
+                value: selectedTemplate?.type?.id,
+              }}
+              // onChange={(e) => handleChangeCompose(e)}
+              options={options.map((item) => ({ value: item.id, label: item.name }))}
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  height: '30px',
+                  minHeight: '30px',
+                  border: 0,
+                  boxShadow: 'none',
+                }),
+                menu: (base) => ({
+                  ...base,
+                  width: '224px',
+                  minWidth: '224px',
+                  right: '-1px',
+                }),
+                option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+                  // const color = chroma(data.color);
+                  // console.log({ data, isDisabled, isFocused, isSelected });
+                  return {
+                    ...styles,
+                    backgroundColor: isFocused ? '#F3F4F8' : null,
+                    color: !isFocused ? '#8C90A5' : '#19224C',
+                    margin: '8px',
+                    width: 'auto',
+                    borderRadius: '4px',
+                    height: '26px',
+                    lineHeight: '7px',
+                    padding: '10px 12px',
+                    // minWidth: '143px',
+                  };
+                },
+                placeholder: (base) => ({
+                  ...base,
+                  color: '#8C90A5',
+                }),
+                dropdownIndicator: (provided, state) => ({
+                  ...provided,
+                  transform: state.selectProps.menuIsOpen && 'rotate(180deg)',
+                }),
+              }}
+            /> */}
             <input
               id="requestedText"
               name="input_text"

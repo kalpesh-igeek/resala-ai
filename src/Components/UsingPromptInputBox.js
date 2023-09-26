@@ -33,7 +33,7 @@ const UsingPromptInputBox = ({
   const [activeLanguage, setAciveLanguage] = useState(outputlanguages);
   const [popupBox, setPopupBox] = useState();
   const [selectedLanguage, setSelectedLanguage] = useState(outputlanguages[0]);
-  const [newPrompt, setNewPrompt] = useState();
+  const [newPrompt, setNewPrompt] = useState(selectedPrompt?.prompt || '');
   // const [outputLanguages, setOutputLanguage] = useState([]);
   var arr = selectedPrompt.prompt?.replace(/\[.*?\]/g, '');
 
@@ -73,12 +73,7 @@ const UsingPromptInputBox = ({
   // }
 
   const handlePromptInput = (e) => {
-    if (!e.target.value) {
-      setNewPrompt(selectedPrompt.prompt);
-    } else {
-      // setNewPrompt({ question: arr + e.target.value, language: selectedLanguage ? selectedLanguage.title : 'auto' });
-      setNewPrompt(arr + e.target.value);
-    }
+    setNewPrompt(e.target.value);
   };
 
   return (
@@ -178,7 +173,7 @@ const UsingPromptInputBox = ({
             id="promptText"
             name="promptText"
             rows="6"
-            // value={newPrompt}
+            value={newPrompt}
             placeholder="Topic or Keyword"
             className="text-[12px] border-gray block w-full rounded-lg border p-[12px]"
             onChange={(e) => handlePromptInput(e)}

@@ -9,7 +9,6 @@ import searchIcon from '../../utils/Account/Icons/Icons.svg';
 
 const SelectMobileNumber = ({ setInputValue }) => {
   const [number, setNumber] = useState(`+${getCountryCallingCode('US')}`);
-  console.log('number', number);
   const [countries, setCountries] = useState([]);
   const [country, setCountry] = useState('US');
   const [countryCode, setCountryCode] = useState(getCountryCallingCode('US'));

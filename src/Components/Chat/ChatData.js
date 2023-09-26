@@ -1,9 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReadIcon from '../../utils/Chat/Icons/ReadIcon.svg';
 import CopyIcon from '../../utils/Chat/Icons/CopyIcon.svg';
 import Typewriter from '../Typewriter';
 import LoadingGif from '../../utils/Chat/Gif/loader.gif';
 import RegenerateIcon from '../../utils/Chat/Icons/RegenerateIcon.svg';
+import copy from 'copy-to-clipboard';
+import { useSpeechSynthesis } from 'react-speech-kit';
 
 const ChatData = ({
   chatData,
@@ -13,16 +15,31 @@ const ChatData = ({
   chatContainerRef,
   activeTabSub,
   isStreaming,
+  isSpeechEnabled,
 }) => {
-  // const renderMessage = (item) => {
-  //   if (activeTabSub === 'chat' && item.isNew) {
-  //     // Display typewriter component
-  //     return <Typewriter text={item.msg} delay={50} setIsTypewriterDone={setIsTypewriterDone} contentType="chat" />;
-  //   } else {
-  //     // Display normal message from chatData
-  //     return <>{item.msg}</>;
-  //   }
-  // };
+  const { speak, cancel, speaking } = useSpeechSynthesis();
+
+  const handleSpeak = (msg) => {
+    if (speaking) {
+      cancel();
+    } else {
+      speak({ text: msg });
+    }
+  };
+
+  // FIX: contiue speech
+  useEffect(() => {
+    if (!isTypewriterDone && isSpeechEnabled) {
+      const speechMsg = chatData[chatData.length - 1]?.msg;
+      if (speechMsg) {
+        speak({ text: speechMsg });
+      }
+    }
+    return () => {
+      cancel();
+    };
+  }, [isTypewriterDone, isSpeechEnabled]);
+
   const renderMessage = (item) => {
     if (activeTabSub === 'chat' && item.isNew) {
       // Display typewriter component
@@ -34,13 +51,8 @@ const ChatData = ({
 
       // Check if the first message starts with the summarizing string
       if (messages[0].startsWith(summarizingString)) {
-        console.log('123', messages[0].startsWith(summarizingString));
         // If there is a new line after the summarizing string, create a new message
         if (messages[0].indexOf(summarizingString) + summarizingString.length < messages[0].length) {
-          console.log(
-            'yestdgjsfd',
-            messages[0].indexOf(summarizingString) + summarizingString.length < messages[0].length
-          );
           return (
             <>
               <div>{messages[0]}</div>
@@ -88,10 +100,15 @@ const ChatData = ({
                       }}
                     >
                       <div className="option flex items-center gap-2 bg-white absolute right-0 -top-[23px] border border-gray p-[8px] rounded-[6px]">
-                        <span className="cursor-pointer">
+                        <span onClick={() => handleSpeak(item.msg)} className="cursor-pointer">
                           <img src={ReadIcon} />
                         </span>
-                        <span className="cursor-pointer">
+                        <span
+                          onClick={() => {
+                            copy(item.msg);
+                          }}
+                          className="cursor-pointer"
+                        >
                           <img src={CopyIcon} />
                         </span>
                       </div>

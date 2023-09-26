@@ -21,8 +21,8 @@ const DropDownBox = ({
   };
 
   return (
-    <div className="relative">
-      <div className="cursor-pointer py-[10px]" onClick={() => clickHandler(index)}>
+    <div className="relative h-[45px]">
+      <div className="cursor-pointer" onClick={() => clickHandler(index)}>
         <img src={MoreIcon} />
       </div>
       <div

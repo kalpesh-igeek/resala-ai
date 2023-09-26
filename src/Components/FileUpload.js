@@ -42,7 +42,6 @@ const FileUpload = ({
 
   const handleChange = (e) => {
     const fileUploaded = e.target.files[0];
-    console.log('e.target.files', e.target.files);
     setSelectedFile(fileUploaded);
     // props.handleFile(fileUploaded);
   };
