@@ -48,6 +48,7 @@ import DocIcon from '../utils/Chat/Icons/Controls/DocIcon.svg';
 import DocIconHover from '../utils/Chat/Icons/Controls/DocIconHover.svg';
 import HistoryIcon from '../utils/Chat/Icons/Controls/HistoryIcon.svg';
 import MuteIcon from '../utils/Chat/Icons/Controls/MuteIcon.svg';
+import UnMuteIcon from '../utils/Chat/Icons/Controls/UnMuteIcon.svg';
 
 import TranslateIcon from '../utils/Chat/Icons/TranslateIcon.svg';
 import ReadIcon from '../utils/Chat/Icons/ReadIcon.svg';
@@ -107,6 +108,8 @@ import prevIcon from '../utils/MainScreen/Icons/prev.svg';
 import nextIcon from '../utils/MainScreen/Icons/next.svg';
 import axios from 'axios';
 import stopIcon from '../utils/MainScreen/Icons/stop.svg';
+import { BottomDrawerLayout } from '../Components/Common/BottomDrawerLayout';
+import PromptComp from '../Components/Common/PromptComp';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -188,7 +191,6 @@ const MainScreen = ({
   selectedAction,
   setSelectedAction,
 }) => {
-  // console.log('selectedAction', selectedAction);
   const TOKEN = getToken();
   const navigate = useNavigate();
 
@@ -202,8 +204,7 @@ const MainScreen = ({
 
   // const [suggestionBox, setSuggestionBox] = useState(true);
 
-  const [selectedTemplate, setSelectedTempate] = useState(state?.template || []);
-
+  const [selectedTemplate, setSelectedTempate] = useState(state?.template);
   const [isUsePrompt, setIsUsePrompt] = useState(false);
 
   const myRef = document.getElementById('#draftPreview');
@@ -342,6 +343,7 @@ const MainScreen = ({
   const [hasResultText, setHasResultText] = useState(false);
   const [hasResultTextRep, setHasResultTextRep] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isSpeechEnabled, setIsSpeechEnabled] = useState(false);
 
   const chatContainerRef = useRef(null);
   const promptRef = useRef(null);
@@ -693,7 +695,6 @@ const MainScreen = ({
 
   //compose
   const [selectedText, setSelectedText] = useState({ input_text: requestedText });
-
   const [replyText, setReplyText] = useState({ original_text: '', reply: '' });
 
   useEffect(() => {
@@ -2088,27 +2089,6 @@ const MainScreen = ({
                       </Tab>
                     )}
                   </Tab.List>
-                  {/* <Tab.Panels as={Fragment}>
-                    <Tab.Panel key="compose" data-headlessui-state="selected">
-                      <div>
-                        {!selectedTemplate && (
-                          <button
-                            className="flex gap-1 items-center w-full rounded-md bg-white text-[12px] font-medium text-primaryBlue"
-                            onClick={() => navigate('/savedtemplates')}
-                            style={{
-                              position: 'sticky',
-                              top: '57px',
-                              zIndex: '20px',
-                              boxShadow: '0px 2px 8px 0px #0000000D',
-                            }}
-                          >
-                            <img src={TemplatesIcon} />
-                            <span className="text-primaryBlue text-[14px]">Templates</span>
-                          </button>
-                        )}
-                      </div>
-                    </Tab.Panel>
-                  </Tab.Panels> */}
                 </div>
               ) : (
                 <div className="flex items-center px-[20px] py-[11px] justify-between  border-b-gray border-b-[1px] border-l-gray border-l-[1px]">
@@ -2143,205 +2123,6 @@ const MainScreen = ({
               )}
               <Tab.Panels as={Fragment}>
                 <Tab.Panel key="chat">
-                  <div className="px-[20px] py-[12px] relative bg-white mt-[6px]">
-                    {/* <div className="flex items-center gap-2 right-[20px] -top-[33px] absolute z-[60]">
-                      <button
-                        className="flex gap-1 items-center justify-center w-full h-[24px] bg-lightblue1 rounded-full px-[9px] py-[5px] text-[12px] font-medium text-primaryBlue"
-                        onClick={() => setIsUploadDocument(true)}
-                      >
-                        <img src={UploadIcon} />
-                        <span className="text-primaryBlue text-[12px]">DocChat</span>
-                      </button>
-                      <Dropdown
-                        className="language flex gap-1 items-center justify-center w-full rounded-full border border-primaryBlue px-[6px] py-[3px] bg-white h-[24px] text-[12px] font-medium text-primaryBlue cursor-pointer"
-                        options={outputlanguages}
-                        value={defaultLanguage}
-                        arrowClosed={<img className="w-[10px] h-[10px]" src={ArrowDown} />}
-                        arrowOpen={<img className="w-[10px] h-[10px] rotate-180" src={ArrowDown} />}
-                      />
-                    </div> */}
-                    {!isViewPrompts ? (
-                      <div className="bg-lightblue1 px-[66px] py-[16px] flex flex-col text-center rounded-[6px] relative z-50">
-                        <div className="text-[14px] mb-[16px]">Find useful prompts from our prompts community.</div>
-                        <div
-                          className="text-[14px] font-bold text-primaryBlue cursor-pointer"
-                          onClick={() => setIsViewPrompts(true)}
-                        >
-                          View Prompts
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="bg-white border border-gray p-[8] rounded-[6px] relative z-50">
-                        <Tab.Group as="div" defaultIndex={0}>
-                          <div className="flex gap-2 items-center">
-                            <Tab.List className="border border-gray inline-flex rounded-[4px] h-[32px]">
-                              <Tab
-                                key="general"
-                                className={({ selected }) =>
-                                  classNames(
-                                    selected
-                                      ? 'border-primaryBlue text-black rounded-l-[4px]'
-                                      : 'border-transparent text-gray1',
-                                    'flex-1 whitespace-nowrap border p-[7px] -m-[1px] text-[12px] font-medium focus:outline-0'
-                                  )
-                                }
-                              >
-                                General
-                              </Tab>
-                              <Tab
-                                key="my"
-                                className={({ selected }) =>
-                                  classNames(
-                                    selected
-                                      ? 'border-primaryBlue text-black rounded-r-[4px]'
-                                      : 'border-transparent text-gray1',
-                                    'flex-1 whitespace-nowrap border p-[7px] -m-[1px] text-[12px] font-medium focus:outline-0'
-                                  )
-                                }
-                                onClick={handleCloseSettingPrompt}
-                              >
-                                My
-                              </Tab>
-                            </Tab.List>
-                            <div className="border border-gray items-center flex w-full rounded-md px-[9px]">
-                              <img src={SearchIcon} />
-                              <InputField
-                                className="block w-full rounded-md border-0 px-[9px] py-[7px] text-[12px] text-darkBlue placeholder:text-gray1 focus:outline-0"
-                                name="search"
-                                label=""
-                                type="text"
-                                placeholder="Search"
-                                handleChange={(e) => setSearch(e.target.value)}
-                              />
-                            </div>
-                            <div
-                              className="absolute -top-[10] -right-[10px] cursor-pointer"
-                              onClick={() => setIsViewPrompts(false)}
-                            >
-                              <img src={SuggestionCloseIcon} />
-                            </div>
-                          </div>
-                          <Tab.Panels as={Fragment}>
-                            <div className="grid">
-                              <Tab.Panel key="general">
-                                <div className="grid grid-cols-3 gap-2 pt-[8px]">
-                                  {generalPromptList.map((item) =>
-                                    item.length === 0 ? (
-                                      <div className="suggestion flex flex-col justify-end rounded-[6px] text-darkgray1 bg-lightblue1 p-[9px] text-[14px] cursor-pointer hover:bg-lightblue3">
-                                        <div className="pb-[8px]">{/* <img src={item.image_link} /> */}</div>
-                                        <div className="flex items-center justify-between">
-                                          {/* <span className="w-full text-[14px] font-medium">{item?.name}</span> */}
-                                          No Prompt
-                                        </div>
-                                      </div>
-                                    ) : (
-                                      // <div
-                                      //   onClick={(e) => {
-                                      //     // setGeneralPromptRes(true); // Add this line
-
-                                      //     handleSendMessage(e, item);
-                                      //     setIsViewPrompts(false);
-                                      //     setIsTypewriterDone(true);
-                                      //   }}
-                                      //   className="suggestion flex flex-col justify-end rounded-[6px] text-darkgray1 bg-lightblue1 p-[9px] text-[14px] cursor-pointer hover:bg-lightblue3"
-                                      // >
-                                      //   <div className="pb-[8px]">
-                                      //     <img src={item.image_link} />
-                                      //   </div>
-                                      //   <div className="flex items-center justify-between">
-                                      //     <span className="w-full text-[14px] font-medium">{item?.name}</span>
-                                      //     {/* <div className="info relative">
-                                      //     <img src={InfoIcon} />
-                                      //     <div
-                                      //       className="info-box p-[7px] rounded-[6px] bg-white text-[12px] absolute bottom-[170%] right-[50%] translate-x-[50%] whitespace-nowrap border border-primaryBlue"
-                                      //       onClick={() => handlePromptViewPopup(item)}
-                                      //     >
-                                      //       View info
-                                      //       <span className="h-[10px] w-[10px] bg-white absolute right-0 left-0 m-auto -bottom-[6px] rotate-45 border-b border-r border-primaryBlue"></span>
-                                      //     </div>
-                                      //   </div> */}
-                                      //   </div>
-                                      // </div>
-                                      <div
-                                        onClick={(e) => {
-                                          // setGeneralPromptRes(true); // Add this line
-                                          // if (!isStreaming) {
-                                          // setController(new AbortController());
-                                          // setIsStreaming(true);
-                                          handleSendMessage(e, item);
-
-                                          setIsViewPrompts(false);
-                                          setIsViewPrompts(false);
-                                          setIsTypewriterDone(true);
-                                          // }
-                                        }}
-                                        className="suggestion rounded-[6px] text-darkgray1 bg-lightblue1 p-[9px] text-[14px] cursor-pointer hover:bg-lightblue3"
-                                        style={{ display: 'flex', flexDirection: 'column' }}
-                                      >
-                                        <div className="pb-[8px]">
-                                          <img src={item.image_link} alt={item.name} />
-                                        </div>
-                                        <div className="flex items-center justify-between">
-                                          <span className="w-full text-[14px] font-medium">{item?.name}</span>
-                                        </div>
-                                      </div>
-                                      // <div
-                                      //   onClick={(e) => {
-                                      //     // setGeneralPromptRes(true); // Add this line
-                                      //     handleSendMessage(e, item);
-                                      //     setIsViewPrompts(false);
-                                      //     setIsTypewriterDone(true);
-                                      //   }}
-                                      //   className={`suggestion rounded-[6px] text-darkgray1 bg-lightblue1 p-[9px] text-[14px] cursor-pointer hover:bg-lightblue3 ${
-                                      //     item.name.includes('Riddle time' || 'Word of the day') ? 'h-[69px]' : ''
-                                      //   } ${item.name.includes('Word of the day') ? 'h-[69px]' : ''}`}
-                                      //   style={{ display: 'grid', gridTemplateRows: 'auto 1fr auto' }}
-                                      // >
-                                      //   <div className="pb-[8px]">
-                                      //     <img src={item.image_link} alt={item.name} />
-                                      //   </div>
-                                      //   <div className="flex items-center justify-between">
-                                      //     <span className="w-full text-[14px] font-medium">{item?.name}</span>
-                                      //   </div>
-                                      // </div>
-                                    )
-                                  )}
-                                </div>
-                              </Tab.Panel>
-                              <Tab.Panel key="my" className="h-[305px] relative">
-                                <div className="grid grid-cols-3 gap-2 pt-[8px]">
-                                  {promptList.map((item) => (
-                                    <React.Fragment>
-                                      <div
-                                        className="flex rounded-[6px] text-darkgray1 bg-lightblue1 p-[8px] text-[14px] cursor-pointer"
-                                        onClick={() => {
-                                          handleUsePrompt(item);
-                                          setIsViewPrompts(false);
-                                        }}
-                                      >
-                                        <span className="max-w-[130px] text-[14px] font-medium overflow-hidden whitespace-nowrap text-ellipsis">
-                                          {item?.name}
-                                        </span>
-                                      </div>
-                                    </React.Fragment>
-                                  ))}
-                                </div>
-                                <div className="absolute bottom-0 right-0 gap-2 flex items-center">
-                                  <span className="cursor-pointer">
-                                    <img src={PagePrevIcon} />
-                                  </span>
-                                  <div className="">1 of 20</div>
-                                  <span className="cursor-pointer">
-                                    <img src={PageNextIcon} />
-                                  </span>
-                                </div>
-                              </Tab.Panel>
-                            </div>
-                          </Tab.Panels>
-                        </Tab.Group>
-                      </div>
-                    )}
-                  </div>
                   <div className="bg-white w-[500px] items-center fixed right-0 bottom-0 p-[20px]">
                     <ChatData
                       chatData={chatData}
@@ -2352,6 +2133,7 @@ const MainScreen = ({
                       activeTabSub={activeTabSub}
                       switchedTabs={switchedTabs}
                       isStreaming={isStreaming}
+                      isSpeechEnabled={isSpeechEnabled}
                     />
 
                     {isUsePrompt ? (
@@ -2398,56 +2180,10 @@ const MainScreen = ({
                               >
                                 <img src={addPromptBox ? DocIconHover : DocIcon} />
                               </div>
-
-                              <div
-                                ref={promptRef}
-                                className={`chats-settings w-max flex flex-col gap-2 absolute right-0 bottom-[100%] bg-white p-[8px] rounded-[8px] ${
-                                  addPromptBox ? 'block' : 'hidden'
-                                }`}
-                                style={{
-                                  boxShadow: '0px 2px 20px 0px #00000026',
-                                }}
-                              >
-                                <div className="text-[12px] flex items-center text-gray1 justify-between font-medium px-[8px] py-[4px]">
-                                  MY PROMPTS
-                                  <span className="cursor-pointer" onClick={() => handleNewPrompt()}>
-                                    <img src={AddCircle} />
-                                  </span>
-                                </div>
-                                {promptList.length === 0 ? (
-                                  <div className="promptEdit px-[8px] py-[4px] flex items-center justify-between gap-3 text-gray1 text-[14px] rounded-[4px] hover:bg-gray4">
-                                    <div className="flex items-center gap-3 cursor-pointer">
-                                      <span className="w-[80px] overflow-hidden whitespace-nowrap text-ellipsis">
-                                        No Data Found
-                                      </span>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <>
-                                    {promptList.map((item) => (
-                                      <div className="promptEdit px-[8px] py-[4px] flex items-center justify-between gap-3 text-gray1 text-[14px] rounded-[4px] hover:bg-gray4">
-                                        <div
-                                          className="flex items-center gap-3 cursor-pointer"
-                                          onClick={() => {
-                                            handleUsePrompt(item);
-                                            setAddPromptBox(false);
-                                          }}
-                                        >
-                                          <img src={MoreIcon} />
-                                          <span className="w-[80px] overflow-hidden whitespace-nowrap text-ellipsis">
-                                            {item?.name}
-                                          </span>
-                                        </div>
-                                        <span
-                                          className="editIcon cursor-pointer"
-                                          onClick={() => handleCustomPrompt(item)}
-                                        >
-                                          <img className="w-max" src={EditIcon} />
-                                        </span>
-                                      </div>
-                                    ))}
-                                  </>
-                                )}
+                              <div className={`${addPromptBox ? 'block' : 'hidden'}`}>
+                                <BottomDrawerLayout title="Prompt Library" setClose={setAddPromptBox}>
+                                  <PromptComp />
+                                </BottomDrawerLayout>
                               </div>
                             </div>
                             <div className="relative">
@@ -2529,10 +2265,11 @@ const MainScreen = ({
                             <button
                               onClick={() => {
                                 setIsViewPrompts(false);
+                                setIsSpeechEnabled(!isSpeechEnabled);
                               }}
                               className="w-[20px] h-[20px]"
                             >
-                              <img src={MuteIcon} />
+                              <img src={isSpeechEnabled ? UnMuteIcon : MuteIcon} alt="I" />
                             </button>
                           </div>
                         </div>
@@ -2919,6 +2656,7 @@ const MainScreen = ({
                                     />
                                   }
                                 /> */}
+
                                 <Select
                                   className="border border-gray rounded-md p-[9px] text-[14px] placeholder:text-gray1"
                                   menuPlacement="bottom"
@@ -3089,15 +2827,19 @@ const MainScreen = ({
                         <div className="flex text-[14px] font-medium text-darkBlue whitespace-nowrap">AI Tools</div>
 
                         {!inputButtonBox && (
-                          <div className="flex gap-2 items-center w-full" onClick={handleInputButtonBox}>
-                            {selectedItems.map(
-                              (item) =>
-                                item?.name && (
-                                  <button className="w-full rounded-md px-1 py-2 text-[12px] font-medium text-darkBlue border bg-lightblue1 border-lightblue">
-                                    {item?.name}
-                                  </button>
-                                )
-                            )}
+                          <div
+                            className={`${
+                              inputButtonBox && selectedItems.length === 0 ? 'hidden' : 'block animate-fade-in'
+                            } transition duration-500 flex gap-2 items-center w-full`}
+                            onClick={handleInputButtonBox}
+                          >
+                            {selectedItems
+                              .filter((itm) => itm.name)
+                              .map((item) => (
+                                <button className="w-full rounded-md px-1 py-2 text-[12px] font-medium text-darkBlue border bg-lightblue1 border-lightblue">
+                                  {item.name}
+                                </button>
+                              ))}
                           </div>
                         )}
 
@@ -3110,171 +2852,170 @@ const MainScreen = ({
                           <img src={ArrowDown} />
                         </div>
                       </div>
-                      {inputButtonBox && (
-                        <div className={!inputButtonBox ? `hidden` : `block`}>
-                          {selectTab === 1 ? (
-                            <div className="pb-[20px]">
-                              <div className="flex gap-1 items-center">
-                                <img src={actionIcon} />
-                                <label for="actions" className="block text-[12px] font-bold leading-6 text-gray1">
-                                  ACTION
-                                </label>
-                              </div>
-                              <RadioGroup value={selectedAction} onChange={setSelectedAction}>
-                                <div className="inline-flex gap-2 items-center">
-                                  {actions.map((action, index) => (
-                                    <RadioGroup.Option
-                                      name="action"
-                                      key={action?.name}
-                                      value={action}
-                                      onClick={(e) => handleInputAction(action)}
-                                      className={({ checked }) =>
-                                        classNames(
-                                          'cursor-pointer text-darkBlue',
-                                          checked || action?.name === selectedAction?.name
-                                            ? 'border-lightblue bg-lightblue1'
-                                            : '',
-                                          'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
-                                        )
-                                      }
-                                    >
-                                      <RadioGroup.Label as="span">{action?.name}</RadioGroup.Label>
-                                    </RadioGroup.Option>
-                                  ))}
-                                </div>
-                              </RadioGroup>
-                            </div>
-                          ) : (
-                            <div className="pb-[20px]">
-                              <div className="flex gap-1 items-center">
-                                <img src={formatIcon} />
-                                <label for="format" className="block text-[12px] font-bold leading-6 text-gray1">
-                                  FORMAT
-                                </label>
-                              </div>
-                              <RadioGroup value={selectedFormat} onChange={setSelectedFormat}>
-                                <div className="inline-flex gap-2 items-center">
-                                  {format.map((action, index) => (
-                                    <RadioGroup.Option
-                                      name="action"
-                                      key={action?.name}
-                                      value={action}
-                                      onClick={(e) => handleInputAction(action)}
-                                      className={({ checked }) =>
-                                        classNames(
-                                          'cursor-pointer text-darkBlue',
-                                          checked || action?.name === selectedFormat?.name
-                                            ? 'border-lightblue bg-lightblue1'
-                                            : '',
-                                          'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
-                                        )
-                                      }
-                                    >
-                                      <RadioGroup.Label as="span">{action?.name}</RadioGroup.Label>
-                                    </RadioGroup.Option>
-                                  ))}
-                                </div>
-                              </RadioGroup>
-                            </div>
-                          )}
+
+                      <div
+                        className={`${!inputButtonBox ? `hidden` : 'block animate-fade-in'} transition duration-500 `}
+                      >
+                        {selectTab === 1 ? (
                           <div className="pb-[20px]">
                             <div className="flex gap-1 items-center">
-                              <img src={lengthIcon} />
+                              <img src={actionIcon} />
                               <label for="actions" className="block text-[12px] font-bold leading-6 text-gray1">
-                                LENGTH
+                                ACTION
                               </label>
                             </div>
-                            <RadioGroup value={selectedLength} onChange={setSelectedLength}>
+                            <RadioGroup value={selectedAction} onChange={setSelectedAction}>
                               <div className="inline-flex gap-2 items-center">
-                                {lengths.map((length, index) => (
+                                {actions.map((action, index) => (
                                   <RadioGroup.Option
-                                    name="length"
-                                    key={length?.name}
-                                    value={length}
-                                    onClick={(e) => handleInputLength(e, index, length)}
+                                    name="action"
+                                    key={action?.name}
+                                    value={action}
+                                    onClick={(e) => handleInputAction(action)}
                                     className={({ checked }) =>
                                       classNames(
                                         'cursor-pointer text-darkBlue',
-                                        checked || length?.name === selectedLength?.name
+                                        checked || action?.name === selectedAction?.name
                                           ? 'border-lightblue bg-lightblue1'
                                           : '',
                                         'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
                                       )
                                     }
                                   >
-                                    <RadioGroup.Label as="span">{length?.name}</RadioGroup.Label>
+                                    <RadioGroup.Label as="span">{action?.name}</RadioGroup.Label>
                                   </RadioGroup.Option>
                                 ))}
                               </div>
                             </RadioGroup>
                           </div>
+                        ) : (
                           <div className="pb-[20px]">
                             <div className="flex gap-1 items-center">
-                              <img src={toneIcon} />
-                              <label for="actions" className="block text-[12px] font-bold leading-6 text-gray1">
-                                TONE
+                              <img src={formatIcon} />
+                              <label for="format" className="block text-[12px] font-bold leading-6 text-gray1">
+                                FORMAT
                               </label>
                             </div>
-                            <RadioGroup value={selectedTone} onChange={setSelectedTone}>
+                            <RadioGroup value={selectedFormat} onChange={setSelectedFormat}>
                               <div className="inline-flex gap-2 items-center">
-                                {tones.map((tone, index) => (
+                                {format.map((action, index) => (
                                   <RadioGroup.Option
-                                    name="length"
-                                    key={tone?.name}
-                                    value={tone}
-                                    onClick={(e) => handleInputTone(e, index, tone)}
+                                    name="action"
+                                    key={action?.name}
+                                    value={action}
+                                    onClick={(e) => handleInputAction(action)}
                                     className={({ checked }) =>
                                       classNames(
                                         'cursor-pointer text-darkBlue',
-                                        checked || tone?.name === selectedTone?.name
+                                        checked || action?.name === selectedFormat?.name
                                           ? 'border-lightblue bg-lightblue1'
                                           : '',
                                         'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
                                       )
                                     }
                                   >
-                                    <RadioGroup.Label as="span">{tone?.name}</RadioGroup.Label>
+                                    <RadioGroup.Label as="span">{action?.name}</RadioGroup.Label>
                                   </RadioGroup.Option>
                                 ))}
                               </div>
                             </RadioGroup>
                           </div>
-                          <div className="pb-[10px]">
-                            <div className="flex gap-1 items-center">
-                              <img src={languageIcon} />
-                              <label
-                                for="actions"
-                                className="block text-[12px] font-bold leading-6 text-gray1 uppercase"
-                              >
-                                LANGUAGE
-                              </label>
+                        )}
+                        <div className="pb-[20px]">
+                          <div className="flex gap-1 items-center">
+                            <img src={lengthIcon} />
+                            <label for="actions" className="block text-[12px] font-bold leading-6 text-gray1">
+                              LENGTH
+                            </label>
+                          </div>
+                          <RadioGroup value={selectedLength} onChange={setSelectedLength}>
+                            <div className="inline-flex gap-2 items-center">
+                              {lengths.map((length, index) => (
+                                <RadioGroup.Option
+                                  name="length"
+                                  key={length?.name}
+                                  value={length}
+                                  onClick={(e) => handleInputLength(e, index, length)}
+                                  className={({ checked }) =>
+                                    classNames(
+                                      'cursor-pointer text-darkBlue',
+                                      checked || length?.name === selectedLength?.name
+                                        ? 'border-lightblue bg-lightblue1'
+                                        : '',
+                                      'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
+                                    )
+                                  }
+                                >
+                                  <RadioGroup.Label as="span">{length?.name}</RadioGroup.Label>
+                                </RadioGroup.Option>
+                              ))}
                             </div>
-                            <RadioGroup value={selectedLanguage} onChange={setSelectedLanguage}>
-                              <div className="inline-flex gap-2 items-center">
-                                {languages.map((language, index) => (
-                                  <RadioGroup.Option
-                                    name="length"
-                                    key={language?.name}
-                                    value={language}
-                                    onClick={(e) => handleInputLanguage(e, index, language)}
-                                    className={({ checked }) =>
-                                      classNames(
-                                        'cursor-pointer text-darkBlue',
-                                        checked || language?.name === selectedLanguage?.name
-                                          ? 'border-lightblue bg-lightblue1'
-                                          : '',
-                                        'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
-                                      )
-                                    }
-                                  >
-                                    <RadioGroup.Label as="span">{language?.name}</RadioGroup.Label>
-                                  </RadioGroup.Option>
-                                ))}
-                              </div>
-                            </RadioGroup>
-                          </div>
+                          </RadioGroup>
                         </div>
-                      )}
+                        <div className="pb-[20px]">
+                          <div className="flex gap-1 items-center">
+                            <img src={toneIcon} />
+                            <label for="actions" className="block text-[12px] font-bold leading-6 text-gray1">
+                              TONE
+                            </label>
+                          </div>
+                          <RadioGroup value={selectedTone} onChange={setSelectedTone}>
+                            <div className="inline-flex gap-2 items-center">
+                              {tones.map((tone, index) => (
+                                <RadioGroup.Option
+                                  name="length"
+                                  key={tone?.name}
+                                  value={tone}
+                                  onClick={(e) => handleInputTone(e, index, tone)}
+                                  className={({ checked }) =>
+                                    classNames(
+                                      'cursor-pointer text-darkBlue',
+                                      checked || tone?.name === selectedTone?.name
+                                        ? 'border-lightblue bg-lightblue1'
+                                        : '',
+                                      'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
+                                    )
+                                  }
+                                >
+                                  <RadioGroup.Label as="span">{tone?.name}</RadioGroup.Label>
+                                </RadioGroup.Option>
+                              ))}
+                            </div>
+                          </RadioGroup>
+                        </div>
+                        <div className="pb-[10px]">
+                          <div className="flex gap-1 items-center">
+                            <img src={languageIcon} />
+                            <label for="actions" className="block text-[12px] font-bold leading-6 text-gray1 uppercase">
+                              LANGUAGE
+                            </label>
+                          </div>
+                          <RadioGroup value={selectedLanguage} onChange={setSelectedLanguage}>
+                            <div className="inline-flex gap-2 items-center">
+                              {languages.map((language, index) => (
+                                <RadioGroup.Option
+                                  name="length"
+                                  key={language?.name}
+                                  value={language}
+                                  onClick={(e) => handleInputLanguage(e, index, language)}
+                                  className={({ checked }) =>
+                                    classNames(
+                                      'cursor-pointer text-darkBlue',
+                                      checked || language?.name === selectedLanguage?.name
+                                        ? 'border-lightblue bg-lightblue1'
+                                        : '',
+                                      'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
+                                    )
+                                  }
+                                >
+                                  <RadioGroup.Label as="span">{language?.name}</RadioGroup.Label>
+                                </RadioGroup.Option>
+                              ))}
+                            </div>
+                          </RadioGroup>
+                        </div>
+                      </div>
+
                       <div className="pt-[15px] pb-[20px]">
                         {selectTab === 1 ? (
                           <button

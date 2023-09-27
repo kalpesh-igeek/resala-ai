@@ -35,8 +35,10 @@ const Header = ({
 
   const handleClose = () => {
     if (activity) {
+      // console.log("1");
       handleClick();
     } else {
+      // console.log("2");
       dispatch(checkActivity(false));
       handleCloseClick();
     }

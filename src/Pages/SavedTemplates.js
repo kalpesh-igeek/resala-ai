@@ -74,9 +74,10 @@ const SavedTemplates = ({
   };
 
   const handleClose = () => {
-    setIsOpen(false);
+    navigate('/')
+    // setIsOpen(false);
     // handleSidebar();
-    document.querySelectorAll('[style="margin-right: 500px;"]')[0].style = 'position: relative;';
+    // document.querySelectorAll('[style="margin-right: 500px;"]')[0].style = 'position: relative;';
   };
 
   const handleOuterClick = () => {
@@ -162,8 +163,8 @@ const SavedTemplates = ({
                   <Tab
                     className={
                       selectTab === data.id
-                        ? 'w-max rounded-[100px] shadow-sm gap-[8px] text-[11px] font-bold bg-graywhite px-[7px] py-[4px]  transition-all duration-200 ease-linear'
-                        : 'w-max text-[11px] text-lightgray2 px-[7px] py-[4px]  transition-all duration-200 ease-linear'
+                        ? 'w-max rounded-[100px] shadow-sm text-[11px] font-bold bg-graywhite px-[7px] py-[4px]'
+                        : 'w-max text-[11px] text-lightgray2 px-[7px] py-[4px]'
                     }
                     key={id}
                     onClick={() => handleSelectTab(data)}
@@ -185,7 +186,7 @@ const SavedTemplates = ({
                     key={index}
                   >
                     <div
-                      className="flex items-center gap-2 cursor-pointer"
+                      className="flex items-center gap-2 cursor-pointer grow"
                       onClick={() => handleSelectTemplate(index, template)}
                     >
                       <div className="h-[40px] w-[40px] bg-lightgray flex items-center justify-center rounded-full">
