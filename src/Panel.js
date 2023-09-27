@@ -27,10 +27,12 @@ import { getToken } from './utils/localstorage';
 import Template from './Pages/Templates/Template';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkActivity } from './redux/reducers/authSlice/AuthSlice';
+import YoutubeButton from './YoutubeButton';
 
 const QUICKREPLY = 'quickreply';
 const SELECTION = 'selection';
 const CHAT = 'chat';
+const SUMMARIZEVIDEO = 'summarize-video';
 
 export const DrawerContext = React.createContext(null);
 
@@ -115,19 +117,63 @@ export default function Panel() {
     // window.onhashchange = function () {
     //   setBackToInbox(window.location.hash.split('#inbox/')[1]);
     // };
-    setTimeout(() => {
-      const quickReply = document.getElementById('quickButton');
-      // console.log('quickReply', quickReply);
-      const quickPosition = document.querySelectorAll('[aria-label="Print all"]')[0];
-      // console.log('quickPosition', quickPosition);
-      if (quickPosition) {
-        quickPosition.parentElement?.parentElement?.prepend(quickReply);
-        quickReply.onclick = function () {
-          handleSidebar(QUICKREPLY);
-          setRequestedText('hello');
-        };
-      }
-    }, 4000);
+    const hostname = window.location.hostname;
+    console.log({hostname});
+
+    if(hostname == 'www.youtube.com'){
+      setTimeout(() => {
+        const secondaryInner = document.getElementById('secondary-inner');
+        if(secondaryInner){
+          const youtubeButton = document.getElementById('youtubeButton');
+          if(youtubeButton){
+            secondaryInner.prepend(youtubeButton);
+            youtubeButton.classList.remove("hidden");
+
+            const summarizeVideoId = document.getElementById('summarizeVideo');
+            summarizeVideoId.onclick = function () {
+              document.querySelectorAll('.summarizeVideo').forEach(function(element) {
+                  console.log(element.id);
+                  element.classList.remove("hidden");
+              });
+            };
+
+            const highlightsArrowDown = document.getElementById('highlightsArrowDown');
+            highlightsArrowDown.onclick = ()=> {
+              const highlightsData = document.getElementById('highlightsData');
+              if(highlightsData){
+                highlightsData.classList.toggle("hidden");
+              }
+              highlightsArrowDown.classList.toggle("rotate-180");
+            }
+
+            const clickToExpandClass = document.getElementsByClassName('clickToExpand');
+            Array.from(clickToExpandClass).forEach(function(element) {
+              element.addEventListener('click', () => {
+                dataId = element.getAttribute('data-id')
+                  let clickToExpandData = document.getElementById('clickToExpandData_'+ dataId);
+                  clickToExpandData.classList.toggle("hidden");
+                  let clickToExpand = document.getElementById('clickToExpand_'+ dataId);
+                  clickToExpand.classList.toggle("rotate-180");
+              });
+            });
+          }
+        }
+      }, 3000);
+
+    }else if(hostname == 'mail.google.com'){
+      setTimeout(() => {
+        const quickReply = document.getElementById('quickButton');
+        const quickPosition = document.querySelectorAll('[aria-label="Print all"]')[0];
+        if (quickPosition) {
+          quickPosition.parentElement?.parentElement?.prepend(quickReply);
+          quickReply.onclick = function () {
+            handleSidebar(QUICKREPLY);
+            setRequestedText('hello');
+          };
+        }
+      }, 3000);
+      
+    }
   }, []);
 
   // useEffect(() => {
@@ -301,6 +347,7 @@ export default function Panel() {
         positionY={positionY}
       />
       <QuickButton handleSidebar={handleSidebar} />
+      <YoutubeButton />
       {/* <div
         style={{
           boxShadow: '0px 9px 10px rgba(22, 120, 242, 0.25)',
