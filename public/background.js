@@ -1,3 +1,5 @@
+// background.js
+
 let isOpen = false;
 
 const actionClickHandler = async ({ id: tabId }) => {
@@ -14,3 +16,12 @@ const actionClickHandler = async ({ id: tabId }) => {
 };
 
 chrome.action.onClicked.addListener(actionClickHandler);
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.enableButton !== undefined) {
+    // Enable or disable the button based on the message
+    const enable = message.enableButton;
+    console.log('enable', enable);
+    chrome.action.setBadgeText({ text: enable ? 'ON' : 'OFF' });
+  }
+});

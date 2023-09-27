@@ -202,7 +202,7 @@ const MainScreen = ({
 
   // const [suggestionBox, setSuggestionBox] = useState(true);
 
-  const [selectedTemplate, setSelectedTempate] = useState(state?.template);
+  const [selectedTemplate, setSelectedTempate] = useState(state?.template || []);
 
   const [isUsePrompt, setIsUsePrompt] = useState(false);
 
@@ -350,6 +350,164 @@ const MainScreen = ({
   const languageRef = useRef(null);
 
   const draftPreviewTextareaRef = useRef(null);
+
+  // const [buttonDisabled, setButtonDisabled] = useState(true);
+  // const [focusedTextarea, setFocusedTextarea] = useState(null);
+
+  // useEffect(() => {
+  //   const messageListener = (message) => {
+  //     if (message.enableButton !== undefined) {
+  //       setButtonDisabled(!message.enableButton);
+  //     }
+  //   };
+
+  //   chrome.runtime.onMessage.addListener(messageListener);
+
+  //   return () => {
+  //     chrome.runtime.onMessage.removeListener(messageListener);
+  //   };
+  // }, []);
+
+  // const isElementInExtension = (element) => {
+  //   // Replace 'your-extension-id' with the actual ID of your extension's root element.
+  //   const extensionRootElement = document.getElementById('side-bar-extension-root');
+  //   return extensionRootElement?.contains(element);
+  // };
+
+  // // Define a function to check if an element is an input field
+  // const isInputField = (element) => {
+  //   return (
+  //     element.tagName === 'INPUT' ||
+  //     element.tagName === 'TEXTAREA' ||
+  //     // You can add more conditions for other types of input fields (e.g., select)
+  //     // element.tagName === 'SELECT' ||
+  //     // ...
+  //     false
+  //   );
+  // };
+
+  // // Define a function to find the closest button element to the given element
+  // const findClosestButton = (element) => {
+  //   // Traverse the DOM tree upwards to find the closest button element
+  //   while (element) {
+  //     if (element.tagName === 'BUTTON') {
+  //       return element;
+  //     }
+  //     element = element.parentElement;
+  //   }
+  //   return null; // If no button element is found in the ancestor chain
+  // };
+
+  // useEffect(() => {
+  //   const handleFocusIn = (event) => {
+  //     const focusedElement = event.target;
+
+  //     if (!isElementInExtension(focusedElement) && isInputField(focusedElement)) {
+  //       const button = findClosestButton(focusedElement);
+  //       // console.log('button', focusedElement);
+
+  //       if (button) {
+  //         button.removeAttribute('disabled');
+  //       }
+
+  //       chrome.runtime.sendMessage({ enableButton: true });
+  //       setButtonDisabled(false);
+  //     }
+  //   };
+
+  //   const handleFocusOut = (event) => {
+  //     const blurredElement = event.target;
+
+  //     if (!isElementInExtension(blurredElement) && isInputField(blurredElement)) {
+  //       const button = findClosestButton(blurredElement);
+
+  //       if (button) {
+  //         button.setAttribute('disabled', 'disabled');
+  //       }
+  //       setButtonDisabled(true);
+  //       if (focusedElement.tagName === 'TEXTAREA') {
+  //         const valueToInsert = 'This is test text';
+  //         focusedElement.value += valueToInsert;
+  //       }
+  //     }
+  //   };
+
+  //   document.addEventListener('focusin', handleFocusIn);
+  //   document.addEventListener('focusout', handleFocusOut);
+
+  //   return () => {
+  //     document.removeEventListener('focusin', handleFocusIn);
+  //     document.removeEventListener('focusout', handleFocusOut);
+  //   };
+  // }, []);
+
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [focusedTextarea, setFocusedTextarea] = useState(null);
+
+  useEffect(() => {
+    const messageListener = (message) => {
+      if (message.enableButton !== undefined) {
+        setButtonDisabled(!message.enableButton);
+      }
+    };
+
+    chrome.runtime.onMessage.addListener(messageListener);
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(messageListener);
+    };
+  }, []);
+
+  const isElementInExtension = (element) => {
+    // Replace 'your-extension-id' with the actual ID of your extension's root element.
+    const extensionRootElement = document.getElementById('side-bar-extension-root');
+    return extensionRootElement?.contains(element);
+  };
+
+  const isInputField = (element) => {
+    const parentElement = document.querySelector('div[gmail_original="1"]');
+    return (
+      element.tagName === 'INPUT' ||
+      element.tagName === 'TEXTAREA' ||
+      parentElement ||
+      // Add more conditions for other input field types as needed
+      false
+    );
+  };
+  // const isElementInExtension = (element) => {
+  //   // Replace 'your-extension-id' with the actual ID of your extension's root element.
+  //   const extensionRootElement = document.getElementById('your-extension-id');
+  //   return extensionRootElement?.contains(element);
+  // };
+  const findClosestButton = (element) => {
+    while (element) {
+      if (element.tagName === 'BUTTON') {
+        return element;
+      }
+      element = element.parentElement;
+    }
+    return null;
+  };
+
+  const handleFocusIn = (event) => {
+    const focusedElement = event.target;
+    const parentElement = document.querySelector('div[gmail_original="1"]');
+
+    if (!isElementInExtension(focusedElement) && isInputField(focusedElement)) {
+      const button = findClosestButton(focusedElement);
+
+      if (button) {
+        button.removeAttribute('disabled');
+      }
+
+      chrome.runtime.sendMessage({ enableButton: true });
+      setButtonDisabled(false);
+
+      if (focusedElement.tagName === 'TEXTAREA' || focusedElement.tagName === 'INPUT' || parentElement) {
+        setFocusedTextarea(focusedElement);
+      }
+    }
+  };
 
   useEffect(() => {
     // Recalculate aiToolsLength when selectedItems changes
@@ -800,6 +958,32 @@ const MainScreen = ({
     }
   }, [selectedTemplate]);
 
+  // useEffect(() => {
+  //   if (selectedTemplate) {
+  //     setInputButtonBox(true);
+  //     setRequestedText(selectedTemplate[0]?.name); // For Action
+  //     setSelectedAction({ name: selectedTemplate[0]?.name });
+
+  //     // Check if there's a format item in the array (assuming it's the second item)
+  //     if (selectedTemplate.length > 1) {
+  //       setSelectedFormat({ name: selectedTemplate[1]?.name }); // For Format
+  //       // Since Format is found in the selectedTemplate, set selectedTab to 2
+  //       setSelectTab(2);
+  //     }
+
+  //     setSelectedLength({ name: selectedTemplate[1]?.name });
+  //     setSelectedTone({ name: selectedTemplate[2]?.name });
+  //     setSelectedLanguage({ name: selectedTemplate[3]?.name });
+
+  //     setSelectedItems([
+  //       { name: selectedTemplate[0]?.name },
+  //       { name: selectedTemplate[1]?.name },
+  //       { name: selectedTemplate[2]?.name },
+  //       { name: selectedTemplate[3]?.name },
+  //     ]);
+  //   }
+  // }, [selectedTemplate]);
+
   const handleAudioInfoPopup = () => {
     // closeSpeechRecognition();
     setIsAudioInfoPopup(true);
@@ -925,8 +1109,6 @@ const MainScreen = ({
             // Replace <br><br> with a newline
             data = line.replace(/#@#/g, '\n');
             // console.log('data', data);
-            // console.log('data', data);
-            // console.log('data', data);
             if (line.includes('connection closed')) {
               setIsTypewriterDone(false);
               setIsStreamingComp(false);
@@ -1027,6 +1209,14 @@ const MainScreen = ({
             }
             // }
           }
+          setTemplatePayload({
+            input_text: replyText.original_text?.trim(),
+            action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
+            length: selectedLength?.name,
+            tone: selectedTone?.name,
+            language: selectedLanguage?.name,
+            output_text: accumulatedMessage,
+          });
           newResultText = [
             ...resultTextRep,
             { output_text: accumulatedMessage.trim() }, // Trim to remove trailing spaces
@@ -1212,12 +1402,75 @@ const MainScreen = ({
     }, 2000);
   };
 
-  // const loadedTextContent = 'Your loaded text content goes here'; // Replace with your loaded text content.
-
   const handleApply = () => {
-    // Send a message to the background script with the loaded text content.
-    // chrome.runtime.sendMessage({ applyText: loadedTextContent });
+    const parentElement = document.querySelector('div[gmail_original="1"]');
+    if (focusedTextarea) {
+      const valueToInsert = templatePayload?.output_text;
+      const selectionStart = focusedTextarea.selectionStart;
+      const selectionEnd = focusedTextarea.selectionEnd;
+      const currentValue = focusedTextarea.value;
+      const newValue = currentValue.substring(0, selectionStart) + valueToInsert + currentValue.substring(selectionEnd);
+
+      // Set the new value of the textarea
+      focusedTextarea.value = newValue;
+
+      // Restore focus and cursor position
+      focusedTextarea.focus();
+      focusedTextarea.setSelectionRange(selectionStart + valueToInsert.length, selectionStart + valueToInsert.length);
+    }
+    if (parentElement) {
+      // Get the dynamic text from templatePayload.generate_mail
+      const dynamicText = templatePayload.output_text;
+
+      // Split the dynamic text into sections based on line breaks
+      const dynamicTextSections = dynamicText.split('\n');
+
+      // Clear any existing content in the parent element
+      parentElement.innerHTML = '';
+
+      // Create a new div element for each section and add it to the parent element
+      dynamicTextSections.forEach((sectionText, index) => {
+        if (sectionText.trim() === '') {
+          // Add a div element with a line break when there is a line break in the dynamic text
+          const newDiv = document.createElement('div');
+          newDiv.setAttribute('dir', 'ltr');
+          newDiv.setAttribute('gmail_original', '1');
+          newDiv.innerHTML = '<br>';
+          parentElement.appendChild(newDiv);
+        } else {
+          // Add a div element with the dynamic text
+          const newDiv = document.createElement('div');
+          newDiv.setAttribute('dir', 'ltr');
+          newDiv.setAttribute('gmail_original', '1');
+          newDiv.innerHTML = sectionText;
+          parentElement.appendChild(newDiv);
+        }
+      });
+    }
   };
+
+  useEffect(() => {
+    document.addEventListener('focusin', handleFocusIn);
+
+    return () => {
+      document.removeEventListener('focusin', handleFocusIn);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleFocusOut = (event) => {
+      if (focusedTextarea && !event.relatedTarget) {
+        setFocusedTextarea(null);
+        setButtonDisabled(true);
+      }
+    };
+
+    document.addEventListener('focusout', handleFocusOut);
+
+    return () => {
+      document.removeEventListener('focusout', handleFocusOut);
+    };
+  }, [focusedTextarea]);
 
   const handlePromptViewPopup = (prompt) => {
     setIsGeneralPromptViewPopup(true);
@@ -1702,28 +1955,8 @@ const MainScreen = ({
     setIsOpen(false);
   };
 
-  // const handleApply = () => {
-  //   const focusedElement = document.activeElement;
-  //   console.log('focusedElement', focusedElement);
-  //   console.log('focusedElement.tagName', focusedElement.tagName);
-  //   if (focusedElement.tagName === 'INPUT' || focusedElement.tagName === 'TEXTAREA') {
-  //     focusedElement.value = resultText.output_text || resultText || selectedTemplate?.output_text;
-  //   }
-  // };
-  // const handleApply = () => {
-  //   // Step 2: Retrieve the generated draft text (resultText)
-  //   //   const generatedDraft = resultText.output_text || resultText || selectedTemplate?.output_text;
-  //   // Step 3: Detect when a user focuses on an input field outside your extension
-  //   // You can add an event listener for input field focus
-  //   document.addEventListener('focusin', handleInputFieldFocus);
-  //   // Step 4: Store the generated draft text in a state or a variable
-  //   // For example, you can use React state to store the generated draft text
-  //   // ... code to set the generated draft text in state
-  // };
-  // Step 3: Handle input field focus
   const handleInputFieldFocus = (event) => {
     const target = event.target;
-    console.log('target', target);
     // Check if the focused element is an input field
     if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
       // Step 4: Insert the generated draft text into the focused input field
@@ -3290,12 +3523,18 @@ const MainScreen = ({
                               {copied ? 'Copied!' : 'Copy'}
                             </button>
                             <button
-                              className="w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 disabled:cursor-none disabled:opacity-50"
-                              disabled={resultTextRep !== '' ? '' : 'disabled'}
+                              className={`w-full relative group rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 ${
+                                buttonDisabled ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
+                              }`}
+                              disabled={buttonDisabled}
                               onClick={handleApply}
                               type="button"
+                              id="addToFocusedInput"
                             >
                               Apply
+                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 bg-gray-800 text-white text-sm rounded-md py-1 px-2 mt-2 transition-opacity duration-300">
+                                Tooltip Text
+                              </div>
                             </button>
                           </div>
                         </div>
@@ -3349,7 +3588,7 @@ const MainScreen = ({
                                 <SaveTemplatePopup
                                   setSaveTemplateBox={setSaveTemplateBox}
                                   saveTemplateBox={saveTemplateBox}
-                                  draftResponse={resultTextRep}
+                                  draftResponse={templatePayload}
                                 />
                               </div>
                             )}
@@ -3422,10 +3661,13 @@ const MainScreen = ({
                               {copied ? 'Copied!' : 'Copy'}
                             </button>
                             <button
-                              className="w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 disabled:cursor-none disabled:opacity-50"
-                              disabled={resultTextRep !== '' ? '' : 'disabled'}
+                              className={`w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 ${
+                                buttonDisabled ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
+                              }`}
+                              disabled={buttonDisabled}
                               onClick={handleApply}
                               type="button"
+                              id="addToFocusedInput"
                             >
                               Apply
                             </button>

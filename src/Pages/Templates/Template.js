@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Typewriter from '../../Components/Typewriter';
 // import SaveTemplate from '../utils/SavedTemplates/Icons/SaveTemplate.svg';
@@ -15,6 +15,106 @@ const Template = ({ selectedTemplate, setActiveTab }) => {
       setCopied(false); // Revert copied state to false after 2 seconds
     }, 2000);
   };
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [focusedTextarea, setFocusedTextarea] = useState(null);
+
+  useEffect(() => {
+    const messageListener = (message) => {
+      if (message.enableButton !== undefined) {
+        setButtonDisabled(!message.enableButton);
+      }
+    };
+
+    chrome.runtime.onMessage.addListener(messageListener);
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(messageListener);
+    };
+  }, []);
+
+  const isElementInExtension = (element) => {
+    // Replace 'your-extension-id' with the actual ID of your extension's root element.
+    const extensionRootElement = document.getElementById('side-bar-extension-root');
+    return extensionRootElement?.contains(element);
+  };
+
+  const isInputField = (element) => {
+    return (
+      element.tagName === 'INPUT' ||
+      element.tagName === 'TEXTAREA' ||
+      // Add more conditions for other input field types as needed
+      false
+    );
+  };
+
+  const findClosestButton = (element) => {
+    while (element) {
+      if (element.tagName === 'BUTTON') {
+        return element;
+      }
+      element = element.parentElement;
+    }
+    return null;
+  };
+
+  const handleFocusIn = (event) => {
+    const focusedElement = event.target;
+
+    if (!isElementInExtension(focusedElement) && isInputField(focusedElement)) {
+      const button = findClosestButton(focusedElement);
+
+      if (button) {
+        button.removeAttribute('disabled');
+      }
+
+      chrome.runtime.sendMessage({ enableButton: true });
+      setButtonDisabled(false);
+
+      if (focusedElement.tagName === 'TEXTAREA' || focusedElement.tagName === 'INPUT') {
+        setFocusedTextarea(focusedElement);
+      }
+    }
+  };
+
+  const handleApply = () => {
+    if (focusedTextarea) {
+      const valueToInsert = selectedTemplate?.output_text;
+      const selectionStart = focusedTextarea.selectionStart;
+      const selectionEnd = focusedTextarea.selectionEnd;
+      const currentValue = focusedTextarea.value;
+      const newValue = currentValue.substring(0, selectionStart) + valueToInsert + currentValue.substring(selectionEnd);
+
+      // Set the new value of the textarea
+      focusedTextarea.value = newValue;
+
+      // Restore focus and cursor position
+      focusedTextarea.focus();
+      focusedTextarea.setSelectionRange(selectionStart + valueToInsert.length, selectionStart + valueToInsert.length);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('focusin', handleFocusIn);
+
+    return () => {
+      document.removeEventListener('focusin', handleFocusIn);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleFocusOut = (event) => {
+      if (focusedTextarea && !event.relatedTarget) {
+        setFocusedTextarea(null);
+        setButtonDisabled(true);
+      }
+    };
+
+    document.addEventListener('focusout', handleFocusOut);
+
+    return () => {
+      document.removeEventListener('focusout', handleFocusOut);
+    };
+  }, [focusedTextarea]);
   return (
     <div className="px-[20px] py-[12px] relative mt-[12px]">
       <div className="col-span-full">
@@ -94,8 +194,13 @@ const Template = ({ selectedTemplate, setActiveTab }) => {
             {copied ? 'Copied!' : 'Copy'}
           </button>
           <button
-            className="w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
-            // disabled={resultText !== '' ? '' : 'disabled'}
+            className={`w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 ${
+              buttonDisabled ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
+            }`}
+            disabled={buttonDisabled}
+            onClick={handleApply}
+            type="button"
+            id="addToFocusedInput"
           >
             Apply
           </button>
