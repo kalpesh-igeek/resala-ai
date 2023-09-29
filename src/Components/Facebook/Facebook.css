@@ -1,0 +1,7 @@
+.scrollbarFace::-webkit-scrollbar {
+  width: 0;
+}
+.textArea:focus {
+  outline: none;
+  resize: none;
+}
