@@ -159,7 +159,7 @@ const QuickReply = ({
       const content = emailContentElement.textContent.trim().replace(/\s+/g, ' '); // Replace multiple spaces and line breaks with a single space
 
       try {
-        const response = await fetch('http://192.168.1.10:8000/quick_reply/stream_sender_intent', {
+        const response = await fetch('https://api-qa.resala.ai/quick_reply/stream_sender_intent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -231,7 +231,7 @@ const QuickReply = ({
     try {
       // setCompLoading(true);
       // Call your new API here
-      const response = await fetch('http://192.168.1.10:8000/quick_reply/generate_stream_email', {
+      const response = await fetch('https://api-qa.resala.ai/quick_reply/generate_stream_email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

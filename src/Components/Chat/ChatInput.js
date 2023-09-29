@@ -41,22 +41,22 @@ const ChatInput = () => {
                 <div className="inputLanguage flex items-center gap-2 text-[12px] relative text-darkBlue">
                   <div className="">Language</div>
                   {/* <Dropdown
-                                        className=" border border-gray rounded-md text-[10px] p-[4px] w-[100px]"
-                                        options={outputlanguages}
-                                        value={defaultLanguage}
-                                        arrowClosed={
-                                          <img
-                                            className="absolute top-[50%] -translate-y-[50%] right-[0] w-[16px] h-[16px]"
-                                            src={ArrowDown}
-                                          />
-                                        }
-                                        arrowOpen={
-                                          <img
-                                            className="absolute top-[50%] -translate-y-[50%] right-[0] w-[16px] h-[16px] rotate-180"
-                                            src={ArrowDown}
-                                          />
-                                        }
-                                      /> */}
+                    className=" border border-gray rounded-md text-[10px] p-[4px] w-[100px]"
+                    options={outputlanguages}
+                    value={defaultLanguage}
+                    arrowClosed={
+                      <img
+                        className="absolute top-[50%] -translate-y-[50%] right-[0] w-[16px] h-[16px]"
+                        src={ArrowDown}
+                      />
+                    }
+                    arrowOpen={
+                      <img
+                        className="absolute top-[50%] -translate-y-[50%] right-[0] w-[16px] h-[16px] rotate-180"
+                        src={ArrowDown}
+                      />
+                    }
+                  /> */}
                   <div ref={selectRef}>
                     <Select
                       className="border border-gray rounded-md text-[10px] p-[4px]"

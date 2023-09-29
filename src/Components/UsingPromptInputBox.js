@@ -3,6 +3,9 @@ import Close from '../utils/MainScreen/Icons/Close.svg';
 import { RadioGroup } from '@headlessui/react';
 import { useDispatch } from 'react-redux';
 import { respondeLanguage } from '../redux/reducers/chatSlice/ChatSlice';
+import { SelectLanguage } from './Common/SelectLanguage';
+import InputField from './InputField';
+import { replaceWordsInBrackets } from '../Helpers/replaceString';
 
 const outputlanguages = [
   { title: 'English', active: true },
@@ -27,6 +30,8 @@ const UsingPromptInputBox = ({
   SuggestionCloseIcon,
   selectedPrompt,
   SendIcon,
+  multiplePlaceholder,
+  setMultiplePlaceholder,
 }) => {
   // console.log('selectedPrompt', selectedPrompt);
   // const dispatch = useDispatch();
@@ -76,6 +81,31 @@ const UsingPromptInputBox = ({
     setNewPrompt(e.target.value);
   };
 
+  const handleChange = (e, index) => {
+    const tmp = Array.from(multiplePlaceholder.fields);
+    tmp[index] = e.target.value;
+    console.log('tmp', tmp);
+    setMultiplePlaceholder((prev) => {
+      return {
+        ...prev,
+        fields: tmp,
+      };
+    });
+  };
+
+  const handleSend = () => {
+    const OriginalString = multiplePlaceholder.prompt;
+    const replaceWord = multiplePlaceholder.fields;
+    const Language = multiplePlaceholder.output_language;
+    const updatedString = replaceWordsInBrackets(OriginalString, replaceWord);
+
+    handleSendMessage(undefined, updatedString, Language);
+    setNewPrompt('');
+    setIsViewPrompts(false);
+    setIsTypewriterDone(true);
+    setMultiplePlaceholder(undefined);
+  };
+
   return (
     <div className={`${isUsePrompt ? 'block' : 'hidden'}`}>
       <div
@@ -88,7 +118,13 @@ const UsingPromptInputBox = ({
             <div className="gap-2 flex items-center">
               <span>{selectedPrompt.name}</span>
             </div>
-            <div className="cursor-pointer -mt-[30px]" onClick={() => setIsUsePrompt(false)}>
+            <div
+              className="cursor-pointer -mt-[30px]"
+              onClick={() => {
+                setMultiplePlaceholder(undefined);
+                setIsUsePrompt(false);
+              }}
+            >
               <img src={Close} />
             </div>
           </div>
@@ -96,9 +132,9 @@ const UsingPromptInputBox = ({
         <div className="col-span-full mb-[12px]">
           <div className="text-[14px] text-gray1 mb-[8px]">{selectedPrompt.description}</div>
         </div>
-        <div className="mb-[8px]">
-          <div className="text-[12px] text-gray1 font-medium mb-[8px]">OUTPUT LANGUAGE</div>
-          <div className="promptLanguage flex gap-2 items-center">
+        <div className="flex items-center gap-[8px] mb-[8px]">
+          <div className="text-[12px] text-gray1 font-medium">OUTPUT LANGUAGE</div>
+          {/* <div className="promptLanguage flex gap-2 items-center">
             <RadioGroup value={selectedLanguage} onChange={setSelectedLanguage} className="flex items-center gap-2">
               <RadioGroup.Option
                 name="language"
@@ -166,40 +202,71 @@ const UsingPromptInputBox = ({
                 ))}
               </div>
             </div>
-          </div>
+          </div> */}
+
+          {/* CUSTOME DRPDOWN LANGUAGE */}
+          <SelectLanguage
+            isOpen={popupBox}
+            setClose={setPopupBox}
+            active={activeLanguage.find((itm) => itm.active)}
+            options={[...activeLanguage]}
+          />
         </div>
-        <div className="relative">
-          <textarea
-            id="promptText"
-            name="promptText"
-            rows="6"
-            value={newPrompt}
-            placeholder="Topic or Keyword"
-            className="text-[12px] border-gray block w-full rounded-lg border p-[12px]"
-            onChange={(e) => handlePromptInput(e)}
-            style={{ padding: '10px 35px 10px 10px', resize: 'none' }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
+
+        {multiplePlaceholder ? (
+          <div className="grid grid-cols-1 gap-y-[12px] w-full">
+            {multiplePlaceholder.fields.map((itm, index) => (
+              <div index={`input-${index}`}>
+                {/* <input value={itm} placeholder={itm} onChange={(e) => handleChange(e, index)} /> */}
+                <InputField
+                  className="w-full rounded-md border border-gray p-[12px] text-[14px] text-darkBlue placeholder:text-gray2"
+                  value={itm}
+                  placeholder={itm}
+                  handleChange={(e) => handleChange(e, index)}
+                />
+              </div>
+            ))}
+            <div
+              onClick={handleSend}
+              className="cursor-pointer w-[460px] h-10 px-4 pt-[9px] pb-2.5 bg-blue-600 rounded-md justify-center items-start gap-2.5 inline-flex hover:opacity-90 focus:outline-none"
+            >
+              <div className="text-white text-base font-medium font-['DM Sans'] capitalize">Send</div>
+            </div>
+          </div>
+        ) : (
+          <div className="relative">
+            <textarea
+              id="promptText"
+              name="promptText"
+              rows="6"
+              value={newPrompt}
+              placeholder="Topic or Keyword"
+              className="text-[12px] border-gray block w-full rounded-lg border p-[12px]"
+              onChange={(e) => handlePromptInput(e)}
+              style={{ padding: '10px 35px 10px 10px', resize: 'none' }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage(e, newPrompt ? newPrompt : selectedPrompt.prompt, selectedLanguage.title);
+                  setNewPrompt('');
+                  setIsViewPrompts(false);
+                  setIsTypewriterDone(true);
+                }
+              }}
+            />
+            <div
+              className="absolute top-[12px] right-[12px] w-[20px] h-[20px] cursor-pointer"
+              onClick={(e) => {
                 handleSendMessage(e, newPrompt ? newPrompt : selectedPrompt.prompt, selectedLanguage.title);
                 setNewPrompt('');
                 setIsViewPrompts(false);
                 setIsTypewriterDone(true);
-              }
-            }}
-          />
-          <div
-            className="absolute top-[12px] right-[12px] w-[20px] h-[20px] cursor-pointer"
-            onClick={(e) => {
-              handleSendMessage(e, newPrompt ? newPrompt : selectedPrompt.prompt, selectedLanguage.title);
-              setNewPrompt('');
-              setIsViewPrompts(false);
-              setIsTypewriterDone(true);
-            }}
-          >
-            <img src={SendIcon} />
+              }}
+            >
+              <img src={SendIcon} />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

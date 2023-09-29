@@ -273,10 +273,10 @@ const MainScreen = ({
 
   //Shubham
   // {Chat}
-
   const [chatInput, setChatInput] = useState({
     chatText: '',
   });
+
   const [errors, setErrors] = useState({});
   const [chatLoading, setChatLoading] = useState(false);
 
@@ -344,6 +344,7 @@ const MainScreen = ({
   const [hasResultTextRep, setHasResultTextRep] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isSpeechEnabled, setIsSpeechEnabled] = useState(false);
+  const [multiplePlaceholder, setMultiplePlaceholder] = useState(undefined);
 
   const chatContainerRef = useRef(null);
   const promptRef = useRef(null);
@@ -1066,7 +1067,7 @@ const MainScreen = ({
       try {
         setCompLoading(true);
         // Call your new API here
-        const response = await fetch('http://192.168.1.10:8000/compose/compose_stream', {
+        const response = await fetch('https://api-qa.resala.ai/compose/compose_stream', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1156,7 +1157,7 @@ const MainScreen = ({
       try {
         setCompRepLoading(true);
         // Call your new API here
-        const response = await fetch('http://192.168.1.10:8000/compose/generate_stream_reply', {
+        const response = await fetch('https://api-qa.resala.ai/compose/generate_stream_reply', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1255,7 +1256,7 @@ const MainScreen = ({
       try {
         setCompLoading(true);
         // Call your new API here
-        const response = await fetch('http://192.168.1.10:8000/compose/compose_stream', {
+        const response = await fetch('https://api-qa.resala.ai/compose/compose_stream', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1567,7 +1568,7 @@ const MainScreen = ({
       try {
         // Call your new API here
         // const USER_TOKEN = getToken();
-        const response = await fetch('http://192.168.1.10:8000/chat/general_prompt_response_stream', {
+        const response = await fetch('https://api-qa.resala.ai/chat/general_prompt_response_stream', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1628,7 +1629,7 @@ const MainScreen = ({
       // Add the "Loading..." message initially
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       try {
-        const response = await fetch('http://192.168.1.10:8000/chat/stream_chat', {
+        const response = await fetch('https://api-qa.resala.ai/chat/stream_chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1692,7 +1693,7 @@ const MainScreen = ({
       // Add the "Loading..." message initially
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       try {
-        const response = await fetch('http://192.168.1.10:8000/doc_chat/chat_document', {
+        const response = await fetch('https://api-qa.resala.ai/doc_chat/chat_document', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1781,7 +1782,7 @@ const MainScreen = ({
     const payload = { chatId: chatId };
 
     try {
-      const response = await fetch('http://192.168.1.10:8000/chat/regenerate_stream_response', {
+      const response = await fetch('https://api-qa.resala.ai/chat/regenerate_stream_response', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2138,6 +2139,8 @@ const MainScreen = ({
 
                     {isUsePrompt ? (
                       <UsingPromptInputBox
+                        multiplePlaceholder={multiplePlaceholder}
+                        setMultiplePlaceholder={setMultiplePlaceholder}
                         handleSendMessage={handleSendMessage}
                         isUsePrompt={isUsePrompt}
                         setIsUsePrompt={setIsUsePrompt}
@@ -2182,7 +2185,20 @@ const MainScreen = ({
                               </div>
                               <div className={`${addPromptBox ? 'block' : 'hidden'}`}>
                                 <BottomDrawerLayout title="Prompt Library" setClose={setAddPromptBox}>
-                                  <PromptComp />
+                                  <PromptComp
+                                    promptList={promptList}
+                                    multiplePlaceholder={multiplePlaceholder}
+                                    setMultiplePlaceholder={setMultiplePlaceholder}
+                                    handleUsePrompt={handleUsePrompt}
+                                    setIsViewPrompts={setIsViewPrompts}
+                                    generalPromptList={generalPromptList}
+                                    handleSendMessage={handleSendMessage}
+                                    setIsTypewriterDone={setIsTypewriterDone}
+                                    setClose={setAddPromptBox}
+                                    setChatInput={setChatInput}
+                                    handleCustomPrompt={handleCustomPrompt}
+                                    handleNewPrompt={handleNewPrompt}
+                                  />
                                 </BottomDrawerLayout>
                               </div>
                             </div>
@@ -2195,7 +2211,7 @@ const MainScreen = ({
                               </div>
                               <div
                                 ref={languageRef}
-                                className={`chats-settings w-[178] flex flex-col gap-2 absolute right-0 bottom-[100%] bg-white p-[8px] rounded-[8px] ${
+                                className={`chats-settings w-[190px] flex flex-col gap-2 absolute right-0 bottom-[100%] bg-white p-[8px] rounded-[8px] ${
                                   settingsPopupBox ? 'block' : 'hidden'
                                 }`}
                                 style={{
@@ -2279,7 +2295,7 @@ const MainScreen = ({
                               // if (!isStreaming) {
                               // setController(new AbortController());
                               // setIsStreaming(true);
-
+                              e.preventDefault();
                               handleSendMessage(e, chatInput.chatText);
                               setChatInput({
                                 ...chatInput,
@@ -3080,15 +3096,15 @@ const MainScreen = ({
                             className={`flex text-[16px] w-full focus:outline-none justify-center rounded-md bg-primaryBlue px-3 py-2 text-sm leading-6 text-white shadow-sm hover:opacity-90  ${
                               compRepLoading ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
                             } 
-                             ${
-                               (selectTab === 2 && !replyText.original_text) ||
-                               replyText.original_text.trim() === '' ||
-                               !replyText.reply ||
-                               replyText.reply.trim() === '' ||
-                               aiToolsLength !== 4
-                                 ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
-                                 : ''
-                             }`}
+                              ${
+                                (selectTab === 2 && !replyText.original_text) ||
+                                replyText.original_text.trim() === '' ||
+                                !replyText.reply ||
+                                replyText.reply.trim() === '' ||
+                                aiToolsLength !== 4
+                                  ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
+                                  : ''
+                              }`}
                             onClick={(e) => {
                               handleGenerateDraft(e);
                               setComposeRes(false);

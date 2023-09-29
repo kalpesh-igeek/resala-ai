@@ -93,7 +93,7 @@ const ChatData = ({
                 return (
                   <div id="chat-container" className="flex justify-start">
                     <div
-                      className="message  bg-lightgray max-w-[370px] border border-gray p-[12px] flex flex-col mb-[12px] rounded-tl-[6px] rounded-tr-[6px] rounded-br-[6px] rounded-br-0 rounded-bl-0 relative "
+                      className="message  bg-lightgray max-w-[370px] border-0 border-gray p-[12px] flex flex-col mb-[12px] rounded-tl-[6px] rounded-tr-[6px] rounded-br-[6px] rounded-br-0 rounded-bl-0 relative "
                       style={{
                         // boxShadow: '0px 2px 4px 0px #0000000D',
                         overflowWrap: 'break-word',
@@ -131,7 +131,7 @@ const ChatData = ({
       </div>
 
       {!isTypewriterDone && chatData?.length >= 2 && (
-        <div className="text-[12px] text-lightgray2 mb-[30px]">
+        <div className="text-[12px] text-lightgray2 mb-[16px]">
           <span
             className="flex items-center gap-2"
             onClick={() => {
