@@ -31,6 +31,7 @@ import YoutubeButton from './YoutubeButton';
 import { generateYoutubeSummary } from './redux/reducers/YoutubeSummarySlice/YoutubeSummarySlice';
 import { useSpeechSynthesis } from 'react-speech-kit';
 import copy from 'copy-to-clipboard';
+import WikipediaButton from './WikipediaButton';
 
 const QUICKREPLY = 'quickreply';
 const SELECTION = 'selection';
@@ -162,6 +163,14 @@ export default function Panel() {
         }
       }, 3000);
       
+    }else if(hostname == "en.wikipedia.org"){
+      setTimeout(() => {
+        const WikipediaButton = document.getElementById('WikipediaButton');
+        if(WikipediaButton){
+          WikipediaButton.classList.remove("hidden");
+        }
+      }, 3000);
+      
     }
   }, []);
 
@@ -253,8 +262,9 @@ export default function Panel() {
     setIsLoadedExtension(true);
     setSelectedAction({ name: tool });
     // setIsPopupVisible(false);
+    console.log({selectedText});
     setRequestedText(selectedText);
-    document.querySelectorAll('[style="position: relative;"]')[0].style = 'margin-right: 500px';
+    document.querySelectorAll('[style="position: relative;"]')[0] ? document.querySelectorAll('[style="position: relative;"]')[0].style = 'margin-right: 500px' : '';
   };
 
   useEffect(() => {
@@ -337,6 +347,7 @@ export default function Panel() {
       />
       <QuickButton handleSidebar={handleSidebar} />
       <YoutubeButton />
+      <WikipediaButton handleSidebar={handleSidebar}/>
       {/* <div
         style={{
           boxShadow: '0px 9px 10px rgba(22, 120, 242, 0.25)',

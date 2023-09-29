@@ -30,6 +30,7 @@ const YoutubeButton = () => {
         summarizeVideoId.onclick = function () {
           document.querySelectorAll('.summarizeVideo').forEach(function(element) {
             console.log(element.id);
+            fetchYoutubeSummary()
             element.classList.remove("hidden");
           });
         };
@@ -65,7 +66,6 @@ const YoutubeButton = () => {
             }
           });
         };
-        fetchYoutubeSummary()
 
         const volumeHigh = document.getElementById('volumeHigh');
         volumeHigh.onclick = () => {
