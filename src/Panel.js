@@ -68,6 +68,7 @@ export default function Panel() {
   const [positionX, setPoistionX] = useState(0);
   // console.log('positionX', positionX);
   const [selectedAction, setSelectedAction] = useState();
+  const [isClickWikiPediaButton, setIsClickWikiPediaButton] = useState(false);
   const [positionY, setPoistionY] = useState(0);
   const [backToInbox, setBackToInbox] = useState('');
   const [isPopupVisible, setIsPopupVisible] = useState(true);
@@ -146,6 +147,12 @@ export default function Panel() {
           if(youtubeButton){
             secondaryInner.prepend(youtubeButton);
             youtubeButton.classList.remove("hidden");
+            const ContinueInChat = document.getElementById('ContinueInChat');
+            ContinueInChat.addEventListener('click', () => {
+              console.log("ContinueInChat");
+              handleSidebar('chat')
+              setIsClickWikiPediaButton(true)
+            })
           }
         }
       }, 3000);
@@ -169,6 +176,13 @@ export default function Panel() {
         if(WikipediaButton){
           WikipediaButton.classList.remove("hidden");
         }
+
+        const wikiSummarize = document.getElementById('wikiSummarize');
+        wikiSummarize.addEventListener('click', () => {
+          console.log("Fsdhkj");
+          setIsClickWikiPediaButton(true)
+        })
+
       }, 3000);
       
     }
@@ -262,7 +276,6 @@ export default function Panel() {
     setIsLoadedExtension(true);
     setSelectedAction({ name: tool });
     // setIsPopupVisible(false);
-    console.log({selectedText});
     setRequestedText(selectedText);
     document.querySelectorAll('[style="position: relative;"]')[0] ? document.querySelectorAll('[style="position: relative;"]')[0].style = 'margin-right: 500px' : '';
   };
@@ -364,7 +377,7 @@ export default function Panel() {
       <DrawerContext.Provider value={{ isSideBarOpen }}>
         <div
           style={{
-            display: 'block',
+            display: isSideBarOpen ? 'block' : 'none',
             width: isSideBarOpen ? 500 : 0,
             boxShadow: '-10px 0px 20px 0px #3C42570D',
             zIndex: 999999,
@@ -419,6 +432,8 @@ export default function Panel() {
                           selectedAction={selectedAction}
                           setSelectedAction={setSelectedAction}
                           windowSelectedText={selectedText}
+                          isClickButton = {isClickWikiPediaButton} 
+                          setIsClickButton = {setIsClickWikiPediaButton} 
                         />
                       }
                     />

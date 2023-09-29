@@ -126,7 +126,7 @@ const YoutubeButton = () => {
         <div id="summarizeVideoData" className='hidden summarizeVideo p-[16px] pt-[6px] text-[#5F6583] text-[12px] !font-dmsans font-[400]' style={{ wordWrap: 'break-word' }}>
           <div id='summarizeVideoResponse'></div>
           <div className='pt-[16px]'>
-            <div className='pl-[8px] pr-[8px] pt-[6px] pb-[6px] rounded-[14.40px] justify-flex-start items-center gap-[4px] inline-flex' style={{ border: '1px #1678F2 solid'}}>
+            <div className='pl-[8px] pr-[8px] pt-[6px] pb-[6px] rounded-[14.40px] justify-flex-start items-center gap-[4px] inline-flex cursor-pointer' style={{ border: '1px #1678F2 solid'}} id='ContinueInChat'>
                 <div>
                   <img className="w-[18px] h-[18px]" src={Message} />
                 </div>

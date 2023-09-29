@@ -191,6 +191,8 @@ const MainScreen = ({
   selectedAction,
   setSelectedAction,
   windowSelectedText,
+  isClickButton,
+  setIsClickButton
 }) => {
   const TOKEN = getToken();
   const navigate = useNavigate();
@@ -562,6 +564,131 @@ const MainScreen = ({
     });
     setChatData(updatedChatData);
   };
+
+  const getPageSummary = async (type) => {
+    console.log("sdfvsdjkjk");
+    function generateRandomString(length) {
+      const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      let result = '';
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        result += characters.charAt(randomIndex);
+      }
+      return result;
+    }
+
+    try {
+      setChatType(type);
+      setIsUploadDocument(false);
+      setIsViewPrompts(false);
+      setIsDocChat(false);
+      setIsStreaming(true);
+      setAllreadyStreamed(true);
+
+      if (abortController) {
+        abortController.abort();
+        setAbortController(null); // Clear the abort controller
+      }
+
+      if (alreadyStreamed) {
+        return;
+      }
+
+      // Create a new AbortController instance for this fetch request
+      const controller = new AbortController();
+      setAbortController(controller);
+
+      payload = {
+        "url": window.location.href,
+        "chat_id": generateRandomString(45)
+      }
+
+      payload = JSON.stringify(payload)
+
+      console.log({payload},getToken());
+      const hostname = window.location.hostname;
+      let url = "https://api-qa.resala.ai/web_summary/web_summary";
+      if(hostname == "www.youtube.com"){
+        url = "https://api-qa.resala.ai/youtube/youtube_summary";
+      }
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: getToken(),
+        },
+        body: payload,
+        signal: controller.signal,
+      });
+
+      console.log(response);
+      if (response.ok) {
+        const reader = response.body.getReader();
+        let accumulatedMessage = '';
+
+        // Add initial message to chat data
+
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            break;
+          }
+          const chunk = new TextDecoder().decode(value);
+          const lines = chunk.split('\n');
+
+          for (const line of lines) {
+            data = line.replace(/#@#/g, '\n');
+            // console.log('data', data);
+
+            if (line.includes('connection closed')) {
+              console.log("df");
+              setAllreadyStreamed(false);
+              setIsStreaming(false);
+              break;
+            } else if (line.startsWith('Summarizing : ')) {
+              // If the line starts with the summarizing string, skip it
+              continue;
+            } else {
+              accumulatedMessage += data + ''; // Add the line to the accumulated message
+            }
+          }
+          // Update the chat data with the accumulated message, without the "Loading..." message
+          setChatData((prevMessages) => [
+            ...prevMessages.slice(0, -1), // Remove the last (Loading...) message
+            { msg: accumulatedMessage?.trim(), type: 'ai' }, // Update the chat data
+          ]);
+          // Create a new message with the accumulated message
+        }
+
+        // Update state variables
+        // ...
+      } else {
+        throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+  }
+  //wikipedia
+  console.log(isClickButton);
+  useEffect(() => {
+    if(isClickButton){
+      console.log("dfjkh");
+      const hostname = window.location.hostname;
+      console.log({hostname});
+      if(hostname == "en.wikipedia.org"){
+        setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
+        getPageSummary('wikipedia')
+      }
+      if(hostname == "www.youtube.com"){
+        setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
+        getPageSummary('youtube')
+      }
+    }
+
+  },[isClickButton])
 
   //Prompt
   useEffect(() => {
@@ -1876,6 +2003,11 @@ const MainScreen = ({
       setIsStreaming(false);
       setIsStreamingComp(false);
       setIsDocChat(false);
+    }
+    if (id === 'book') {
+      console.log("book");
+      setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
+      getPageSummary('book')
     }
   };
 

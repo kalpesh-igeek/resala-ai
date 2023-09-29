@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReadIcon from '../../utils/Chat/Icons/ReadIcon.svg';
 import CopyIcon from '../../utils/Chat/Icons/CopyIcon.svg';
+import CopiedIcon from '../../utils/Chat/Icons/CopiedIcon.svg';
 import Typewriter from '../Typewriter';
 import LoadingGif from '../../utils/Chat/Gif/loader.gif';
 import RegenerateIcon from '../../utils/Chat/Icons/RegenerateIcon.svg';
@@ -18,6 +19,7 @@ const ChatData = ({
   isSpeechEnabled,
 }) => {
   const { speak, cancel, speaking } = useSpeechSynthesis();
+  const [isCopied, setisCopied] = useState(false)
 
   const handleSpeak = (msg) => {
     if (speaking) {
@@ -26,6 +28,12 @@ const ChatData = ({
       speak({ text: msg });
     }
   };
+  useEffect(() => {
+     const timer = setTimeout(() => {
+        setisCopied(false)
+      }, 3000);
+    return clearTimeout(timer)
+  }, [isCopied])
 
   // FIX: contiue speech
   useEffect(() => {
@@ -106,10 +114,11 @@ const ChatData = ({
                         <span
                           onClick={() => {
                             copy(item.msg);
+                            setisCopied(true)
                           }}
                           className="cursor-pointer"
                         >
-                          <img src={CopyIcon} />
+                          <img src={!isCopied ? CopyIcon : CopiedIcon} />
                         </span>
                       </div>
 
