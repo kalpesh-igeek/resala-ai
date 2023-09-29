@@ -1,5 +1,5 @@
 #side-bar-extension-root,
-#quickButton {
+#quickButton, #youtubeButton {
   @tailwind base;
   @tailwind components;
   @tailwind utilities;

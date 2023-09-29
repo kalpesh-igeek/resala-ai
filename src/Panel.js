@@ -27,10 +27,16 @@ import { getToken } from './utils/localstorage';
 import Template from './Pages/Templates/Template';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkActivity } from './redux/reducers/authSlice/AuthSlice';
+import YoutubeButton from './YoutubeButton';
+import { generateYoutubeSummary } from './redux/reducers/YoutubeSummarySlice/YoutubeSummarySlice';
+import { useSpeechSynthesis } from 'react-speech-kit';
+import copy from 'copy-to-clipboard';
+import WikipediaButton from './WikipediaButton';
 
 const QUICKREPLY = 'quickreply';
 const SELECTION = 'selection';
 const CHAT = 'chat';
+const SUMMARIZEVIDEO = 'summarize-video';
 
 export const DrawerContext = React.createContext(null);
 
@@ -70,6 +76,20 @@ export default function Panel() {
 
   const [mailId, setMailId] = useState(window.location.hash);
 
+  const { speak, cancel, speaking } = useSpeechSynthesis();
+
+  useEffect(()=>{
+    speak({ text: "dsjkdjgvkljsdkgvjasklgvjsaklgvjasklgvjklkl" });
+  },[])
+  const handleSpeak = (msg) => {
+    console.log({msg});
+    console.log({speaking});
+    if (speaking) {
+      cancel();
+    } else {
+      speak({ text: msg });
+    }
+  };
   // function myFunction(e) {
   //   const selected = window.getSelection();
   //   if (selected.toString() !== '') {
@@ -115,19 +135,43 @@ export default function Panel() {
     // window.onhashchange = function () {
     //   setBackToInbox(window.location.hash.split('#inbox/')[1]);
     // };
-    setTimeout(() => {
-      const quickReply = document.getElementById('quickButton');
-      // console.log('quickReply', quickReply);
-      const quickPosition = document.querySelectorAll('[aria-label="Print all"]')[0];
-      // console.log('quickPosition', quickPosition);
-      if (quickPosition) {
-        quickPosition.parentElement?.parentElement?.prepend(quickReply);
-        quickReply.onclick = function () {
-          handleSidebar(QUICKREPLY);
-          setRequestedText('hello');
-        };
-      }
-    }, 4000);
+    const hostname = window.location.hostname;
+    console.log({hostname});
+
+    if(hostname == 'www.youtube.com'){
+      setTimeout(() => {
+        const secondaryInner = document.getElementById('secondary-inner');
+        if(secondaryInner){
+          const youtubeButton = document.getElementById('youtubeButton');
+          if(youtubeButton){
+            secondaryInner.prepend(youtubeButton);
+            youtubeButton.classList.remove("hidden");
+          }
+        }
+      }, 3000);
+
+    }else if(hostname == 'mail.google.com'){
+      setTimeout(() => {
+        const quickReply = document.getElementById('quickButton');
+        const quickPosition = document.querySelectorAll('[aria-label="Print all"]')[0];
+        if (quickPosition) {
+          quickPosition.parentElement?.parentElement?.prepend(quickReply);
+          quickReply.onclick = function () {
+            handleSidebar(QUICKREPLY);
+            setRequestedText('hello');
+          };
+        }
+      }, 3000);
+      
+    }else if(hostname == "en.wikipedia.org"){
+      setTimeout(() => {
+        const WikipediaButton = document.getElementById('WikipediaButton');
+        if(WikipediaButton){
+          WikipediaButton.classList.remove("hidden");
+        }
+      }, 3000);
+      
+    }
   }, []);
 
   // useEffect(() => {
@@ -218,8 +262,9 @@ export default function Panel() {
     setIsLoadedExtension(true);
     setSelectedAction({ name: tool });
     // setIsPopupVisible(false);
+    console.log({selectedText});
     setRequestedText(selectedText);
-    document.querySelectorAll('[style="position: relative;"]')[0].style = 'margin-right: 500px';
+    document.querySelectorAll('[style="position: relative;"]')[0] ? document.querySelectorAll('[style="position: relative;"]')[0].style = 'margin-right: 500px' : '';
   };
 
   useEffect(() => {
@@ -301,6 +346,8 @@ export default function Panel() {
         positionY={positionY}
       />
       <QuickButton handleSidebar={handleSidebar} />
+      <YoutubeButton />
+      <WikipediaButton handleSidebar={handleSidebar} />
       {/* <div
         style={{
           boxShadow: '0px 9px 10px rgba(22, 120, 242, 0.25)',
@@ -371,6 +418,7 @@ export default function Panel() {
                           QUICKREPLY={QUICKREPLY}
                           selectedAction={selectedAction}
                           setSelectedAction={setSelectedAction}
+                          windowSelectedText={selectedText}
                         />
                       }
                     />

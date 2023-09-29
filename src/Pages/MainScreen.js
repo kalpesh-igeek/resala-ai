@@ -190,6 +190,7 @@ const MainScreen = ({
   handleCloseClick,
   selectedAction,
   setSelectedAction,
+  windowSelectedText,
 }) => {
   const TOKEN = getToken();
   const navigate = useNavigate();
@@ -700,8 +701,17 @@ const MainScreen = ({
 
   useEffect(() => {
     setSelectedText({ input_text: requestedText });
+    setReplyText((prev) => {
+      return { ...prev, original_text: requestedText };
+    });
     handleInputAction(selectedAction);
   }, [requestedText]);
+
+  useEffect(() => {
+    setReplyText((prev) => {
+      return { ...prev, original_text: windowSelectedText };
+    });
+  }, [windowSelectedText]);
 
   const fetchprompts = async () => {
     const res = await dispatch(getPromptList());

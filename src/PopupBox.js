@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function PopupBox({ SELECTION, handleSidebar, selectedText, positionX, positionY, requestedText }) {
   const navigate = useNavigate();
+  console.log('selectedText', selectedText);
   const [status, setStatus] = useState(false);
   const [areItemsPinned, setItemsPinned] = useState(0);
   const historyRef = useRef(null);
@@ -35,6 +36,31 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
       pinned: false,
       icon: SimplifyIcon,
       name: 'Simplify',
+    },
+    {
+      pinned: false,
+      icon: ParaphraseIcon,
+      name: 'Paraphrase',
+    },
+    {
+      pinned: false,
+      icon: SummarizeIcon,
+      name: 'Summarize',
+    },
+    {
+      pinned: false,
+      icon: ExplainIcon,
+      name: 'Explain',
+    },
+    {
+      pinned: false,
+      icon: TranslateIcon,
+      name: 'Translate',
+    },
+    {
+      pinned: false,
+      icon: TemplateIcon,
+      name: 'Template',
     },
   ]);
 
@@ -89,7 +115,7 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
 
   useEffect(() => {
     if (menu) {
-      setMenuClasses('absolute top-full right-0 z-50 w-44 bg-white px-5 py-4 rounded-lg block');
+      setMenuClasses(`absolute ${positionY > 179 ? 'bottom-[100%]' : 'top-full'}  right-0 z-50 w-44 bg-white px-5 py-4 rounded-lg block`);
     } else {
       setMenuClasses('absolute top-full right-0 z-50 w-44 bg-white px-5 py-4 rounded-lg hidden');
     }
@@ -133,7 +159,7 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
                           onClick={() => handleSidebar(SELECTION,pin.name)}
                         >
                           <img src={pin.icon} className='min-w-[12px] min-h-[12px]' />
-                          { pinnedItems.some(item => !item.pinned) ? <span>{pin.name}</span> : ''}
+                          { areItemsPinned < 3 ? <span>{pin.name}</span> : ''}
                         </div>
                         {pinnedItems?.length - 1 !== index ? <div className="bg-slate-300 w-px h-3 mx-0.5"></div> : ''}
                       </>
@@ -157,6 +183,8 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
               <div id="pinItems"></div>
               <div className="boxMenu">
                 {pinnedItems.map((pin, index) => (
+                  <>
+                  {pin.name == "Summarize" || pin.name == "Template" ? <div className="bg-slate-300 h-px my-0.5"></div> : ""}
                   <div
                     className="py-1 font-dmsans text-xs flex justify-between items-center gap-2 selectText hover:bg-gray rounded-lg px-[2px]"
                     key={index}
@@ -176,8 +204,9 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
                       />
                     </span>
                   </div>
+                  </>
                 ))}
-                <div
+                {/* <div
                   className="py-1 font-dmsans text-xs flex items-center gap-2 cursor-pointer"
                   onClick={() => handleSidebar(SELECTION)}
                 >
@@ -213,7 +242,7 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
                 >
                   <img src={TemplateIcon} />
                   <span>Template</span>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

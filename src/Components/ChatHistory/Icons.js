@@ -7,7 +7,21 @@ import WebSummeryIcon from '../../utils/Chat/Icons/Types/WebSummeryIcon.svg';
 import YoutubeIcon from '../../utils/Chat/Icons/Types/YoutubeIcon.svg';
 
 const Icons = ({ item }) => {
-  return <img src={item?.Type === 1 ? ChatIcon : item?.Type === 2 ? DocChatIcon : ''} />;
+  return (
+    <img
+      src={
+        item?.Type === 1
+          ? ChatIcon
+          : item?.Type === 2
+          ? DocChatIcon
+          : item?.Type === 3
+          ? WebSummeryIcon
+          : item?.Type === 4
+          ? YoutubeIcon
+          : ''
+      }
+    />
+  );
 };
 
 export default Icons;

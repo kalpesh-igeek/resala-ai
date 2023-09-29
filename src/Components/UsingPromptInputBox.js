@@ -35,12 +35,18 @@ const UsingPromptInputBox = ({
 }) => {
   // console.log('selectedPrompt', selectedPrompt);
   // const dispatch = useDispatch();
+
   const [activeLanguage, setAciveLanguage] = useState(outputlanguages);
   const [popupBox, setPopupBox] = useState();
   const [selectedLanguage, setSelectedLanguage] = useState(outputlanguages[0]);
   const [newPrompt, setNewPrompt] = useState(selectedPrompt?.prompt || '');
+  const [initialValue, setinitialValue] = useState([]);
   // const [outputLanguages, setOutputLanguage] = useState([]);
   var arr = selectedPrompt.prompt?.replace(/\[.*?\]/g, '');
+
+  useEffect(() => {
+    setinitialValue(multiplePlaceholder);
+  }, []);
 
   // useEffect(() => {
   //     setAciveLanguage();
@@ -217,10 +223,20 @@ const UsingPromptInputBox = ({
           <div className="grid grid-cols-1 gap-y-[12px] w-full">
             {multiplePlaceholder.fields.map((itm, index) => (
               <div index={`input-${index}`}>
+                {console.log('itm', typeof itm)}
                 {/* <input value={itm} placeholder={itm} onChange={(e) => handleChange(e, index)} /> */}
                 <InputField
                   className="w-full rounded-md border border-gray p-[12px] text-[14px] text-darkBlue placeholder:text-gray2"
-                  value={itm}
+                  value={
+                    initialValue[index] != multiplePlaceholder[index] || multiplePlaceholder[index]?.length != 0
+                      ? multiplePlaceholder[index]
+                      : null
+                  }
+                  // value={
+                  //   initialValue[index] != multiplePlaceholder[index] || multiplePlaceholder[index]?.length != 0
+                  //     ? multiplePlaceholder[index]
+                  //     : null
+                  // }
                   placeholder={itm}
                   handleChange={(e) => handleChange(e, index)}
                 />

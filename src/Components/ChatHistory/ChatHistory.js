@@ -174,6 +174,7 @@ const ChatHistory = ({
   setHistoryType,
   setSearchChatHis,
 }) => {
+  console.log('chatsHistory', chatsHistory);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [filesList, setFileList] = useState(filesListData);

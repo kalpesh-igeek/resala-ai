@@ -70,7 +70,7 @@ const ChatData = ({
     <>
       <div
         ref={chatContainerRef}
-        className={`text-[12px] max-h-[440px] overflow-y-auto flex flex-col-reverse ${isStreaming ? 'mb-[55px]' : ''} `}
+        className={`text-[12px] max-h-[575px] overflow-y-auto flex flex-col-reverse ${isStreaming ? 'mb-[55px]' : ''} `}
       >
         <div className="">
           {chatData.map((item, index) => {
