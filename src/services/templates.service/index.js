@@ -15,6 +15,17 @@ const addTemplate = async (payload) => {
     // Toast('error', error.response.data.Message);
   }
 };
+const addTemplateQuickReply = async (payload) => {
+  try {
+    const templatePath = `/quick_reply/quickreply_template`;
+    return await postRequest(templatePath, payload);
+  } catch (error) {
+    return error;
+    // Toast('error', error?.response?.data?.message);
+    // console.log('error', error?.response?.data?.message);
+    // Toast('error', error.response.data.Message);
+  }
+};
 
 const getTemplateList = async (queryParams) => {
   try {
@@ -84,4 +95,5 @@ export const templateService = {
   getTemplateType,
   updateTemplate,
   deleteTemplate,
+  addTemplateQuickReply,
 };

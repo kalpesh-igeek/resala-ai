@@ -6,10 +6,10 @@ import ArrowDown from '../../utils/PopupBox/Icons/ArrowDown.svg';
 import Select from 'react-select';
 import { useDispatch } from 'react-redux';
 import { templateCheck } from '../../utils/validation';
-import { addTemplate, getTemplateType } from '../../redux/reducers/templateSlice/TemplateSlice';
+import { addTemplate, addTemplateQuickReply, getTemplateType } from '../../redux/reducers/templateSlice/TemplateSlice';
 import { useNavigate } from 'react-router-dom';
 
-export default function SaveTemplatePopup({ saveTemplateBox, setSaveTemplateBox, draftResponse, type }) {
+export default function SaveTemplatePopup({ saveTemplateBox, setSaveTemplateBox, draftResponse, module }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState();
@@ -76,24 +76,46 @@ export default function SaveTemplatePopup({ saveTemplateBox, setSaveTemplateBox,
       setErrors(errors);
       return;
     }
-    const payload = {
-      name: templateInput?.templatename,
-      type: selectedOption?.value,
-      action: draftResponse?.action,
-      length: draftResponse?.length,
-      tone: draftResponse?.tone,
-      language: draftResponse?.language,
-      input_text: draftResponse?.input_text,
-      output_text: draftResponse?.output_text,
-    };
-    const res = await dispatch(addTemplate(payload));
-    if (!res.payload) {
-      return;
-    }
-    if (res.payload?.status === 200) {
-      setSaveTemplateBox(false);
-      setTemplateInput('');
-      navigate('/savedtemplates');
+    if (module === 'quickReply') {
+      console.log('first');
+      const payload = {
+        template_name: templateInput?.templatename,
+        template_type: selectedOption?.value,
+        tone: draftResponse?.tone,
+        language: draftResponse?.language,
+        sender_intent: draftResponse?.sender_intent,
+        generate_mail: draftResponse?.generate_mail,
+      };
+      const res = await dispatch(addTemplateQuickReply(payload));
+      if (!res.payload) {
+        return;
+      }
+      if (res.payload?.status === 200) {
+        setSaveTemplateBox(false);
+        setTemplateInput('');
+        navigate('/savedtemplates');
+      }
+    } else {
+      console.log('second');
+      const payload = {
+        name: templateInput?.templatename,
+        type: selectedOption?.value,
+        action: draftResponse?.action,
+        length: draftResponse?.length,
+        tone: draftResponse?.tone,
+        language: draftResponse?.language,
+        input_text: draftResponse?.input_text,
+        output_text: draftResponse?.output_text,
+      };
+      const res = await dispatch(addTemplate(payload));
+      if (!res.payload) {
+        return;
+      }
+      if (res.payload?.status === 200) {
+        setSaveTemplateBox(false);
+        setTemplateInput('');
+        navigate('/savedtemplates');
+      }
     }
   };
   // const defaultOption = options[0];
@@ -204,7 +226,9 @@ export default function SaveTemplatePopup({ saveTemplateBox, setSaveTemplateBox,
             </button>
             <button
               className={`rounded-md bg-primaryBlue focus:outline-none px-[16px] py-[10px] text-[16px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50 ${
-                !templateInput.templatename || !selectedOption ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
+                !templateInput.templatename || templateInput.templatename?.trim() === '' || !selectedOption
+                  ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
+                  : ''
               }`}
               onClick={(e) => handleSaveTemplate(e)}
               disabled={!templateInput.templatename || !selectedOption}

@@ -5,8 +5,24 @@ const AITools = ({ inputButtonBox, handleInputButtonBox, selectedAction, setSele
     <>
       <div className="pt-[16px] pb-[10px] flex gap-2 justify-between items-center">
         <div className="flex text-[14px] font-medium text-darkBlue whitespace-nowrap">AI Tools</div>
-
         {!inputButtonBox && (
+          <div
+            className={`${
+              inputButtonBox ? 'hidden' : 'block animate-fade-in'
+            } transition duration-500 flex gap-2 items-center w-full`}
+            onClick={handleInputButtonBox}
+          >
+            {selectedItems
+              .filter((itm) => itm.name)
+              .map((item) => (
+                <button className="w-full rounded-md px-1 py-2 text-[12px] font-medium text-darkBlue border bg-lightblue1 border-lightblue">
+                  {item.name}
+                </button>
+              ))}
+          </div>
+        )}
+
+        {/* {!inputButtonBox && (
           <div className="flex gap-2 items-center w-full" onClick={handleInputButtonBox}>
             {selectedItems.map((item) => (
               <button className="w-full rounded-md px-1 py-2 text-[12px] font-medium text-darkBlue border bg-lightblue1 border-lightblue">
@@ -14,7 +30,7 @@ const AITools = ({ inputButtonBox, handleInputButtonBox, selectedAction, setSele
               </button>
             ))}
           </div>
-        )}
+        )} */}
 
         <div
           className={`w-[20px] flex text-[14px] font-medium text-darkBlue whitespace-nowrap justify-center cursor-pointer ${
@@ -25,8 +41,8 @@ const AITools = ({ inputButtonBox, handleInputButtonBox, selectedAction, setSele
           <img src={ArrowDown} />
         </div>
       </div>
-      
-      <div className={!inputButtonBox ? `hidden` : `block`}>
+
+      <div className={`${!inputButtonBox ? `hidden` : 'block animate-fade-in'} transition duration-500 `}>
         <div className="pb-[20px]">
           <div className="flex gap-1 items-center">
             <img src={actionIcon} />

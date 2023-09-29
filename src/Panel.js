@@ -28,6 +28,9 @@ import Template from './Pages/Templates/Template';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkActivity } from './redux/reducers/authSlice/AuthSlice';
 import YoutubeButton from './YoutubeButton';
+import { generateYoutubeSummary } from './redux/reducers/YoutubeSummarySlice/YoutubeSummarySlice';
+import { useSpeechSynthesis } from 'react-speech-kit';
+import copy from 'copy-to-clipboard';
 
 const QUICKREPLY = 'quickreply';
 const SELECTION = 'selection';
@@ -72,6 +75,20 @@ export default function Panel() {
 
   const [mailId, setMailId] = useState(window.location.hash);
 
+  const { speak, cancel, speaking } = useSpeechSynthesis();
+
+  useEffect(()=>{
+    speak({ text: "dsjkdjgvkljsdkgvjasklgvjsaklgvjasklgvjklkl" });
+  },[])
+  const handleSpeak = (msg) => {
+    console.log({msg});
+    console.log({speaking});
+    if (speaking) {
+      cancel();
+    } else {
+      speak({ text: msg });
+    }
+  };
   // function myFunction(e) {
   //   const selected = window.getSelection();
   //   if (selected.toString() !== '') {
@@ -105,11 +122,11 @@ export default function Panel() {
       // Add the height of the element to position it below the selected text
       const positionY = rect.top + window.scrollY + rect.height + 20;
 
-      document.getElementById('selectmenu').style.display = 'block'
+      document.getElementById('selectmenu').style.display = 'block';
       setPoistionX(positionX + window.scrollX);
       setPoistionY(positionY + window.scrollY);
-    }else{
-      document.getElementById('selectmenu').style.display = 'none'
+    } else {
+      document.getElementById('selectmenu').style.display = 'none';
     }
   }
 
@@ -128,34 +145,6 @@ export default function Panel() {
           if(youtubeButton){
             secondaryInner.prepend(youtubeButton);
             youtubeButton.classList.remove("hidden");
-
-            const summarizeVideoId = document.getElementById('summarizeVideo');
-            summarizeVideoId.onclick = function () {
-              document.querySelectorAll('.summarizeVideo').forEach(function(element) {
-                  console.log(element.id);
-                  element.classList.remove("hidden");
-              });
-            };
-
-            const highlightsArrowDown = document.getElementById('highlightsArrowDown');
-            highlightsArrowDown.onclick = ()=> {
-              const highlightsData = document.getElementById('highlightsData');
-              if(highlightsData){
-                highlightsData.classList.toggle("hidden");
-              }
-              highlightsArrowDown.classList.toggle("rotate-180");
-            }
-
-            const clickToExpandClass = document.getElementsByClassName('clickToExpand');
-            Array.from(clickToExpandClass).forEach(function(element) {
-              element.addEventListener('click', () => {
-                dataId = element.getAttribute('data-id')
-                  let clickToExpandData = document.getElementById('clickToExpandData_'+ dataId);
-                  clickToExpandData.classList.toggle("hidden");
-                  let clickToExpand = document.getElementById('clickToExpand_'+ dataId);
-                  clickToExpand.classList.toggle("rotate-180");
-              });
-            });
           }
         }
       }, 3000);
@@ -257,8 +246,8 @@ export default function Panel() {
     sendResponse('Request : ' + JSON.stringify('request'));
   });
 
-  const handleSidebar = (tab,tool=undefined) => {
-    console.log({tab,tool});
+  const handleSidebar = (tab, tool = undefined) => {
+    console.log({ tab, tool });
     setActiveTab(tab);
     setIsOpen(true);
     setIsLoadedExtension(true);

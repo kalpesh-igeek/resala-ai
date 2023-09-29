@@ -68,7 +68,7 @@ const InputField = ({
             ref={inputRef}
             className={`appearance-none ${className}`}
             name={name}
-            type={(name === 'password' || name === 're_password') && showPassword ? 'text' : type}
+            type={(name === 'password' || name === 're_password') && showPassword ? 'text' : type === "email" ? 'text' : type}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             value={value}

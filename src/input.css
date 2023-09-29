@@ -772,3 +772,16 @@ input[type='number']::-webkit-outer-spin-button {
   visibility: visible;
   overflow: hidden;
 }
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-in-out;
+}

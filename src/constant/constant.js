@@ -1,5 +1,4 @@
 module.exports = {
-  // baseUrl: 'https://api-qa.resala.ai',
-  baseUrl: 'https://api-qa.resala.ai',
-  // baseUrl: 'https://6fd4-2401-4900-1f3f-1a41-f4a8-3fc3-729c-8292.ngrok-free.app',
+  // baseUrl: 'https://2dd2-2401-4900-1f3f-124d-11f8-7e7c-3d2d-b5c8.ngrok-free.app', //local
+  baseUrl: 'https://api-qa.resala.ai', //live
 };

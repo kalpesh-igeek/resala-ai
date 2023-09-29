@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ResalaIconWithText from './utils/Youtube/ResalaIconWithText.svg';
 import Copy from './utils/Youtube/copy.svg';
 import MaterialSymbolsRefresh from './utils/Youtube/material-symbols_refresh.svg';
@@ -6,8 +6,109 @@ import volumeHigh from './utils/Youtube/volumehigh.svg';
 import Message from './utils/Youtube/message.svg';
 import ArrowDown from './utils/PopupBox/Icons/ArrowDown.svg';
 import Educare from './utils/Youtube/educare.svg';
+import { useDispatch } from 'react-redux';
+import { generateYoutubeSummary } from './redux/reducers/YoutubeSummarySlice/YoutubeSummarySlice';
+import { useSpeechSynthesis } from 'react-speech-kit';
+import copy from 'copy-to-clipboard';
 
 const YoutubeButton = () => {
+  const dispatch = useDispatch()
+  const { speak, cancel, speaking } = useSpeechSynthesis();
+  const handleSpeak = (msg) => {
+    console.log({msg});
+    console.log({speaking});
+    if (speaking) {
+      cancel();
+    } else {
+      speak({ text: msg });
+    }
+  };
+
+  useEffect(() => {
+    const summarizeVideoId = document.getElementById('summarizeVideo');
+    if(summarizeVideoId){
+        summarizeVideoId.onclick = function () {
+          document.querySelectorAll('.summarizeVideo').forEach(function(element) {
+            console.log(element.id);
+            element.classList.remove("hidden");
+          });
+        };
+
+        function generateRandomString(length) {
+          const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+          let result = '';
+          for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            result += characters.charAt(randomIndex);
+          }
+          return result;
+        }
+
+        
+        const fetchYoutubeSummary = async () => {
+          payload = {
+            "url": window.location.href,
+            "chat_id": generateRandomString(45)
+          }
+          const res = await dispatch(generateYoutubeSummary(payload));
+          if (!res.payload) {
+            // fetchYoutubeSummary()
+            return;
+          }
+          
+          new_res = res.payload.split('\n')
+          const summarizeVideoResponse = document.getElementById('summarizeVideoResponse');
+          new_res.forEach(element => {
+            console.log(element);
+            if(element && element != 'connection closed'){
+              summarizeVideoResponse.innerText += element
+            }
+          });
+        };
+        fetchYoutubeSummary()
+
+        const volumeHigh = document.getElementById('volumeHigh');
+        volumeHigh.onclick = () => {
+          const summarizeVideoResponse = document.getElementById('summarizeVideoResponse');
+          console.log("sdfjksdhfjk");
+          handleSpeak(summarizeVideoResponse.innerText)
+        }
+
+        const Copy = document.getElementById('Copy');
+        Copy.onclick = () => {
+          const summarizeVideoResponse = document.getElementById('summarizeVideoResponse');
+          copy(summarizeVideoResponse.innerText);
+        }
+        
+        const MaterialSymbolsRefresh = document.getElementById('MaterialSymbolsRefresh');
+        MaterialSymbolsRefresh.onclick = () => {
+          const summarizeVideoResponse = document.getElementById('summarizeVideoResponse');
+          summarizeVideoResponse.innerText = "";
+          fetchYoutubeSummary()
+        }
+        
+        const highlightsArrowDown = document.getElementById('highlightsArrowDown');
+        highlightsArrowDown.onclick = ()=> {
+          const highlightsData = document.getElementById('highlightsData');
+          if(highlightsData){
+            highlightsData.classList.toggle("hidden");
+          }
+          highlightsArrowDown.classList.toggle("rotate-180");
+        }
+
+        const clickToExpandClass = document.getElementsByClassName('clickToExpand');
+        Array.from(clickToExpandClass).forEach(function(element) {
+          element.addEventListener('click', () => {
+            dataId = element.getAttribute('data-id')
+              let clickToExpandData = document.getElementById('clickToExpandData_'+ dataId);
+              clickToExpandData.classList.toggle("hidden");
+              let clickToExpand = document.getElementById('clickToExpand_'+ dataId);
+              clickToExpand.classList.toggle("rotate-180");
+          });
+        });
+    }
+  }, [])
+  
   return (
     <div id="youtubeButton" style={{ marginBottom: '28px'}} className='hidden'>
       <div className='w-[100%] min-h[60px] !bg-white rounded-[6px]' style={{ boxShadow: '0px 2px 20px rgba(60, 66, 87, 0.10)' }}>
@@ -16,16 +117,14 @@ const YoutubeButton = () => {
             <img className="w-[100%] h-[24px]" src={ResalaIconWithText} />
           </div>
           <div id="actionButton" className='hidden summarizeVideo flex justify-center items-center mr-[-68px]'>
-            <img className="w-[16px] h-[16px]" src={Copy} />
-            <img className="w-[16px] h-[16px] mr-[8px] ml-[8px]" src={MaterialSymbolsRefresh} />
-            <img className="w-[16px] h-[16px]" src={volumeHigh} />
+            <img className="w-[16px] h-[16px] cursor-pointer" id='Copy' src={Copy} />
+            <img className="w-[16px] h-[16px] mr-[8px] ml-[8px] cursor-pointer" id='MaterialSymbolsRefresh' src={MaterialSymbolsRefresh} />
+            <img className="w-[16px] h-[16px] cursor-pointer" id='volumeHigh' src={volumeHigh} />
           </div>
-          <div id='summarizeVideo' className='w-[112px] text-white !font-dmsans text-[12px] font-[500] w-[112px] h-[28px] p-[6px] bg-[#1678F2] rounded-[4px] m-[16px] justify-center flex items-center cursor-pointer' style={{ wordWrap:'break-word' }}>Summarize Video</div>
+          <div id='summarizeVideo' className='w-[112px] text-white !font-dmsans text-[12px] font-[500] w-[112px] h-[28px] p-[6px] bg-[#1678F2] rounded-[4px] m-[16px] justify-center flex items-center cursor-pointer' style={{ wordWrap:'break-word' }} >Summarize Video</div>
         </div>
         <div id="summarizeVideoData" className='hidden summarizeVideo p-[16px] pt-[6px] text-[#5F6583] text-[12px] !font-dmsans font-[400]' style={{ wordWrap: 'break-word' }}>
-          <div>
-            Lorem ipsum dolor sit amet consectetur. Tellus hendrerit vitae nibh luctus mi id dignissim pharetra convallis. Rhoncus diam risus neque elementum viverra erat lacus in non. Sed rutrum diam aenean hendrerit aliquam ultrices. Posuere in vivamus non vestibulum consectetur tortor vel urna.
-          </div>
+          <div id='summarizeVideoResponse'></div>
           <div className='pt-[16px]'>
             <div className='pl-[8px] pr-[8px] pt-[6px] pb-[6px] rounded-[14.40px] justify-flex-start items-center gap-[4px] inline-flex' style={{ border: '1px #1678F2 solid'}}>
                 <div>

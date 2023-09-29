@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useRoutes } from 'react-router-dom';
 import { RadioGroup } from '@headlessui/react';
 import TypeWriterEffect from 'react-typewriter-effect';
 import Header from '../Layout/Header';
@@ -48,6 +48,7 @@ import DocIcon from '../utils/Chat/Icons/Controls/DocIcon.svg';
 import DocIconHover from '../utils/Chat/Icons/Controls/DocIconHover.svg';
 import HistoryIcon from '../utils/Chat/Icons/Controls/HistoryIcon.svg';
 import MuteIcon from '../utils/Chat/Icons/Controls/MuteIcon.svg';
+import UnMuteIcon from '../utils/Chat/Icons/Controls/UnMuteIcon.svg';
 
 import TranslateIcon from '../utils/Chat/Icons/TranslateIcon.svg';
 import ReadIcon from '../utils/Chat/Icons/ReadIcon.svg';
@@ -107,6 +108,8 @@ import prevIcon from '../utils/MainScreen/Icons/prev.svg';
 import nextIcon from '../utils/MainScreen/Icons/next.svg';
 import axios from 'axios';
 import stopIcon from '../utils/MainScreen/Icons/stop.svg';
+import { BottomDrawerLayout } from '../Components/Common/BottomDrawerLayout';
+import PromptComp from '../Components/Common/PromptComp';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -188,10 +191,11 @@ const MainScreen = ({
   selectedAction,
   setSelectedAction,
 }) => {
-  console.log('selectedAction', selectedAction);
   const TOKEN = getToken();
   const navigate = useNavigate();
+
   const { state } = useLocation();
+
   const { isLoading, historyId } = useSelector((state) => state.chat);
   const { Loading } = useSelector((state) => state.compose);
   const { user } = useSelector((state) => state.auth);
@@ -201,7 +205,6 @@ const MainScreen = ({
   // const [suggestionBox, setSuggestionBox] = useState(true);
 
   const [selectedTemplate, setSelectedTempate] = useState(state?.template);
-  console.log({ selectedTemplate });
   const [isUsePrompt, setIsUsePrompt] = useState(false);
 
   const myRef = document.getElementById('#draftPreview');
@@ -219,6 +222,7 @@ const MainScreen = ({
     { name: selectedTone?.name },
     { name: selectedLanguage?.name },
   ]);
+
   const [aiToolsLength, setAiToolsLength] = useState(selectedItems.filter((data) => data?.name)?.length);
 
   // console.log('selectedItems', selectedItems.filter((data) => data?.name)?.length);
@@ -317,6 +321,7 @@ const MainScreen = ({
   const [isNewDraft, setIsNewDraft] = useState(false);
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(null);
   const [compLoading, setCompLoading] = useState(false);
+
   const [compRepLoading, setCompRepLoading] = useState(false);
   const [alreadyStreamed, setAllreadyStreamed] = useState(false);
 
@@ -337,6 +342,8 @@ const MainScreen = ({
   const [chatType, setChatType] = useState('');
   const [hasResultText, setHasResultText] = useState(false);
   const [hasResultTextRep, setHasResultTextRep] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [isSpeechEnabled, setIsSpeechEnabled] = useState(false);
 
   const chatContainerRef = useRef(null);
   const promptRef = useRef(null);
@@ -345,6 +352,164 @@ const MainScreen = ({
   const languageRef = useRef(null);
 
   const draftPreviewTextareaRef = useRef(null);
+
+  // const [buttonDisabled, setButtonDisabled] = useState(true);
+  // const [focusedTextarea, setFocusedTextarea] = useState(null);
+
+  // useEffect(() => {
+  //   const messageListener = (message) => {
+  //     if (message.enableButton !== undefined) {
+  //       setButtonDisabled(!message.enableButton);
+  //     }
+  //   };
+
+  //   chrome.runtime.onMessage.addListener(messageListener);
+
+  //   return () => {
+  //     chrome.runtime.onMessage.removeListener(messageListener);
+  //   };
+  // }, []);
+
+  // const isElementInExtension = (element) => {
+  //   // Replace 'your-extension-id' with the actual ID of your extension's root element.
+  //   const extensionRootElement = document.getElementById('side-bar-extension-root');
+  //   return extensionRootElement?.contains(element);
+  // };
+
+  // // Define a function to check if an element is an input field
+  // const isInputField = (element) => {
+  //   return (
+  //     element.tagName === 'INPUT' ||
+  //     element.tagName === 'TEXTAREA' ||
+  //     // You can add more conditions for other types of input fields (e.g., select)
+  //     // element.tagName === 'SELECT' ||
+  //     // ...
+  //     false
+  //   );
+  // };
+
+  // // Define a function to find the closest button element to the given element
+  // const findClosestButton = (element) => {
+  //   // Traverse the DOM tree upwards to find the closest button element
+  //   while (element) {
+  //     if (element.tagName === 'BUTTON') {
+  //       return element;
+  //     }
+  //     element = element.parentElement;
+  //   }
+  //   return null; // If no button element is found in the ancestor chain
+  // };
+
+  // useEffect(() => {
+  //   const handleFocusIn = (event) => {
+  //     const focusedElement = event.target;
+
+  //     if (!isElementInExtension(focusedElement) && isInputField(focusedElement)) {
+  //       const button = findClosestButton(focusedElement);
+  //       // console.log('button', focusedElement);
+
+  //       if (button) {
+  //         button.removeAttribute('disabled');
+  //       }
+
+  //       chrome.runtime.sendMessage({ enableButton: true });
+  //       setButtonDisabled(false);
+  //     }
+  //   };
+
+  //   const handleFocusOut = (event) => {
+  //     const blurredElement = event.target;
+
+  //     if (!isElementInExtension(blurredElement) && isInputField(blurredElement)) {
+  //       const button = findClosestButton(blurredElement);
+
+  //       if (button) {
+  //         button.setAttribute('disabled', 'disabled');
+  //       }
+  //       setButtonDisabled(true);
+  //       if (focusedElement.tagName === 'TEXTAREA') {
+  //         const valueToInsert = 'This is test text';
+  //         focusedElement.value += valueToInsert;
+  //       }
+  //     }
+  //   };
+
+  //   document.addEventListener('focusin', handleFocusIn);
+  //   document.addEventListener('focusout', handleFocusOut);
+
+  //   return () => {
+  //     document.removeEventListener('focusin', handleFocusIn);
+  //     document.removeEventListener('focusout', handleFocusOut);
+  //   };
+  // }, []);
+
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [focusedTextarea, setFocusedTextarea] = useState(null);
+
+  useEffect(() => {
+    const messageListener = (message) => {
+      if (message.enableButton !== undefined) {
+        setButtonDisabled(!message.enableButton);
+      }
+    };
+
+    chrome.runtime.onMessage.addListener(messageListener);
+
+    return () => {
+      chrome.runtime.onMessage.removeListener(messageListener);
+    };
+  }, []);
+
+  const isElementInExtension = (element) => {
+    // Replace 'your-extension-id' with the actual ID of your extension's root element.
+    const extensionRootElement = document.getElementById('side-bar-extension-root');
+    return extensionRootElement?.contains(element);
+  };
+
+  const isInputField = (element) => {
+    const parentElement = document.querySelector('div[gmail_original="1"]');
+    return (
+      element.tagName === 'INPUT' ||
+      element.tagName === 'TEXTAREA' ||
+      parentElement ||
+      // Add more conditions for other input field types as needed
+      false
+    );
+  };
+  // const isElementInExtension = (element) => {
+  //   // Replace 'your-extension-id' with the actual ID of your extension's root element.
+  //   const extensionRootElement = document.getElementById('your-extension-id');
+  //   return extensionRootElement?.contains(element);
+  // };
+  const findClosestButton = (element) => {
+    while (element) {
+      if (element.tagName === 'BUTTON') {
+        return element;
+      }
+      element = element.parentElement;
+    }
+    return null;
+  };
+
+  const handleFocusIn = (event) => {
+    const focusedElement = event.target;
+    const parentElement = document.querySelector('div[gmail_original="1"]');
+
+    if (!isElementInExtension(focusedElement) && isInputField(focusedElement)) {
+      const button = findClosestButton(focusedElement);
+
+      if (button) {
+        button.removeAttribute('disabled');
+      }
+
+      chrome.runtime.sendMessage({ enableButton: true });
+      setButtonDisabled(false);
+
+      if (focusedElement.tagName === 'TEXTAREA' || focusedElement.tagName === 'INPUT' || parentElement) {
+        setFocusedTextarea(focusedElement);
+      }
+    }
+  };
 
   useEffect(() => {
     // Recalculate aiToolsLength when selectedItems changes
@@ -530,7 +695,6 @@ const MainScreen = ({
 
   //compose
   const [selectedText, setSelectedText] = useState({ input_text: requestedText });
-  console.log({ selectedText, requestedText });
   const [replyText, setReplyText] = useState({ original_text: '', reply: '' });
 
   useEffect(() => {
@@ -779,7 +943,7 @@ const MainScreen = ({
 
   useEffect(() => {
     if (selectedTemplate) {
-      setInputButtonBox(!inputButtonBox);
+      setInputButtonBox(true);
       setRequestedText(selectedTemplate?.input);
       setSelectedAction({ name: selectedTemplate?.action });
       setSelectedFormat({ name: selectedTemplate?.action });
@@ -794,6 +958,32 @@ const MainScreen = ({
       ]);
     }
   }, [selectedTemplate]);
+
+  // useEffect(() => {
+  //   if (selectedTemplate) {
+  //     setInputButtonBox(true);
+  //     setRequestedText(selectedTemplate[0]?.name); // For Action
+  //     setSelectedAction({ name: selectedTemplate[0]?.name });
+
+  //     // Check if there's a format item in the array (assuming it's the second item)
+  //     if (selectedTemplate.length > 1) {
+  //       setSelectedFormat({ name: selectedTemplate[1]?.name }); // For Format
+  //       // Since Format is found in the selectedTemplate, set selectedTab to 2
+  //       setSelectTab(2);
+  //     }
+
+  //     setSelectedLength({ name: selectedTemplate[1]?.name });
+  //     setSelectedTone({ name: selectedTemplate[2]?.name });
+  //     setSelectedLanguage({ name: selectedTemplate[3]?.name });
+
+  //     setSelectedItems([
+  //       { name: selectedTemplate[0]?.name },
+  //       { name: selectedTemplate[1]?.name },
+  //       { name: selectedTemplate[2]?.name },
+  //       { name: selectedTemplate[3]?.name },
+  //     ]);
+  //   }
+  // }, [selectedTemplate]);
 
   const handleAudioInfoPopup = () => {
     // closeSpeechRecognition();
@@ -876,7 +1066,7 @@ const MainScreen = ({
       try {
         setCompLoading(true);
         // Call your new API here
-        const response = await fetch('https://api-qa.resala.ai/compose/compose_stream', {
+        const response = await fetch('http://192.168.1.10:8000/compose/compose_stream', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -919,8 +1109,6 @@ const MainScreen = ({
             // const data = line.substring(6).trim(); // Remove "data: " prefix and trim spaces
             // Replace <br><br> with a newline
             data = line.replace(/#@#/g, '\n');
-            console.log('data', data);
-            // console.log('data', data);
             // console.log('data', data);
             if (line.includes('connection closed')) {
               setIsTypewriterDone(false);
@@ -968,7 +1156,7 @@ const MainScreen = ({
       try {
         setCompRepLoading(true);
         // Call your new API here
-        const response = await fetch('https://api-qa.resala.ai/compose/generate_stream_reply', {
+        const response = await fetch('http://192.168.1.10:8000/compose/generate_stream_reply', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1022,6 +1210,14 @@ const MainScreen = ({
             }
             // }
           }
+          setTemplatePayload({
+            input_text: replyText.original_text?.trim(),
+            action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
+            length: selectedLength?.name,
+            tone: selectedTone?.name,
+            language: selectedLanguage?.name,
+            output_text: accumulatedMessage,
+          });
           newResultText = [
             ...resultTextRep,
             { output_text: accumulatedMessage.trim() }, // Trim to remove trailing spaces
@@ -1037,23 +1233,107 @@ const MainScreen = ({
       }
     }
     if (state?.edit) {
-      setIsTypewriterDone(true);
-      const payload = {
-        input_text: editTemplateName.input_text,
-        action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
-        length: selectedLength?.name,
-        tone: selectedTone?.name,
-        language: selectedLanguage?.name,
-      };
+      // setIsTypewriterDone(true);
+      // const payload = {
+      //   input_text: editTemplateName.input_text,
+      //   action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
+      //   length: selectedLength?.name,
+      //   tone: selectedTone?.name,
+      //   language: selectedLanguage?.name,
+      // };
 
-      const res = await dispatch(generateDraft(payload));
-      if (!res.payload) {
-        return;
-      }
-      if (res.payload?.status === 200) {
-        setComposeRes(true);
-        setResultText(res.payload?.Result);
-        setIsNewDraft(true); // add this line
+      // const res = await dispatch(generateDraft(payload));
+      // if (!res.payload) {
+      //   return;
+      // }
+      // if (res.payload?.status === 200) {
+      //   setComposeRes(true);
+      //   setResultText(res.payload?.Result);
+      //   setIsNewDraft(true); // add this line
+      // }
+
+      try {
+        setCompLoading(true);
+        // Call your new API here
+        const response = await fetch('http://192.168.1.10:8000/compose/compose_stream', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            Authorization: getToken(),
+          },
+          body: JSON.stringify({
+            input_text: editTemplateName.input_text,
+            action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
+            length: selectedLength?.name,
+            tone: selectedTone?.name,
+            language: selectedLanguage?.name,
+            // Include other necessary parameters
+          }),
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+        }
+
+        // Process the response from your new API here
+        const reader = response.body.getReader();
+        let accumulatedMessage = '';
+        let newResultText = [];
+
+        while (true) {
+          // setAllreadyStreamed(true);
+          // setCompLoading(false);
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = new TextDecoder().decode(value);
+          const lines = chunk.split('\n');
+          for (const line of lines) {
+            setComposeRes(true);
+            setIsNewDraft(true);
+            // console.log('chunk', line);
+            // if (line.startsWith('data: ')) {
+            // const data = line.substring(6).trim(); // Remove "data: " prefix and trim spaces
+            // Replace <br><br> with a newline
+            data = line.replace(/#@#/g, '\n');
+            // console.log('data', data);
+            // console.log('data', data);
+            if (line.includes('connection closed')) {
+              setIsTypewriterDone(false);
+              setIsStreamingComp(false);
+              setCompLoading(false);
+
+              // Set the typewriter state to false when "connection closed" is encountered
+            } else {
+              // Exclude lines containing "connection closed" and append the word
+              accumulatedMessage += data + '';
+              // setResultText((prevResultText) => [...prevResultText, { output_text: accumulatedMessage }]);
+            }
+            // }
+          }
+          // console.log('accumulatedMessage', accumulatedMessage);
+          setTemplatePayload({
+            input_text: selectedText.input_text?.trim(),
+            action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
+            length: selectedLength?.name,
+            tone: selectedTone?.name,
+            language: selectedLanguage?.name,
+            output_text: accumulatedMessage,
+          });
+          newResultText = [
+            ...resultText,
+            { output_text: accumulatedMessage.trim() }, // Trim to remove trailing spaces
+          ];
+          setCurrentPageIndexTab1(newResultText.length - 1); // Use the updated result text length
+
+          // Update the state with the new result text
+          setResultText(newResultText);
+          setHasResultText(true);
+        }
+      } catch (error) {
+        console.error('An error occurred:', error);
       }
     }
 
@@ -1088,11 +1368,7 @@ const MainScreen = ({
       payload: {
         name: editTemplateName?.templatename,
         input_text: editTemplateName.input_text,
-        output_text: resultText?.output_text
-          ? resultText?.output_text
-          : resultTextRep?.output_text
-          ? resultTextRep?.output_text
-          : selectedTemplate?.output_text,
+        output_text: templatePayload?.output_text ? templatePayload?.output_text : selectedTemplate?.output_text,
         type: selectedTemplateType?.value ? selectedTemplateType?.value : selectedTemplate?.type?.id,
         action: selectedAction?.name,
         length: selectedLength?.name,
@@ -1106,7 +1382,7 @@ const MainScreen = ({
       return;
     }
     if (res.payload?.status === 200) {
-      Toast('success', 'Template updated successfully');
+      // Toast('success', 'Template updated successfully');
       navigate('/savedtemplates');
     }
   };
@@ -1116,11 +1392,86 @@ const MainScreen = ({
   };
 
   const handleCopyDraft = () => {
-    console.log('resultText?.output_text', resultText?.output_text);
+    navigator.clipboard.writeText(
+      templatePayload?.output_text ? templatePayload?.output_text : selectedTemplate?.output_text
+    );
+    // navigator.clipboard.writeText(resultTextRep?.output_text);
 
-    navigator.clipboard.writeText(resultText?.output_text);
-    navigator.clipboard.writeText(resultTextRep?.output_text);
+    setCopied(true); // Set copied state to true when text is copied
+    setTimeout(() => {
+      setCopied(false); // Revert copied state to false after 2 seconds
+    }, 2000);
   };
+
+  const handleApply = () => {
+    const parentElement = document.querySelector('div[gmail_original="1"]');
+    if (focusedTextarea) {
+      const valueToInsert = templatePayload?.output_text;
+      const selectionStart = focusedTextarea.selectionStart;
+      const selectionEnd = focusedTextarea.selectionEnd;
+      const currentValue = focusedTextarea.value;
+      const newValue = currentValue.substring(0, selectionStart) + valueToInsert + currentValue.substring(selectionEnd);
+
+      // Set the new value of the textarea
+      focusedTextarea.value = newValue;
+
+      // Restore focus and cursor position
+      focusedTextarea.focus();
+      focusedTextarea.setSelectionRange(selectionStart + valueToInsert.length, selectionStart + valueToInsert.length);
+    }
+    if (parentElement) {
+      // Get the dynamic text from templatePayload.generate_mail
+      const dynamicText = templatePayload.output_text;
+
+      // Split the dynamic text into sections based on line breaks
+      const dynamicTextSections = dynamicText.split('\n');
+
+      // Clear any existing content in the parent element
+      parentElement.innerHTML = '';
+
+      // Create a new div element for each section and add it to the parent element
+      dynamicTextSections.forEach((sectionText, index) => {
+        if (sectionText.trim() === '') {
+          // Add a div element with a line break when there is a line break in the dynamic text
+          const newDiv = document.createElement('div');
+          newDiv.setAttribute('dir', 'ltr');
+          newDiv.setAttribute('gmail_original', '1');
+          newDiv.innerHTML = '<br>';
+          parentElement.appendChild(newDiv);
+        } else {
+          // Add a div element with the dynamic text
+          const newDiv = document.createElement('div');
+          newDiv.setAttribute('dir', 'ltr');
+          newDiv.setAttribute('gmail_original', '1');
+          newDiv.innerHTML = sectionText;
+          parentElement.appendChild(newDiv);
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('focusin', handleFocusIn);
+
+    return () => {
+      document.removeEventListener('focusin', handleFocusIn);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleFocusOut = (event) => {
+      if (focusedTextarea && !event.relatedTarget) {
+        setFocusedTextarea(null);
+        setButtonDisabled(true);
+      }
+    };
+
+    document.addEventListener('focusout', handleFocusOut);
+
+    return () => {
+      document.removeEventListener('focusout', handleFocusOut);
+    };
+  }, [focusedTextarea]);
 
   const handlePromptViewPopup = (prompt) => {
     setIsGeneralPromptViewPopup(true);
@@ -1216,7 +1567,7 @@ const MainScreen = ({
       try {
         // Call your new API here
         // const USER_TOKEN = getToken();
-        const response = await fetch('https://api-qa.resala.ai/chat/general_prompt_response_stream', {
+        const response = await fetch('http://192.168.1.10:8000/chat/general_prompt_response_stream', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1341,7 +1692,7 @@ const MainScreen = ({
       // Add the "Loading..." message initially
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       try {
-        const response = await fetch('https://api-qa.resala.ai/doc_chat/chat_document', {
+        const response = await fetch('http://192.168.1.10:8000/doc_chat/chat_document', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1430,7 +1781,7 @@ const MainScreen = ({
     const payload = { chatId: chatId };
 
     try {
-      const response = await fetch('https://api-qa.resala.ai/chat/regenerate_stream_response', {
+      const response = await fetch('http://192.168.1.10:8000/chat/regenerate_stream_response', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1461,7 +1812,6 @@ const MainScreen = ({
 
           for (const line of lines) {
             data = line.replace(/#@#/g, '\n');
-            console.log('data', data);
             // console.log('data', data);
             if (line.includes('connection closed')) {
               setIsStreaming(false);
@@ -1606,28 +1956,8 @@ const MainScreen = ({
     setIsOpen(false);
   };
 
-  // const handleApply = () => {
-  //   const focusedElement = document.activeElement;
-  //   console.log('focusedElement', focusedElement);
-  //   console.log('focusedElement.tagName', focusedElement.tagName);
-  //   if (focusedElement.tagName === 'INPUT' || focusedElement.tagName === 'TEXTAREA') {
-  //     focusedElement.value = resultText.output_text || resultText || selectedTemplate?.output_text;
-  //   }
-  // };
-  const handleApply = () => {
-    // Step 2: Retrieve the generated draft text (resultText)
-    //   const generatedDraft = resultText.output_text || resultText || selectedTemplate?.output_text;
-    // Step 3: Detect when a user focuses on an input field outside your extension
-    // You can add an event listener for input field focus
-    document.addEventListener('focusin', handleInputFieldFocus);
-    // Step 4: Store the generated draft text in a state or a variable
-    // For example, you can use React state to store the generated draft text
-    // ... code to set the generated draft text in state
-  };
-  // Step 3: Handle input field focus
   const handleInputFieldFocus = (event) => {
     const target = event.target;
-    console.log('target', target);
     // Check if the focused element is an input field
     if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
       // Step 4: Insert the generated draft text into the focused input field
@@ -1759,27 +2089,6 @@ const MainScreen = ({
                       </Tab>
                     )}
                   </Tab.List>
-                  {/* <Tab.Panels as={Fragment}>
-                    <Tab.Panel key="compose" data-headlessui-state="selected">
-                      <div>
-                        {!selectedTemplate && (
-                          <button
-                            className="flex gap-1 items-center w-full rounded-md bg-white text-[12px] font-medium text-primaryBlue"
-                            onClick={() => navigate('/savedtemplates')}
-                            style={{
-                              position: 'sticky',
-                              top: '57px',
-                              zIndex: '20px',
-                              boxShadow: '0px 2px 8px 0px #0000000D',
-                            }}
-                          >
-                            <img src={TemplatesIcon} />
-                            <span className="text-primaryBlue text-[14px]">Templates</span>
-                          </button>
-                        )}
-                      </div>
-                    </Tab.Panel>
-                  </Tab.Panels> */}
                 </div>
               ) : (
                 <div className="flex items-center px-[20px] py-[11px] justify-between  border-b-gray border-b-[1px] border-l-gray border-l-[1px]">
@@ -1793,6 +2102,7 @@ const MainScreen = ({
                         // } else {
                         //   navigate('/');
                         // }
+                        setAiToolsLength(0);
                         navigate('/savedtemplates');
                       }}
                     >
@@ -1813,205 +2123,6 @@ const MainScreen = ({
               )}
               <Tab.Panels as={Fragment}>
                 <Tab.Panel key="chat">
-                  <div className="px-[20px] py-[12px] relative bg-white mt-[6px]">
-                    {/* <div className="flex items-center gap-2 right-[20px] -top-[33px] absolute z-[60]">
-                      <button
-                        className="flex gap-1 items-center justify-center w-full h-[24px] bg-lightblue1 rounded-full px-[9px] py-[5px] text-[12px] font-medium text-primaryBlue"
-                        onClick={() => setIsUploadDocument(true)}
-                      >
-                        <img src={UploadIcon} />
-                        <span className="text-primaryBlue text-[12px]">DocChat</span>
-                      </button>
-                      <Dropdown
-                        className="language flex gap-1 items-center justify-center w-full rounded-full border border-primaryBlue px-[6px] py-[3px] bg-white h-[24px] text-[12px] font-medium text-primaryBlue cursor-pointer"
-                        options={outputlanguages}
-                        value={defaultLanguage}
-                        arrowClosed={<img className="w-[10px] h-[10px]" src={ArrowDown} />}
-                        arrowOpen={<img className="w-[10px] h-[10px] rotate-180" src={ArrowDown} />}
-                      />
-                    </div> */}
-                    {!isViewPrompts ? (
-                      <div className="bg-lightblue1 px-[66px] py-[16px] flex flex-col text-center rounded-[6px] relative z-50">
-                        <div className="text-[14px] mb-[16px]">Find useful prompts from our prompts community.</div>
-                        <div
-                          className="text-[14px] font-bold text-primaryBlue cursor-pointer"
-                          onClick={() => setIsViewPrompts(true)}
-                        >
-                          View Prompts
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="bg-white border border-gray p-[8] rounded-[6px] relative z-50">
-                        <Tab.Group as="div" defaultIndex={0}>
-                          <div className="flex gap-2 items-center">
-                            <Tab.List className="border border-gray inline-flex rounded-[4px] h-[32px]">
-                              <Tab
-                                key="general"
-                                className={({ selected }) =>
-                                  classNames(
-                                    selected
-                                      ? 'border-primaryBlue text-black rounded-l-[4px]'
-                                      : 'border-transparent text-gray1',
-                                    'flex-1 whitespace-nowrap border p-[7px] -m-[1px] text-[12px] font-medium focus:outline-0'
-                                  )
-                                }
-                              >
-                                General
-                              </Tab>
-                              <Tab
-                                key="my"
-                                className={({ selected }) =>
-                                  classNames(
-                                    selected
-                                      ? 'border-primaryBlue text-black rounded-r-[4px]'
-                                      : 'border-transparent text-gray1',
-                                    'flex-1 whitespace-nowrap border p-[7px] -m-[1px] text-[12px] font-medium focus:outline-0'
-                                  )
-                                }
-                                onClick={handleCloseSettingPrompt}
-                              >
-                                My
-                              </Tab>
-                            </Tab.List>
-                            <div className="border border-gray items-center flex w-full rounded-md px-[9px]">
-                              <img src={SearchIcon} />
-                              <InputField
-                                className="block w-full rounded-md border-0 px-[9px] py-[7px] text-[12px] text-darkBlue placeholder:text-gray1 focus:outline-0"
-                                name="search"
-                                label=""
-                                type="text"
-                                placeholder="Search"
-                                handleChange={(e) => setSearch(e.target.value)}
-                              />
-                            </div>
-                            <div
-                              className="absolute -top-[10] -right-[10px] cursor-pointer"
-                              onClick={() => setIsViewPrompts(false)}
-                            >
-                              <img src={SuggestionCloseIcon} />
-                            </div>
-                          </div>
-                          <Tab.Panels as={Fragment}>
-                            <div className="grid">
-                              <Tab.Panel key="general">
-                                <div className="grid grid-cols-3 gap-2 pt-[8px]">
-                                  {generalPromptList.map((item) =>
-                                    item.length === 0 ? (
-                                      <div className="suggestion flex flex-col justify-end rounded-[6px] text-darkgray1 bg-lightblue1 p-[9px] text-[14px] cursor-pointer hover:bg-lightblue3">
-                                        <div className="pb-[8px]">{/* <img src={item.image_link} /> */}</div>
-                                        <div className="flex items-center justify-between">
-                                          {/* <span className="w-full text-[14px] font-medium">{item?.name}</span> */}
-                                          No Prompt
-                                        </div>
-                                      </div>
-                                    ) : (
-                                      // <div
-                                      //   onClick={(e) => {
-                                      //     // setGeneralPromptRes(true); // Add this line
-
-                                      //     handleSendMessage(e, item);
-                                      //     setIsViewPrompts(false);
-                                      //     setIsTypewriterDone(true);
-                                      //   }}
-                                      //   className="suggestion flex flex-col justify-end rounded-[6px] text-darkgray1 bg-lightblue1 p-[9px] text-[14px] cursor-pointer hover:bg-lightblue3"
-                                      // >
-                                      //   <div className="pb-[8px]">
-                                      //     <img src={item.image_link} />
-                                      //   </div>
-                                      //   <div className="flex items-center justify-between">
-                                      //     <span className="w-full text-[14px] font-medium">{item?.name}</span>
-                                      //     {/* <div className="info relative">
-                                      //     <img src={InfoIcon} />
-                                      //     <div
-                                      //       className="info-box p-[7px] rounded-[6px] bg-white text-[12px] absolute bottom-[170%] right-[50%] translate-x-[50%] whitespace-nowrap border border-primaryBlue"
-                                      //       onClick={() => handlePromptViewPopup(item)}
-                                      //     >
-                                      //       View info
-                                      //       <span className="h-[10px] w-[10px] bg-white absolute right-0 left-0 m-auto -bottom-[6px] rotate-45 border-b border-r border-primaryBlue"></span>
-                                      //     </div>
-                                      //   </div> */}
-                                      //   </div>
-                                      // </div>
-                                      <div
-                                        onClick={(e) => {
-                                          // setGeneralPromptRes(true); // Add this line
-                                          // if (!isStreaming) {
-                                          // setController(new AbortController());
-                                          // setIsStreaming(true);
-                                          handleSendMessage(e, item);
-
-                                          setIsViewPrompts(false);
-                                          setIsViewPrompts(false);
-                                          setIsTypewriterDone(true);
-                                          // }
-                                        }}
-                                        className="suggestion rounded-[6px] text-darkgray1 bg-lightblue1 p-[9px] text-[14px] cursor-pointer hover:bg-lightblue3"
-                                        style={{ display: 'flex', flexDirection: 'column' }}
-                                      >
-                                        <div className="pb-[8px]">
-                                          <img src={item.image_link} alt={item.name} />
-                                        </div>
-                                        <div className="flex items-center justify-between">
-                                          <span className="w-full text-[14px] font-medium">{item?.name}</span>
-                                        </div>
-                                      </div>
-                                      // <div
-                                      //   onClick={(e) => {
-                                      //     // setGeneralPromptRes(true); // Add this line
-                                      //     handleSendMessage(e, item);
-                                      //     setIsViewPrompts(false);
-                                      //     setIsTypewriterDone(true);
-                                      //   }}
-                                      //   className={`suggestion rounded-[6px] text-darkgray1 bg-lightblue1 p-[9px] text-[14px] cursor-pointer hover:bg-lightblue3 ${
-                                      //     item.name.includes('Riddle time' || 'Word of the day') ? 'h-[69px]' : ''
-                                      //   } ${item.name.includes('Word of the day') ? 'h-[69px]' : ''}`}
-                                      //   style={{ display: 'grid', gridTemplateRows: 'auto 1fr auto' }}
-                                      // >
-                                      //   <div className="pb-[8px]">
-                                      //     <img src={item.image_link} alt={item.name} />
-                                      //   </div>
-                                      //   <div className="flex items-center justify-between">
-                                      //     <span className="w-full text-[14px] font-medium">{item?.name}</span>
-                                      //   </div>
-                                      // </div>
-                                    )
-                                  )}
-                                </div>
-                              </Tab.Panel>
-                              <Tab.Panel key="my" className="h-[305px] relative">
-                                <div className="grid grid-cols-3 gap-2 pt-[8px]">
-                                  {promptList.map((item) => (
-                                    <React.Fragment>
-                                      <div
-                                        className="flex rounded-[6px] text-darkgray1 bg-lightblue1 p-[8px] text-[14px] cursor-pointer"
-                                        onClick={() => {
-                                          handleUsePrompt(item);
-                                          setIsViewPrompts(false);
-                                        }}
-                                      >
-                                        <span className="max-w-[130px] text-[14px] font-medium overflow-hidden whitespace-nowrap text-ellipsis">
-                                          {item?.name}
-                                        </span>
-                                      </div>
-                                    </React.Fragment>
-                                  ))}
-                                </div>
-                                <div className="absolute bottom-0 right-0 gap-2 flex items-center">
-                                  <span className="cursor-pointer">
-                                    <img src={PagePrevIcon} />
-                                  </span>
-                                  <div className="">1 of 20</div>
-                                  <span className="cursor-pointer">
-                                    <img src={PageNextIcon} />
-                                  </span>
-                                </div>
-                              </Tab.Panel>
-                            </div>
-                          </Tab.Panels>
-                        </Tab.Group>
-                      </div>
-                    )}
-                  </div>
                   <div className="bg-white w-[500px] items-center fixed right-0 bottom-0 p-[20px]">
                     <ChatData
                       chatData={chatData}
@@ -2022,6 +2133,7 @@ const MainScreen = ({
                       activeTabSub={activeTabSub}
                       switchedTabs={switchedTabs}
                       isStreaming={isStreaming}
+                      isSpeechEnabled={isSpeechEnabled}
                     />
 
                     {isUsePrompt ? (
@@ -2068,56 +2180,10 @@ const MainScreen = ({
                               >
                                 <img src={addPromptBox ? DocIconHover : DocIcon} />
                               </div>
-
-                              <div
-                                ref={promptRef}
-                                className={`chats-settings w-max flex flex-col gap-2 absolute right-0 bottom-[100%] bg-white p-[8px] rounded-[8px] ${
-                                  addPromptBox ? 'block' : 'hidden'
-                                }`}
-                                style={{
-                                  boxShadow: '0px 2px 20px 0px #00000026',
-                                }}
-                              >
-                                <div className="text-[12px] flex items-center text-gray1 justify-between font-medium px-[8px] py-[4px]">
-                                  MY PROMPTS
-                                  <span className="cursor-pointer" onClick={() => handleNewPrompt()}>
-                                    <img src={AddCircle} />
-                                  </span>
-                                </div>
-                                {promptList.length === 0 ? (
-                                  <div className="promptEdit px-[8px] py-[4px] flex items-center justify-between gap-3 text-gray1 text-[14px] rounded-[4px] hover:bg-gray4">
-                                    <div className="flex items-center gap-3 cursor-pointer">
-                                      <span className="w-[80px] overflow-hidden whitespace-nowrap text-ellipsis">
-                                        No Data Found
-                                      </span>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <>
-                                    {promptList.map((item) => (
-                                      <div className="promptEdit px-[8px] py-[4px] flex items-center justify-between gap-3 text-gray1 text-[14px] rounded-[4px] hover:bg-gray4">
-                                        <div
-                                          className="flex items-center gap-3 cursor-pointer"
-                                          onClick={() => {
-                                            handleUsePrompt(item);
-                                            setAddPromptBox(false);
-                                          }}
-                                        >
-                                          <img src={MoreIcon} />
-                                          <span className="w-[80px] overflow-hidden whitespace-nowrap text-ellipsis">
-                                            {item?.name}
-                                          </span>
-                                        </div>
-                                        <span
-                                          className="editIcon cursor-pointer"
-                                          onClick={() => handleCustomPrompt(item)}
-                                        >
-                                          <img className="w-max" src={EditIcon} />
-                                        </span>
-                                      </div>
-                                    ))}
-                                  </>
-                                )}
+                              <div className={`${addPromptBox ? 'block' : 'hidden'}`}>
+                                <BottomDrawerLayout title="Prompt Library" setClose={setAddPromptBox}>
+                                  <PromptComp />
+                                </BottomDrawerLayout>
                               </div>
                             </div>
                             <div className="relative">
@@ -2199,10 +2265,11 @@ const MainScreen = ({
                             <button
                               onClick={() => {
                                 setIsViewPrompts(false);
+                                setIsSpeechEnabled(!isSpeechEnabled);
                               }}
                               className="w-[20px] h-[20px]"
                             >
-                              <img src={MuteIcon} />
+                              <img src={isSpeechEnabled ? UnMuteIcon : MuteIcon} alt="I" />
                             </button>
                           </div>
                         </div>
@@ -2589,6 +2656,7 @@ const MainScreen = ({
                                     />
                                   }
                                 /> */}
+
                                 <Select
                                   className="border border-gray rounded-md p-[9px] text-[14px] placeholder:text-gray1"
                                   menuPlacement="bottom"
@@ -2759,15 +2827,19 @@ const MainScreen = ({
                         <div className="flex text-[14px] font-medium text-darkBlue whitespace-nowrap">AI Tools</div>
 
                         {!inputButtonBox && (
-                          <div className="flex gap-2 items-center w-full" onClick={handleInputButtonBox}>
-                            {selectedItems.map(
-                              (item) =>
-                                item?.name && (
-                                  <button className="w-full rounded-md px-1 py-2 text-[12px] font-medium text-darkBlue border bg-lightblue1 border-lightblue">
-                                    {item?.name}
-                                  </button>
-                                )
-                            )}
+                          <div
+                            className={`${
+                              inputButtonBox && selectedItems.length === 0 ? 'hidden' : 'block animate-fade-in'
+                            } transition duration-500 flex gap-2 items-center w-full`}
+                            onClick={handleInputButtonBox}
+                          >
+                            {selectedItems
+                              .filter((itm) => itm.name)
+                              .map((item) => (
+                                <button className="w-full rounded-md px-1 py-2 text-[12px] font-medium text-darkBlue border bg-lightblue1 border-lightblue">
+                                  {item.name}
+                                </button>
+                              ))}
                           </div>
                         )}
 
@@ -2780,171 +2852,170 @@ const MainScreen = ({
                           <img src={ArrowDown} />
                         </div>
                       </div>
-                      {inputButtonBox && (
-                        <div className={!inputButtonBox ? `hidden` : `block`}>
-                          {selectTab === 1 ? (
-                            <div className="pb-[20px]">
-                              <div className="flex gap-1 items-center">
-                                <img src={actionIcon} />
-                                <label for="actions" className="block text-[12px] font-bold leading-6 text-gray1">
-                                  ACTION
-                                </label>
-                              </div>
-                              <RadioGroup value={selectedAction} onChange={setSelectedAction}>
-                                <div className="inline-flex gap-2 items-center">
-                                  {actions.map((action, index) => (
-                                    <RadioGroup.Option
-                                      name="action"
-                                      key={action?.name}
-                                      value={action}
-                                      onClick={(e) => handleInputAction(action)}
-                                      className={({ checked }) =>
-                                        classNames(
-                                          'cursor-pointer text-darkBlue',
-                                          checked || action?.name === selectedAction?.name
-                                            ? 'border-lightblue bg-lightblue1'
-                                            : '',
-                                          'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
-                                        )
-                                      }
-                                    >
-                                      <RadioGroup.Label as="span">{action?.name}</RadioGroup.Label>
-                                    </RadioGroup.Option>
-                                  ))}
-                                </div>
-                              </RadioGroup>
-                            </div>
-                          ) : (
-                            <div className="pb-[20px]">
-                              <div className="flex gap-1 items-center">
-                                <img src={formatIcon} />
-                                <label for="format" className="block text-[12px] font-bold leading-6 text-gray1">
-                                  FORMAT
-                                </label>
-                              </div>
-                              <RadioGroup value={selectedFormat} onChange={setSelectedFormat}>
-                                <div className="inline-flex gap-2 items-center">
-                                  {format.map((action, index) => (
-                                    <RadioGroup.Option
-                                      name="action"
-                                      key={action?.name}
-                                      value={action}
-                                      onClick={(e) => handleInputAction(action)}
-                                      className={({ checked }) =>
-                                        classNames(
-                                          'cursor-pointer text-darkBlue',
-                                          checked || action?.name === selectedFormat?.name
-                                            ? 'border-lightblue bg-lightblue1'
-                                            : '',
-                                          'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
-                                        )
-                                      }
-                                    >
-                                      <RadioGroup.Label as="span">{action?.name}</RadioGroup.Label>
-                                    </RadioGroup.Option>
-                                  ))}
-                                </div>
-                              </RadioGroup>
-                            </div>
-                          )}
+
+                      <div
+                        className={`${!inputButtonBox ? `hidden` : 'block animate-fade-in'} transition duration-500 `}
+                      >
+                        {selectTab === 1 ? (
                           <div className="pb-[20px]">
                             <div className="flex gap-1 items-center">
-                              <img src={lengthIcon} />
+                              <img src={actionIcon} />
                               <label for="actions" className="block text-[12px] font-bold leading-6 text-gray1">
-                                LENGTH
+                                ACTION
                               </label>
                             </div>
-                            <RadioGroup value={selectedLength} onChange={setSelectedLength}>
+                            <RadioGroup value={selectedAction} onChange={setSelectedAction}>
                               <div className="inline-flex gap-2 items-center">
-                                {lengths.map((length, index) => (
+                                {actions.map((action, index) => (
                                   <RadioGroup.Option
-                                    name="length"
-                                    key={length?.name}
-                                    value={length}
-                                    onClick={(e) => handleInputLength(e, index, length)}
+                                    name="action"
+                                    key={action?.name}
+                                    value={action}
+                                    onClick={(e) => handleInputAction(action)}
                                     className={({ checked }) =>
                                       classNames(
                                         'cursor-pointer text-darkBlue',
-                                        checked || length?.name === selectedLength?.name
+                                        checked || action?.name === selectedAction?.name
                                           ? 'border-lightblue bg-lightblue1'
                                           : '',
                                         'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
                                       )
                                     }
                                   >
-                                    <RadioGroup.Label as="span">{length?.name}</RadioGroup.Label>
+                                    <RadioGroup.Label as="span">{action?.name}</RadioGroup.Label>
                                   </RadioGroup.Option>
                                 ))}
                               </div>
                             </RadioGroup>
                           </div>
+                        ) : (
                           <div className="pb-[20px]">
                             <div className="flex gap-1 items-center">
-                              <img src={toneIcon} />
-                              <label for="actions" className="block text-[12px] font-bold leading-6 text-gray1">
-                                TONE
+                              <img src={formatIcon} />
+                              <label for="format" className="block text-[12px] font-bold leading-6 text-gray1">
+                                FORMAT
                               </label>
                             </div>
-                            <RadioGroup value={selectedTone} onChange={setSelectedTone}>
+                            <RadioGroup value={selectedFormat} onChange={setSelectedFormat}>
                               <div className="inline-flex gap-2 items-center">
-                                {tones.map((tone, index) => (
+                                {format.map((action, index) => (
                                   <RadioGroup.Option
-                                    name="length"
-                                    key={tone?.name}
-                                    value={tone}
-                                    onClick={(e) => handleInputTone(e, index, tone)}
+                                    name="action"
+                                    key={action?.name}
+                                    value={action}
+                                    onClick={(e) => handleInputAction(action)}
                                     className={({ checked }) =>
                                       classNames(
                                         'cursor-pointer text-darkBlue',
-                                        checked || tone?.name === selectedTone?.name
+                                        checked || action?.name === selectedFormat?.name
                                           ? 'border-lightblue bg-lightblue1'
                                           : '',
                                         'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
                                       )
                                     }
                                   >
-                                    <RadioGroup.Label as="span">{tone?.name}</RadioGroup.Label>
+                                    <RadioGroup.Label as="span">{action?.name}</RadioGroup.Label>
                                   </RadioGroup.Option>
                                 ))}
                               </div>
                             </RadioGroup>
                           </div>
-                          <div className="pb-[10px]">
-                            <div className="flex gap-1 items-center">
-                              <img src={languageIcon} />
-                              <label
-                                for="actions"
-                                className="block text-[12px] font-bold leading-6 text-gray1 uppercase"
-                              >
-                                LANGUAGE
-                              </label>
+                        )}
+                        <div className="pb-[20px]">
+                          <div className="flex gap-1 items-center">
+                            <img src={lengthIcon} />
+                            <label for="actions" className="block text-[12px] font-bold leading-6 text-gray1">
+                              LENGTH
+                            </label>
+                          </div>
+                          <RadioGroup value={selectedLength} onChange={setSelectedLength}>
+                            <div className="inline-flex gap-2 items-center">
+                              {lengths.map((length, index) => (
+                                <RadioGroup.Option
+                                  name="length"
+                                  key={length?.name}
+                                  value={length}
+                                  onClick={(e) => handleInputLength(e, index, length)}
+                                  className={({ checked }) =>
+                                    classNames(
+                                      'cursor-pointer text-darkBlue',
+                                      checked || length?.name === selectedLength?.name
+                                        ? 'border-lightblue bg-lightblue1'
+                                        : '',
+                                      'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
+                                    )
+                                  }
+                                >
+                                  <RadioGroup.Label as="span">{length?.name}</RadioGroup.Label>
+                                </RadioGroup.Option>
+                              ))}
                             </div>
-                            <RadioGroup value={selectedLanguage} onChange={setSelectedLanguage}>
-                              <div className="inline-flex gap-2 items-center">
-                                {languages.map((language, index) => (
-                                  <RadioGroup.Option
-                                    name="length"
-                                    key={language?.name}
-                                    value={language}
-                                    onClick={(e) => handleInputLanguage(e, index, language)}
-                                    className={({ checked }) =>
-                                      classNames(
-                                        'cursor-pointer text-darkBlue',
-                                        checked || language?.name === selectedLanguage?.name
-                                          ? 'border-lightblue bg-lightblue1'
-                                          : '',
-                                        'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
-                                      )
-                                    }
-                                  >
-                                    <RadioGroup.Label as="span">{language?.name}</RadioGroup.Label>
-                                  </RadioGroup.Option>
-                                ))}
-                              </div>
-                            </RadioGroup>
-                          </div>
+                          </RadioGroup>
                         </div>
-                      )}
+                        <div className="pb-[20px]">
+                          <div className="flex gap-1 items-center">
+                            <img src={toneIcon} />
+                            <label for="actions" className="block text-[12px] font-bold leading-6 text-gray1">
+                              TONE
+                            </label>
+                          </div>
+                          <RadioGroup value={selectedTone} onChange={setSelectedTone}>
+                            <div className="inline-flex gap-2 items-center">
+                              {tones.map((tone, index) => (
+                                <RadioGroup.Option
+                                  name="length"
+                                  key={tone?.name}
+                                  value={tone}
+                                  onClick={(e) => handleInputTone(e, index, tone)}
+                                  className={({ checked }) =>
+                                    classNames(
+                                      'cursor-pointer text-darkBlue',
+                                      checked || tone?.name === selectedTone?.name
+                                        ? 'border-lightblue bg-lightblue1'
+                                        : '',
+                                      'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
+                                    )
+                                  }
+                                >
+                                  <RadioGroup.Label as="span">{tone?.name}</RadioGroup.Label>
+                                </RadioGroup.Option>
+                              ))}
+                            </div>
+                          </RadioGroup>
+                        </div>
+                        <div className="pb-[10px]">
+                          <div className="flex gap-1 items-center">
+                            <img src={languageIcon} />
+                            <label for="actions" className="block text-[12px] font-bold leading-6 text-gray1 uppercase">
+                              LANGUAGE
+                            </label>
+                          </div>
+                          <RadioGroup value={selectedLanguage} onChange={setSelectedLanguage}>
+                            <div className="inline-flex gap-2 items-center">
+                              {languages.map((language, index) => (
+                                <RadioGroup.Option
+                                  name="length"
+                                  key={language?.name}
+                                  value={language}
+                                  onClick={(e) => handleInputLanguage(e, index, language)}
+                                  className={({ checked }) =>
+                                    classNames(
+                                      'cursor-pointer text-darkBlue',
+                                      checked || language?.name === selectedLanguage?.name
+                                        ? 'border-lightblue bg-lightblue1'
+                                        : '',
+                                      'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
+                                    )
+                                  }
+                                >
+                                  <RadioGroup.Label as="span">{language?.name}</RadioGroup.Label>
+                                </RadioGroup.Option>
+                              ))}
+                            </div>
+                          </RadioGroup>
+                        </div>
+                      </div>
+
                       <div className="pt-[15px] pb-[20px]">
                         {selectTab === 1 ? (
                           <button
@@ -2952,9 +3023,14 @@ const MainScreen = ({
                             className={`flex text-[16px] w-full justify-center focus:outline-none rounded-md bg-primaryBlue px-3 py-2 text-sm leading-6 text-white shadow-sm hover:opacity-90  ${
                               compLoading ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
                             } ${
-                              (selectTab === 1 &&
-                                (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
-                              aiToolsLength !== 4
+                              !state?.edit
+                                ? (selectTab === 1 &&
+                                    (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                  // !editTemplateName?.input_text
+                                  aiToolsLength !== 4
+                                  ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
+                                  : ''
+                                : !editTemplateName?.input_text || aiToolsLength !== 4
                                 ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
                                 : ''
                             } `}
@@ -2962,12 +3038,13 @@ const MainScreen = ({
                               handleGenerateDraft(e);
                               setComposeRes(false);
                             }}
-                            // disabled={Loading || !selectedText.input_text}
                             disabled={
                               compLoading ||
-                              (selectTab === 1 &&
-                                (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
-                              aiToolsLength !== 4
+                              (!state?.edit
+                                ? (selectTab === 1 &&
+                                    (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                  aiToolsLength !== 4
+                                : !editTemplateName?.input_text || aiToolsLength !== 4)
                             }
                           >
                             <div className="">
@@ -3056,7 +3133,7 @@ const MainScreen = ({
                           </button>
                         )}
                       </div>
-                      {composeRes && hasResultText && selectTab === 1 && (
+                      {((composeRes && hasResultText && selectTab === 1) || state?.edit) && (
                         <div className="pb-[20px]">
                           <div className="flex justify-between item-center">
                             <div className="flex gap-2 items-center">
@@ -3094,7 +3171,7 @@ const MainScreen = ({
                                 </div>
                               )}
                             </div>
-                            {!isStreamingComp && (
+                            {!isStreamingComp && !state?.edit && (
                               <div>
                                 <button
                                   className="flex gap-1 items-center w-full rounded-md bg-white text-[12px] font-medium text-primaryBlue"
@@ -3184,15 +3261,21 @@ const MainScreen = ({
                               disabled={resultTextRep !== '' ? '' : 'disabled'}
                               onClick={handleCopyDraft}
                             >
-                              Copy
+                              {copied ? 'Copied!' : 'Copy'}
                             </button>
                             <button
-                              className="w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 disabled:cursor-none disabled:opacity-50"
-                              disabled={resultTextRep !== '' ? '' : 'disabled'}
+                              className={`w-full relative group rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 ${
+                                buttonDisabled ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
+                              }`}
+                              disabled={buttonDisabled}
                               onClick={handleApply}
                               type="button"
+                              id="addToFocusedInput"
                             >
                               Apply
+                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 bg-gray-800 text-white text-sm rounded-md py-1 px-2 mt-2 transition-opacity duration-300">
+                                Tooltip Text
+                              </div>
                             </button>
                           </div>
                         </div>
@@ -3234,7 +3317,7 @@ const MainScreen = ({
                                 </div>
                               )}
                             </div>
-                            {!isStreamingComp && (
+                            {!isStreamingComp && !state?.edit && (
                               <div>
                                 <button
                                   className="flex gap-1 items-center w-full rounded-md bg-white text-[12px] font-medium text-primaryBlue"
@@ -3246,7 +3329,7 @@ const MainScreen = ({
                                 <SaveTemplatePopup
                                   setSaveTemplateBox={setSaveTemplateBox}
                                   saveTemplateBox={saveTemplateBox}
-                                  draftResponse={resultTextRep}
+                                  draftResponse={templatePayload}
                                 />
                               </div>
                             )}
@@ -3316,13 +3399,16 @@ const MainScreen = ({
                               disabled={resultTextRep !== '' ? '' : 'disabled'}
                               onClick={handleCopyDraft}
                             >
-                              Copy
+                              {copied ? 'Copied!' : 'Copy'}
                             </button>
                             <button
-                              className="w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 disabled:cursor-none disabled:opacity-50"
-                              disabled={resultTextRep !== '' ? '' : 'disabled'}
+                              className={`w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 ${
+                                buttonDisabled ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
+                              }`}
+                              disabled={buttonDisabled}
                               onClick={handleApply}
                               type="button"
+                              id="addToFocusedInput"
                             >
                               Apply
                             </button>
@@ -3347,11 +3433,29 @@ const MainScreen = ({
                               // disabled={resultText !== '' ? '' : 'disabled'}
                               onClick={handleCopyDraft}
                             >
-                              Copy
+                              {copied ? 'Copied!' : 'Copy'}
                             </button>
                             <button
-                              className="w-full rounded-md bg-primaryBlue px-1 focus:outline-none py-[10px] text-[16px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
-                              // disabled={resultText !== '' ? '' : 'disabled'}
+                              className={`w-full rounded-md bg-primaryBlue px-1 focus:outline-none py-[10px] text-[16px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50 ${
+                                !state?.edit
+                                  ? (selectTab === 1 &&
+                                      (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                    // !editTemplateName?.input_text
+                                    aiToolsLength !== 4
+                                    ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
+                                    : ''
+                                  : !editTemplateName?.input_text || aiToolsLength !== 4
+                                  ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
+                                  : ''
+                              } `}
+                              disabled={
+                                compLoading ||
+                                (!state?.edit
+                                  ? (selectTab === 1 &&
+                                      (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                    aiToolsLength !== 4
+                                  : !editTemplateName?.input_text || aiToolsLength !== 4)
+                              }
                               onClick={(e) => handleUpdateTemplate(e)}
                             >
                               Update

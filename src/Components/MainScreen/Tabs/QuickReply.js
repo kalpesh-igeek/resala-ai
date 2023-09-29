@@ -30,6 +30,9 @@ const tones = [
 const exeLang = [
   { value: 'english', label: 'English' },
   { value: 'arabic', label: 'Arabic' },
+  { value: 'hindi', label: 'Hindi' },
+  { value: 'french', label: 'French' },
+  { value: 'spanish', label: 'Spanish' },
 ];
 
 const QuickReply = ({
@@ -75,13 +78,22 @@ const QuickReply = ({
   const [transcript, setTranscript] = useState('');
   const [replyResponse, setReplyResponse] = useState({
     tone: '',
-    language: 'auto',
+    language: '',
     sender_intent: '',
     generate_mail: '',
   });
   // console.log('replyResponse', replyResponse);
   const [isPermissionGranted, setIsPermissionGranted] = useState(false);
+  const [templatePayload, setTemplatePayload] = useState({
+    template_name: '',
+    template_type: '',
+    tone: '',
+    language: '',
+    sender_intent: '',
+    generate_mail: '',
+  });
   const draftPreviewTextareaRef = useRef(null);
+  const [copied, setCopied] = useState(false);
 
   const handlePlanInfo = () => {
     setIsReplies(!isReplies);
@@ -147,7 +159,7 @@ const QuickReply = ({
       const content = emailContentElement.textContent.trim().replace(/\s+/g, ' '); // Replace multiple spaces and line breaks with a single space
 
       try {
-        const response = await fetch('https://api-qa.resala.ai/quick_reply/stream_sender_intent', {
+        const response = await fetch('http://192.168.1.10:8000/quick_reply/stream_sender_intent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -219,7 +231,7 @@ const QuickReply = ({
     try {
       // setCompLoading(true);
       // Call your new API here
-      const response = await fetch('https://api-qa.resala.ai/quick_reply/generate_stream_email', {
+      const response = await fetch('http://192.168.1.10:8000/quick_reply/generate_stream_email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -228,8 +240,8 @@ const QuickReply = ({
         },
         body: JSON.stringify({
           sender_intent: senderIntent.trim(),
-          tone: selectedOption?.value,
-          language: 'auto',
+          tone: selectedOption?.label,
+          language: selectedLang?.label,
           ideas_of_replay: idea?.idea || idea,
           // Include other necessary parameters
         }),
@@ -268,6 +280,12 @@ const QuickReply = ({
           }
           // }
         }
+        setTemplatePayload({
+          tone: selectedOption?.label,
+          language: selectedLang?.label,
+          sender_intent: senderIntent.trim(),
+          generate_mail: accumulatedMessage,
+        });
         newResultText = [
           ...resultText,
           { output_text: accumulatedMessage.trim() }, // Trim to remove trailing spaces
@@ -278,8 +296,8 @@ const QuickReply = ({
         // Update the state with the new result text
         setResultText(newResultText);
         setReplyResponse({
-          tone: selectedOption?.value,
-          language: 'auto',
+          tone: selectedOption?.label,
+          language: selectedLang?.label,
           sender_intent: senderIntent.trim(),
           generate_mail: resultText[newResultText?.length],
         });
@@ -358,6 +376,52 @@ const QuickReply = ({
     setIsMicEnabled(false);
     setIsListening(false);
     setTranscript('');
+  };
+
+  const handleApply = () => {
+    const parentElement = document.querySelector('div[gmail_original="1"]');
+
+    if (parentElement) {
+      // Get the dynamic text from templatePayload.generate_mail
+      const dynamicText = templatePayload.generate_mail;
+
+      // Split the dynamic text into sections based on line breaks
+      const dynamicTextSections = dynamicText.split('\n');
+
+      // Clear any existing content in the parent element
+      parentElement.innerHTML = '';
+
+      // Create a new div element for each section and add it to the parent element
+      dynamicTextSections.forEach((sectionText, index) => {
+        if (sectionText.trim() === '') {
+          // Add a div element with a line break when there is a line break in the dynamic text
+          const newDiv = document.createElement('div');
+          newDiv.setAttribute('dir', 'ltr');
+          newDiv.setAttribute('gmail_original', '1');
+          newDiv.innerHTML = '<br>';
+          parentElement.appendChild(newDiv);
+        } else {
+          // Add a div element with the dynamic text
+          const newDiv = document.createElement('div');
+          newDiv.setAttribute('dir', 'ltr');
+          newDiv.setAttribute('gmail_original', '1');
+          newDiv.innerHTML = sectionText;
+          parentElement.appendChild(newDiv);
+        }
+      });
+    } else {
+      console.error('Element not found');
+    }
+  };
+
+  const handleCopyDraft = () => {
+    navigator.clipboard.writeText(templatePayload?.generate_mail);
+    // navigator.clipboard.writeText(resultTextRep?.output_text);
+
+    setCopied(true); // Set copied state to true when text is copied
+    setTimeout(() => {
+      setCopied(false); // Revert copied state to false after 2 seconds
+    }, 2000);
   };
 
   return (
@@ -692,7 +756,12 @@ const QuickReply = ({
                     <span className="text-primaryBlue">Save Template</span>
                     <img src={SaveTemplate} />
                   </button>
-                  <SaveTemplatePopup setSaveTemplateBox={setSaveTemplateBox} saveTemplateBox={saveTemplateBox} />
+                  <SaveTemplatePopup
+                    setSaveTemplateBox={setSaveTemplateBox}
+                    saveTemplateBox={saveTemplateBox}
+                    draftResponse={templatePayload}
+                    module="quickReply"
+                  />
                 </div>
               )}
               {isStreamingComp && (
@@ -733,7 +802,7 @@ const QuickReply = ({
             />
           </div>
         )}
-        {composeRes && (
+        {composeRes && !isStreamingComp && (
           <div className="mt-1">
             <div className="flex gap-2 items-center">
               <button
@@ -749,14 +818,17 @@ const QuickReply = ({
               <button
                 className="w-full rounded-md bg-white px-1 focus:outline-none py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
                 // disabled={resultTextRep !== '' ? '' : 'disabled'}
-                // onClick={handleCopyDraft}
+                // disabled={isStreamingComp}
+                onClick={handleCopyDraft}
               >
-                Copy
+                {copied ? 'Copied!' : 'Copy'}
               </button>
               <button
-                className="w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 disabled:cursor-none disabled:opacity-50"
-                // disabled={resultTextRep !== '' ? '' : 'disabled'}
-                onClick={copyToClipboard}
+                className={`w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 disabled:cursor-none disabled:opacity-50 ${
+                  isStreamingComp ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
+                }`}
+                disabled={isStreamingComp}
+                onClick={handleApply}
                 type="button"
               >
                 Insert
