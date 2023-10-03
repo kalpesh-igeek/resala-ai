@@ -1,0 +1,11 @@
+
+.scrollbarFace::-webkit-scrollbar {
+    width: 0;
+  }
+  .textArea:focus {
+    outline: none;
+    resize: none;
+  }
+  .hoverLanguage:hover{
+    background-color: #F3F4F8 !important;
+  }

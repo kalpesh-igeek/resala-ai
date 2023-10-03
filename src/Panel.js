@@ -32,6 +32,7 @@ import { generateYoutubeSummary } from './redux/reducers/YoutubeSummarySlice/You
 import { useSpeechSynthesis } from 'react-speech-kit';
 import copy from 'copy-to-clipboard';
 import WikipediaButton from './WikipediaButton';
+import LinkedinButton from './LinkedinButton';
 
 const QUICKREPLY = 'quickreply';
 const SELECTION = 'selection';
@@ -132,6 +133,12 @@ export default function Panel() {
     }
   }
 
+  const [fromPosition, setFromPosition] = useState({
+    bottom: 0,
+    top : 0,
+    left: 0,
+  });
+
   useEffect(() => {
     // window.onhashchange = function () {
     //   setBackToInbox(window.location.hash.split('#inbox/')[1]);
@@ -182,12 +189,49 @@ export default function Panel() {
           console.log("Fsdhkj");
           setIsClickWikiPediaButton(true)
         })
-
       }, 3000);
-      
+
+    }else if(hostname == "www.linkedin.com"){
+      setTimeout(() => {
+        const postButton = document.getElementsByClassName('share-box-feed-entry__top-bar')[0];
+        console.log("postButton");
+        if(postButton){
+          postButton.addEventListener('click', () => {
+            setTimeout(() => {
+              const LinkedinButton = document.getElementById('LinkedinButton');
+              LinkedinButton.classList.remove("hidden");
+              LinkedinButton.addEventListener('click', () => {
+                const SocialPopup = document.getElementById('SocialPopup');
+                if(SocialPopup){
+                  SocialPopup.classList.remove("hidden");
+                  let FormPosition = document.getElementsByClassName('share-box')[0];
+                  console.log('FormPosition', FormPosition);
+                  if (FormPosition) {
+                    FormPosition = FormPosition.getBoundingClientRect();
+                    console.log('FormPosition', FormPosition);
+                    setFromPosition({
+                      bottom: FormPosition.bottom,
+                      top: FormPosition.top + 105,
+                      left: FormPosition.left + 360,
+                    });
+                    LinkedinButton.classList.add("hidden");
+                  }
+                }
+              })
+              let closeSocialBtn = document.getElementById('closeSocialBtn');
+              closeSocialBtn.addEventListener('click', () => {
+                const LinkedinButton = document.getElementById('LinkedinButton');
+                LinkedinButton.classList.remove("hidden");
+              })
+            }, 3000);
+          })
+        }
+      }, 3000);
+
     }
   }, []);
 
+  console.log({fromPosition});
   // useEffect(() => {
   //   setTimeout(() => {
   //     const quickReply = document.getElementById('quickButton');
@@ -361,6 +405,7 @@ export default function Panel() {
       <QuickButton handleSidebar={handleSidebar} />
       <YoutubeButton />
       <WikipediaButton handleSidebar={handleSidebar} />
+      <LinkedinButton fromPosition={fromPosition} />
       {/* <div
         style={{
           boxShadow: '0px 9px 10px rgba(22, 120, 242, 0.25)',
