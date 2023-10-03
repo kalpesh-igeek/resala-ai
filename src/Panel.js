@@ -154,7 +154,7 @@ export default function Panel() {
 
   let isDragging = false;
   let offsetX, offsetY;
-  
+
   const [fromBtnPosition, setFromBtnPosition] = useState({
     bottom: 0,
     left: 0,
@@ -381,60 +381,47 @@ export default function Panel() {
       }, 3000);
     }else if(hostname == "twitter.com"){
       setTimeout(() => {
-        // let postButton = document.querySelectorAll('[aria-label="Create a post"]')[0]
-        // console.log("postButton");
-        // if(postButton){
-        //   postButton = postButton.children[0];
-        //   console.log(postButton);
-        //   postButton.addEventListener('click', () => {
-        //     console.log("postButton click");
-        //     setTimeout(() => {
-        //       let BtnPosition = document.getElementsByClassName('x1afcbsf')[0];
-        //       console.log('BtnPosition', BtnPosition);
-        //       if (BtnPosition) {
-        //         BtnPosition = BtnPosition.getBoundingClientRect();
-        //         console.log('BtnPosition', BtnPosition);
-        //         setFromBtnPosition({
-        //           bottom: BtnPosition.bottom - 116,
-        //           left: BtnPosition.left + 444,
-        //         });
-        //       }
-        //       const SocialButton = document.getElementById('SocialButton');
-        //       SocialButton.classList.remove("hidden");
-        //       SocialButton.addEventListener('click', () => {
-        //         const SocialPopup = document.getElementById('SocialPopup');
-        //         console.log(SocialPopup);
-        //         if(SocialPopup){
-        //           SocialPopup.classList.remove("hidden");
-        //           let FormPosition = document.getElementsByClassName('x1afcbsf')[0];
-        //           console.log('FormPosition', FormPosition);
-        //           if (FormPosition) {
-        //             FormPosition = FormPosition.getBoundingClientRect();
-        //             console.log('FormPosition', FormPosition);
-        //             setFromPosition({
-        //               bottom: FormPosition.bottom + 78,
-        //               top: -FormPosition.bottom - 78,
-        //               left: FormPosition.left + 199,
-        //             });
-        //             SocialButton.classList.add("hidden");
-        //           }
-        //         }
-        //       })
-        //       let closeSocialBtn = document.getElementById('closeSocialBtn');
-        //       closeSocialBtn.addEventListener('click', () => {
-        //         console.log("SocialButton");
-        //         const SocialButton = document.getElementById('SocialButton');
-        //         SocialButton.classList.remove("hidden");
-        //       })
-        //       let Dismiss = document.querySelectorAll('[aria-label="Close"]')[0];
-        //       Dismiss.addEventListener('click', () => {
-        //         console.log("Dismiss");
-        //         const SocialButton = document.getElementById('SocialButton');
-        //         SocialButton.classList.add("hidden");
-        //       })
-        //     }, 2000);
-        //   })
-        // }
+        let BtnPosition = document.querySelectorAll('[data-testid="toolBar"]')[0]
+        console.log("BtnPosition");
+        if(BtnPosition){
+          BtnPosition = BtnPosition.parentElement;
+          console.log(BtnPosition);
+          BtnPosition = BtnPosition.getBoundingClientRect();
+          console.log('BtnPosition', BtnPosition);
+          setFromBtnPosition({
+            bottom: BtnPosition.bottom + 595,
+            left: BtnPosition.left + 471,
+          });
+
+          const SocialButton = document.getElementById('SocialButton');
+          SocialButton.classList.remove("hidden");
+          SocialButton.addEventListener('click', () => {
+            const SocialPopup = document.getElementById('SocialPopup');
+            console.log(SocialPopup);
+            if(SocialPopup){
+              SocialPopup.classList.remove("hidden");
+              let FormPosition = document.querySelectorAll('[data-testid="toolBar"]')[0]
+              console.log('FormPosition', FormPosition);
+              if (FormPosition) {
+                FormPosition = FormPosition.parentElement.getBoundingClientRect();
+                console.log('FormPosition', FormPosition);
+                setFromPosition({ 
+                  bottom: FormPosition.bottom + 601,
+                  top: -FormPosition.bottom - 601,
+                  left: FormPosition.left + 227,
+                });
+                SocialButton.classList.add("hidden");
+              }
+            }
+          })
+          
+          let closeSocialBtn = document.getElementById('closeSocialBtn');
+          closeSocialBtn.addEventListener('click', () => {
+            console.log("SocialButton");
+            const SocialButton = document.getElementById('SocialButton');
+            SocialButton.classList.remove("hidden");
+          })
+        }
       }, 3000);
     }
   }, [isFloatIconClicked]);
