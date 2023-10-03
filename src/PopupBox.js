@@ -17,7 +17,6 @@ import { useNavigate } from 'react-router-dom';
 
 export default function PopupBox({ SELECTION, handleSidebar, selectedText, positionX, positionY, requestedText }) {
   const navigate = useNavigate();
-  console.log('selectedText', selectedText);
   const [status, setStatus] = useState(false);
   const [areItemsPinned, setItemsPinned] = useState(0);
   const historyRef = useRef(null);

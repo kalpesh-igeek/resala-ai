@@ -50,7 +50,7 @@
     "react-select": "^5.7.3",
     "react-speech-kit": "^3.0.1",
     "react-speech-recognition": "^3.10.0",
-    "react-tooltip": "^5.13.1",
+    "react-tooltip": "^5.21.5",
     "react-typewriter-effect": "^1.1.0",
     "use-react-countries": "^1.1.0"
   },

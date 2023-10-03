@@ -1,5 +1,6 @@
 #side-bar-extension-root,
-#quickButton, #youtubeButton {
+#quickButton,
+#youtubeButton {
   /*
 ! tailwindcss v3.1.8 | MIT License | https://tailwindcss.com
 */
@@ -478,6 +479,12 @@ video {
   .pointer-events-none {
     pointer-events: none;
   }
+  .visible {
+    visibility: visible;
+  }
+  .invisible {
+    visibility: hidden;
+  }
   .fixed {
     position: fixed;
   }
@@ -490,6 +497,18 @@ video {
   .sticky {
     position: sticky;
   }
+  .bottom-\[20px\] {
+    bottom: 20px;
+  }
+  .right-\[20px\] {
+    right: 20px;
+  }
+  .bottom-\[calc\(100\%\+10px\)\] {
+    bottom: calc(100% + 10px);
+  }
+  .right-0 {
+    right: 0px;
+  }
   .right-\[446px\] {
     right: 446px;
   }
@@ -501,9 +520,6 @@ video {
   }
   .top-0 {
     top: 0px;
-  }
-  .right-0 {
-    right: 0px;
   }
   .bottom-0 {
     bottom: 0px;
@@ -574,9 +590,6 @@ video {
   .left-\[217px\] {
     left: 217px;
   }
-  .right-\[20px\] {
-    right: 20px;
-  }
   .top-\[50\%\] {
     top: 50%;
   }
@@ -619,6 +632,15 @@ video {
   .-top-\[23px\] {
     top: -23px;
   }
+  .top-\[-2px\] {
+    top: -2px;
+  }
+  .right-\[-2px\] {
+    right: -2px;
+  }
+  .right-\[40px\] {
+    right: 40px;
+  }
   .top-\[55px\] {
     top: 55px;
   }
@@ -657,6 +679,9 @@ video {
   }
   .-top-\[31px\] {
     top: -31px;
+  }
+  .\!z-\[99999999999\] {
+    z-index: 99999999999 !important;
   }
   .z-50 {
     z-index: 50;
@@ -885,6 +910,9 @@ video {
   .block {
     display: block;
   }
+  .\!block {
+    display: block !important;
+  }
   .inline {
     display: inline;
   }
@@ -902,6 +930,13 @@ video {
   }
   .hidden {
     display: none;
+  }
+  .\!hidden {
+    display: none !important;
+  }
+  .h-fit {
+    height: -moz-fit-content;
+    height: fit-content;
   }
   .h-\[32px\] {
     height: 32px;
@@ -1067,6 +1102,10 @@ video {
   }
   .min-h-\[644px\] {
     min-height: 644px;
+  }
+  .w-fit {
+    width: -moz-fit-content;
+    width: fit-content;
   }
   .w-\[32px\] {
     width: 32px;
@@ -1234,6 +1273,12 @@ video {
   .w-\[120px\] {
     width: 120px;
   }
+  .w-\[203px\] {
+    width: 203px;
+  }
+  .w-\[111px\] {
+    width: 111px;
+  }
   .w-\[12px\] {
     width: 12px;
   }
@@ -1281,6 +1326,9 @@ video {
   }
   .min-w-\[17px\] {
     min-width: 17px;
+  }
+  .min-w-\[50px\] {
+    min-width: 50px;
   }
   .min-w-0 {
     min-width: 0px;
@@ -1446,6 +1494,13 @@ video {
   .gap-y-\[12px\] {
     row-gap: 12px;
   }
+  .gap-y-\[8px\] {
+    row-gap: 8px;
+  }
+  .gap-x-\[10px\] {
+    -moz-column-gap: 10px;
+         column-gap: 10px;
+  }
   .overflow-hidden {
     overflow: hidden;
   }
@@ -1462,6 +1517,9 @@ video {
   }
   .whitespace-nowrap {
     white-space: nowrap;
+  }
+  .whitespace-pre {
+    white-space: pre;
   }
   .rounded-\[50\%\] {
     border-radius: 50%;
@@ -1613,6 +1671,10 @@ video {
     --tw-border-opacity: 1;
     border-color: rgb(223 228 236 / var(--tw-border-opacity));
   }
+  .\!border-primaryBlue {
+    --tw-border-opacity: 1 !important;
+    border-color: rgb(22 120 242 / var(--tw-border-opacity)) !important;
+  }
   .border-b-slate-200 {
     --tw-border-opacity: 1;
     border-bottom-color: rgb(226 232 240 / var(--tw-border-opacity));
@@ -1628,6 +1690,10 @@ video {
   .border-t-gray {
     --tw-border-opacity: 1;
     border-top-color: rgb(223 228 236 / var(--tw-border-opacity));
+  }
+  .bg-lightblue1 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(238 246 255 / var(--tw-bg-opacity));
   }
   .bg-primaryBlue {
     --tw-bg-opacity: 1;
@@ -1656,10 +1722,6 @@ video {
   .bg-\[\#1678F2\] {
     --tw-bg-opacity: 1;
     background-color: rgb(22 120 242 / var(--tw-bg-opacity));
-  }
-  .bg-lightblue1 {
-    --tw-bg-opacity: 1;
-    background-color: rgb(238 246 255 / var(--tw-bg-opacity));
   }
   .bg-black {
     --tw-bg-opacity: 1;
@@ -1704,6 +1766,10 @@ video {
     --tw-bg-opacity: 1;
     background-color: rgb(249 249 251 / var(--tw-bg-opacity));
   }
+  .bg-lightblue6 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(209 231 255 / var(--tw-bg-opacity));
+  }
   .bg-blue-200 {
     --tw-bg-opacity: 1;
     background-color: rgb(191 219 254 / var(--tw-bg-opacity));
@@ -1726,6 +1792,9 @@ video {
   }
   .fill-blue-600 {
     fill: #2563eb;
+  }
+  .p-\[5px\] {
+    padding: 5px;
   }
   .p-1 {
     padding: 0.25rem;
@@ -1766,9 +1835,6 @@ video {
   .p-\[18px\] {
     padding: 18px;
   }
-  .p-\[5px\] {
-    padding: 5px;
-  }
   .p-\[10px\] {
     padding: 10px;
   }
@@ -1777,6 +1843,9 @@ video {
   }
   .p-\[11px\] {
     padding: 11px;
+  }
+  .p-\[2px\] {
+    padding: 2px;
   }
   .p-\[8\] {
     padding: 8;
@@ -2164,6 +2233,12 @@ video {
   }
   .leading-6 {
     line-height: 1.5rem;
+  }
+  .leading-\[16px\] {
+    line-height: 16px;
+  }
+  .leading-\[18px\] {
+    line-height: 18px;
   }
   .text-white {
     --tw-text-opacity: 1;
@@ -3069,6 +3144,14 @@ input[type='number']::-webkit-outer-spin-button {
   overflow: hidden;
 }
 
+.fix-text {
+  opacity: 1;
+  max-width: 110px;
+  max-height: 18px;
+  visibility: visible;
+  overflow: hidden;
+}
+
 @keyframes fade-in {
   0% {
     opacity: 0;
@@ -3081,6 +3164,33 @@ input[type='number']::-webkit-outer-spin-button {
 
 .animate-fade-in {
   animation: fade-in 0.2s ease-in-out;
+}
+
+#floatingIcon:hover .closeIcon {
+  visibility: unset;
+}
+
+/* ARROW STYLING */
+
+.custom-arrow-top {
+  border: 1px solid transparent !important;
+  border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgb(22, 120, 242)   rgb(22, 120, 242) !important;
+}
+
+.custom-arrow-left {
+  border: 1px solid transparent !important;
+  border-color: rgba(0, 0, 0, 0) rgb(22, 120, 242) rgb(22, 120, 242) rgba(0, 0, 0, 0) !important;
+}
+
+.custom-arrow-right {
+  border: 1px solid transparent !important;
+  border-color: rgb(22, 120, 242) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgb(22, 120, 242) !important;
+}
+
+.custom-arrow-bottom {
+  z-index: 9999;
+  border: 1px solid transparent !important;
+  border-color: rgb(22, 120, 242) rgb(22, 120, 242) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) !important;
 }
 
 .placeholder\:text-gray1::-moz-placeholder {
@@ -3161,6 +3271,10 @@ input[type='number']::-webkit-outer-spin-button {
 .hover\:bg-blue-200:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(191 219 254 / var(--tw-bg-opacity));
+}
+
+.hover\:pr-\[8px\]:hover {
+  padding-right: 8px;
 }
 
 .hover\:text-darkBlue:hover {

@@ -34,6 +34,10 @@ import copy from 'copy-to-clipboard';
 import WikipediaButton from './WikipediaButton';
 import LinkedinButton from './LinkedinButton';
 
+import { unset } from 'lodash';
+import { FloatOptions } from './Components/FloatIcon/FloatOptions';
+import { FloatBtn } from './Components/FloatIcon/FloatBtn';
+
 const QUICKREPLY = 'quickreply';
 const SELECTION = 'selection';
 const CHAT = 'chat';
@@ -71,21 +75,29 @@ export default function Panel() {
   const [selectedAction, setSelectedAction] = useState();
   const [isClickWikiPediaButton, setIsClickWikiPediaButton] = useState(false);
   const [positionY, setPoistionY] = useState(0);
+  const [isFloatIconClicked, setIsFloatIconClicked] = useState(false);
   const [backToInbox, setBackToInbox] = useState('');
   const [isPopupVisible, setIsPopupVisible] = useState(true);
   const { activity } = useSelector((state) => state.auth);
-  // console.log('activity', activity);
 
   const [mailId, setMailId] = useState(window.location.hash);
 
   const { speak, cancel, speaking } = useSpeechSynthesis();
 
-  useEffect(()=>{
-    speak({ text: "dsjkdjgvkljsdkgvjasklgvjsaklgvjasklgvjklkl" });
-  },[])
+  const [height, setHeight] = useState(window.innerHeight);
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      setWidth(window.innerWidth);
+      setHeight(window.innerHeight);
+    };
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+
   const handleSpeak = (msg) => {
-    console.log({msg});
-    console.log({speaking});
+    console.log({ msg });
+    console.log({ speaking });
     if (speaking) {
       cancel();
     } else {
@@ -139,32 +151,92 @@ export default function Panel() {
     left: 0,
   });
 
-  useEffect(() => {
-    // window.onhashchange = function () {
-    //   setBackToInbox(window.location.hash.split('#inbox/')[1]);
-    // };
-    const hostname = window.location.hostname;
-    console.log({hostname});
 
-    if(hostname == 'www.youtube.com'){
+  let isDragging = false;
+  let offsetX, offsetY;
+
+  useEffect(() => {
+    const hostname = window.location.hostname;
+    const floatIcon = document.getElementById('floatingIcon');
+
+    if (floatIcon) {
+
+      if (isFloatIconClicked) {
+        console.log('remove');
+        window.removeEventListener('mousedown', (e) => {
+          isDragging = true;
+          offsetX = e.clientX - floatIcon.getBoundingClientRect().left;
+          offsetY = e.clientY - floatIcon.getBoundingClientRect().top;
+          floatIcon.style.cursor = 'grabbing';
+        });
+        window.removeEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+
+          const x = e.clientX - offsetX;
+          const y = e.clientY - offsetY;
+
+          // floatIcon.style.left = x + 'px';
+          if (y > 0 && y < height - 42) {
+            floatIcon.style.top = y + 'px';
+          }
+        });
+        window.removeEventListener('mouseup', () => {
+          isDragging = false;
+          floatIcon.style.cursor = 'grab';
+        });
+        window.removeEventListener('dragstart', (e) => {
+          e.preventDefault();
+        });
+
+        return;
+      }
+
+      floatIcon.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        offsetX = e.clientX - floatIcon.getBoundingClientRect().left;
+        offsetY = e.clientY - floatIcon.getBoundingClientRect().top;
+        floatIcon.style.cursor = 'grabbing';
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+
+        const x = e.clientX - offsetX;
+        const y = e.clientY - offsetY;
+
+        // floatIcon.style.left = x + 'px';
+        if (y > 0 && y < height - 42) {
+          floatIcon.style.top = y + 'px';
+        }
+      });
+
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+        floatIcon.style.cursor = 'grab';
+      });
+
+      floatIcon.addEventListener('dragstart', (e) => {
+        e.preventDefault();
+      });
+    }
+    if (hostname == 'www.youtube.com') {
       setTimeout(() => {
         const secondaryInner = document.getElementById('secondary-inner');
-        if(secondaryInner){
+        if (secondaryInner) {
           const youtubeButton = document.getElementById('youtubeButton');
-          if(youtubeButton){
+          if (youtubeButton) {
             secondaryInner.prepend(youtubeButton);
-            youtubeButton.classList.remove("hidden");
+            youtubeButton.classList.remove('hidden');
             const ContinueInChat = document.getElementById('ContinueInChat');
             ContinueInChat.addEventListener('click', () => {
-              console.log("ContinueInChat");
-              handleSidebar('chat')
-              setIsClickWikiPediaButton(true)
-            })
+              console.log('ContinueInChat');
+              handleSidebar('chat');
+              setIsClickWikiPediaButton(true);
+            });
           }
         }
       }, 3000);
-
-    }else if(hostname == 'mail.google.com'){
+    } else if (hostname == 'mail.google.com') {
       setTimeout(() => {
         const quickReply = document.getElementById('quickButton');
         const quickPosition = document.querySelectorAll('[aria-label="Print all"]')[0];
@@ -176,12 +248,11 @@ export default function Panel() {
           };
         }
       }, 3000);
-      
-    }else if(hostname == "en.wikipedia.org"){
+    } else if (hostname == 'en.wikipedia.org') {
       setTimeout(() => {
         const WikipediaButton = document.getElementById('WikipediaButton');
-        if(WikipediaButton){
-          WikipediaButton.classList.remove("hidden");
+        if (WikipediaButton) {
+          WikipediaButton.classList.remove('hidden');
         }
 
         const wikiSummarize = document.getElementById('wikiSummarize');
@@ -229,7 +300,7 @@ export default function Panel() {
       }, 3000);
 
     }
-  }, []);
+  }, [isFloatIconClicked]);
 
   console.log({fromPosition});
   // useEffect(() => {
@@ -321,7 +392,9 @@ export default function Panel() {
     setSelectedAction({ name: tool });
     // setIsPopupVisible(false);
     setRequestedText(selectedText);
-    document.querySelectorAll('[style="position: relative;"]')[0] ? document.querySelectorAll('[style="position: relative;"]')[0].style = 'margin-right: 500px' : '';
+    document.querySelectorAll('[style="position: relative;"]')[0]
+      ? (document.querySelectorAll('[style="position: relative;"]')[0].style = 'margin-right: 500px')
+      : '';
   };
 
   useEffect(() => {
@@ -393,6 +466,31 @@ export default function Panel() {
 
   return (
     <>
+      {/* FloatIcon */}
+      <div
+        id="floatingIcon"
+        style={{
+          borderRadius: '20px 20px 0px 20px',
+          transition: 'unset',
+          display: isSideBarOpen ? 'none' : 'flex',
+        }}
+        className={`fixed bottom-[20px] select-none ${
+          !isFloatIconClicked && 'new-btn-without-scale'
+        } group/icon right-[20px] cursor-pointer w-fit p-[5px] hover:pr-[8px] h-fit flex justify-center items-center !z-[99999999999] bg-lightblue1`}
+      >
+        <FloatBtn
+          isClicked={isFloatIconClicked}
+          onClick={() => {
+            setIsFloatIconClicked(!isFloatIconClicked);
+          }}
+        />
+
+        {/* OPTIONS MENU */}
+        <div className={` ${isFloatIconClicked ? 'block' : 'hidden'} absolute bottom-[calc(100%+10px)] right-0`}>
+          <FloatOptions />
+        </div>
+      </div>
+
       <PopupBox
         SELECTION={SELECTION}
         handleSidebar={handleSidebar}
@@ -477,8 +575,8 @@ export default function Panel() {
                           selectedAction={selectedAction}
                           setSelectedAction={setSelectedAction}
                           windowSelectedText={selectedText}
-                          isClickButton = {isClickWikiPediaButton} 
-                          setIsClickButton = {setIsClickWikiPediaButton} 
+                          isClickButton={isClickWikiPediaButton}
+                          setIsClickButton={setIsClickWikiPediaButton}
                         />
                       }
                     />

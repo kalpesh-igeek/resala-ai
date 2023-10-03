@@ -29,9 +29,23 @@ async function init() {
   // Set the href attribute to the Google Fonts URL
   linkElement2.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap';
 
+//   const floatingIcon = document.createElement('div');
+//   floatingIcon.id = 'floatingIcon';
+//   floatingIcon.style.cssText = `
+//   width: 50px;
+//   height: 50px;
+//   background-color: blue;
+//   position: fixed;
+//   bottom: 20px;
+//   right: 20px;
+//   z-index:999999999 !important;
+//   cursor: pointer;
+// `;
+
   // Append the link element to the head of the document
   document.head.appendChild(linkElement1);
   document.head.appendChild(linkElement2);
+  // body.appendChild(floatingIcon);
   body.appendChild(app);
 
   const root = createRoot(app);
