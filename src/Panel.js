@@ -32,7 +32,7 @@ import { generateYoutubeSummary } from './redux/reducers/YoutubeSummarySlice/You
 import { useSpeechSynthesis } from 'react-speech-kit';
 import copy from 'copy-to-clipboard';
 import WikipediaButton from './WikipediaButton';
-import LinkedinButton from './LinkedinButton';
+import SocialButton from './SocialButton';
 
 import { unset } from 'lodash';
 import { FloatOptions } from './Components/FloatIcon/FloatOptions';
@@ -154,6 +154,11 @@ export default function Panel() {
 
   let isDragging = false;
   let offsetX, offsetY;
+  
+  const [fromBtnPosition, setFromBtnPosition] = useState({
+    bottom: 0,
+    left: 0,
+  });
 
   useEffect(() => {
     const hostname = window.location.hostname;
@@ -269,9 +274,20 @@ export default function Panel() {
         if(postButton){
           postButton.addEventListener('click', () => {
             setTimeout(() => {
-              const LinkedinButton = document.getElementById('LinkedinButton');
-              LinkedinButton.classList.remove("hidden");
-              LinkedinButton.addEventListener('click', () => {
+              let BtnPosition = document.getElementsByClassName('share-creation-state__footer')[0];
+              console.log('BtnPosition', BtnPosition);
+              if (BtnPosition) {
+                BtnPosition = BtnPosition.getBoundingClientRect();
+                console.log('BtnPosition', BtnPosition);
+                setFromBtnPosition({
+                  bottom: BtnPosition.bottom - 206,
+                  left: BtnPosition.left + 680,
+                });
+              }
+              
+              const SocialButton = document.getElementById('SocialButton');
+              SocialButton.classList.remove("hidden");
+              SocialButton.addEventListener('click', () => {
                 const SocialPopup = document.getElementById('SocialPopup');
                 if(SocialPopup){
                   SocialPopup.classList.remove("hidden");
@@ -285,24 +301,146 @@ export default function Panel() {
                       top: FormPosition.top + 105,
                       left: FormPosition.left + 360,
                     });
-                    LinkedinButton.classList.add("hidden");
+                    SocialButton.classList.add("hidden");
                   }
                 }
               })
               let closeSocialBtn = document.getElementById('closeSocialBtn');
               closeSocialBtn.addEventListener('click', () => {
-                const LinkedinButton = document.getElementById('LinkedinButton');
-                LinkedinButton.classList.remove("hidden");
+                console.log("SocialButton");
+                const SocialButton = document.getElementById('SocialButton');
+                SocialButton.classList.remove("hidden");
+              })
+              let Dismiss = document.querySelectorAll('[aria-label="Dismiss"]')[0];
+              Dismiss.addEventListener('click', () => {
+                console.log("Dismiss");
+                const SocialButton = document.getElementById('SocialButton');
+                SocialButton.classList.add("hidden");
               })
             }, 3000);
           })
         }
       }, 3000);
 
+    }else if(hostname == "www.facebook.com"){
+      setTimeout(() => {
+        let postButton = document.querySelectorAll('[aria-label="Create a post"]')[0]
+        console.log("postButton");
+        if(postButton){
+          postButton = postButton.children[0];
+          console.log(postButton);
+          postButton.addEventListener('click', () => {
+            console.log("postButton click");
+            setTimeout(() => {
+              let BtnPosition = document.getElementsByClassName('x1afcbsf')[0];
+              console.log('BtnPosition', BtnPosition);
+              if (BtnPosition) {
+                BtnPosition = BtnPosition.getBoundingClientRect();
+                console.log('BtnPosition', BtnPosition);
+                setFromBtnPosition({
+                  bottom: BtnPosition.bottom - 116,
+                  left: BtnPosition.left + 444,
+                });
+              }
+              const SocialButton = document.getElementById('SocialButton');
+              SocialButton.classList.remove("hidden");
+              SocialButton.addEventListener('click', () => {
+                const SocialPopup = document.getElementById('SocialPopup');
+                console.log(SocialPopup);
+                if(SocialPopup){
+                  SocialPopup.classList.remove("hidden");
+                  let FormPosition = document.getElementsByClassName('x1afcbsf')[0];
+                  console.log('FormPosition', FormPosition);
+                  if (FormPosition) {
+                    FormPosition = FormPosition.getBoundingClientRect();
+                    console.log('FormPosition', FormPosition);
+                    setFromPosition({
+                      bottom: FormPosition.bottom + 78,
+                      top: -FormPosition.bottom - 78,
+                      left: FormPosition.left + 199,
+                    });
+                    SocialButton.classList.add("hidden");
+                  }
+                }
+              })
+              let closeSocialBtn = document.getElementById('closeSocialBtn');
+              closeSocialBtn.addEventListener('click', () => {
+                console.log("SocialButton");
+                const SocialButton = document.getElementById('SocialButton');
+                SocialButton.classList.remove("hidden");
+              })
+              let Dismiss = document.querySelectorAll('[aria-label="Close"]')[0];
+              Dismiss.addEventListener('click', () => {
+                console.log("Dismiss");
+                const SocialButton = document.getElementById('SocialButton');
+                SocialButton.classList.add("hidden");
+              })
+            }, 2000);
+          })
+        }
+      }, 3000);
+    }else if(hostname == "twitter.com"){
+      setTimeout(() => {
+        // let postButton = document.querySelectorAll('[aria-label="Create a post"]')[0]
+        // console.log("postButton");
+        // if(postButton){
+        //   postButton = postButton.children[0];
+        //   console.log(postButton);
+        //   postButton.addEventListener('click', () => {
+        //     console.log("postButton click");
+        //     setTimeout(() => {
+        //       let BtnPosition = document.getElementsByClassName('x1afcbsf')[0];
+        //       console.log('BtnPosition', BtnPosition);
+        //       if (BtnPosition) {
+        //         BtnPosition = BtnPosition.getBoundingClientRect();
+        //         console.log('BtnPosition', BtnPosition);
+        //         setFromBtnPosition({
+        //           bottom: BtnPosition.bottom - 116,
+        //           left: BtnPosition.left + 444,
+        //         });
+        //       }
+        //       const SocialButton = document.getElementById('SocialButton');
+        //       SocialButton.classList.remove("hidden");
+        //       SocialButton.addEventListener('click', () => {
+        //         const SocialPopup = document.getElementById('SocialPopup');
+        //         console.log(SocialPopup);
+        //         if(SocialPopup){
+        //           SocialPopup.classList.remove("hidden");
+        //           let FormPosition = document.getElementsByClassName('x1afcbsf')[0];
+        //           console.log('FormPosition', FormPosition);
+        //           if (FormPosition) {
+        //             FormPosition = FormPosition.getBoundingClientRect();
+        //             console.log('FormPosition', FormPosition);
+        //             setFromPosition({
+        //               bottom: FormPosition.bottom + 78,
+        //               top: -FormPosition.bottom - 78,
+        //               left: FormPosition.left + 199,
+        //             });
+        //             SocialButton.classList.add("hidden");
+        //           }
+        //         }
+        //       })
+        //       let closeSocialBtn = document.getElementById('closeSocialBtn');
+        //       closeSocialBtn.addEventListener('click', () => {
+        //         console.log("SocialButton");
+        //         const SocialButton = document.getElementById('SocialButton');
+        //         SocialButton.classList.remove("hidden");
+        //       })
+        //       let Dismiss = document.querySelectorAll('[aria-label="Close"]')[0];
+        //       Dismiss.addEventListener('click', () => {
+        //         console.log("Dismiss");
+        //         const SocialButton = document.getElementById('SocialButton');
+        //         SocialButton.classList.add("hidden");
+        //       })
+        //     }, 2000);
+        //   })
+        // }
+      }, 3000);
     }
   }, [isFloatIconClicked]);
 
   console.log({fromPosition});
+  console.log({fromBtnPosition});
   // useEffect(() => {
   //   setTimeout(() => {
   //     const quickReply = document.getElementById('quickButton');
@@ -503,7 +641,7 @@ export default function Panel() {
       <QuickButton handleSidebar={handleSidebar} />
       <YoutubeButton />
       <WikipediaButton handleSidebar={handleSidebar} />
-      <LinkedinButton fromPosition={fromPosition} />
+      <SocialButton fromPosition={fromPosition} fromBtnPosition={fromBtnPosition} />
       {/* <div
         style={{
           boxShadow: '0px 9px 10px rgba(22, 120, 242, 0.25)',

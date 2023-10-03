@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import RisalaAILOGO from './utils/Linkedin/RisalaAILOGO.svg';
 import SocialPopup from './SocialPopup';
 
-const LinkedinButton = ({fromPosition}) => {
+const SocialButton = ({fromPosition, fromBtnPosition}) => {
   return (
     <>
-    <div id="LinkedinButton" className='hidden' style={{
+    <div id="SocialButton" className='hidden' style={{
       position: 'fixed',
-      bottom: '437px',
-      left: '908px',
+      bottom:fromBtnPosition.bottom,
+      left:fromBtnPosition.left,
+      // bottom: '437px',
+      // left: '908px',
       zIndex: '999999999999',
     }}>
       <img className="" src={RisalaAILOGO} style={{zIndex: '9999999999 !important'}} />
@@ -17,4 +19,4 @@ const LinkedinButton = ({fromPosition}) => {
     </>
   );
 };
-export default LinkedinButton;
+export default SocialButton;
