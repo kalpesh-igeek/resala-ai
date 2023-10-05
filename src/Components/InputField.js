@@ -68,14 +68,20 @@ const InputField = ({
             ref={inputRef}
             className={`appearance-none ${className}`}
             name={name}
-            type={(name === 'password' || name === 're_password') && showPassword ? 'text' : type === "email" ? 'text' : type}
+            type={
+              (name === 'password' || name === 're_password') && showPassword
+                ? 'text'
+                : type === 'email'
+                ? 'text'
+                : type
+            }
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             value={value}
             onChange={handleChange}
             placeholder={placeholder}
             // required={type === 'email' || type === 'password' ? true : false}
-            disabled={isLoading}
+            disabled={isLoading || disabled}
           />
         )}
         {/* ${value && 'filled'}  */}

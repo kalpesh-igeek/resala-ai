@@ -8,6 +8,7 @@ import SettingsIcon from '../utils/Header/SettingsIcon.svg';
 import Profile from '../Pages/Profile';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkActivity } from '../redux/reducers/authSlice/AuthSlice';
+import CustomTooltip from '../Components/CustomTooltip/Tooltip';
 
 const loggedUser = {
   avatar: Avatar,
@@ -59,9 +60,20 @@ const Header = ({
         </div>
 
         <div className="flex items-center">
-          <div className="mr-[10px] h-[34px] w-[34px] border-slate-300 rounded-full border flex justify-center items-center cursor-pointer">
-            <img className="h-[20px] w-[20px]" src={SettingsIcon} onClick={() => navigate('/preferences')} />
-          </div>
+          <CustomTooltip
+            isFloating
+            maxWidth="430px"
+            place="bottom"
+            id="SettingHeader"
+            content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Settings </div>`}
+          >
+            <div
+              id="SettingHeader"
+              className="mr-[10px] h-[34px] w-[34px] border-slate-300 rounded-full border flex justify-center items-center cursor-pointer"
+            >
+              <img className="h-[20px] w-[20px]" src={SettingsIcon} onClick={() => navigate('/preferences')} />
+            </div>
+          </CustomTooltip>
           <div className="mr-[10px] relative">
             <div className="cursor-pointer" onClick={() => setIsProfile(!isProfile)}>
               <img className="h-[34px] w-[34px]" src={Avatar} />

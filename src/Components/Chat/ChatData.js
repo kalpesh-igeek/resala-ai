@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReadIcon from '../../utils/Chat/Icons/ReadIcon.svg';
+import ReadFilledIcon from '../../utils/Chat/Icons/ReadIcon-filled.svg';
 import CopyIcon from '../../utils/Chat/Icons/CopyIcon.svg';
 import CopiedIcon from '../../utils/Chat/Icons/CopiedIcon.svg';
 import Typewriter from '../Typewriter';
@@ -7,6 +8,7 @@ import LoadingGif from '../../utils/Chat/Gif/loader.gif';
 import RegenerateIcon from '../../utils/Chat/Icons/RegenerateIcon.svg';
 import copy from 'copy-to-clipboard';
 import { useSpeechSynthesis } from 'react-speech-kit';
+import CustomTooltip from '../CustomTooltip/Tooltip';
 
 const ChatData = ({
   chatData,
@@ -19,7 +21,7 @@ const ChatData = ({
   isSpeechEnabled,
 }) => {
   const { speak, cancel, speaking } = useSpeechSynthesis();
-  const [isCopied, setisCopied] = useState(false)
+  const [isCopied, setisCopied] = useState(undefined);
 
   const handleSpeak = (msg) => {
     if (speaking) {
@@ -29,11 +31,11 @@ const ChatData = ({
     }
   };
   useEffect(() => {
-     const timer = setTimeout(() => {
-        setisCopied(false)
-      }, 3000);
-    return clearTimeout(timer)
-  }, [isCopied])
+    const timer = setTimeout(() => {
+      setisCopied(false);
+    }, 3000);
+    return clearTimeout(timer);
+  }, [isCopied]);
 
   // FIX: contiue speech
   useEffect(() => {
@@ -78,7 +80,7 @@ const ChatData = ({
     <>
       <div
         ref={chatContainerRef}
-        className={`text-[12px] max-h-[575px] overflow-y-auto flex flex-col-reverse ${isStreaming ? 'mb-[55px]' : ''} `}
+        className={`text-[12px] max-h-[530px] overflow-y-auto flex flex-col-reverse ${isStreaming ? 'mb-[55px]' : ''} `}
       >
         <div className="">
           {chatData.map((item, index) => {
@@ -108,18 +110,37 @@ const ChatData = ({
                       }}
                     >
                       <div className="option flex items-center gap-2 bg-white absolute right-0 -top-[23px] border border-gray p-[8px] rounded-[6px]">
-                        <span onClick={() => handleSpeak(item.msg)} className="cursor-pointer">
-                          <img src={ReadIcon} />
-                        </span>
-                        <span
-                          onClick={() => {
-                            copy(item.msg);
-                            setisCopied(true)
-                          }}
-                          className="cursor-pointer"
+                        <CustomTooltip
+                          maxWidth="430px"
+                          place="top"
+                          id={`speak-${index + 1}`}
+                          content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > ${
+                            speaking ? 'Stop' : 'Speak'
+                          } </div>`}
                         >
-                          <img src={!isCopied ? CopyIcon : CopiedIcon} />
-                        </span>
+                          <span id={`speak-${index + 1}`} onClick={() => handleSpeak(item.msg)} className="cursor-pointer">
+                            <img src={speaking ? ReadFilledIcon : ReadIcon} />
+                          </span>
+                        </CustomTooltip>
+                        <CustomTooltip
+                          maxWidth="430px"
+                          place="top"
+                          id={`copyTooltip-${index + 1}`}
+                          content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > ${
+                            isCopied !== index ? "Copy" : "Copied"
+                          } </div>`}
+                        >
+                          <span
+                            id={`copyTooltip-${index + 1}`}
+                            onClick={() => {
+                              copy(item.msg);
+                              setisCopied(index);
+                            }}
+                            className="cursor-pointer"
+                          >
+                            <img src={isCopied !== index ? CopyIcon : CopiedIcon} />
+                          </span>
+                        </CustomTooltip>
                       </div>
 
                       <pre className="font-dmsans" style={{ textWrap: 'wrap' }}>

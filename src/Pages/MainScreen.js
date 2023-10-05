@@ -110,6 +110,7 @@ import axios from 'axios';
 import stopIcon from '../utils/MainScreen/Icons/stop.svg';
 import { BottomDrawerLayout } from '../Components/Common/BottomDrawerLayout';
 import PromptComp from '../Components/Common/PromptComp';
+import CustomTooltip from '../Components/CustomTooltip/Tooltip';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -192,11 +193,12 @@ const MainScreen = ({
   setSelectedAction,
   windowSelectedText,
   isClickButton,
-  setIsClickButton
+  setIsClickButton,
 }) => {
   const TOKEN = getToken();
   const navigate = useNavigate();
-
+  const redux = useSelector((state) => state);
+  console.log('redux', redux);
   const { state } = useLocation();
 
   const { isLoading, historyId } = useSelector((state) => state.chat);
@@ -566,7 +568,7 @@ const MainScreen = ({
   };
 
   const getPageSummary = async (type) => {
-    console.log("sdfvsdjkjk");
+    console.log('sdfvsdjkjk');
     function generateRandomString(length) {
       const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
       let result = '';
@@ -599,17 +601,17 @@ const MainScreen = ({
       setAbortController(controller);
 
       payload = {
-        "url": window.location.href,
-        "chat_id": generateRandomString(45)
-      }
+        url: window.location.href,
+        chat_id: generateRandomString(45),
+      };
 
-      payload = JSON.stringify(payload)
+      payload = JSON.stringify(payload);
 
-      console.log({payload},getToken());
+      console.log({ payload }, getToken());
       const hostname = window.location.hostname;
-      let url = "https://api-qa.resala.ai/web_summary/web_summary";
-      if(hostname == "www.youtube.com"){
-        url = "https://api-qa.resala.ai/youtube/youtube_summary";
+      let url = 'https://api-qa.resala.ai/web_summary/web_summary';
+      if (hostname == 'www.youtube.com') {
+        url = 'https://api-qa.resala.ai/youtube/youtube_summary';
       }
       const response = await fetch(url, {
         method: 'POST',
@@ -643,7 +645,7 @@ const MainScreen = ({
             // console.log('data', data);
 
             if (line.includes('connection closed')) {
-              console.log("df");
+              console.log('df');
               setAllreadyStreamed(false);
               setIsStreaming(false);
               break;
@@ -670,25 +672,24 @@ const MainScreen = ({
     } catch (error) {
       console.error('An error occurred:', error);
     }
-  }
+  };
   //wikipedia
   console.log(isClickButton);
   useEffect(() => {
-    if(isClickButton){
-      console.log("dfjkh");
+    if (isClickButton) {
+      console.log('dfjkh');
       const hostname = window.location.hostname;
-      console.log({hostname});
-      if(hostname == "en.wikipedia.org"){
+      console.log({ hostname });
+      if (hostname == 'en.wikipedia.org') {
         setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
-        getPageSummary('wikipedia')
+        getPageSummary('wikipedia');
       }
-      if(hostname == "www.youtube.com"){
+      if (hostname == 'www.youtube.com') {
         setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
-        getPageSummary('youtube')
+        getPageSummary('youtube');
       }
     }
-
-  },[isClickButton])
+  }, [isClickButton]);
 
   //Prompt
   useEffect(() => {
@@ -2005,9 +2006,9 @@ const MainScreen = ({
       setIsDocChat(false);
     }
     if (id === 'book') {
-      console.log("book");
+      console.log('book');
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
-      getPageSummary('book')
+      getPageSummary('book');
     }
   };
 
@@ -2300,7 +2301,7 @@ const MainScreen = ({
                             {items.map((item) => (
                               <div
                                 key={item.id}
-                                className="flex new-btn-without-scale p-[5px] items-center gap-1 bg-gray4 rounded-md cursor-pointer"
+                                className="flex new-btn-without-scale p-[5px] items-center bg-gray4 rounded-md cursor-pointer"
                                 // className="flex new-btn p-[5px] items-center gap-1 bg-gray4 rounded-md cursor-pointer"
                                 onMouseEnter={() => handleMouseEnterLeave(item.id, true)}
                                 onMouseLeave={() => handleMouseEnterLeave(item.id, false)}
@@ -2310,21 +2311,36 @@ const MainScreen = ({
                                   className={`w-[18px] h-[18px] ${item.isHovered ? 'hovered' : ''}`}
                                   src={item.isHovered ? item.hoverImg : item.img}
                                 />
-                                <span className={`text-[12px]`}>{item.label}</span>
+                                <span className={`text-[12px] whitespace-pre`}> {item.label}</span>
                               </div>
                             ))}{' '}
                           </div>
                           <div className="flex gap-[15px] items-center">
-                            <button className="w-[20px] h-[20px]" onClick={handleChatHistory}>
-                              <img src={HistoryIcon} />
-                            </button>
+                            <CustomTooltip
+                              maxWidth="430px"
+                              place="top"
+                              id="chatHistory"
+                              content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > History </div>`}
+                            >
+                              <button id="chatHistory" className="w-[20px] h-[20px]" onClick={handleChatHistory}>
+                                <img src={HistoryIcon} />
+                              </button>
+                            </CustomTooltip>
                             <div className="relative">
-                              <div
-                                className="w-[20px] h-[20px] flex items-center justify-center cursor-pointer rounded-md bg-white"
-                                onClick={handleOpenPrompt}
+                              <CustomTooltip
+                                maxWidth="430px"
+                                place="top"
+                                id="prompt"
+                                content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Prompt library </div>`}
                               >
-                                <img src={addPromptBox ? DocIconHover : DocIcon} />
-                              </div>
+                                <div
+                                  id="prompt"
+                                  className="w-[20px] h-[20px] flex items-center justify-center cursor-pointer rounded-md bg-white"
+                                  onClick={handleOpenPrompt}
+                                >
+                                  <img src={addPromptBox ? DocIconHover : DocIcon} />
+                                </div>
+                              </CustomTooltip>
                               <div className={`${addPromptBox ? 'block' : 'hidden'}`}>
                                 <BottomDrawerLayout title="Prompt Library" setClose={setAddPromptBox}>
                                   <PromptComp
@@ -2345,12 +2361,20 @@ const MainScreen = ({
                               </div>
                             </div>
                             <div className="relative">
-                              <div
-                                className="w-[20px] h-[20px] flex items-center justify-center cursor-pointer rounded-md bg-white"
-                                onClick={handleOpenSettings}
+                              <CustomTooltip
+                                maxWidth="430px"
+                                place="top"
+                                id="settingId"
+                                content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Chat language setting </div>`}
                               >
-                                <img src={settingsPopupBox ? SettingsIconHover : SettingsIcon} />
-                              </div>
+                                <div
+                                  id="settingId"
+                                  className="w-[20px] h-[20px] flex items-center justify-center cursor-pointer rounded-md bg-white"
+                                  onClick={handleOpenSettings}
+                                >
+                                  <img src={settingsPopupBox ? SettingsIconHover : SettingsIcon} />
+                                </div>
+                              </CustomTooltip>
                               <div
                                 ref={languageRef}
                                 className={`chats-settings w-[190px] flex flex-col gap-2 absolute right-0 bottom-[100%] bg-white p-[8px] rounded-[8px] ${
@@ -2419,16 +2443,25 @@ const MainScreen = ({
                                 </div>
                               </div>
                             </div>
-
-                            <button
-                              onClick={() => {
-                                setIsViewPrompts(false);
-                                setIsSpeechEnabled(!isSpeechEnabled);
-                              }}
-                              className="w-[20px] h-[20px]"
+                            <CustomTooltip
+                              maxWidth="430px"
+                              place="top"
+                              id="speaker"
+                              content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Voice respond ${
+                                isSpeechEnabled ? 'enabled' : 'disabled'
+                              } </div>`}
                             >
-                              <img src={isSpeechEnabled ? UnMuteIcon : MuteIcon} alt="I" />
-                            </button>
+                              <button
+                                id="speaker"
+                                onClick={() => {
+                                  setIsViewPrompts(false);
+                                  setIsSpeechEnabled(!isSpeechEnabled);
+                                }}
+                                className="w-[20px] h-[20px]"
+                              >
+                                <img src={isSpeechEnabled ? UnMuteIcon : MuteIcon} alt="I" />
+                              </button>
+                            </CustomTooltip>
                           </div>
                         </div>
                         <div className="mt-2 relative">
@@ -2662,12 +2695,12 @@ const MainScreen = ({
                               //   setIsTypewriterDone={setIsTypewriterDone}
                               // />
                               <div
-                                className={`flex items-top gap-4 border border-gray p-[10px] rounded-lg ${
+                                className={`flex items-top gap-[8px] border border-gray px-[10px] rounded-lg ${
                                   chatType === 'summarize' ? 'blur-sm shadow-md pointer-events-none' : '' // Add the blur class conditionally
                                 }`}
                               >
                                 <div
-                                  className={`flex items-center justify-center w-[24px] h-[24px] rounded-full cursor-pointer ${
+                                  className={`flex items-center justify-center mt-[10px] w-[24px] h-[24px] rounded-full cursor-pointer ${
                                     isStreaming ? 'disabled cursor-default' : ''
                                   }`}
                                   onClick={() => !isStreaming && handleAudioInput()} // Conditionally set the onClick handler
@@ -2684,7 +2717,7 @@ const MainScreen = ({
                                   rows="5"
                                   value={chatInput.chatText}
                                   placeholder={errors.chatText ? errors.chatText : 'Tell me what to write for you'}
-                                  className="text-[14px] pt-[5px] block w-[349px] rounded-lg focus:outline-0"
+                                  className="text-[14px] pt-[14px] block w-[349px] rounded-lg focus:outline-0"
                                   onChange={(e) => handleChange(e)}
                                   onKeyDown={(e) => {
                                     // if (!isStreaming) {
@@ -2707,16 +2740,25 @@ const MainScreen = ({
                                 />
                                 {/* {errors.chatText && <p className="text-red text-[12px]">{errors.chatText}</p>} */}
                                 {!isStreaming && !chatLoading && (
-                                  <button
-                                    className={`absolute top-[12px] right-[12px] w-[20px] h-[20px] cursor-pointer focus:outline-0  ${
-                                      chatLoading ? 'opacity-50 cursor-not-allowed' : ''
-                                    }`}
-                                    // onClick={(e) => {}}
-                                    type="submit"
-                                    disabled={chatLoading || !chatInput.chatText}
+                                  <CustomTooltip
+                                    isFloating
+                                    maxWidth="430px"
+                                    place="bottom"
+                                    id="SubmitSend"
+                                    content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Sends </div>`}
                                   >
-                                    <img src={SendIcon} />
-                                  </button>
+                                    <button
+                                      id="SubmitSend"
+                                      className={`absolute top-[12px] right-[12px] w-[20px] h-[20px] cursor-pointer focus:outline-0  ${
+                                        chatLoading ? 'opacity-50 cursor-not-allowed' : ''
+                                      }`}
+                                      // onClick={(e) => {}}
+                                      type="submit"
+                                      disabled={chatLoading || !chatInput.chatText}
+                                    >
+                                      <img src={SendIcon} />
+                                    </button>
+                                  </CustomTooltip>
                                 )}
                               </div>
                             )}
@@ -2743,7 +2785,7 @@ const MainScreen = ({
                     >
                       <div className="flex gap-2 items-center px-[8px] py-[10px]">
                         <img src={stopIcon} />
-                        <p className="text-primaryBlue text-[12px] font-medium">Stop Generating</p>
+                        <p className="text-primaryBlue text-[12px] font-medium whitespace-nowrap">Stop Generating</p>
                       </div>
                     </div>
                   )}
@@ -3079,6 +3121,7 @@ const MainScreen = ({
                             </RadioGroup>
                           </div>
                         )}
+                        
                         <div className="pb-[20px]">
                           <div className="flex gap-1 items-center">
                             <img src={lengthIcon} />

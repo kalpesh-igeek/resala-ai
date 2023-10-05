@@ -3,7 +3,7 @@ import { Tooltip as ReactTooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
 
 // TO USE THIS MAKE SURE ID NEED TO SAME FOR TOOLTIP AND ON HOVER ELEMENT ID
-const CustomTooltip = ({ children, id, content, maxWidth, place }) => {
+const CustomTooltip = ({ children, id, content, maxWidth, place, isFloating }) => {
   // console.log("here inside ", children, id, content, maxWidth, place);
   return (
     <>
@@ -23,9 +23,10 @@ const CustomTooltip = ({ children, id, content, maxWidth, place }) => {
           padding: '8px',
           fontWeight: '400',
         }}
-        classNameArrow={`custom-arrow-${place}`}
+        classNameArrow={isFloating ? `custom-floating-arrow-${place}` : `custom-arrow-${place}`}
         anchorId={id}
         place={place}
+        // isOpen={true}
       >
         <div dangerouslySetInnerHTML={{ __html: content }} />
       </ReactTooltip>

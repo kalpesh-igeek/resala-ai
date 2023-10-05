@@ -88,7 +88,7 @@ const EnterNewPassword = () => {
         <div className="flex justify-center flex-col gap-2">
           <form onSubmit={handleSubmit}>
             <InputField
-              className="block w-full rounded-md border border-gray mt-[4px] px-7 py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
+              className="block w-full rounded-md border border-gray mt-[4px] pl-[15px] pr-[47px] py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
               name="password"
               label="New password"
               type="password"
@@ -99,7 +99,7 @@ const EnterNewPassword = () => {
             />
             {errors.password && <p className="text-red text-[12px] mb-[10px]">{errors.password}</p>}
             <InputField
-              className="block w-full rounded-md border border-gray mt-[4px] px-7 py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
+              className="block w-full rounded-md border border-gray mt-[4px] pl-[15px] pr-[47px] py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
               name="re_password"
               label="Re-enter new password"
               type="password"

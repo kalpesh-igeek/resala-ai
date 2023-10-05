@@ -54,6 +54,7 @@ const MobileVerification = () => {
         navigate('/entercode', { state: { phone: res.payload, register } });
       }
     }
+    console.log('res', res);
     // else {
     //   setWhatsAppSwitch(true);
     //   setIsVisisbleWhatAppButton(false);

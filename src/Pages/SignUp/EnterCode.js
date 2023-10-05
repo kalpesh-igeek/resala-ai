@@ -23,6 +23,11 @@ const EnterCode = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    const otp = value.replace(/\s/g, '');
+    const formattedOtp = otp.replace(/\D/g, '').replace(/(\d{3})(?=\d)/g, '$1 ');
+    console.log('formattedOtp', formattedOtp);
+
     const formattedValue = value.replace(/\D/g, '');
 
     // Check if the input is a number

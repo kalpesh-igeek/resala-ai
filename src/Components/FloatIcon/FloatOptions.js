@@ -26,6 +26,7 @@ export const FloatOptions = () => {
     <>
       <div className="flex flex-col-reverse gap-y-[8px]">
         <CustomTooltip
+          isFloating
           maxWidth="430px"
           place="left"
           id="1"
@@ -49,6 +50,7 @@ export const FloatOptions = () => {
           </div>
         </CustomTooltip>
         <CustomTooltip
+          isFloating
           maxWidth="430px"
           place="left"
           id="2"

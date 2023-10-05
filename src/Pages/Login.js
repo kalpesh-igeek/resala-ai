@@ -17,6 +17,7 @@ import EyeClose from '../utils/Account/Icons/EyeClose.svg';
 import EyeOpen from '../utils/Account/Icons/Eye.svg';
 import SocialLogin from '../Components/SocialLogin';
 import InforCircleIcon from '../utils/Account/Icons/info-circle.svg';
+import SelectMobileNumber from '../Components/PhoneNumberInput/SelectMobileNumber';
 
 export default function Login({ isLogin, setIsLogin, setActiveTab }) {
   const navigate = useNavigate();
@@ -104,12 +105,13 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
     }
     // setIsRegistered(false);
   };
-  console.log('invalidCred', invalidCred);
+
   const handleSignUp = () => {
     localStorage.removeItem('userAccessToken');
     sessionStorage.removeItem('chatId');
     navigate('/signup');
   };
+
 
   return (
     <>
@@ -128,7 +130,7 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
               type="email"
               placeholder=" "
               handleChange={(e) => handleChange(e)}
-              // disabled={disabled}
+              disabled={isSecondStep}
               setIsRegistered={setIsRegistered}
               setIsSecondStep={setIsSecondStep}
               isRegistered={isRegistered}
@@ -155,7 +157,7 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
               <div className="relative">
                 <InputField
                   isFixedLabel
-                  className="block w-full rounded-md border border-gray mt-[4px] px-7 py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
+                  className="block w-full rounded-md border border-gray mt-[4px] pl-[15px] pr-[47px] py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
                   name="password"
                   label="Password"
                   type={isPasswordVisible ? 'text' : 'password'}

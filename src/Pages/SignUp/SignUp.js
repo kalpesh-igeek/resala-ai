@@ -101,6 +101,7 @@ const SignUp = () => {
     }
     // setIsRegistered(false);
   };
+  console.log('isRegistered', isRegistered);
   return (
     <>
       <div className="py-[90px] px-[75px] flex flex-col justify-center">
@@ -131,6 +132,7 @@ const SignUp = () => {
               label="Email Address"
               type="email"
               placeholder=""
+              disabled={isRegistered}
               handleChange={(e) => handleChange(e)}
               isRegistered={isRegistered}
               setIsRegistered={setIsRegistered}
@@ -141,7 +143,7 @@ const SignUp = () => {
             {isValidCaptch && isRegistered && inputValue.email ? (
               <>
                 <InputField
-                  className="block w-full rounded-md border border-gray mt-[4px] px-7 py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
+                  className="block w-full rounded-md border border-gray mt-[4px] pl-[15px] pr-[47px] py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
                   name="password"
                   label="Password"
                   type="password"
