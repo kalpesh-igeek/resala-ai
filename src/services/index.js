@@ -12,6 +12,8 @@ const getRequest = async (path) => {
       Authorization: getToken(),
     },
   };
+  console.log('Ssajksjkvhkjscjkaschjkashnkj');
+  console.log(getToken());
   const API_ENDPOINT = `${baseUrl}${path}`;
   return await server.get(API_ENDPOINT, AXIOS_CONFIG);
 };

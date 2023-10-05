@@ -1,4 +1,4 @@
 module.exports = {
-  // baseUrl: 'http://192.168.1.10:8000', //local
-  baseUrl: 'https://api-qa.resala.ai', //live
+  baseUrl: 'https://b705-2401-4900-1f3f-142e-14e1-f76d-f98a-d56f.ngrok-free.app', //local
+  // baseUrl: 'https://api-qa.resala.ai', //live
 };
