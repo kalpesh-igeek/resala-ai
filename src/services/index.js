@@ -6,10 +6,11 @@ import { getToken } from '../utils/localstorage';
 // const USER_TOKEN = getToken();
 
 const getRequest = async (path) => {
+  const token = await getToken();
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: getToken(),
+      Authorization: token,
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -28,10 +29,11 @@ const getReqWithoutToken = async (path) => {
 
 // Handling POST request
 const postRequest = async (path, payload) => {
+  const token = await getToken(); // Wait for the token to be resolved
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: getToken(),
+      Authorization: token,
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -39,10 +41,11 @@ const postRequest = async (path, payload) => {
 };
 
 const postReqWithFormData = async (path, formData) => {
+  const token = await getToken();
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: getToken(),
+      Authorization: token,
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -61,10 +64,11 @@ const postReqWithoutToken = async (path, payload) => {
 
 // Handling PUT request
 const putRequest = async (path, payload) => {
+  const token = await getToken();
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: getToken(),
+      Authorization: token,
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -72,10 +76,11 @@ const putRequest = async (path, payload) => {
 };
 
 const putReqWithFormData = async (path, formData) => {
+  const token = await getToken();
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: getToken(),
+      Authorization: token,
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -84,10 +89,11 @@ const putReqWithFormData = async (path, formData) => {
 
 // Handling PATCH request
 const patchRequest = async (path, payload) => {
+  const token = await getToken();
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: getToken(),
+      Authorization: token,
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -107,10 +113,11 @@ const patchReqWithoutToken = async (path, payload) => {
 
 // Handling DELETE request
 const deleteRequest = async (path) => {
+  const token = await getToken();
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: getToken(),
+      Authorization: token,
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;

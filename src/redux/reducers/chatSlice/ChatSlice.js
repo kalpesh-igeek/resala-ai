@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { chatService } from '../../../services/chat.service';
 const initialState = {
   chat: [],
+  docHis: [],
   chatId: '',
   historyId: '',
   isLoading: false,
@@ -59,6 +60,12 @@ export const updatePrompt = createAsyncThunk('chat/updatePrompt', async (payload
 
 export const deleteChatHistory = createAsyncThunk('chat/deleteChatHistory', async (payload) => {
   const { data, status } = await chatService.deleteChatHistory(payload);
+  data.status = status;
+  return data;
+});
+
+export const docHistory = createAsyncThunk('chat/docHistory', async (payload) => {
+  const { data, status } = await chatService.docHistory(payload);
   data.status = status;
   return data;
 });
@@ -199,6 +206,18 @@ export const ChatSlice = createSlice({
       state.chat = action.payload;
     });
     builder.addCase(deleteChatHistory.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    });
+
+    builder.addCase(docHistory.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(docHistory.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.docHis = action.payload;
+    });
+    builder.addCase(docHistory.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.error.message;
     });

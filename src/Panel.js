@@ -26,7 +26,7 @@ import SuccessIcon from './utils/Account/Icons/SuccessIcon.svg';
 import { getToken } from './utils/localstorage';
 import Template from './Pages/Templates/Template';
 import { useDispatch, useSelector } from 'react-redux';
-import { checkActivity } from './redux/reducers/authSlice/AuthSlice';
+import { checkActivity, saveToken } from './redux/reducers/authSlice/AuthSlice';
 import YoutubeButton from './YoutubeButton';
 import { generateYoutubeSummary } from './redux/reducers/YoutubeSummarySlice/YoutubeSummarySlice';
 import { useSpeechSynthesis } from 'react-speech-kit';
@@ -37,6 +37,7 @@ import SocialButton from './SocialButton';
 import { unset } from 'lodash';
 import { FloatOptions } from './Components/FloatIcon/FloatOptions';
 import { FloatBtn } from './Components/FloatIcon/FloatBtn';
+import { newChat } from './redux/reducers/chatSlice/ChatSlice';
 
 const QUICKREPLY = 'quickreply';
 const SELECTION = 'selection';
@@ -53,7 +54,7 @@ const sites = [
 ];
 
 export default function Panel() {
-  const TOKEN = getToken();
+  // const TOKEN = getToken();
   const dispatch = useDispatch();
   const [isSideBarOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('');
@@ -85,6 +86,22 @@ export default function Panel() {
   const { speak, cancel, speaking } = useSpeechSynthesis();
 
   const [height, setHeight] = useState(window.innerHeight);
+
+  const fetchToken = () => {
+    getToken()
+      .then(async (token) => {
+        console.log('TOKEN', token);
+        await dispatch(saveToken(token));
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  };
+
+  useEffect(() => {
+    fetchToken();
+    console.log('hello');
+  }, []);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -147,10 +164,9 @@ export default function Panel() {
 
   const [fromPosition, setFromPosition] = useState({
     bottom: 0,
-    top : 0,
+    top: 0,
     left: 0,
   });
-
 
   let isDragging = false;
   let offsetX, offsetY;
@@ -165,7 +181,6 @@ export default function Panel() {
     const floatIcon = document.getElementById('floatingIcon');
 
     if (floatIcon) {
-
       if (isFloatIconClicked) {
         console.log('remove');
         window.removeEventListener('mousedown', (e) => {
@@ -262,16 +277,15 @@ export default function Panel() {
 
         const wikiSummarize = document.getElementById('wikiSummarize');
         wikiSummarize.addEventListener('click', () => {
-          console.log("Fsdhkj");
-          setIsClickWikiPediaButton(true)
-        })
+          console.log('Fsdhkj');
+          setIsClickWikiPediaButton(true);
+        });
       }, 3000);
-
-    }else if(hostname == "www.linkedin.com"){
+    } else if (hostname == 'www.linkedin.com') {
       setTimeout(() => {
         const postButton = document.getElementsByClassName('share-box-feed-entry__top-bar')[0];
-        console.log("postButton");
-        if(postButton){
+        console.log('postButton');
+        if (postButton) {
           postButton.addEventListener('click', () => {
             setTimeout(() => {
               let BtnPosition = document.getElementsByClassName('share-creation-state__footer')[0];
@@ -284,13 +298,13 @@ export default function Panel() {
                   left: BtnPosition.left + 680,
                 });
               }
-              
+
               const SocialButton = document.getElementById('SocialButton');
-              SocialButton.classList.remove("hidden");
+              SocialButton.classList.remove('hidden');
               SocialButton.addEventListener('click', () => {
                 const SocialPopup = document.getElementById('SocialPopup');
-                if(SocialPopup){
-                  SocialPopup.classList.remove("hidden");
+                if (SocialPopup) {
+                  SocialPopup.classList.remove('hidden');
                   let FormPosition = document.getElementsByClassName('share-box')[0];
                   console.log('FormPosition', FormPosition);
                   if (FormPosition) {
@@ -301,36 +315,35 @@ export default function Panel() {
                       top: FormPosition.top + 105,
                       left: FormPosition.left + 360,
                     });
-                    SocialButton.classList.add("hidden");
+                    SocialButton.classList.add('hidden');
                   }
                 }
-              })
+              });
               let closeSocialBtn = document.getElementById('closeSocialBtn');
               closeSocialBtn.addEventListener('click', () => {
-                console.log("SocialButton");
+                console.log('SocialButton');
                 const SocialButton = document.getElementById('SocialButton');
-                SocialButton.classList.remove("hidden");
-              })
+                SocialButton.classList.remove('hidden');
+              });
               let Dismiss = document.querySelectorAll('[aria-label="Dismiss"]')[0];
               Dismiss.addEventListener('click', () => {
-                console.log("Dismiss");
+                console.log('Dismiss');
                 const SocialButton = document.getElementById('SocialButton');
-                SocialButton.classList.add("hidden");
-              })
+                SocialButton.classList.add('hidden');
+              });
             }, 3000);
-          })
+          });
         }
       }, 3000);
-
-    }else if(hostname == "www.facebook.com"){
+    } else if (hostname == 'www.facebook.com') {
       setTimeout(() => {
-        let postButton = document.querySelectorAll('[aria-label="Create a post"]')[0]
-        console.log("postButton");
-        if(postButton){
+        let postButton = document.querySelectorAll('[aria-label="Create a post"]')[0];
+        console.log('postButton');
+        if (postButton) {
           postButton = postButton.children[0];
           console.log(postButton);
           postButton.addEventListener('click', () => {
-            console.log("postButton click");
+            console.log('postButton click');
             setTimeout(() => {
               let BtnPosition = document.getElementsByClassName('x1afcbsf')[0];
               console.log('BtnPosition', BtnPosition);
@@ -343,12 +356,12 @@ export default function Panel() {
                 });
               }
               const SocialButton = document.getElementById('SocialButton');
-              SocialButton.classList.remove("hidden");
+              SocialButton.classList.remove('hidden');
               SocialButton.addEventListener('click', () => {
                 const SocialPopup = document.getElementById('SocialPopup');
                 console.log(SocialPopup);
-                if(SocialPopup){
-                  SocialPopup.classList.remove("hidden");
+                if (SocialPopup) {
+                  SocialPopup.classList.remove('hidden');
                   let FormPosition = document.getElementsByClassName('x1afcbsf')[0];
                   console.log('FormPosition', FormPosition);
                   if (FormPosition) {
@@ -359,31 +372,31 @@ export default function Panel() {
                       top: -FormPosition.bottom - 78,
                       left: FormPosition.left + 199,
                     });
-                    SocialButton.classList.add("hidden");
+                    SocialButton.classList.add('hidden');
                   }
                 }
-              })
+              });
               let closeSocialBtn = document.getElementById('closeSocialBtn');
               closeSocialBtn.addEventListener('click', () => {
-                console.log("SocialButton");
+                console.log('SocialButton');
                 const SocialButton = document.getElementById('SocialButton');
-                SocialButton.classList.remove("hidden");
-              })
+                SocialButton.classList.remove('hidden');
+              });
               let Dismiss = document.querySelectorAll('[aria-label="Close"]')[0];
               Dismiss.addEventListener('click', () => {
-                console.log("Dismiss");
+                console.log('Dismiss');
                 const SocialButton = document.getElementById('SocialButton');
-                SocialButton.classList.add("hidden");
-              })
+                SocialButton.classList.add('hidden');
+              });
             }, 2000);
-          })
+          });
         }
       }, 3000);
-    }else if(hostname == "twitter.com"){
+    } else if (hostname == 'twitter.com') {
       setTimeout(() => {
-        let BtnPosition = document.querySelectorAll('[data-testid="toolBar"]')[0]
-        console.log("BtnPosition");
-        if(BtnPosition){
+        let BtnPosition = document.querySelectorAll('[data-testid="toolBar"]')[0];
+        console.log('BtnPosition');
+        if (BtnPosition) {
           BtnPosition = BtnPosition.parentElement;
           console.log(BtnPosition);
           BtnPosition = BtnPosition.getBoundingClientRect();
@@ -394,40 +407,38 @@ export default function Panel() {
           });
 
           const SocialButton = document.getElementById('SocialButton');
-          SocialButton.classList.remove("hidden");
+          SocialButton.classList.remove('hidden');
           SocialButton.addEventListener('click', () => {
             const SocialPopup = document.getElementById('SocialPopup');
             console.log(SocialPopup);
-            if(SocialPopup){
-              SocialPopup.classList.remove("hidden");
-              let FormPosition = document.querySelectorAll('[data-testid="toolBar"]')[0]
+            if (SocialPopup) {
+              SocialPopup.classList.remove('hidden');
+              let FormPosition = document.querySelectorAll('[data-testid="toolBar"]')[0];
               console.log('FormPosition', FormPosition);
               if (FormPosition) {
                 FormPosition = FormPosition.parentElement.getBoundingClientRect();
                 console.log('FormPosition', FormPosition);
-                setFromPosition({ 
+                setFromPosition({
                   bottom: FormPosition.bottom + 601,
                   top: -FormPosition.bottom - 601,
                   left: FormPosition.left + 227,
                 });
-                SocialButton.classList.add("hidden");
+                SocialButton.classList.add('hidden');
               }
             }
-          })
-          
+          });
+
           let closeSocialBtn = document.getElementById('closeSocialBtn');
           closeSocialBtn.addEventListener('click', () => {
-            console.log("SocialButton");
+            console.log('SocialButton');
             const SocialButton = document.getElementById('SocialButton');
-            SocialButton.classList.remove("hidden");
-          })
+            SocialButton.classList.remove('hidden');
+          });
         }
       }, 3000);
     }
   }, [isFloatIconClicked]);
 
-  console.log({fromPosition});
-  console.log({fromBtnPosition});
   // useEffect(() => {
   //   setTimeout(() => {
   //     const quickReply = document.getElementById('quickButton');
@@ -500,6 +511,7 @@ export default function Panel() {
   chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.greeting === true) {
       handleSidebar(CHAT);
+      dispatch(newChat());
     } else {
       setIsOpen(false);
       setIfConfirmClose(true);
@@ -541,19 +553,19 @@ export default function Panel() {
     dispatch(checkActivity(false));
   };
 
-  useEffect(() => {
-    if (TOKEN) {
-      if (isSideBarOpen) {
-        const extensionCloseIcon = document.querySelector('.extensionCloseIcon');
-        extensionCloseIcon.addEventListener('click', handleClick);
-      } else {
-        const DrawerCloseIcon = document.querySelector('.DrawerCloseIcon');
-        if (DrawerCloseIcon) {
-          DrawerCloseIcon.addEventListener('click', handleClick);
-        }
-      }
-    }
-  }, [isSideBarOpen, TOKEN]);
+  // useEffect(() => {
+  //   if (TOKEN) {
+  //     if (isSideBarOpen) {
+  //       const extensionCloseIcon = document.querySelector('.extensionCloseIcon');
+  //       extensionCloseIcon.addEventListener('click', handleClick);
+  //     } else {
+  //       const DrawerCloseIcon = document.querySelector('.DrawerCloseIcon');
+  //       if (DrawerCloseIcon) {
+  //         DrawerCloseIcon.addEventListener('click', handleClick);
+  //       }
+  //     }
+  //   }
+  // }, [isSideBarOpen, TOKEN]);
 
   // useEffect(() => {
   //   const handleClick = () => {

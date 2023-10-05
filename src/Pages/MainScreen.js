@@ -68,7 +68,7 @@ import Dropdown from 'react-dropdown';
 import { Tab } from '@headlessui/react';
 import Login from './Login';
 import InputField from '../Components/InputField';
-import { getToken } from '../utils/localstorage';
+import { getToken, getTokenAndLog } from '../utils/localstorage';
 import { getDefauPromptList, getPromptList } from '../redux/reducers/userPromptSlice/UserPromptSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { chatTextCheck, composeCheck, replyCheck } from '../utils/validation';
@@ -110,6 +110,7 @@ import axios from 'axios';
 import stopIcon from '../utils/MainScreen/Icons/stop.svg';
 import { BottomDrawerLayout } from '../Components/Common/BottomDrawerLayout';
 import PromptComp from '../Components/Common/PromptComp';
+import WithAuth from '../utils/privateRoute';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -192,16 +193,23 @@ const MainScreen = ({
   setSelectedAction,
   windowSelectedText,
   isClickButton,
-  setIsClickButton
+  setIsClickButton,
 }) => {
-  const TOKEN = getToken();
+  // Usage:
+  // (async () => {
+  //   const TOKEN = await getToken();
+  //   console.log('TOKEN', TOKEN);
+  // })();
+
+  const TOKEN = 'getTokenAndLog()';
+  // console.log('TOKEN', TOKEN);
   const navigate = useNavigate();
 
   const { state } = useLocation();
 
   const { isLoading, historyId } = useSelector((state) => state.chat);
   const { Loading } = useSelector((state) => state.compose);
-  const { user } = useSelector((state) => state.auth);
+  const { user, userToken } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const chatId = sessionStorage.getItem('chatId');
 
@@ -356,6 +364,25 @@ const MainScreen = ({
   const languageRef = useRef(null);
 
   const draftPreviewTextareaRef = useRef(null);
+
+  useEffect(() => {
+    // Initialize the Broadcast Channel
+    const bc = new BroadcastChannel('authChannel');
+
+    // Listen for token updates from other tabs
+    bc.addEventListener('message', (event) => {
+      // console.log('event', event);
+      if (event.data.type === 'updateToken') {
+        setToken(event.data.token);
+        localStorage.setItem('token', event.data.token);
+      }
+    });
+
+    return () => {
+      // Close the Broadcast Channel when component unmounts
+      bc.close();
+    };
+  }, []);
 
   // const [buttonDisabled, setButtonDisabled] = useState(true);
   // const [focusedTextarea, setFocusedTextarea] = useState(null);
@@ -566,7 +593,7 @@ const MainScreen = ({
   };
 
   const getPageSummary = async (type) => {
-    console.log("sdfvsdjkjk");
+    console.log('sdfvsdjkjk');
     function generateRandomString(length) {
       const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
       let result = '';
@@ -599,17 +626,17 @@ const MainScreen = ({
       setAbortController(controller);
 
       payload = {
-        "url": window.location.href,
-        "chat_id": generateRandomString(45)
-      }
+        url: window.location.href,
+        chat_id: generateRandomString(45),
+      };
 
-      payload = JSON.stringify(payload)
+      payload = JSON.stringify(payload);
 
-      console.log({payload},getToken());
+      console.log({ payload }, getToken());
       const hostname = window.location.hostname;
-      let url = "https://api-qa.resala.ai/web_summary/web_summary";
-      if(hostname == "www.youtube.com"){
-        url = "https://api-qa.resala.ai/youtube/youtube_summary";
+      let url = 'https://api-qa.resala.ai/web_summary/web_summary';
+      if (hostname == 'www.youtube.com') {
+        url = 'https://api-qa.resala.ai/youtube/youtube_summary';
       }
       const response = await fetch(url, {
         method: 'POST',
@@ -643,7 +670,7 @@ const MainScreen = ({
             // console.log('data', data);
 
             if (line.includes('connection closed')) {
-              console.log("df");
+              console.log('df');
               setAllreadyStreamed(false);
               setIsStreaming(false);
               break;
@@ -670,25 +697,24 @@ const MainScreen = ({
     } catch (error) {
       console.error('An error occurred:', error);
     }
-  }
+  };
   //wikipedia
   console.log(isClickButton);
   useEffect(() => {
-    if(isClickButton){
-      console.log("dfjkh");
+    if (isClickButton) {
+      console.log('dfjkh');
       const hostname = window.location.hostname;
-      console.log({hostname});
-      if(hostname == "en.wikipedia.org"){
+      console.log({ hostname });
+      if (hostname == 'en.wikipedia.org') {
         setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
-        getPageSummary('wikipedia')
+        getPageSummary('wikipedia');
       }
-      if(hostname == "www.youtube.com"){
+      if (hostname == 'www.youtube.com') {
         setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
-        getPageSummary('youtube')
+        getPageSummary('youtube');
       }
     }
-
-  },[isClickButton])
+  }, [isClickButton]);
 
   //Prompt
   useEffect(() => {
@@ -1189,6 +1215,7 @@ const MainScreen = ({
     // Create a new AbortController instance for this fetch request
     const controller = new AbortController();
     setAbortController(controller);
+    var token = await getToken();
     if (selectTab === 1 && !state?.edit) {
       setIsTypewriterDone(true);
       let errors;
@@ -1209,7 +1236,7 @@ const MainScreen = ({
           headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
-            Authorization: getToken(),
+            Authorization: token,
           },
           body: JSON.stringify({
             input_text: selectedText.input_text?.trim(),
@@ -1299,7 +1326,7 @@ const MainScreen = ({
           headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
-            Authorization: getToken(),
+            Authorization: token,
           },
           body: JSON.stringify({
             original_text: replyText.original_text?.trim(),
@@ -1398,7 +1425,7 @@ const MainScreen = ({
           headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
-            Authorization: getToken(),
+            Authorization: token,
           },
           body: JSON.stringify({
             input_text: editTemplateName.input_text,
@@ -1695,7 +1722,10 @@ const MainScreen = ({
     // Create a new AbortController instance for this fetch request
     const controller = new AbortController();
     setAbortController(controller);
-
+    var token = await getToken();
+    if (!token) {
+      navigate('/login');
+    }
     if (message?.name) {
       // Add the user message to the chat data
       setChatData((prevMessages) => [...prevMessages, { msg: message.name, type: 'user' }]);
@@ -1710,7 +1740,7 @@ const MainScreen = ({
           headers: {
             'Content-Type': 'application/json',
             // 'Access-Control-Allow-Origin': '*',
-            Authorization: getToken(),
+            Authorization: token,
           },
           body: JSON.stringify({
             chat_id: chatId,
@@ -1771,7 +1801,7 @@ const MainScreen = ({
           headers: {
             'Content-Type': 'application/json',
             // 'Access-Control-Allow-Origin': '*',
-            Authorization: getToken(),
+            Authorization: token,
           },
           body: JSON.stringify({
             question: message,
@@ -1835,7 +1865,7 @@ const MainScreen = ({
           headers: {
             'Content-Type': 'application/json',
             // 'Access-Control-Allow-Origin': '*',
-            Authorization: getToken(),
+            Authorization: token,
           },
           body: JSON.stringify({
             question: message,
@@ -1917,14 +1947,14 @@ const MainScreen = ({
     setChatData(updatedChatData);
 
     const payload = { chatId: chatId };
-
+    var token = await getToken();
     try {
       const response = await fetch('https://api-qa.resala.ai/chat/regenerate_stream_response', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
-          Authorization: getToken(),
+          Authorization: token,
         },
         body: JSON.stringify(payload),
       });
@@ -2005,9 +2035,9 @@ const MainScreen = ({
       setIsDocChat(false);
     }
     if (id === 'book') {
-      console.log("book");
+      console.log('book');
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
-      getPageSummary('book')
+      getPageSummary('book');
     }
   };
 
@@ -3692,6 +3722,7 @@ const MainScreen = ({
               fetchChatHistoryList={fetchChatHistoryList}
               setHistoryType={setHistoryType}
               setSearchChatHis={setSearchChatHis}
+              historyType={historyType}
             />
           </div>
         </Header>
@@ -3700,4 +3731,4 @@ const MainScreen = ({
   );
 };
 
-export default MainScreen;
+export default WithAuth(MainScreen);

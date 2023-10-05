@@ -4,6 +4,7 @@ import { authService } from '../../../services/auth.service';
 const initialState = {
   user: {},
   token: '',
+  userToken: '',
   isUserEmail: '',
   inputDetails: {},
   forgotPassInfo: {},
@@ -85,6 +86,9 @@ export const AuthSlice = createSlice({
     },
     checkActivity: (state, action) => {
       state.activity = action.payload;
+    },
+    saveToken: (state, action) => {
+      state.userToken = action?.payload;
     },
   },
   extraReducers: (builder) => {
@@ -202,5 +206,6 @@ export const AuthSlice = createSlice({
     });
   },
 });
-export const { userDetails, clearDisptach, saveError, forgotPasswordDetails, checkActivity } = AuthSlice.actions;
+export const { userDetails, clearDisptach, saveError, forgotPasswordDetails, checkActivity, saveToken } =
+  AuthSlice.actions;
 export default AuthSlice.reducer;

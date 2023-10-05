@@ -1,7 +1,9 @@
 import React, { useState, useEffect, Fragment, useRef } from 'react';
 import Close from '../../utils/MainScreen/Icons/Close.svg';
 import ArrowDown from '../../utils/PopupBox/Icons/ArrowDown.svg';
-import SearchIcon from '../../utils/Chat/Icons/SearchIcon.svg';
+import SearchIcon from '../../utils/Chat/Icons/History/searchnormal1.svg';
+import brushIcon from '../../utils/Chat/Icons/History/brush.svg';
+import documentIcon from '../../utils/Chat/Icons/History/document.svg';
 import AllChatIcon from '../../utils/Chat/Icons/History/AllChatIcon.svg';
 import DeleteIcon from '../../utils/Chat/Icons/History/trash.svg';
 import ChatIcon from '../../utils/Chat/Icons/Types/ChatIcon.svg';
@@ -21,7 +23,7 @@ import AllHistory from '../../utils/Chat/Icons/History/AllChatHistory.svg';
 import AllHistory from '../../utils/Chat/Icons/History/AllChatHistory.svg';
 import CustomDropdown from './CustomDropDown';
 import Select from 'react-select';
-import { selectChat, userChatList } from '../../redux/reducers/chatSlice/ChatSlice';
+import { docHistory, selectChat, userChatList } from '../../redux/reducers/chatSlice/ChatSlice';
 import { useDispatch } from 'react-redux';
 import { getDefauPromptList } from '../../redux/reducers/userPromptSlice/UserPromptSlice';
 import Icons from './Icons';
@@ -40,8 +42,8 @@ const chatTypes = [
   { title: 'All chat history', icon: AllChatIcon, active: AllChatIcon },
   { title: 'Chat', icon: ChatIcon, active: ChatIconA },
   { title: 'Doc chat', icon: DocChatIcon, active: DocChatIconA },
-  { title: 'Web summary', icon: WebSummeryIcon, active: WebSummeryIconA },
   { title: 'Youtube summary', icon: YoutubeIcon, active: YoutubeIconA },
+  { title: 'Web summary', icon: WebSummeryIcon, active: WebSummeryIconA },
 ];
 
 const filesListData = [
@@ -173,8 +175,8 @@ const ChatHistory = ({
   fetchChatHistoryList,
   setHistoryType,
   setSearchChatHis,
+  historyType,
 }) => {
-  console.log('chatsHistory', chatsHistory);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [filesList, setFileList] = useState(filesListData);
@@ -190,50 +192,33 @@ const ChatHistory = ({
   const [deleteFileIndex, setDeleteFileIndex] = useState();
 
   const [deleteContent, setDeleteContent] = useState('');
+  const [currentActive, setCurrentActive] = useState(0);
+  const [uploadedDoc, setUploadedDoc] = useState([]);
 
   //Shubham
 
   const chatHisRef = useRef(null);
   const deleteRef = useRef();
 
-  // useEffect(() => {
-  //   setChatsHistroy(historyData);
-  // }, []);
+  const fetchDocChatHistory = async () => {
+    const res = await dispatch(docHistory());
 
-  // const handleChatTypeChange = (option) => {
-  //   if (option.value === 'Doc chat') {
-  //     setIsDocChat(true);
-  //   } else {
-  //     setIsDocChat(false);
-  //   }
-  //   let tempArr = Array.from(historyData);
-  //   let newArray = tempArr.filter((item) => item.type === option.value);
-  //   if (option.value === 'All chat history') {
-  //     setChatsHistroy(historyData);
-  //   } else {
-  //     setChatsHistroy(newArray);
-  //   }
-  // };
+    if (!res.payload) {
+      return;
+    }
 
-  // const handleChatTypeChange = (option) => {
-  //   if (option.value === 'Doc chat') {
-  //     setIsDocChat(true);
-  //     setShowOptions(false); // Hide options when 'Doc chat' is selected
-  //   } else {
-  //     setIsDocChat(false);
-  //     setShowOptions(true); // Show options for other chat types
-  //   }
+    if (res.payload.status === 200) {
+      setUploadedDoc(res.payload?.Result);
+      // setTotalData(res.payload?.totalCount);
+      // setIsLoading(false);
+    }
+  };
 
-  //   setSelectedChatType(option.value);
-
-  //   let tempArr = Array.from(historyData);
-  //   let newArray = tempArr.filter((item) => item.type === option.value);
-  //   if (option.value === 'All chat history') {
-  //     setChatsHistroy(historyData);
-  //   } else {
-  //     setChatsHistroy(newArray);
-  //   }
-  // };
+  useEffect(() => {
+    if (currentActive === 1) {
+      fetchDocChatHistory();
+    }
+  }, [currentActive]);
 
   const handleChatSelection = async (chat) => {
     // setChatData(chat);
@@ -242,15 +227,6 @@ const ChatHistory = ({
     setIsViewPrompts(false);
     // navigate('/');
   };
-
-  // useEffect(() => {
-  //   if (isDeleteChatConfirm) {
-  //     let tempArr = Array.from(chatsHistory);
-  //     tempArr.splice(deleteChatIndex, 1);
-  //     setChatsHistroy(tempArr);
-  //     setIsDeleteChatConfirm(false);
-  //   }
-  // }, [isDeleteChatConfirm]);
 
   useEffect(() => {
     if (isDeleteFileConfirm) {
@@ -262,13 +238,6 @@ const ChatHistory = ({
   }, [isDeleteFileConfirm]);
 
   const handleDeleteChat = (id, type) => {
-    // const res = dispatch(deleteChatHistory(id));
-    // if (!res.payload) {
-    //   return;
-    // }
-    // if (res.payload?.status === 200) {
-    //   fetchChatHistory();
-    // }
     setDeleteChatIndex(id);
     setIfOpenDeleteBox(true);
     setDeleteContent(type);
@@ -334,7 +303,7 @@ const ChatHistory = ({
           style={{ boxShadow: '0px 10px 30px 0px #3C425726' }}
           // show={open}
         >
-          <div className="pt-[8px] px-[20px] pb-[20px] text-[22px] font-medium text-darkBlue">
+          <div className="pt-[8px] px-[20px] pb-[14px] text-[22px] font-medium text-darkBlue">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="gap-2 flex items-center">
@@ -483,69 +452,166 @@ const ChatHistory = ({
             </Tab.Group>
           ) : (
             <>
-              <div className="mx-[20px] border border-gray items-center flex rounded-md px-[9px] py-[4px]">
-                <img src={SearchIcon} />
-                {/* <InputField
-                  className="block w-full rounded-md border-0 px-[9px] py-[7px] text-[12px] text-darkBlue placeholder:text-gray1 focus:outline-0"
-                  name="search"
-                  label=""
-                  type="text"
-                  placeholder="Search"
-                  handleChange={setSearchChatHis}
-                /> */}
-                <input
-                  className="block w-full rounded-md border-0 px-[9px] py-[7px] text-[12px] text-darkBlue placeholder:text-gray1 focus:outline-0"
-                  name="search"
-                  label=""
-                  type="text"
-                  placeholder="Search"
-                  onChange={(e) => setSearchChatHis(e.target.value)}
-                />
+              {historyType === 2 && (
+                <Tab.Group
+                  as="div"
+                  defaultIndex={0}
+                  onChange={(index) => {
+                    setCurrentActive(index);
+                  }}
+                >
+                  <Tab.List
+                    style={{
+                      // boxShadow: '0px 2px 8px 0px #0000000D',
+                      borderBottom: '1px solid #DFE4EC',
+                      paddingInline: '20px',
+                    }}
+                  >
+                    {['Doc Chat', 'Uploaded Doc'].map((itm, index) => (
+                      <Tab
+                        key={index}
+                        className={({ selected }) =>
+                          classNames(
+                            selected ? 'border-primaryBlue text-black' : 'border-transparent text-gray1',
+                            'flex-1 whitespace-nowrap border-b-2 py-[12px] text-[14px] font-medium mr-[30px] focus:outline-0'
+                          )
+                        }
+                      >
+                        {itm}
+                      </Tab>
+                    ))}
+                  </Tab.List>
+                </Tab.Group>
+              )}
+              <div className="flex justify-between items-center">
+                <div
+                  className={`ml-[20px] w-[412px] border border-gray items-center flex rounded-md px-[9px] py-[4px] ${
+                    historyType === 2 ? 'mt-[16px]' : ''
+                  }`}
+                >
+                  <img src={SearchIcon} />
+
+                  <input
+                    className="block w-full rounded-md border-0 px-[9px] py-[7px] text-[12px] text-darkBlue placeholder:text-gray1 focus:outline-0"
+                    name="search"
+                    label=""
+                    type="text"
+                    placeholder="Search"
+                    onChange={(e) => setSearchChatHis(e.target.value)}
+                  />
+                </div>
+                <div
+                  className={`rounded-md bg-gray4 p-[9px] mr-[20px] cursor-pointer ${
+                    historyType === 2 ? 'mt-[16px]' : ''
+                  }`}
+                >
+                  <img src={brushIcon} />
+                </div>
               </div>
               <div className="mt-[12px] px-[20px] max-h-[480px] overflow-y-auto">
                 {chatsHistory.length === 0 ? (
                   <div className="text-gray1 text-center py-4">No data found</div>
                 ) : (
-                  chatsHistory.map((item, index) => (
-                    <div className="border-b border-gray py-[8px] selectText cursor-pointer" key={index}>
-                      <div
-                        className="flex items-center justify-between mb-[8px]"
-                        onClick={() => handleChatSelection(item)}
-                      >
-                        <div className="flex items-center gap-2">
-                          <div className="icon">
-                            <Icons item={item} />
-                          </div>
-                          <div className="text-[14px] font-medium cursor-pointer max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis">
-                            {item?.Type === 1 ? item.chat_dict?.human_question : 'Doc chat'}
-                          </div>
-                        </div>
-                        <div className="text-gray1 lowercase whitespace-nowrap">
-                          {getDateDisplay(new Date(item?.created_at))}
-                          {/* {formatDistanceToNow(new Date(item?.created_at), { addSuffix: true, timeZone: 'Etc/UTC' })} */}
-                          {/* {formatDistanceToNow(utcToZonedTime(new Date(item?.created_at), 'Asia/Kolkata'), {
+                  <>
+                    {currentActive === 0
+                      ? chatsHistory.map((item, index) => (
+                          <div
+                            className="border-b border-gray py-[8px] selectText cursor-pointer hover:bg-gray4 hover:rounded-md"
+                            key={index}
+                          >
+                            <div
+                              className="flex items-center justify-between mb-[8px]"
+                              onClick={() => handleChatSelection(item)}
+                            >
+                              <div className="flex items-center gap-2">
+                                <div className="icon">
+                                  <Icons item={item} />
+                                </div>
+                                <div className="text-[14px] font-medium cursor-pointer max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis">
+                                  {item?.Type === 1
+                                    ? item.chat_dict?.human_question
+                                    : item?.Type === 2
+                                    ? item?.document_name
+                                    : item?.Type === 3
+                                    ? 'Youtube Summary'
+                                    : item?.Type === 4
+                                    ? 'Web Summary'
+                                    : ''}
+                                </div>
+                              </div>
+                              <div className="text-gray1 lowercase whitespace-nowrap">
+                                {getDateDisplay(new Date(item?.created_at))}
+                                {/* {formatDistanceToNow(new Date(item?.created_at), { addSuffix: true, timeZone: 'Etc/UTC' })} */}
+                                {/* {formatDistanceToNow(utcToZonedTime(new Date(item?.created_at), 'Asia/Kolkata'), {
                             addSuffix: true,
                           })} */}
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div
-                          className="text-gray1 max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis"
-                          onClick={() => handleChatSelection(item)}
-                        >
-                          {item.chat_dict?.ai_answer}
-                        </div>
-                        <div
-                          className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer"
-                          onClick={() => handleDeleteChat(item?.id, item?.Type)}
-                        >
-                          <span className="selectIcon">
-                            <img src={DeleteIcon} />
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <div
+                                className="text-gray1 max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis"
+                                onClick={() => handleChatSelection(item)}
+                              >
+                                {item.chat_dict?.ai_answer}
+                              </div>
+                              <div
+                                className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer"
+                                onClick={() => handleDeleteChat(item?.id, item?.Type)}
+                              >
+                                <span className="selectIcon">
+                                  <img src={DeleteIcon} />
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      : uploadedDoc.map((item, index) => (
+                          <div
+                            className="border-b border-gray py-[8px] selectText cursor-pointer hover:bg-gray4 hover:rounded-md"
+                            key={index}
+                          >
+                            <div
+                              className="flex items-center justify-between mb-[8px]"
+                              onClick={() => handleChatSelection(item)}
+                            >
+                              <div className="flex items-center gap-2">
+                                <div className="icon">
+                                  <Icons item={item} />
+                                </div>
+                                <div className="text-[14px] font-medium cursor-pointer max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis">
+                                  {/* {item?.Type === 1 ? item.chat_dict?.human_question : item?.document_name}
+                                   */}
+                                  Doc Chat
+                                </div>
+                              </div>
+                              <div className="text-gray1 lowercase whitespace-nowrap">
+                                {getDateDisplay(new Date(item?.created_at))}
+                                {/* {formatDistanceToNow(new Date(item?.created_at), { addSuffix: true, timeZone: 'Etc/UTC' })} */}
+                                {/* {formatDistanceToNow(utcToZonedTime(new Date(item?.created_at), 'Asia/Kolkata'), {
+                            addSuffix: true,
+                          })} */}
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <div
+                                className="gap-2 text-primaryBlue flex items-center bg-lightblue1 rounded-md px-[8px] py-[12px] max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis"
+                                onClick={() => handleChatSelection(item)}
+                              >
+                                <img src={documentIcon} />
+                                {item?.Document}
+                              </div>
+                              <div
+                                className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer"
+                                onClick={() => handleDeleteChat(item?.id, item?.Type)}
+                              >
+                                <span className="selectIcon">
+                                  <img src={DeleteIcon} />
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                  </>
                 )}
               </div>
             </>

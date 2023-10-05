@@ -19,6 +19,7 @@ import { getIdeasReply } from '../../../redux/reducers/QuickReplySlice/QuickRepl
 import { useDispatch } from 'react-redux';
 import Select from 'react-select';
 import { getToken } from '../../../utils/localstorage';
+import WithAuth from '../../../utils/privateRoute';
 
 const tones = [
   { value: 'professional', label: 'Professional' },
@@ -153,7 +154,7 @@ const QuickReply = ({
 
   const getSendersIntent = async () => {
     const emailContentElement = document.getElementsByClassName('a3s aiL ')[0]; // Use querySelector for class selectors
-
+    var token = await getToken();
     if (emailContentElement) {
       // Extract the email content from the element
       const content = emailContentElement.textContent.trim().replace(/\s+/g, ' '); // Replace multiple spaces and line breaks with a single space
@@ -164,7 +165,7 @@ const QuickReply = ({
           headers: {
             'Content-Type': 'application/json',
             // 'Access-Control-Allow-Origin': '*',
-            Authorization: getToken(),
+            Authorization: token,
           },
           body: JSON.stringify({
             email: content,
@@ -228,6 +229,7 @@ const QuickReply = ({
     // Create a new AbortController instance for this fetch request
     const controller = new AbortController();
     setAbortController(controller);
+    var token = await getToken();
     try {
       // setCompLoading(true);
       // Call your new API here
@@ -236,7 +238,7 @@ const QuickReply = ({
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
-          Authorization: getToken(),
+          Authorization: token,
         },
         body: JSON.stringify({
           sender_intent: senderIntent.trim(),
@@ -840,4 +842,4 @@ const QuickReply = ({
     </>
   );
 };
-export default QuickReply;
+export default WithAuth(QuickReply);

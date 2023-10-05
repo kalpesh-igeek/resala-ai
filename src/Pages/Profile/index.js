@@ -28,8 +28,16 @@ const Profile = ({
     removeToken();
     navigate('/login');
     dispatch(clearDisptach());
+    chrome.storage.local.remove('userAccessToken', function () {
+      if (chrome.runtime.lastError) {
+        console.error(chrome.runtime.lastError);
+      } else {
+        console.log('Token removed successfully!');
+      }
+    });
     sessionStorage.removeItem('chatId');
     localStorage.removeItem('userPreferences');
+    // Broadcast the logout action to other tabs
     // setTimeout(() => {
     //   // setIsLogout(false);
     //   // setIsLogin(false);

@@ -73,6 +73,17 @@ const userChatHistory = async (id) => {
   }
 };
 
+const docHistory = async () => {
+  try {
+    const userChatHisPath = `/doc_chat/get_document_list`;
+    return await getRequest(userChatHisPath);
+  } catch (error) {
+    // Toast('error', error?.response?.data?.message);
+    // console.log('error', error?.response?.data?.message);
+    Toast('error', error.response.data.Message);
+  }
+};
+
 const userChatList = async (queryParams) => {
   try {
     const { history_type, page_number, page_record, query } = queryParams;
@@ -129,4 +140,5 @@ export const chatService = {
   userChatList,
   deleteChatHistory,
   respondeLanguage,
+  docHistory,
 };

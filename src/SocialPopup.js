@@ -50,8 +50,6 @@ function SocialPopup({ fromPosition }) {
     });
   }, []);
 
-  console.log('fromPosition', fromPosition);
-
   //
   const [language, setLanguage] = useState(false);
   const handleLanguage = () => {
@@ -147,7 +145,7 @@ function SocialPopup({ fromPosition }) {
             <div>
               <img className="rounded-full w-[24] h-[24]" src={Profile} />
             </div>
-            <div onClick={handleClose} id='closeSocialBtn'>
+            <div onClick={handleClose} id="closeSocialBtn">
               <img className="rounded-full w-[24] h-[24]" src={Close} />
             </div>
           </div>
@@ -174,10 +172,10 @@ function SocialPopup({ fromPosition }) {
               <div
                 className={`${
                   language ? 'block' : 'hidden'
-                } w-[121px] bg-white rounded-lg shadow flex-col justify-start items-start gap-[8px] inline-flex absolute top-[30px] right-0 p-[8px] pt-[10] pb-[10px]` }
-                style={{zIndex:"99999999", boxShadow: '0px 2px 20px 0px rgba(0, 0, 0, 0.15)'}}
+                } w-[121px] bg-white rounded-lg shadow flex-col justify-start items-start gap-[8px] inline-flex absolute top-[30px] right-0 p-[8px] pt-[10] pb-[10px]`}
+                style={{ zIndex: '99999999', boxShadow: '0px 2px 20px 0px rgba(0, 0, 0, 0.15)' }}
               >
-                <div className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage" >
+                <div className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage">
                   <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">English</div>
                 </div>
                 <div className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage">
@@ -231,8 +229,8 @@ function SocialPopup({ fromPosition }) {
               <div
                 className={`${
                   profession ? 'block' : 'hidden'
-                } w-[121px] bg-white rounded-lg shadow flex-col justify-start items-start gap-[8px] inline-flex absolute top-[30px] right-0 p-[8px] pt-[10] pb-[10px]` }
-                style={{zIndex:"99999999", boxShadow: '0px 2px 20px 0px rgba(0, 0, 0, 0.15)'}}
+                } w-[121px] bg-white rounded-lg shadow flex-col justify-start items-start gap-[8px] inline-flex absolute top-[30px] right-0 p-[8px] pt-[10] pb-[10px]`}
+                style={{ zIndex: '99999999', boxShadow: '0px 2px 20px 0px rgba(0, 0, 0, 0.15)' }}
               >
                 <div className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage">
                   <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">Professional</div>
@@ -296,25 +294,26 @@ function SocialPopup({ fromPosition }) {
           </div>
         </div>
         <div className="p-[16px] absolute bottom-[0px] flex border border-white">
-          <div className='w-[565px] p-[14px] pb-[0px] flex border-[1px] border-slate-200 rounded-[6px] gap-[8px]'>
-            <div className="rounded-full w-[24px] h-[24px] background-[#fff] flex justify-center items-center" style={{boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.15)'}}>
+          <div className="w-[565px] p-[14px] pb-[0px] flex border-[1px] border-slate-200 rounded-[6px] gap-[8px]">
+            <div
+              className="rounded-full w-[24px] h-[24px] background-[#fff] flex justify-center items-center"
+              style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.15)' }}
+            >
               <img className="w-[16px] h-[16px]" src={Mic} />
             </div>
             <div className="min-w-[444px] min-h-[86px] text-[#8C90A5] text-[14px] font-normal font-['Arial']">
               <textarea
                 placeholder="Tell me what to write for you"
                 className="p-[1px] textArea resize-none"
-                style={{ width: '100%', height: '100%' ,boxShadow: 'none'}}
+                style={{ width: '100%', height: '100%', boxShadow: 'none' }}
               />
             </div>
             <div className="flex flex-col justify-between items-end pt-[2px] pb-[10px]">
-              <div className='w-[20px] h-[20px]'>
+              <div className="w-[20px] h-[20px]">
                 <img className="" src={Send} />
               </div>
               <div>
-                <span className='text-[#8C90A5] text-[12px]'>
-                  0/4000
-                </span>
+                <span className="text-[#8C90A5] text-[12px]">0/4000</span>
               </div>
             </div>
           </div>

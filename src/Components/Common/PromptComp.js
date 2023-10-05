@@ -27,10 +27,8 @@ function PromptComp({
 
   useEffect(() => {
     if (currentActive === 0) {
-      console.log('generalSearch', generalSearch);
       setPersonalSearch('');
     } else {
-      console.log('personalSearch', personalSearch);
       setGeneralSearch('');
     }
   }, [currentActive]);
@@ -46,7 +44,7 @@ function PromptComp({
       >
         <Tab.List
           style={{
-            boxShadow: '0px 2px 8px 0px #0000000D',
+            borderBottom: '1px solid #DFE4EC',
             paddingInline: '20px',
           }}
         >

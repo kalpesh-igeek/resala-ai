@@ -1,24 +1,26 @@
+import { useDispatch } from 'react-redux';
+import { saveToken } from '../../redux/reducers/authSlice/AuthSlice';
+
 const TOKEN_KEY = 'userAccessToken';
 const RefreshToken = 'userRefreshToken';
 
-const getToken = () => {
-  const token = localStorage.getItem(TOKEN_KEY);
-  if (!token) {
-    localStorage.removeItem(TOKEN_KEY);
-    return false;
-  }
-  return token;
+const fetchToken = () => {
+  return new Promise((resolve) => {
+    chrome.storage.local.get('userAccessToken', (data) => {
+      let token = null;
+      if (data.userAccessToken) {
+        token = data.userAccessToken;
+      }
+      return resolve(token);
+    });
+  });
 };
-// export const getToken = () => {
-//   return new Promise((resolve, reject) => {
-//     try {
-//       const token = localStorage.getItem(TOKEN_KEY);
-//       resolve(token);
-//     } catch (error) {
-//       reject(error);
-//     }
-//   });
-// };
+const getToken = async () => {
+  // let getToken = localStorage.getItem('token');
+  let getToken = await fetchToken();
+  // console.log('here in middle?', getToken);
+  return getToken;
+};
 
 const setToken = (tokenValue) => {
   localStorage.setItem(TOKEN_KEY, `Bearer ${tokenValue}`);

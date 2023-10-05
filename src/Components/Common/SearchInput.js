@@ -1,11 +1,11 @@
 import React from 'react';
-import SearchIcon from '../../utils/Chat/Icons/SearchIcon.svg';
+import SearchIcon from '../../utils/Chat/Icons/History/searchnormal1.svg';
 import InputField from '../InputField';
 
-export const SearchInput = ({name,onChange,value}) => {
+export const SearchInput = ({ name, onChange, value }) => {
   return (
     <>
-      <div className="border border-gray items-center flex rounded-md px-[9px]">
+      <div className="border border-gray items-center flex rounded-md px-[9px] py-[4px]">
         <img src={SearchIcon} alt="s" />
         <InputField
           label=""

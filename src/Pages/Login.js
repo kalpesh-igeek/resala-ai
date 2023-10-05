@@ -7,7 +7,7 @@ import MicrosoftIcon from '../utils/Account/Icons/MicrosoftIcon.svg';
 import AppleIcon from '../utils/Account/Icons/AppleIcon.svg';
 import InputField from '../Components/InputField';
 import { emailCheck, passwordCheck } from '../utils/validation';
-import { emailChecking, login } from '../redux/reducers/authSlice/AuthSlice';
+import { emailChecking, login, saveToken } from '../redux/reducers/authSlice/AuthSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getToken, setToken } from '../utils/localstorage';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
@@ -90,21 +90,29 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
       }
       if (res.payload.status === 200) {
         setInvalidCred('');
-        localStorage.setItem('userAccessToken', `Bearer ${res.payload?.data?.Result?.access_token}`);
-
-        Promise.resolve().then(() => {
-          const userToken = getToken();
-          if (userToken) {
-            // Now we are sure that the token is updated in local storage
+        // localStorage.setItem('userAccessToken', `Bearer ${res.payload?.data?.Result?.access_token}`);
+        chrome.storage.local.set({ userAccessToken: `Bearer ${res.payload?.data?.Result?.access_token}` }, function () {
+          if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
+          } else {
+            console.log('Token stored successfully!');
             dispatch(newChat());
+            dispatch(saveToken(`Bearer ${res.payload?.data?.Result?.access_token}`));
             navigate('/');
           }
         });
+
+        // Promise.resolve().then(() => {
+        // const userToken = getToken();
+        // if (userToken) {
+        // Now we are sure that the token is updated in local storage
+
+        // }
+        // });
       }
     }
     // setIsRegistered(false);
   };
-  console.log('invalidCred', invalidCred);
   const handleSignUp = () => {
     localStorage.removeItem('userAccessToken');
     sessionStorage.removeItem('chatId');

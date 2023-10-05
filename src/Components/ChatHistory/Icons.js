@@ -15,9 +15,9 @@ const Icons = ({ item }) => {
           : item?.Type === 2
           ? DocChatIcon
           : item?.Type === 3
-          ? WebSummeryIcon
-          : item?.Type === 4
           ? YoutubeIcon
+          : item?.Type === 4
+          ? WebSummeryIcon
           : ''
       }
     />
