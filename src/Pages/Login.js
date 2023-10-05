@@ -112,7 +112,6 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
     navigate('/signup');
   };
 
-
   return (
     <>
       <div className="py-[90px] px-[75px] flex flex-col justify-center">

@@ -25,3 +25,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.action.setBadgeText({ text: enable ? 'ON' : 'OFF' });
   }
 });
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  console.log(tabId, changeInfo, tab);
+  if (changeInfo.url) {
+    console.log('URL changed to:', tab);
+    chrome.tabs.sendMessage(tabId, { gmailId: changeInfo.url }, function (response) {
+      console.log('response', response);
+    });
+    // You can perform actions here when the URL changes.
+  }
+});

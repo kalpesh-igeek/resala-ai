@@ -139,14 +139,14 @@ const SelectMobileNumber = ({ setInputValue }) => {
         }}
         international
         value={value}
-        onChange={(value) => {
-          handleNumberChange(value);
+        onChange={(number) => {
+          handleNumberChange(number);
         }}
         defaultCountry="US"
         placeholder="Enter phone number"
         countryCallingCodeEditable={false}
+        limitMaxLength={true}
         countrySelectComponent={(props) => {
-          console.log(props);
           const { value } = props;
           return (
             <div

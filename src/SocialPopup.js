@@ -30,25 +30,25 @@ function SocialPopup({ fromPosition }) {
   //   bottom: 0,
   //   left: 0,
   // });
-  useEffect(() => {
-    let setLogoSocial = document.getElementById('setLogoSocial');
-    if (!setLogoSocial) return;
-    setLogoSocial.addEventListener('click', function () {
-      let SocialPopup = document.getElementById('SocialPopup');
-      console.log('clicked!', SocialPopup);
-      const FormPosition = document.getElementsByClassName('xt7dq6l')[2].getBoundingClientRect();
-      console.log('FormPosition', FormPosition);
-      if (FormPosition) {
-        console.log('FormPosition', FormPosition);
-        setFromPosition({
-          bottom: FormPosition.bottom - 275,
-          left: FormPosition.left + 250,
-        });
-        // SocialPopup.style.top = FormPosition.top;
-        // SocialPopup.style.left = FormPosition.left;
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   let setLogoSocial = document.getElementById('setLogoSocial');
+  //   if (!setLogoSocial) return;
+  //   setLogoSocial.addEventListener('click', function () {
+  //     let SocialPopup = document.getElementById('SocialPopup');
+  //     console.log('clicked!', SocialPopup);
+  //     const FormPosition = document.getElementsByClassName('xt7dq6l')[2].getBoundingClientRect();
+  //     console.log('FormPosition', FormPosition);
+  //     if (FormPosition) {
+  //       console.log('FormPosition', FormPosition);
+  //       setFromPosition({
+  //         bottom: FormPosition.bottom - 275,
+  //         left: FormPosition.left + 250,
+  //       });
+  //       // SocialPopup.style.top = FormPosition.top;
+  //       // SocialPopup.style.left = FormPosition.left;
+  //     }
+  //   });
+  // }, []);
 
   console.log('fromPosition', fromPosition);
 

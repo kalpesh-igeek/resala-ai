@@ -3,7 +3,7 @@ import ResalaIcon from './utils/ResalaIcon.svg';
 
 const QuickButton = ({ handleSidebar }) => {
   return (
-    <div id="quickButton" className="hidden">
+    <div id="quickButton" className="hidden" style={{position:'absolute',top: '127px', right:'100px',zIndex:'9999999'}}>
       <button
         className="flex items-center gap-2 rounded-full border border-primaryBlue bg-white px-[8px] py-[6px] text-[14px] font-medium text-darkBlue"
         onClick={() => handleSidebar('quickreply')}
