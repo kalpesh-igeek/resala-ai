@@ -261,8 +261,9 @@ export default function Panel() {
       }, 3000);
     } else if (hostname == 'mail.google.com') {
         console.log('mai  is already');
+        const quickReply = document.getElementById('quickButton');
+        quickReply.classList.add('hidden');
         setTimeout(() => {
-          const quickReply = document.getElementById('quickButton');
           const quickPosition = document.querySelectorAll('[aria-label="Print all"]')[0];
           if (quickPosition) {
             quickReply.classList.remove('hidden');
@@ -275,7 +276,6 @@ export default function Panel() {
             //   setRequestedText('hello');
             // };
           }
-          quickReply.classList.add('hidden');
       }, 3000);
     }else if (hostname == 'en.wikipedia.org') {
       setTimeout(() => {
