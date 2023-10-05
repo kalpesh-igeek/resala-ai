@@ -76,6 +76,7 @@ export default function Panel() {
   const [isClickWikiPediaButton, setIsClickWikiPediaButton] = useState(false);
   const [positionY, setPoistionY] = useState(0);
   const [isFloatIconClicked, setIsFloatIconClicked] = useState(false);
+  const [isWikipediaButtonClicked, setIsWikipediaButtonClicked] = useState(false);
   const [backToInbox, setBackToInbox] = useState('');
   const [isPopupVisible, setIsPopupVisible] = useState(true);
   const { activity } = useSelector((state) => state.auth);
@@ -152,6 +153,8 @@ export default function Panel() {
   });
 
   let isDragging = false;
+  let isWikiDragging = false;
+  let offsetWikiX, offsetWikiY;
   let offsetX, offsetY;
 
   const [fromBtnPosition, setFromBtnPosition] = useState({
@@ -224,6 +227,7 @@ export default function Panel() {
         e.preventDefault();
       });
     }
+    
     if (hostname == 'www.youtube.com') {
       setTimeout(() => {
         const secondaryInner = document.getElementById('secondary-inner');
@@ -255,7 +259,7 @@ export default function Panel() {
           }
         }
       }, 3000);
-    } else if (hostname == 'mail.google.com') {
+    }else if (hostname == 'mail.google.com') {
       setTimeout(() => {
         const quickReply = document.getElementById('quickButton');
         const quickPosition = document.querySelectorAll('[aria-label="Print all"]')[0];
@@ -267,11 +271,69 @@ export default function Panel() {
           };
         }
       }, 3000);
-    } else if (hostname == 'en.wikipedia.org') {
+    }else if (hostname == 'en.wikipedia.org') {
       setTimeout(() => {
         const WikipediaButton = document.getElementById('WikipediaButton');
         if (WikipediaButton) {
           WikipediaButton.classList.remove('hidden');
+          if (isWikipediaButtonClicked) {
+            console.log('remove');
+            window.removeEventListener('mousedown', (e) => {
+              isWikiDragging = true;
+              offsetWikiX = e.clientX - WikipediaButton.getBoundingClientRect().left;
+              offsetWikiY = e.clientY - WikipediaButton.getBoundingClientRect().top;
+              WikipediaButton.style.cursor = 'grabbing';
+            });
+            window.removeEventListener('mousemove', (e) => {
+              if (!isWikiDragging) return;
+    
+              const x = e.clientX - offsetWikiX;
+              const y = e.clientY - offsetWikiY;
+    
+              if (y > 0 && y < height - 42) {
+                WikipediaButton.style.left = x + 'px';
+                WikipediaButton.style.top = y + 'px';
+              }
+            });
+            window.removeEventListener('mouseup', () => {
+              isWikiDragging = false;
+              WikipediaButton.style.cursor = 'grab';
+            });
+            window.removeEventListener('dragstart', (e) => {
+              e.preventDefault();
+            });
+    
+            return;
+          }
+    
+          WikipediaButton.addEventListener('mousedown', (e) => {
+            isWikiDragging = true;
+            offsetWikiX = e.clientX - WikipediaButton.getBoundingClientRect().left;
+            offsetWikiY = e.clientY - WikipediaButton.getBoundingClientRect().top;
+            WikipediaButton.style.cursor = 'grabbing';
+          });
+    
+          document.addEventListener('mousemove', (e) => {
+            if (!isWikiDragging) return;
+    
+            const x = e.clientX - offsetWikiX;
+            const y = e.clientY - offsetWikiY;
+    
+            if (y > 0 && y < height - 42) {
+              WikipediaButton.style.left = x + 'px';
+              WikipediaButton.style.top = y + 'px';
+            }
+          });
+    
+          document.addEventListener('mouseup', () => {
+            isWikiDragging = false;
+            WikipediaButton.style.cursor = 'grab';
+          });
+    
+          WikipediaButton.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+          });
+
         }
 
         const wikiSummarize = document.getElementById('wikiSummarize');
@@ -641,8 +703,10 @@ export default function Panel() {
         positionY={positionY}
       />
       <QuickButton handleSidebar={handleSidebar} />
-      <YoutubeButton />
-      <WikipediaButton handleSidebar={handleSidebar} />
+      <YoutubeButton handleSidebar={handleSidebar} />
+      <WikipediaButton handleSidebar={handleSidebar} onClick={() => {
+            setIsWikipediaButtonClicked(!isWikipediaButtonClicked);
+          }}/>
       <SocialButton fromPosition={fromPosition} fromBtnPosition={fromBtnPosition} />
       {/* <div
         style={{

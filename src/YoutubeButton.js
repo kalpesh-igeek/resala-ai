@@ -13,9 +13,11 @@ import { generateYoutubeSummary } from './redux/reducers/YoutubeSummarySlice/You
 import { useSpeechSynthesis } from 'react-speech-kit';
 import copy from 'copy-to-clipboard';
 import { getToken } from './utils/localstorage';
+import { useNavigate } from 'react-router-dom';
 
-const YoutubeButton = () => {
+const YoutubeButton = ({handleSidebar}) => {
   const dispatch = useDispatch()
+  const navigate = useNavigate();
   const { speak, cancel, speaking } = useSpeechSynthesis();
   const handleSpeak = (msg) => {
     console.log({msg});
@@ -26,6 +28,18 @@ const YoutubeButton = () => {
       speak({ text: msg });
     }
   };
+
+  useEffect(() => {
+    console.log("dgvskdgjkl");
+    const youtubeButtonSetting = document.getElementById('youtubeButtonSetting');
+    if(youtubeButtonSetting){
+      youtubeButtonSetting.onclick = function () {
+        console.log("preferences");
+        navigate('/preferences')
+        handleSidebar('chat')
+      };
+    }
+  }, [])
 
   const [summaryData, setSummaryData] = useState([]);
   
@@ -152,7 +166,7 @@ const YoutubeButton = () => {
     <div id="youtubeButton" style={{ marginBottom: '28px', position:'relative'}} className='hidden'>
       <div id="actionPopUpButton" className='hidden top-[6px] absolute w-[52px] h-[28px] flex justify-around items-center rounded-[6px]' style={{border: '1px solid #DFE4EC', boxShadow: '0px 2px 10px 0px rgba(62, 62, 62, 0.10)', background: '#F3F4F8', top: '-18px', right: '12px'}}>
         <div>
-          <img className='w-[12px] h-[12px] cursor-pointer' id='setting' src={Setting} />
+          <img className='w-[12px] h-[12px] cursor-pointer' id='youtubeButtonSetting' src={Setting} />
         </div>
         <div>
           <img className='w-[12px] h-[12px] cursor-pointer' id='actionCloseButton' src={Close} />

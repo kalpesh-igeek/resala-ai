@@ -12,9 +12,9 @@ const WikipediaButton = ({handleSidebar}) => {
   });
 
   useEffect(() => {
-    const setting = document.getElementById('setting');
-    if(setting){
-      setting.onclick = function () {
+    const WikipediaButtonSetting = document.getElementById('WikipediaButtonSetting');
+    if(WikipediaButtonSetting){
+      WikipediaButtonSetting.onclick = function () {
         console.log("preferences");
         navigate('/preferences')
         handleSidebar('chat')
@@ -40,7 +40,7 @@ const WikipediaButton = ({handleSidebar}) => {
           <div className="w-6 h-6 left-[245px] top-[18px] absolute">
               <div className="w-6 h-6 left-0 top-0 absolute" />
               <div className="w-[14.12px] h-[14.12px] left-[4.53px] top-[4.94px] absolute" >
-                <img className="w-[100%] h-[14px] cursor-pointer" id='setting' src={Setting} />
+                <img className="w-[100%] h-[14px] cursor-pointer" id='WikipediaButtonSetting' src={Setting} />
               </div>
           </div>
           <div className="w-[76px] h-7 p-1.5 left-[133px] top-[16px] absolute bg-blue-600 rounded flex-col justify-center items-center gap-2.5 inline-flex">
