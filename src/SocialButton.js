@@ -6,7 +6,8 @@ const SocialButton = ({fromPosition, fromBtnPosition}) => {
   return (
     <>
     <div id="SocialButton" className='hidden' style={{
-      position: 'fixed',
+      position: 'absolute',
+      top:fromBtnPosition.top,
       bottom:fromBtnPosition.bottom,
       left:fromBtnPosition.left,
       // bottom: '437px',

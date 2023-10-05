@@ -6,10 +6,13 @@ import volumeHigh from './utils/Youtube/volumehigh.svg';
 import Message from './utils/Youtube/message.svg';
 import ArrowDown from './utils/PopupBox/Icons/ArrowDown.svg';
 import Educare from './utils/Youtube/educare.svg';
+import Setting from './utils/Wikipedia/Setting.svg';
+import Close from './utils/Wikipedia/Close.svg';
 import { useDispatch } from 'react-redux';
 import { generateYoutubeSummary } from './redux/reducers/YoutubeSummarySlice/YoutubeSummarySlice';
 import { useSpeechSynthesis } from 'react-speech-kit';
 import copy from 'copy-to-clipboard';
+import { getToken } from './utils/localstorage';
 
 const YoutubeButton = () => {
   const dispatch = useDispatch()
@@ -24,46 +27,80 @@ const YoutubeButton = () => {
     }
   };
 
-  useEffect(() => {
+  const [summaryData, setSummaryData] = useState([]);
+  
+  function generateRandomString(length) {
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      result += characters.charAt(randomIndex);
+    }
+    return result;
+  }
+
+  const fetchYoutubeSummary = async () => { 
+    setSummaryData([])
+    setSummaryData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
+
+    const response = await fetch('https://api-qa.resala.ai/youtube/youtube_summary', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // 'Access-Control-Allow-Origin': '*',
+        Authorization: getToken(),
+      },
+      body: JSON.stringify({
+        url: window.location.href,
+        chat_id: generateRandomString(45),
+      }),
+      signal: AbortController.signal, // Associate the AbortController with the request
+    });
+
+    // const response = await dispatch(userChatNew(payload));
+    if (!response.ok) {
+      throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+    }
+    const reader = response.body.getReader();
+    let accumulatedMessage = '';
+
+    // Continuously read and append the streaming response
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = new TextDecoder().decode(value);
+      // Process and display the received message
+      const lines = chunk.split('\n');
+      for (const line of lines) {
+        // console.log('chunk', line);
+        // if (line.startsWith('data: ')) {
+        // const data = line.substring(6).trim(); // Remove "data: " prefix and trim spaces
+        // Replace <br><br> with a newline
+        data = line.replace(/#@#/g, '\n');
+        if (line.includes('connection closed')) {
+          // Set the typewriter state to false when "connection closed" is encountered
+        } else {
+          // Exclude lines containing "connection closed" and append the word
+          accumulatedMessage += data + '';
+        }
+        // }
+      }
+      // Update the chat data with the accumulated message, without the "Loading..." message
+      setSummaryData((prevMessages) => [
+        ...prevMessages.slice(0, -1), // Remove the last (Loading...) message
+        { msg: accumulatedMessage?.trim(), type: 'ai' }, // Update the chat data
+      ]);
+    }
+  };
+
+  useEffect(async() => {
     const summarizeVideoId = document.getElementById('summarizeVideo');
     if(summarizeVideoId){
-        summarizeVideoId.onclick = function () {
+      summarizeVideoId.onclick = function () {
+          fetchYoutubeSummary()
           document.querySelectorAll('.summarizeVideo').forEach(function(element) {
             console.log(element.id);
-            fetchYoutubeSummary()
             element.classList.remove("hidden");
-          });
-        };
-
-        function generateRandomString(length) {
-          const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-          let result = '';
-          for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * characters.length);
-            result += characters.charAt(randomIndex);
-          }
-          return result;
-        }
-
-        
-        const fetchYoutubeSummary = async () => {
-          payload = {
-            "url": window.location.href,
-            "chat_id": generateRandomString(45)
-          }
-          const res = await dispatch(generateYoutubeSummary(payload));
-          if (!res.payload) {
-            // fetchYoutubeSummary()
-            return;
-          }
-          
-          new_res = res.payload.split('\n')
-          const summarizeVideoResponse = document.getElementById('summarizeVideoResponse');
-          new_res.forEach(element => {
-            console.log(element);
-            if(element && element != 'connection closed'){
-              summarizeVideoResponse.innerText += element
-            }
           });
         };
 
@@ -108,9 +145,19 @@ const YoutubeButton = () => {
         });
     }
   }, [])
-  
+
+
+  console.log(summaryData);
   return (
-    <div id="youtubeButton" style={{ marginBottom: '28px'}} className='hidden'>
+    <div id="youtubeButton" style={{ marginBottom: '28px', position:'relative'}} className='hidden'>
+      <div id="actionPopUpButton" className='hidden top-[6px] absolute w-[52px] h-[28px] flex justify-around items-center rounded-[6px]' style={{border: '1px solid #DFE4EC', boxShadow: '0px 2px 10px 0px rgba(62, 62, 62, 0.10)', background: '#F3F4F8', top: '-18px', right: '12px'}}>
+        <div>
+          <img className='w-[12px] h-[12px] cursor-pointer' id='setting' src={Setting} />
+        </div>
+        <div>
+          <img className='w-[12px] h-[12px] cursor-pointer' id='actionCloseButton' src={Close} />
+        </div>
+      </div>
       <div className='w-[100%] min-h[60px] !bg-white rounded-[6px]' style={{ boxShadow: '0px 2px 20px rgba(60, 66, 87, 0.10)' }}>
         <div className='flex justify-between'>
           <div className='flex justify-center items-center ml-[16px]'>
@@ -124,7 +171,7 @@ const YoutubeButton = () => {
           <div id='summarizeVideo' className='w-[112px] text-white !font-dmsans text-[12px] font-[500] w-[112px] h-[28px] p-[6px] bg-[#1678F2] rounded-[4px] m-[16px] justify-center flex items-center cursor-pointer' style={{ wordWrap:'break-word' }} >Summarize Video</div>
         </div>
         <div id="summarizeVideoData" className='hidden summarizeVideo p-[16px] pt-[6px] text-[#5F6583] text-[12px] !font-dmsans font-[400]' style={{ wordWrap: 'break-word' }}>
-          <div id='summarizeVideoResponse'></div>
+          <div id='summarizeVideoResponse'>{summaryData[0] && summaryData[0].msg}</div>
           <div className='pt-[16px]'>
             <div className='pl-[8px] pr-[8px] pt-[6px] pb-[6px] rounded-[14.40px] justify-flex-start items-center gap-[4px] inline-flex cursor-pointer' style={{ border: '1px #1678F2 solid'}} id='ContinueInChat'>
                 <div>

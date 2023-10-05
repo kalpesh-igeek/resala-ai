@@ -151,12 +151,12 @@ export default function Panel() {
     left: 0,
   });
 
-
   let isDragging = false;
   let offsetX, offsetY;
 
   const [fromBtnPosition, setFromBtnPosition] = useState({
     bottom: 0,
+    top: 0,
     left: 0,
   });
 
@@ -229,9 +229,23 @@ export default function Panel() {
         const secondaryInner = document.getElementById('secondary-inner');
         if (secondaryInner) {
           const youtubeButton = document.getElementById('youtubeButton');
+          const actionPopUpButton = document.getElementById('actionPopUpButton');
+          const actionCloseButton = document.getElementById('actionCloseButton');
+          actionCloseButton.addEventListener('click', () => {
+            console.log("actionCloseButton click");
+            youtubeButton.classList.add('hidden');            
+          }) 
+          youtubeButton.addEventListener('mouseover', () => {
+            console.log("mouseover");
+            actionPopUpButton.classList.remove('hidden');            
+          })
+          youtubeButton.addEventListener('mouseout', () => {
+            console.log("mouseout");
+            actionPopUpButton.classList.add('hidden');            
+          })
           if (youtubeButton) {
             secondaryInner.prepend(youtubeButton);
-            youtubeButton.classList.remove('hidden');
+            youtubeButton.classList.remove('hidden');            
             const ContinueInChat = document.getElementById('ContinueInChat');
             ContinueInChat.addEventListener('click', () => {
               console.log('ContinueInChat');
@@ -274,14 +288,14 @@ export default function Panel() {
         if(postButton){
           postButton.addEventListener('click', () => {
             setTimeout(() => {
-              let BtnPosition = document.getElementsByClassName('share-creation-state__footer')[0];
+              let BtnPosition = document.getElementById('share-to-linkedin-modal__header');
               console.log('BtnPosition', BtnPosition);
               if (BtnPosition) {
                 BtnPosition = BtnPosition.getBoundingClientRect();
                 console.log('BtnPosition', BtnPosition);
                 setFromBtnPosition({
-                  bottom: BtnPosition.bottom - 206,
-                  left: BtnPosition.left + 680,
+                  top: BtnPosition.top + 36 ,
+                  left: BtnPosition.left + 660,
                 });
               }
               
@@ -389,6 +403,7 @@ export default function Panel() {
           BtnPosition = BtnPosition.getBoundingClientRect();
           console.log('BtnPosition', BtnPosition);
           setFromBtnPosition({
+            top: BtnPosition.top - 48,
             bottom: BtnPosition.bottom + 595,
             left: BtnPosition.left + 471,
           });
@@ -426,8 +441,8 @@ export default function Panel() {
     }
   }, [isFloatIconClicked]);
 
-  console.log({fromPosition});
-  console.log({fromBtnPosition});
+  // console.log({fromPosition});
+  // console.log({fromBtnPosition});
   // useEffect(() => {
   //   setTimeout(() => {
   //     const quickReply = document.getElementById('quickButton');
