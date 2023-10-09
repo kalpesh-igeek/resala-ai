@@ -260,13 +260,29 @@ export default function Panel() {
         }
       }, 3000);
     } else if (hostname == 'mail.google.com') {
-        console.log('mai  is already');
-        const quickReply = document.getElementById('quickButton');
-        quickReply.classList.add('hidden');
-        setTimeout(() => {
-          const quickPosition = document.querySelectorAll('[aria-label="Print all"]')[0];
-          if (quickPosition) {
-            quickReply.classList.remove('hidden');
+        console.log('mail is already');
+        const oldQuickReply = document.getElementById('cloneQuickReply');
+        if(!oldQuickReply){
+          const quickReply = document.getElementById('quickButton');
+          const cloneQuickReply = quickReply.cloneNode(true)
+          cloneQuickReply.id = "cloneQuickReply";
+          cloneQuickReply.classList.add('hidden');
+          setTimeout(() => {
+            const quickPosition = document.getElementsByClassName('hj')[0];
+            if(quickPosition){
+              cloneQuickReply.classList.remove('hidden');
+              quickPosition.childNodes[0].prepend(cloneQuickReply);
+              const cloneQuickReplyButton = document.getElementById('cloneQuickReply');
+              cloneQuickReplyButton.addEventListener('click', () => {
+                handleSidebar('quickreply')
+              })
+            }
+          }, 3000);
+        }
+
+          // const quickPosition = document.querySelectorAll('[aria-label="Print all"]')[0];
+          // if (quickPosition) {
+            // quickReply.classList.remove('hidden');
             // quickPosition.style.position = 'fixed';
             // quickPosition.style.top = 100;
             // quickPosition.style.left = 100;
@@ -275,8 +291,7 @@ export default function Panel() {
             //   handleSidebar(QUICKREPLY);
             //   setRequestedText('hello');
             // };
-          }
-      }, 3000);
+          // }
     }else if (hostname == 'en.wikipedia.org') {
       setTimeout(() => {
         const WikipediaButton = document.getElementById('WikipediaButton');
@@ -596,7 +611,7 @@ export default function Panel() {
   });
 
   const handleSidebar = (tab, tool = undefined) => {
-    console.log({ tab, tool });
+    // console.log({ tab, tool });
     setActiveTab(tab);
     setIsOpen(true);
     setIsLoadedExtension(true);

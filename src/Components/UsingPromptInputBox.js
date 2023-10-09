@@ -221,8 +221,21 @@ const UsingPromptInputBox = ({
 
         {multiplePlaceholder ? (
           <div className="grid grid-cols-1 gap-y-[12px] w-full">
-            {multiplePlaceholder.fields.map((itm, index) => (
-              <div index={`input-${index}`}>
+            { multiplePlaceholder.fields.map((itm, index) => (
+                multiplePlaceholder.fields.length == 1
+                ? <div index={`input-${index}`}>
+                  {console.log('itm', typeof itm)}
+                  <textarea
+                    placeholder={`${itm}`}
+                    className="w-full rounded-md border border-gray p-[12px] text-[14px] text-darkBlue placeholder:text-gray2"
+                    style={{ width: '100%', boxShadow: 'none' }}
+                    value={initialValue[index] != multiplePlaceholder[index] || multiplePlaceholder[index]?.length != 0
+                      ? multiplePlaceholder[index]
+                      : null}
+                      onChange={(e) => handleChange(e, index)}
+                  />
+                </div>
+                : <div index={`input-${index}`}>
                 {console.log('itm', typeof itm)}
                 {/* <input value={itm} placeholder={itm} onChange={(e) => handleChange(e, index)} /> */}
                 <InputField

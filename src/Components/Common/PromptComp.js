@@ -6,6 +6,7 @@ import SearchIcon from '../../utils/Chat/Icons/SearchIcon.svg';
 import { SearchInput } from './SearchInput';
 import EditGrayIcon from '../../utils/Chat/Icons/EditGrayIcon.svg';
 import AddCircle from '../../utils/Chat/Icons/AddCircle.svg';
+import CustomTooltip from '../CustomTooltip/Tooltip';
 
 function PromptComp({
   generalPromptList,
@@ -169,13 +170,16 @@ function PromptComp({
                             {item?.prompt}
                           </div>
                         </div>
-                        <div
-                          onClick={() => {
-                            handleCustomPrompt(item);
-                          }}
+                        <CustomTooltip
+                          maxWidth="430px"
+                          place="top"
+                          id={"PromptLibraryEdit" + index}
+                          content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Edit Prompt </div>`}
                         >
-                          <img className="w-max" src={EditGrayIcon} />
-                        </div>
+                          <button id={"PromptLibraryEdit" + index} className="cursor-pointer" onClick={() => handleCustomPrompt(item)}>
+                            <img className="w-max" src={EditGrayIcon} />
+                          </button>
+                        </CustomTooltip>
                       </div>
                     )
                   )}
@@ -185,14 +189,16 @@ function PromptComp({
           </Tab.Panels>
         </div>
       </Tab.Group>
-      <div
-        onClick={() => {
-          handleNewPrompt();
-        }}
-        className={`${currentActive === 1 ? 'block' : 'hidden'} absolute right-[20px] top-[16px] cursor-pointer`}
+      <CustomTooltip
+        maxWidth="430px"
+        place="top"
+        id='AddPrompt'
+        content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Add Prompt </div>`}
       >
-        <img src={AddCircle} alt="AddCircle" />
-      </div>
+        <button id='AddPrompt' className={`${currentActive === 1 ? 'block' : 'hidden'} absolute right-[20px] top-[16px] cursor-pointer`} onClick={() => handleNewPrompt()}>
+          <img src={AddCircle} />
+        </button>
+      </CustomTooltip>
     </div>
   );
 }

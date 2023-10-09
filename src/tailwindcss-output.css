@@ -1,4 +1,5 @@
 #side-bar-extension-root,
+#cloneQuickReply,
 #quickButton,
 #youtubeButton {
   /*
@@ -638,6 +639,12 @@ video {
   .-top-\[23px\] {
     top: -23px;
   }
+  .left-\[6px\] {
+    left: 6px;
+  }
+  .top-\[3px\] {
+    top: 3px;
+  }
   .top-\[-2px\] {
     top: -2px;
   }
@@ -683,8 +690,8 @@ video {
   .right-\[60px\] {
     right: 60px;
   }
-  .-top-\[31px\] {
-    top: -31px;
+  .-top-\[38px\] {
+    top: -38px;
   }
   .\!z-\[99999999999\] {
     z-index: 99999999999 !important;
@@ -1299,6 +1306,9 @@ video {
   }
   .w-\[30px\] {
     width: 30px;
+  }
+  .w-\[41px\] {
+    width: 41px;
   }
   .w-\[120px\] {
     width: 120px;
@@ -2017,6 +2027,10 @@ video {
     padding-left: 20px;
     padding-right: 20px;
   }
+  .py-\[100px\] {
+    padding-top: 100px;
+    padding-bottom: 100px;
+  }
   .px-7 {
     padding-left: 1.75rem;
     padding-right: 1.75rem;
@@ -2299,6 +2313,9 @@ video {
   }
   .leading-\[18px\] {
     line-height: 18px;
+  }
+  .leading-3 {
+    line-height: .75rem;
   }
   .leading-\[16px\] {
     line-height: 16px;

@@ -66,8 +66,8 @@ const QuickReply = ({
   const [ideasList, setIdeasList] = useState([]);
   const [senderIntent, setSenderIntent] = useState('');
   const [customIdea, setCustomIdea] = useState('');
-  const [selectedOption, setSelectedOption] = useState(tones[0]);
-  const [selectedLang, setSelectedLang] = useState(exeLang[0]);
+  const [selectedOption, setSelectedOption] = useState(tones[0].label);
+  const [selectedLang, setSelectedLang] = useState(exeLang[0].label);
   const [resultText, setResultText] = useState([]);
   const [currentPageIndexTab1, setCurrentPageIndexTab1] = useState(0);
   const [isStreamingComp, setIsStreamingComp] = useState(false);
@@ -102,6 +102,7 @@ const QuickReply = ({
     setSelectedOption(selectedOption);
   };
   const handleSelectLangChange = (selectedLang) => {
+    console.log(selectedLang);
     setSelectedLang(selectedLang);
   };
   const defaultTone = tones[0];
@@ -240,8 +241,10 @@ const QuickReply = ({
         },
         body: JSON.stringify({
           sender_intent: senderIntent.trim(),
-          tone: selectedOption?.label,
-          language: selectedLang?.label,
+          tone: selectedOption,
+          language: selectedLang,
+          // tone: selectedOption?.label,
+          // language: selectedLang?.label,
           ideas_of_replay: idea?.idea || idea,
           // Include other necessary parameters
         }),
@@ -424,11 +427,86 @@ const QuickReply = ({
     }, 2000);
   };
 
+  const [language, setLanguage] = useState(false);
+  const [profession, setProfession] = useState(false);
+
+  const handleLanguage = () => {
+    // setLanguage((prevLanguage) => (prevLanguage === 'English' ? '' : 'English'));
+    setLanguage(!language);
+    setProfession(false);
+  };
+
+  const handleprofession = () => {
+    setProfession(!profession);
+    setLanguage(false);
+  };
+
+  console.log({selectedLang});
   return (
     <>
       <div className="px-[20px] py-[12px] relative">
-        <div className="flex gap-2 right-[20px] -top-[31px] absolute z-30">
-          <Select
+        <div className="flex gap-2 right-[20px] -top-[38px] absolute z-30">
+        <div className="flex gap-[8px]">
+            <div
+              className="p-[4px] pl-[8px] relative cursor-pointer w-[70px] bg-white rounded-[14px] border border-blue-600 justify-around items-center flex"
+              onClick={handleLanguage}
+            >
+              <div className="text-indigo-950 text-xs font-medium font-['DM Sans']">
+                <p className="text-[#5F6583] text-[12px]">{selectedLang}</p>
+              </div>
+              <div className="">
+                <img className="w-[14] h-[14]" src={ArrowDown} />
+              </div>
+              {/* drop down */}
+              <div
+                className={`${
+                  language ? 'block' : 'hidden'
+                } w-[121px] bg-white rounded-lg shadow flex-col justify-start items-start gap-[8px] inline-flex absolute top-[30px] right-0 p-[8px] pt-[10] pb-[10px]`}
+                style={{ zIndex: '99999999', boxShadow: '0px 2px 20px 0px rgba(0, 0, 0, 0.15)' }}
+              >
+                {exeLang?.map((element, index) => (
+                  <div
+                    className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage"
+                    key={index}
+                    onClick={() => handleSelectLangChange(element.value)}
+                  >
+                    <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">{element.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* profession */}
+            <div
+              className="p-[4px] pl-[8px] relative cursor-pointer w-[99px] bg-white rounded-[14px] border border-blue-600 justify-around items-center flex"
+              onClick={() => handleprofession()}
+            >
+              <div className="text-indigo-950 text-xs font-medium font-['DM Sans']">
+                <p className="text-[#5F6583] text-[12px]">{selectedOption}</p>
+              </div>
+              <div className="">
+                <img className="w-[14] h-[14]" src={ArrowDown} />
+              </div>
+              {/* drop down */}
+              <div
+                className={`${
+                  profession ? 'block' : 'hidden'
+                } w-[121px] bg-white rounded-lg shadow flex-col justify-start items-start gap-[8px] inline-flex absolute top-[30px] right-0 p-[8px] pt-[10] pb-[10px]`}
+                style={{ zIndex: '99999999', boxShadow: '0px 2px 20px 0px rgba(0, 0, 0, 0.15)' }}
+              >
+                {tones?.map((element, index) => (
+                  <div
+                    className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage"
+                    key={index}
+                    onClick={() => handleSelectChange(element.value)}
+                  >
+                    <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">{element.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          {/* <Select
             className="language w-[74px] h-[24px] flex gap-1 items-center justify-center rounded-full border border-primaryBlue px-[6px] py-[3px] bg-white text-[12px] font-medium text-darkBlue cursor-pointer"
             menuPlacement="top"
             // defaultValue={}
@@ -535,7 +613,7 @@ const QuickReply = ({
                 transform: state.selectProps.menuIsOpen && 'rotate(180deg)',
               }),
             }}
-          />
+          /> */}
 
           <button
             className="flex w-[76px] gap-1 items-center w-full rounded-md bg-white text-[12px] font-medium text-primaryBlue"

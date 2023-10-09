@@ -31,6 +31,7 @@ import Select, { components } from 'react-select';
 import { formatDistanceToNow } from 'date-fns';
 import { utcToZonedTime, format } from 'date-fns-tz';
 import { getDateDisplay } from '../../Helpers/dateFormater';
+import CustomTooltip from '../CustomTooltip/Tooltip';
 // -active
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -173,8 +174,10 @@ const ChatHistory = ({
   fetchChatHistoryList,
   setHistoryType,
   setSearchChatHis,
+  lastSelectedChat,
+  setlastSelectedChat
 }) => {
-  console.log('chatsHistory', chatsHistory);
+  // console.log('chatsHistory', chatsHistory);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [filesList, setFileList] = useState(filesListData);
@@ -236,6 +239,7 @@ const ChatHistory = ({
   // };
 
   const handleChatSelection = async (chat) => {
+    setlastSelectedChat(chat)
     // setChatData(chat);
     await dispatch(selectChat(chat?.id));
     setIsChatHistory(false);
@@ -434,12 +438,16 @@ const ChatHistory = ({
                           </div>
                           <div className="flex items-center justify-between">
                             <div className="text-gray1">{item.description}</div>
-                            <div
-                              className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer"
-                              onClick={() => handleDeleteChat(index)}
+                            <CustomTooltip
+                              maxWidth="430px"
+                              place="top"
+                              id="chatHistoryDelete"
+                              content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Delete </div>`}
                             >
-                              <img src={DeleteIcon} />
-                            </div>
+                              <button id="chatHistoryDelete" className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer" onClick={() => handleDeleteChat(index)}>
+                                <img src={DeleteIcon} />
+                              </button>
+                            </CustomTooltip>
                           </div>
                         </div>
                       )
@@ -513,6 +521,10 @@ const ChatHistory = ({
                         onClick={() => handleChatSelection(item)}
                       >
                         <div className="flex items-center gap-2">
+                          <div className={lastSelectedChat && item.id == lastSelectedChat.id ? 'block w-[41px] h-[18px] relative' : 'hidden'}>
+                              <div className="w-[41px] h-[18px] left-0 top-0 absolute bg-indigo-950 rounded" style={{background:'#19224C'}} />
+                              <div className="left-[6px] top-[3px] absolute text-white text-[10px] font-normal font-['DM Sans'] leading-3">Active</div>
+                          </div>
                           <div className="icon">
                             <Icons item={item} />
                           </div>
@@ -535,14 +547,16 @@ const ChatHistory = ({
                         >
                           {item.chat_dict?.ai_answer}
                         </div>
-                        <div
-                          className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer"
-                          onClick={() => handleDeleteChat(item?.id, item?.Type)}
+                        <CustomTooltip
+                          maxWidth="430px"
+                          place="top"
+                          id={'chatHistoryDelete'+ item?.id}
+                          content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Delete </div>`}
                         >
-                          <span className="selectIcon">
+                          <button id={'chatHistoryDelete'+ item?.id} className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer" onClick={() => handleDeleteChat(item?.id, item?.Type)}>
                             <img src={DeleteIcon} />
-                          </span>
-                        </div>
+                          </button>
+                        </CustomTooltip>
                       </div>
                     </div>
                   ))

@@ -198,7 +198,7 @@ const MainScreen = ({
   const TOKEN = getToken();
   const navigate = useNavigate();
   const redux = useSelector((state) => state);
-  console.log('redux', redux);
+  // console.log('redux', redux);
   const { state } = useLocation();
 
   const { isLoading, historyId } = useSelector((state) => state.chat);
@@ -451,6 +451,7 @@ const MainScreen = ({
 
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [focusedTextarea, setFocusedTextarea] = useState(null);
+  const [lastSelectedChat, setlastSelectedChat] = useState(null)
 
   useEffect(() => {
     const messageListener = (message) => {
@@ -2010,6 +2011,7 @@ const MainScreen = ({
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       getPageSummary('book');
     }
+    setlastSelectedChat(null)
   };
 
   const handleNewPrompt = () => {
@@ -3735,6 +3737,8 @@ const MainScreen = ({
               fetchChatHistoryList={fetchChatHistoryList}
               setHistoryType={setHistoryType}
               setSearchChatHis={setSearchChatHis}
+              lastSelectedChat={lastSelectedChat}
+              setlastSelectedChat={setlastSelectedChat}
             />
           </div>
         </Header>

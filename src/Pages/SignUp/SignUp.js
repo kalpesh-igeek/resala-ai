@@ -10,6 +10,7 @@ import { checkMail, userDetails } from '../../redux/reducers/authSlice/AuthSlice
 import SocialLogin from '../../Components/SocialLogin';
 import PasswordRequirements from '../../Components/PasswordRequirement';
 import InforCircleIcon from '../../utils/Account/Icons/info-circle.svg';
+import Close from '../../utils/Header/Close-1.svg';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -101,14 +102,44 @@ const SignUp = () => {
     }
     // setIsRegistered(false);
   };
+
+  const handleClose = () => {
+    document.querySelectorAll('[style="margin-right: 500px;"]')[0].style = 'position: relative;';
+    document.getElementsByClassName('MAINBODY')[0].style = 'display: none;';
+    document.body.style.width = '100%'
+  };
+
   console.log('isRegistered', isRegistered);
   return (
     <>
-      <div className="py-[90px] px-[75px] flex flex-col justify-center">
-        <div className="flex items-center justify-center gap-2 mb-[50px]">
+      <div
+        style={{ position: 'sticky', top: 0 }}
+        className="flex items-center justify-between px-[20px] py-[11px] border-b-gray border-b-[1px] border-l-gray border-l-[1px] bg-white relative z-[70] font-dmsans"
+      >
+        <div className="flex items-center gap-2">
+          <img src={Logo} alt="logo" className="cursor-pointer h-[34px] w-[34px]" onClick={() => navigate('/')} />
+          <div className="text-darkgray text-[20px] font-Poppins font-medium">Resala</div>
+          <div className="flex gap-1 items-center justify-center w-full rounded-full border border-primaryBlue bg-white font-medium text-primaryBlue ">
+            <div className="text-[10px] beta">Beta</div>
+          </div>
+        </div>
+
+        <div className="flex items-center">
+          <div>
+            <img
+              className="extensionCloseIcon cursor-pointer h-[31px] w-[31px]"
+              src={Close}
+              alt="Close"
+              onClick={handleClose}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="py-[100px] px-[75px] flex flex-col justify-center">
+        {/* <div className="flex items-center justify-center gap-2 mb-[50px]">
           <img src={Logo} alt="logo" className="cursor-pointer h-[32px] w-[32px]" />
           <div className="text-darkgray text-[18px]">Resala</div>
-        </div>
+        </div> */}
         <div
           className={
             !isRegistered
