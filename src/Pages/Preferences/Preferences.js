@@ -107,7 +107,7 @@ const Preferences = ({ selectedItems, setSelectedItems }) => {
       <Header>
         <div
           className="flex items-center px-[20px] py-[11px] justify-between bg-white  border-b-gray border-b-[1px] border-l-gray border-l-[1px]"
-          style={{ position: 'sticky', top: '57px' }}
+          style={{ position: 'sticky', top: '57px', zIndex: '9999999' }}
         >
           <div className="gap-2 flex items-center text-[16px] text-darkBlue">
             <div className="cursor-pointer" onClick={() => navigate('/')}>

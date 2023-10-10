@@ -22,6 +22,7 @@ const Header = ({
   handleClick,
   handleCloseClick,
   setIsLogout,
+  setIfOpenConfirmBox,
   isActivity,
   position,
   // setIsLogin
@@ -36,10 +37,29 @@ const Header = ({
 
   const handleClose = () => {
     if (activity) {
-      // console.log("1");
+      console.log('1');
       handleClick();
     } else {
-      // console.log("2");
+      console.log('2');
+      // setIfOpenConfirmBox(true);
+      const textarea1 = document.getElementById('chatText');
+      const textarea2 = document.getElementById('requestedText');
+      const SocialButton = document.getElementById('SocialButton');
+      // const SocialPopup = document.getElementById('SocialPopup');
+
+      // setIfConfirmClose(true);
+      if (textarea1 || textarea2) {
+        console.log(textarea1.value || textarea1.value);
+        console.log(textarea1.value);
+        if (textarea1.value.trim() === '' || textarea2.value.trim() === '') {
+          console.log('Hello');
+          SocialButton.classList.remove('hidden');
+          // SocialPopup.classList.remove('hidden');
+        } else {
+          setIfOpenConfirmBox(true);
+        }
+      }
+      // setIfConfirmClose(true);
       dispatch(checkActivity(false));
       handleCloseClick();
     }

@@ -30,6 +30,7 @@ const ChatData = ({
       speak({ text: msg });
     }
   };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setisCopied(false);
@@ -80,7 +81,9 @@ const ChatData = ({
     <>
       <div
         ref={chatContainerRef}
-        className={`text-[12px] max-h-[530px] overflow-y-auto flex flex-col-reverse ${isStreaming ? 'mb-[55px]' : ''} `}
+        className={`text-[12px] max-h-[530px] overflow-y-auto flex flex-col-reverse ${
+          isStreaming ? 'mb-[55px]' : ''
+        } relative`}
       >
         <div className="">
           {chatData.map((item, index) => {
@@ -91,7 +94,6 @@ const ChatData = ({
                     <div
                       className="bg-lightblue1 text-darkBlue max-w-[370px] p-[12px] flex flex-col rounded-tl-[6px] rounded-tr-[6px] rounded-br-0 rounded-bl-[6px] mb-[16px] text-[14px] "
                       style={{
-                        // boxShadow: '0px 2px 4px 0px #0000000D',
                         overflowWrap: 'break-word',
                       }}
                     >
@@ -101,55 +103,58 @@ const ChatData = ({
                 );
               case 'ai':
                 return (
-                  <div id="chat-container" className="flex justify-start">
-                    <div
-                      className="message  bg-lightgray max-w-[370px] border-0 border-gray p-[12px] flex flex-col mb-[12px] rounded-tl-[6px] rounded-tr-[6px] rounded-br-[6px] rounded-br-0 rounded-bl-0 relative "
-                      style={{
-                        // boxShadow: '0px 2px 4px 0px #0000000D',
-                        overflowWrap: 'break-word',
-                      }}
-                    >
-                      <div className="option flex items-center gap-2 bg-white absolute right-0 -top-[23px] border border-gray p-[8px] rounded-[6px]">
-                        <CustomTooltip
-                          maxWidth="430px"
-                          place="top"
-                          id={`speak-${index + 1}`}
-                          content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > ${
-                            speaking ? 'Stop' : 'Speak'
-                          } </div>`}
-                        >
-                          <span id={`speak-${index + 1}`} onClick={() => handleSpeak(item.msg)} className="cursor-pointer">
-                            <img src={speaking ? ReadFilledIcon : ReadIcon} />
-                          </span>
-                        </CustomTooltip>
-                        <CustomTooltip
-                          maxWidth="430px"
-                          place="top"
-                          id={`copyTooltip-${index + 1}`}
-                          content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > ${
-                            isCopied !== index ? "Copy" : "Copied"
-                          } </div>`}
-                        >
-                          <span
-                            id={`copyTooltip-${index + 1}`}
-                            onClick={() => {
-                              copy(item.msg);
-                              setisCopied(index);
-                            }}
-                            className="cursor-pointer"
+                  <>
+                    <div id="chat-container" className="flex justify-start mb-[30px]">
+                      <div
+                        className="message  bg-lightgray max-w-[370px] border-0 border-gray p-[12px] flex flex-col mb-[8px] rounded-tl-[6px] rounded-tr-[6px] rounded-br-[6px] rounded-br-0 rounded-bl-0 relative "
+                        style={{
+                          overflowWrap: 'break-word',
+                        }}
+                      >
+                        <div className="option flex items-center gap-2 bg-white absolute right-0 -top-[23px] border border-gray p-[8px] rounded-[6px]">
+                          <CustomTooltip
+                            maxWidth="430px"
+                            place="top"
+                            id={`speak-${index + 1}`}
+                            content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > ${
+                              speaking ? 'Stop' : 'Speak'
+                            } </div>`}
                           >
-                            <img src={isCopied !== index ? CopyIcon : CopiedIcon} />
-                          </span>
-                        </CustomTooltip>
+                            <span
+                              id={`speak-${index + 1}`}
+                              onClick={() => handleSpeak(item.msg)}
+                              className="cursor-pointer"
+                            >
+                              <img src={speaking ? ReadFilledIcon : ReadIcon} />
+                            </span>
+                          </CustomTooltip>
+                          <CustomTooltip
+                            maxWidth="430px"
+                            place="top"
+                            id={`copyTooltip-${index + 1}`}
+                            content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > ${
+                              isCopied !== index ? 'Copy' : 'Copied'
+                            } </div>`}
+                          >
+                            <span
+                              id={`copyTooltip-${index + 1}`}
+                              onClick={() => {
+                                copy(item.msg);
+                                setisCopied(index);
+                              }}
+                              className="cursor-pointer"
+                            >
+                              <img src={isCopied !== index ? CopyIcon : CopiedIcon} />
+                            </span>
+                          </CustomTooltip>
+                        </div>
+
+                        <pre className="font-dmsans text-[14px]" style={{ textWrap: 'wrap' }}>
+                          {renderMessage(item)}
+                        </pre>
                       </div>
-
-                      <pre className="font-dmsans text-[14px]" style={{ textWrap: 'wrap' }}>
-                        {renderMessage(item)}
-                      </pre>
-
-                      {/* Remove <pre></pre> when new original response from chat GPT */}
                     </div>
-                  </div>
+                  </>
                 );
               case 'loading':
                 return <img id="chat-container" className="w-[100px]" src={LoadingGif} />;
@@ -158,9 +163,24 @@ const ChatData = ({
             }
           })}
         </div>
+        {!isTypewriterDone && chatData?.length >= 2 && (
+          <div className="text-[12px] text-lightgray2 mb-[16px] absolute bottom-0 right-0 left-0">
+            <span
+              className="flex items-center gap-2"
+              onClick={() => {
+                handleRegenerate();
+                setIsTypewriterDone(true);
+              }}
+            >
+              <img className="cursor-pointer" src={RegenerateIcon} />
+              <p className="cursor-pointer">Regenerate</p>
+            </span>
+          </div>
+        )}
       </div>
 
-      {!isTypewriterDone && chatData?.length >= 2 && (
+      {/* Regenerate Button */}
+      {/* {!isTypewriterDone && chatData?.length >= 2 && (
         <div className="text-[12px] text-lightgray2 mb-[16px]">
           <span
             className="flex items-center gap-2"
@@ -173,7 +193,7 @@ const ChatData = ({
             <p className="cursor-pointer">Regenerate</p>
           </span>
         </div>
-      )}
+      )} */}
     </>
   );
 };

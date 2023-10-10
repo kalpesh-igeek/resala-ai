@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { MemoryRouter, Route, Routes, useLocation, useParams } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import MainScreen from './Pages/MainScreen';
 import SavedTemplates from './Pages/SavedTemplates';
 import Preferences from './Pages/Preferences/Preferences';
@@ -22,6 +22,7 @@ import DeletePopup from './Components/DeletePopup';
 import PopupBox from './PopupBox';
 import QuickButton from './QuickButton';
 
+import { useNavigate } from 'react-router-dom';
 import SuccessIcon from './utils/Account/Icons/SuccessIcon.svg';
 import { getToken } from './utils/localstorage';
 import Template from './Pages/Templates/Template';
@@ -164,6 +165,8 @@ export default function Panel() {
     left: 0,
   });
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const hostname = window.location.hostname;
     const floatIcon = document.getElementById('floatingIcon');
@@ -227,7 +230,7 @@ export default function Panel() {
         e.preventDefault();
       });
     }
-    
+
     if (hostname == 'www.youtube.com') {
       setTimeout(() => {
         const secondaryInner = document.getElementById('secondary-inner');
@@ -260,39 +263,39 @@ export default function Panel() {
         }
       }, 3000);
     } else if (hostname == 'mail.google.com') {
-        console.log('mail is already');
-        const oldQuickReply = document.getElementById('cloneQuickReply');
-        if(!oldQuickReply){
-          const quickReply = document.getElementById('quickButton');
-          const cloneQuickReply = quickReply.cloneNode(true)
-          cloneQuickReply.id = "cloneQuickReply";
-          cloneQuickReply.classList.add('hidden');
-          setTimeout(() => {
-            const quickPosition = document.getElementsByClassName('hj')[0];
-            if(quickPosition){
-              cloneQuickReply.classList.remove('hidden');
-              quickPosition.childNodes[0].prepend(cloneQuickReply);
-              const cloneQuickReplyButton = document.getElementById('cloneQuickReply');
-              cloneQuickReplyButton.addEventListener('click', () => {
-                handleSidebar('quickreply')
-              })
-            }
-          }, 3000);
-        }
+      console.log('mail is already');
+      const oldQuickReply = document.getElementById('cloneQuickReply');
+      if (!oldQuickReply) {
+        const quickReply = document.getElementById('quickButton');
+        const cloneQuickReply = quickReply.cloneNode(true);
+        cloneQuickReply.id = 'cloneQuickReply';
+        cloneQuickReply.classList.add('hidden');
+        setTimeout(() => {
+          const quickPosition = document.getElementsByClassName('hj')[0];
+          if (quickPosition) {
+            cloneQuickReply.classList.remove('hidden');
+            quickPosition.childNodes[0].prepend(cloneQuickReply);
+            const cloneQuickReplyButton = document.getElementById('cloneQuickReply');
+            cloneQuickReplyButton.addEventListener('click', () => {
+              handleSidebar('quickreply');
+            });
+          }
+        }, 3000);
+      }
 
-          // const quickPosition = document.querySelectorAll('[aria-label="Print all"]')[0];
-          // if (quickPosition) {
-            // quickReply.classList.remove('hidden');
-            // quickPosition.style.position = 'fixed';
-            // quickPosition.style.top = 100;
-            // quickPosition.style.left = 100;
-            // quickPosition.parentElement?.parentElemeznt?.prepend(quickReply);
-            // quickReply.onclick = function () {
-            //   handleSidebar(QUICKREPLY);
-            //   setRequestedText('hello');
-            // };
-          // }
-    }else if (hostname == 'en.wikipedia.org') {
+      // const quickPosition = document.querySelectorAll('[aria-label="Print all"]')[0];
+      // if (quickPosition) {
+      // quickReply.classList.remove('hidden');
+      // quickPosition.style.position = 'fixed';
+      // quickPosition.style.top = 100;
+      // quickPosition.style.left = 100;
+      // quickPosition.parentElement?.parentElemeznt?.prepend(quickReply);
+      // quickReply.onclick = function () {
+      //   handleSidebar(QUICKREPLY);
+      //   setRequestedText('hello');
+      // };
+      // }
+    } else if (hostname == 'en.wikipedia.org') {
       setTimeout(() => {
         const WikipediaButton = document.getElementById('WikipediaButton');
         if (WikipediaButton) {
@@ -307,10 +310,10 @@ export default function Panel() {
             });
             window.removeEventListener('mousemove', (e) => {
               if (!isWikiDragging) return;
-    
+
               const x = e.clientX - offsetWikiX;
               const y = e.clientY - offsetWikiY;
-    
+
               if (y > 0 && y < height - 42) {
                 WikipediaButton.style.left = x + 'px';
                 WikipediaButton.style.top = y + 'px';
@@ -323,38 +326,37 @@ export default function Panel() {
             window.removeEventListener('dragstart', (e) => {
               e.preventDefault();
             });
-    
+
             return;
           }
-    
+
           WikipediaButton.addEventListener('mousedown', (e) => {
             isWikiDragging = true;
             offsetWikiX = e.clientX - WikipediaButton.getBoundingClientRect().left;
             offsetWikiY = e.clientY - WikipediaButton.getBoundingClientRect().top;
             WikipediaButton.style.cursor = 'grabbing';
           });
-    
+
           document.addEventListener('mousemove', (e) => {
             if (!isWikiDragging) return;
-    
+
             const x = e.clientX - offsetWikiX;
             const y = e.clientY - offsetWikiY;
-    
+
             if (y > 0 && y < height - 42) {
               WikipediaButton.style.left = x + 'px';
               WikipediaButton.style.top = y + 'px';
             }
           });
-    
+
           document.addEventListener('mouseup', () => {
             isWikiDragging = false;
             WikipediaButton.style.cursor = 'grab';
           });
-    
+
           WikipediaButton.addEventListener('dragstart', (e) => {
             e.preventDefault();
           });
-
         }
 
         const wikiSummarize = document.getElementById('wikiSummarize');
@@ -376,15 +378,16 @@ export default function Panel() {
                 BtnPosition = BtnPosition.getBoundingClientRect();
                 console.log('BtnPosition', BtnPosition);
                 setFromBtnPosition({
-                  top: BtnPosition.top + 36,
+                  top: BtnPosition.top + 50,
                   left: BtnPosition.left + 660,
                 });
               }
 
               const SocialButton = document.getElementById('SocialButton');
+              const SocialPopup = document.getElementById('SocialPopup');
               SocialButton.classList.remove('hidden');
               SocialButton.addEventListener('click', () => {
-                const SocialPopup = document.getElementById('SocialPopup');
+                // const SocialPopup = document.getElementById('SocialPopup');
                 if (SocialPopup) {
                   SocialPopup.classList.remove('hidden');
                   let FormPosition = document.getElementsByClassName('share-box')[0];
@@ -412,6 +415,19 @@ export default function Panel() {
                 console.log('Dismiss');
                 const SocialButton = document.getElementById('SocialButton');
                 SocialButton.classList.add('hidden');
+              });
+
+              let socialMediaId = document.getElementById('socialMediaPreference');
+              socialMediaId.addEventListener('click', () => {
+                console.log('socialMediaId', socialMediaId);
+                navigate('/preferences');
+                handleSidebar('chat');
+                console.log('sdshdbjw');
+                console.log(SocialButton, 'SocialButton');
+                console.log(SocialPopup, 'SocialPopup');
+                SocialButton.classList.add('hidden');
+                SocialPopup.classList.add('hidden');
+                console.log('sdshdbjw');
               });
             }, 3000);
           });
@@ -744,10 +760,13 @@ export default function Panel() {
 
       <QuickButton handleSidebar={handleSidebar} />
       <YoutubeButton handleSidebar={handleSidebar} />
-      <WikipediaButton handleSidebar={handleSidebar} onClick={() => {
-            setIsWikipediaButtonClicked(!isWikipediaButtonClicked);
-          }}/>
-      <SocialButton fromPosition={fromPosition} fromBtnPosition={fromBtnPosition} />
+      <WikipediaButton
+        handleSidebar={handleSidebar}
+        onClick={() => {
+          setIsWikipediaButtonClicked(!isWikipediaButtonClicked);
+        }}
+      />
+      <SocialButton fromPosition={fromPosition} fromBtnPosition={fromBtnPosition} handleSidebar={handleSidebar} />
       {/* <div
         style={{
           boxShadow: '0px 9px 10px rgba(22, 120, 242, 0.25)',

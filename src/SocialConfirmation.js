@@ -1,21 +1,18 @@
 import React from 'react';
-import Close from '../utils/MainScreen/Icons/Close.svg';
-import WarningIcon from '../utils/MainScreen/Icons/WarningIcon.svg';
+import Close from './utils/MainScreen/Icons/Close.svg';
+import WarningIcon from './utils/MainScreen/Icons/WarningIcon.svg';
 
-export default function ConfirmationPopup({ ifOpenConfirmBox, setIsOpen, setIfOpenConfirmBox, setIfConfirmClose }) {
-  const SocialButton = document.getElementById('SocialButton');
+export default function SocialConfirmation({ ifOpenConfirmBox, setIsOpen, setIfOpenConfirmBox, setIfConfirmClose }) {
   const handleCloseClick = () => {
     setIfConfirmClose(true);
     setIfOpenConfirmBox(false);
     setIsOpen(false);
-    SocialButton.classList.remove('hidden');
   };
 
   return (
-    <div className={`${ifOpenConfirmBox ? 'block' : 'hidden'}`}>
-      <div className="fixed top-0 bottom-0 right-0 w-[500px] bg-black opacity-40 z-[70]"></div>
+    <div className={`${!ifOpenConfirmBox ? 'block' : 'hidden'}`}>
       <div
-        className="fixed rounded-[10px] bg-white p-[20px] right-[20px] top-[50%] -translate-y-2/4 z-[70] w-[460px]"
+        className=" rounded-[10px] bg-white p-[20px]  z-[70] w-[460px]"
         style={{ boxShadow: '0px 10px 30px 0px #3C425726' }}
         // show={open}
       >

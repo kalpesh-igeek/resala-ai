@@ -451,7 +451,7 @@ const MainScreen = ({
 
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [focusedTextarea, setFocusedTextarea] = useState(null);
-  const [lastSelectedChat, setlastSelectedChat] = useState(null)
+  const [lastSelectedChat, setlastSelectedChat] = useState(null);
 
   useEffect(() => {
     const messageListener = (message) => {
@@ -1634,20 +1634,38 @@ const MainScreen = ({
     setMicClicked(false);
     resetTranscript();
   };
-  const handleChange = (e) => {
+  const handlePaste = (e) => {
+    const maxCharacterCount = 4000;
+    const pastedText = e.clipboardData.getData('text');
     const { name, value } = e.target;
-    const maxCharacterCount = 4000; // Set your desired character limit here
+
+    if (name === 'chatText' && value.length + pastedText.length > maxCharacterCount) {
+      e.preventDefault(); // Prevent pasting if it would exceed the character limit
+    }
+  };
+  const handleChange = (e) => {
+    // const { name, value } = e.target;
+    // const maxCharacterCount = 4000;
+    // if (name === 'chatText') {
+    //   if (value.length > maxCharacterCount) {
+    //     const truncatedValue = value.substring(0, maxCharacterCount);
+    //     e.target.value = truncatedValue;
+    //     (maxCharacterCount);
+    //   } else {setSpeechLength
+    //     setSpeechLength(value.length);
+    //   }
+    // }
+    const { name, value } = e.target;
+    const maxCharacterCount = 4000;
     if (name === 'chatText') {
       if (value.length > maxCharacterCount) {
-        // If the input exceeds the character limit, truncate it
         const truncatedValue = value.substring(0, maxCharacterCount);
         e.target.value = truncatedValue;
-        setSpeechLength(maxCharacterCount);
+        setSpeechLength(truncatedValue.length);
       } else {
         setSpeechLength(value.length);
       }
     }
-
     if (value.length >= maxCharacterCount) {
       e.preventDefault();
       e.stopPropogation();
@@ -1675,6 +1693,7 @@ const MainScreen = ({
       setIsUsePrompt(false);
       setAllreadyStreamed(true);
       setIsStreaming(true);
+      setSpeechLength(0);
     }
 
     chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -2011,7 +2030,7 @@ const MainScreen = ({
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       getPageSummary('book');
     }
-    setlastSelectedChat(null)
+    setlastSelectedChat(null);
   };
 
   const handleNewPrompt = () => {
@@ -2721,6 +2740,7 @@ const MainScreen = ({
                                   placeholder={errors.chatText ? errors.chatText : 'Tell me what to write for you'}
                                   className="text-[14px] pt-[14px] block w-[349px] rounded-lg focus:outline-0"
                                   onChange={(e) => handleChange(e)}
+                                  onPaste={handlePaste}
                                   onKeyDown={(e) => {
                                     // if (!isStreaming) {
                                     if (e.key === 'Enter' && !e.shiftKey) {
@@ -2928,7 +2948,6 @@ const MainScreen = ({
                               </label>
                             </div>
                             <textarea
-                              style={{ resize: 'none' }}
                               id="requestedText"
                               name="input_text"
                               rows="4"
@@ -3123,7 +3142,7 @@ const MainScreen = ({
                             </RadioGroup>
                           </div>
                         )}
-                        
+
                         <div className="pb-[20px]">
                           <div className="flex gap-1 items-center">
                             <img src={lengthIcon} />

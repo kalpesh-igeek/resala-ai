@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './Social.css';
 import Logo from './utils/Social/Risala.ai - LOGO - 13.png';
 import Setting from './utils/Social/solar_settings-broken.png';
-import Profile from './utils/Social/Ellipse 31.png';
+import ProfilePic from './utils/Social/Ellipse 31.png';
 import Cross from './utils/Social/cross.png';
 import Close from './utils/Social/close-circle.png';
 
@@ -13,7 +13,7 @@ import Left from './utils/Social/arrow-left.png';
 import Trash from './utils/Social/trash.png';
 import Menu from './utils/Social/Vector.png';
 // import { message } from 'antd';
-
+import Profile from './Pages/Profile';
 import ResalaIconWithText from './utils/Youtube/ResalaIconWithText.svg';
 import axios from 'axios';
 import { getToken } from './utils/localstorage';
@@ -21,6 +21,15 @@ import { getRequest, postRequest } from './services';
 import { Audio } from 'react-loader-spinner';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
+import CustomTooltip from './Components/CustomTooltip/Tooltip';
+import { useNavigate } from 'react-router-dom';
+// import Preferences from './Pages/Preferences/Preferences';
+// import SocialPreference from './SocialPreference';
+// import SocialProfile from './SocialProfile';
+// import ConfirmationPopup from './Components/ConfirmationPopup';
+import SocialConfirmation from './SocialConfirmation';
+import copy from 'copy-to-clipboard';
+
 const antIcon = (
   <LoadingOutlined
     style={{
@@ -29,126 +38,53 @@ const antIcon = (
     spin
   />
 );
-export default SocialPopup = ({ fromPosition }) => {
-  // const [Ideas, setIdeas] = useState(true);
-  // const [Intro1, setIntro] = useState(false);
-  // const [Mobile1, setMobile] = useState(false);
-  // const [Bag1, setBag] = useState(false);
-
-  // right: calc(100vw - 1120px);
-  // position: fixed;
-  // bottom: calc(100vh - 480px);
-  // /* bottom: 0px; */
-  // z-index: 9999999999;
-  // a[0].getBoundingClientRect();
-  // const [fromPosition, setFromPosition] = useState({
-  //   bottom: 0,
-  //   left: 0,
-  // });
-  // useEffect(() => {
-  //   let setLogoSocial = document.getElementById('setLogoSocial');
-  //   if (!setLogoSocial) return;
-  //   setLogoSocial.addEventListener('click', function () {
-  //     let SocialPopup = document.getElementById('SocialPopup');
-  //     console.log('clicked!', SocialPopup);
-  //     const FormPosition = document.getElementsByClassName('xt7dq6l')[2].getBoundingClientRect();
-  //     console.log('FormPosition', FormPosition);
-  //     if (FormPosition) {
-  //       console.log('FormPosition', FormPosition);
-  //       setFromPosition({
-  //         bottom: FormPosition.bottom - 275,
-  //         left: FormPosition.left + 250,
-  //       });
-  //       // SocialPopup.style.top = FormPosition.top;
-  //       // SocialPopup.style.left = FormPosition.left;
-  //     }
-  //   });
-  // }, []);
-
+export default SocialPopup = ({ fromPosition, handleSidebar }) => {
   console.log('fromPosition', fromPosition);
 
-  //
   const [language, setLanguage] = useState(false);
 
   const handleLanguage = () => {
-    // setLanguage((prevLanguage) => (prevLanguage === 'English' ? '' : 'English'));
     setLanguage(!language);
     setProfession(false);
   };
   const [profession, setProfession] = useState(false);
   const [professions, setProfessions] = useState('Professional');
 
-  const handleprofession = (selectedValue) => {
-    setProfessions(selectedValue);
-    console.log(professions, 'professions');
+  const handleprofession = () => {
     setProfession(!profession);
     setLanguage(false);
   };
-  // // todo profession
-  // const [profession, setProfession] = useState('Professional'); // Initialize with a default profession
-
-  // const handleProfession = () => {
-  //   setProfession((prevProfession) => (prevProfession === 'Professional' ? '' : 'Professional'));
-  // };
-  // language
-  // const [language, setLanguage] = useState('English');
-  // const handleLanguage = () => {
-  //   setLanguage((prevLanguage) => (prevLanguage === 'English' ? '' : 'English'));
-  // };
-
-  // const selectLanguage = (selectedLanguage) => {
-  //   setLanguage(selectedLanguage);
-  // };
 
   //
   const [ideas, setIdeas] = useState(false);
-  // const handleIdeas = () => {
-  //   setIdeas(!ideas);
-  // };
 
-  //
-  const [showButton1Content, setShowButton1Content] = useState(false);
-  const [showButton2Content, setShowButton2Content] = useState(false);
-  const [showButton3Content, setShowButton3Content] = useState(false);
-
-  const toggleContent = (buttonNumber) => {
-    setShowButton1Content(false);
-    setShowButton2Content(false);
-    setShowButton3Content(false);
-
-    switch (buttonNumber) {
-      case 1:
-        setShowButton1Content(true);
-        setIdeas(!ideas);
-        break;
-      case 2:
-        setShowButton2Content(true);
-        setIdeas(!ideas);
-
-        break;
-      case 3:
-        setShowButton3Content(true);
-        setIdeas(!ideas);
-
-        break;
-      default:
-        break;
-    }
-  };
-
-  //
   const handleBack = () => {
     setIdeas(!ideas);
     setShowButton1Content(false);
     setShowButton3Content(false);
     setShowButton2Content(false);
     setIdeasValue('');
+    setResponses([]);
   };
 
   // close
   const [close, setClose] = useState(true);
 
   const handleClose = () => {
+    // const textarea1 = document.getElementById('socialTextarea');
+
+    // setIfConfirmClose(true);
+    // if (textarea1) {
+    //   // console.log(textarea1.value);
+    //   console.log(textarea1.value);
+    //   if (textarea1.value.trim() === '') {
+    //     console.log('Hello');
+    //     setClose(!close);
+    //   } else {
+    //     // setIfOpenConfirmBox(true);
+    //   }
+    // }
+    // setIfOpenConfirmBox(true);
     setClose(!close);
     setIdeasValue('');
   };
@@ -190,18 +126,60 @@ export default SocialPopup = ({ fromPosition }) => {
   console.log(selectedIdea, 'selectedIdea');
 
   // todo : api for language
-  const [languages, setLanguages] = useState([]);
-  useEffect(async () => {
-    let response;
-    response = await getRequest('/user/language_list');
+  const [languages, setLanguages] = useState('English');
+  // useEffect(async () => {
+  //   let response;
+  //   response = await getRequest('/user/language_list');
 
-    if (response.status == 200) {
-      console.log(response.data.Result);
-      setLanguages(response.data.Result);
+  //   if (response.status == 200) {
+  //     console.log(response.data.Result);
+  //     setLanguages(response.data.Result);
+  //   }
+  // }, []);
+
+  // console.log({ languages }, 'languages');
+  // todo counting text
+  const [speechLength, setSpeechLength] = useState(0);
+
+  const handlePaste = (e) => {
+    const maxCharacterCount = 4000;
+    const pastedText = e.clipboardData.getData('text');
+    const { name, value } = e.target;
+
+    if (name === 'socialTextarea' && value.length + pastedText.length > maxCharacterCount) {
+      e.preventDefault();
     }
-  }, []);
-
-  console.log({ languages }, 'languages');
+  };
+  const handleChange = (e) => {
+    // const { name, value } = e.target;
+    // const maxCharacterCount = 4000;
+    // if (name === 'chatText') {
+    //   if (value.length > maxCharacterCount) {
+    //     const truncatedValue = value.substring(0, maxCharacterCount);
+    //     e.target.value = truncatedValue;
+    //     (maxCharacterCount);
+    //   } else {setSpeechLength
+    //     setSpeechLength(value.length);
+    //   }
+    // }
+    setIdeasValue(e.target.value);
+    console.log(IdeasValue, 'Ideas');
+    const { name, value } = e.target;
+    const maxCharacterCount = 4000;
+    if (name === 'socialTextarea') {
+      if (value.length > maxCharacterCount) {
+        const truncatedValue = value.substring(0, maxCharacterCount);
+        e.target.value = truncatedValue;
+        setSpeechLength(truncatedValue.length);
+      } else {
+        setSpeechLength(value.length);
+      }
+    }
+    if (value.length >= maxCharacterCount) {
+      e.preventDefault();
+      e.stopPropogation();
+    }
+  };
 
   // todo textarea
   const [IdeasValue, setIdeasValue] = useState('');
@@ -216,7 +194,7 @@ export default SocialPopup = ({ fromPosition }) => {
     const hostname = window.location.hostname;
     let response;
 
-    const postData = { text: IdeasValue, action: 'string' };
+    const postData = { text: IdeasValue, action: 'string', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
       response = await postRequest('/linkedin/linkedin_post_streaming', postData);
@@ -236,23 +214,17 @@ export default SocialPopup = ({ fromPosition }) => {
     console.log(selectedIdea, 'selectedIdea');
     // setIdeasValue('');
   };
-  // copy to clipboard
-  // const [messageApi, contextHolder] = message.useMessage();
-  // const success = () => {
-  //   messageApi.open({
-  //     type: 'success',
-  //     content: 'Copied',
-  //   });
-  // };
-  const copyToClipboard = () => {
-    const textArea = document.querySelector('.textArea');
 
-    if (textArea) {
-      textArea.select();
-      document.execCommand('copy');
-    }
-    // success();
-  };
+  // const copyToClipboard = () => {
+  //   console.log('copied');
+  //   const textArea = document.querySelector('.textArea');
+
+  //   if (textArea) {
+  //     textArea.select();
+  //     document.execCommand('copy');
+  //   }
+  //   // success();
+  // };
 
   // regenarate
   // const [newDivContent, setNewDivContent] = useState('');
@@ -265,7 +237,7 @@ export default SocialPopup = ({ fromPosition }) => {
     const hostname = window.location.hostname;
     let response;
 
-    const postData = { text: InitialIdeasValue, action: 'string', language: 'english' };
+    const postData = { text: IdeasValue, action: 'string', language: languages, tone: professions };
     console.log(postData, 'postData');
 
     if (hostname === 'www.linkedin.com') {
@@ -273,7 +245,7 @@ export default SocialPopup = ({ fromPosition }) => {
     } else if (hostname === 'www.facebook.com') {
       response = await postRequest('/facebook/regenrate_facebook_post_streaming', postData);
     } else if (hostname === 'twitter.com') {
-      response = await postRequest('/twitter/regenrate_twitter_post_streaming', postData);
+      response = await postRequest('/twitter/regenrate_post_streaming', postData);
     }
 
     console.log({ 'dgvklsdgdsklgvnsdklgndskgdns => ': response });
@@ -285,7 +257,7 @@ export default SocialPopup = ({ fromPosition }) => {
       const paragraph = words.join(' ');
       console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
-      // todo 123
+
       const newDiv = (
         <div id="mainContentArea1" className="mb-[15px]">
           <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex">
@@ -303,18 +275,26 @@ export default SocialPopup = ({ fromPosition }) => {
                   placeholder={`${selectedIdea.placeholder}`}
                   className="p-[1px] textArea resize-none"
                   style={{ width: '100%', boxShadow: 'none' }}
+                  name="socialTextarea"
                   value={IdeasValue}
-                  onChange={(e) => setIdeasValue(e.target.value)}
+                  // onChange={(e) => handleChange(e)}
+                  onChange={handleChange}
+                  onPaste={handlePaste}
+                  id="socialTextarea"
+                  // onChange={(e) => setIdeasValue(e.target.value)}
                 />
               </div>
               <div className={`${IdeasValue === '' ? 'hidden' : 'block'} `}>
                 <div className={`flex gap-[8px] mt-[16px]`}>
-                  <div className="bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-white w-[90px]">
+                  <div
+                    className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]"
+                    onClick={InsertedValue}
+                  >
                     Insert
                   </div>
                   <div
                     className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]"
-                    onClick={copyToClipboard}
+                    onClick={() => copy(IdeasValue)}
                   >
                     Copy
                   </div>
@@ -341,7 +321,7 @@ export default SocialPopup = ({ fromPosition }) => {
               </div>
               <div>
                 {IdeasValue === '' ? (
-                  <span className="text-[#8C90A5] text-[12px]">0/4000</span>
+                  <span className="text-[#8C90A5] text-[12px]">{speechLength}/4000</span>
                 ) : (
                   <div onClick={handleEmpty}>
                     <img className="w-[16px] cursor-pointer" src={Trash} />
@@ -353,7 +333,7 @@ export default SocialPopup = ({ fromPosition }) => {
           {/* {newDivContent && <div>{newDivContent}</div>} */}
         </div>
       );
-      setResponses([...responses, newDiv]);
+      setResponses((state) => [...state, newDiv]);
       // setIdeasValue('');
       console.log(responses, 'responses');
       // setIdeasValue(paragraph);
@@ -367,18 +347,19 @@ export default SocialPopup = ({ fromPosition }) => {
     const hostname = window.location.hostname;
     let response;
     console.log(IdeasValue, 'IdeasValue');
-    const postData = { text: IdeasValue, action: 'string', tone: 'Improve it', language: 'english' };
+    // const postData = { text: IdeasValue, action: 'string', tone: 'Improve it', language: 'english' };
+    const postData = { text: IdeasValue, action: 'Improve it', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
       response = await postRequest('/linkedin/regenrate_post_streaming', postData);
     } else if (hostname === 'www.facebook.com') {
       response = await postRequest('/facebook/regenrate_facebook_post_streaming', postData);
     } else if (hostname === 'twitter.com') {
-      response = await postRequest('/twitter/regenrate_twitter_post_streaming', postData);
+      response = await postRequest('/twitter/regenrate_post_streaming', postData);
     }
 
     if (response && response.status === 200) {
-      const words = response.detail[0].ctx.doc.split(/\s+/).filter((word) => word.trim() !== '');
+      const words = response.data.split(/\s+/).filter((word) => word.trim() !== '');
       console.log(words, 'words');
       const paragraph = words.join(' ');
       console.log(paragraph, ';;;;;;dsdhsdh');
@@ -392,18 +373,19 @@ export default SocialPopup = ({ fromPosition }) => {
     const hostname = window.location.hostname;
     let response;
     console.log(IdeasValue, 'IdeasValue');
-    const postData = { text: IdeasValue, action: 'string', tone: 'Add Details', language: 'english' };
+    // const postData = { text: IdeasValue, action: 'string', tone: 'Add Details', language: 'english' };
+    const postData = { text: IdeasValue, action: 'Add details', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
       response = await postRequest('/linkedin/regenrate_post_streaming', postData);
     } else if (hostname === 'www.facebook.com') {
       response = await postRequest('/facebook/regenrate_facebook_post_streaming', postData);
     } else if (hostname === 'twitter.com') {
-      response = await postRequest('/twitter/regenrate_twitter_post_streaming', postData);
+      response = await postRequest('/twitter/regenrate_post_streaming', postData);
     }
 
     if (response && response.status === 200) {
-      const words = response.detail[0].ctx.doc.split(/\s+/).filter((word) => word.trim() !== '');
+      const words = response.data.split(/\s+/).filter((word) => word.trim() !== '');
       console.log(words, 'words');
       const paragraph = words.join(' ');
       console.log(paragraph, ';;;;;;dsdhsdh');
@@ -417,18 +399,19 @@ export default SocialPopup = ({ fromPosition }) => {
     const hostname = window.location.hostname;
     let response;
     console.log(IdeasValue, 'IdeasValue');
-    const postData = { text: IdeasValue, action: 'string', tone: 'Add Humor', language: 'english' };
+    // const postData = { text: IdeasValue, action: 'string', tone: 'Add Humor', language: 'english' };
+    const postData = { text: IdeasValue, action: 'Humor', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
       response = await postRequest('/linkedin/regenrate_post_streaming', postData);
     } else if (hostname === 'www.facebook.com') {
       response = await postRequest('/facebook/regenrate_facebook_post_streaming', postData);
     } else if (hostname === 'twitter.com') {
-      response = await postRequest('/twitter/regenrate_twitter_post_streaming', postData);
+      response = await postRequest('/twitter/regenrate_post_streaming', postData);
     }
 
     if (response && response.status === 200) {
-      const words = response.detail[0].ctx.doc.split(/\s+/).filter((word) => word.trim() !== '');
+      const words = response.data.split(/\s+/).filter((word) => word.trim() !== '');
       console.log(words, 'words');
       const paragraph = words.join(' ');
       console.log(paragraph, ';;;;;;dsdhsdh');
@@ -442,18 +425,19 @@ export default SocialPopup = ({ fromPosition }) => {
     const hostname = window.location.hostname;
     let response;
     console.log(IdeasValue, 'IdeasValue');
-    const postData = { text: IdeasValue, action: 'string', tone: 'Inspire', language: 'english' };
+    // const postData = { text: IdeasValue, action: 'string', tone: 'Inspire', language: 'english' };
+    const postData = { text: IdeasValue, action: 'Inpire', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
       response = await postRequest('/linkedin/regenrate_post_streaming', postData);
     } else if (hostname === 'www.facebook.com') {
       response = await postRequest('/facebook/regenrate_facebook_post_streaming', postData);
     } else if (hostname === 'twitter.com') {
-      response = await postRequest('/twitter/regenrate_twitter_post_streaming', postData);
+      response = await postRequest('/twitter/regenrate_post_streaming', postData);
     }
 
     if (response && response.status === 200) {
-      const words = response.detail[0].ctx.doc.split(/\s+/).filter((word) => word.trim() !== '');
+      const words = response.data.split(/\s+/).filter((word) => word.trim() !== '');
       console.log(words, 'words');
       const paragraph = words.join(' ');
       console.log(paragraph, ';;;;;;dsdhsdh');
@@ -467,18 +451,19 @@ export default SocialPopup = ({ fromPosition }) => {
     const hostname = window.location.hostname;
     let response;
     console.log(IdeasValue, 'IdeasValue');
-    const postData = { text: IdeasValue, action: 'string', tone: 'Shorten it', language: 'english' };
+    // const postData = { text: IdeasValue, action: 'string', tone: 'Shorten it', language: 'english' };
+    const postData = { text: IdeasValue, action: 'Shorten it', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
       response = await postRequest('/linkedin/regenrate_post_streaming', postData);
     } else if (hostname === 'www.facebook.com') {
       response = await postRequest('/facebook/regenrate_facebook_post_streaming', postData);
     } else if (hostname === 'twitter.com') {
-      response = await postRequest('/twitter/regenrate_twitter_post_streaming', postData);
+      response = await postRequest('/twitter/regenrate_post_streaming', postData);
     }
 
     if (response && response.status === 200) {
-      const words = response.detail[0].ctx.doc.split(/\s+/).filter((word) => word.trim() !== '');
+      const words = response.data.split(/\s+/).filter((word) => word.trim() !== '');
       console.log(words, 'words');
       const paragraph = words.join(' ');
       console.log(paragraph, ';;;;;;dsdhsdh');
@@ -491,9 +476,65 @@ export default SocialPopup = ({ fromPosition }) => {
     setIdeasValue('');
   };
 
+  // Insert text
+  const InsertedValue = () => {
+    console.log('sfsfdsf');
+    const LinkedInClass = document.getElementsByClassName('ql-editor');
+    const FacebookClass = document.getElementsByClassName('xha3pab');
+    const twitterClass = document.querySelectorAll('[data-testid="tweetTextarea_0_label"]');
+    const hostname = window.location.hostname;
+
+    if (hostname == 'www.linkedin.com') {
+      console.log('llinkedIn');
+      const LinkedInText = LinkedInClass[0].children[0];
+      console.log(IdeasValue, 'IdeasValue');
+      LinkedInText.textContent = `${IdeasValue}`;
+    } else if (hostname == 'www.facebook.com') {
+      console.log('facebook');
+      const FacebookText = FacebookClass[0].children[0].children[0].children[0];
+      FacebookText.textContent = `${IdeasValue}`;
+    } else if (hostname == 'twitter.com') {
+      console.log('twitter');
+      const TwitterText =
+        twitterClass[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0]
+          .children[0].children[0].children[0].children[0];
+      TwitterText.textContent = `${IdeasValue}`;
+    }
+  };
+
   // todo : menu
   const [PopupMenu, setPopupMenu] = useState(false);
   console.log({ responses });
+
+  // profile
+  const loggedUser = {
+    avatar: ProfilePic,
+    name: 'Vatsal Sonani',
+    email: 'example@gmail.com',
+    password: 'admin123',
+  };
+  const [isProfile, setIsProfile] = useState(false);
+
+  // setting
+  const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   const socialMediaId = document.getElementById('socialMediaPreference');
+  //   console.log('socialMediaId', socialMediaId);
+  //   navigate('/preferences');
+  //   handleSidebar('chat');
+  //   console.log('Navigation completed');
+  // }, []);
+  // const [Preference, setPreference] = useState(false);
+  // const handleSettings = () => {
+  //   console.log('heelllo preference');
+  //   navigate('/preferences');
+  //   handleSidebar('chat');
+  // };
+  // const handleProfile = () => {
+  //   navigate('/preferences');
+  //   handleSidebar('chat');
+  // };
   return (
     <>
       <div
@@ -505,7 +546,7 @@ export default SocialPopup = ({ fromPosition }) => {
         }}
         className={`${
           close ? 'hidden' : 'block'
-        } rounded-[10px] bg-white fixed w-[600px] h-[365px] relative bg-white rounded-[10px] shadow border border-white overflow-hidden`}
+        } rounded-[10px] bg-white fixed w-[600px] h-[365px] relative shadow border border-white overflow-hidden`}
         id="SocialPopup"
       >
         <div className="flex justify-between p-[12] pl-[16] pr-[16] border-b-[1px] border-b-slate-200">
@@ -519,15 +560,73 @@ export default SocialPopup = ({ fromPosition }) => {
               </div>
             </div>
           </div>
-          <div className="flex gap-[8]">
-            <div className="rounded-full justify-center items-center flex border border-slate-200 w-[24] h-[24]">
-              <img className="w-[14] h-[14]" src={Setting} />
+          <div className="flex gap-[8] ">
+            {/*<div
+              className="rounded-full justify-center items-center flex border border-slate-200 w-[24] h-[24]"
+              id="SettingHeader"
+            >
+              <img className="w-[14] h-[14]" src={Setting} onClick={() => navigate('/preferences')} />
+            </div> */}
+            {/* <CustomTooltip
+              isFloating
+              maxWidth="430px"
+              place="bottom"
+              id="SettingHeader"
+              content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Settings </div>`}
+            > */}
+            <div
+              id="SettingHeader"
+              className="rounded-full justify-center items-center flex border border-slate-200 w-[24] h-[24] cursor-pointer relative"
+            >
+              <img className="h-[14px] w-[14px]" src={Setting} id="socialMediaPreference" />
+
+              {/* <div
+                className={`${
+                  !Preference ? 'hidden' : 'block'
+                } w-[600px] h-[315px] overflow-y-scroll absolute right-[-82px] top-[36px] bg-white`}
+                style={{
+                  zIndex: '99999999',
+                }}
+              >
+                <SocialPreference setPreference={setPreference} />
+              </div> */}
             </div>
-            <div>
-              <img className="rounded-full w-[24] h-[24]" src={Profile} />
+            {/* </CustomTooltip> */}
+            <div className="cursor-pointer relative">
+              <img
+                className="rounded-full w-[24] h-[24]"
+                src={ProfilePic}
+                onClick={() => {
+                  navigate('/');
+                  console.log('hello');
+                }}
+              />
+              {/* {isProfile && (
+                <div
+                  className="absolute top-[28px] right-0 w-[350px] h-[300px] overflow-y-scroll"
+                  style={{
+                    boxShadow: 'rgba(60, 66, 87, 0.1) 0px 10px 20px 0px',
+                    borderRadius: '5px',
+                  }}
+                >
+                  <SocialProfile
+                    loggedUser={loggedUser}
+                    setIsLogout={setIsLogout}
+                    setIsProfile={setIsProfile}
+                    // setIsLogin={setIsLogin}
+                  />
+                </div>
+              )} */}
             </div>
-            <div onClick={handleClose} id="closeSocialBtn" className="cursor-pointer">
-              <img className="rounded-full w-[24] h-[24]" src={Close} />
+            {/* <div className="absolute bottom-0 right-0 h-[300px] overflow-y-scroll"> */}
+            {/* </div> */}
+            <div id="closeSocialBtn" className="cursor-pointer relative">
+              <img className="rounded-full w-[24] h-[24]" src={Close} onClick={handleClose} />
+              {/* {close && (
+                <div className={`absolute bottom-[-250px] right-[51px] `} style={{ zIndex: '999999' }}>
+                  <SocialConfirmation setIfOpenConfirmBox={setIfOpenConfirmBox} />
+                </div>
+              )} */}
             </div>
           </div>
         </div>
@@ -544,7 +643,7 @@ export default SocialPopup = ({ fromPosition }) => {
               onClick={handleLanguage}
             >
               <div className="text-indigo-950 text-xs font-medium font-['DM Sans']">
-                <p className="text-[#5F6583] text-[12px]">English</p>
+                <p className="text-[#5F6583] text-[12px]"> {languages}</p>
               </div>
               <div className="">
                 <img className="w-[14] h-[14]" src={Arrow} />
@@ -556,21 +655,51 @@ export default SocialPopup = ({ fromPosition }) => {
                 } w-[121px] bg-white rounded-lg shadow flex-col justify-start items-start gap-[8px] inline-flex absolute top-[30px] right-0 p-[8px] pt-[10] pb-[10px]`}
                 style={{ zIndex: '99999999', boxShadow: '0px 2px 20px 0px rgba(0, 0, 0, 0.15)' }}
               >
-                {languages?.map((element, index) => (
+                <div
+                  className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage"
+                  onClick={() => setLanguages('English')}
+                >
+                  <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">English</div>
+                </div>
+                <div
+                  className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage"
+                  onClick={() => setLanguages('Arabic')}
+                >
+                  <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">Arabic</div>
+                </div>
+                <div
+                  className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage"
+                  onClick={() => setLanguages('Hindi')}
+                >
+                  <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">Hindi</div>
+                </div>
+                <div
+                  className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage"
+                  onClick={() => setLanguages('Gujarati')}
+                >
+                  <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">Gujarati</div>
+                </div>
+                <div
+                  className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage"
+                  onClick={() => setLanguages('Thai')}
+                >
+                  <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">Thai</div>
+                </div>
+                {/* {languages?.map((element, index) => (
                   <div
                     className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage"
                     key={index}
                   >
                     <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">{element.language}</div>
                   </div>
-                ))}
+                ))} */}
               </div>
             </div>
 
             {/* profession */}
             <div
               className="p-[4px] pl-[8px] relative cursor-pointer w-[99px] bg-white rounded-[14px] border border-blue-600 justify-around items-center flex"
-              onClick={() => handleprofession('Professional')}
+              onClick={handleprofession}
             >
               <div className="text-indigo-950 text-xs font-medium font-['DM Sans']">
                 <p className="text-[#5F6583] text-[12px]">{professions}</p>
@@ -587,31 +716,31 @@ export default SocialPopup = ({ fromPosition }) => {
               >
                 <div
                   className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage"
-                  onClick={() => handleprofession('Professional')}
+                  onClick={() => setProfessions('Professional')}
                 >
                   <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">Professional</div>
                 </div>
                 <div
                   className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage "
-                  onClick={() => handleprofession('Casual')}
+                  onClick={() => setProfessions('Casual')}
                 >
                   <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">Casual</div>
                 </div>
                 <div
                   className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage"
-                  onClick={() => handleprofession('Straight')}
+                  onClick={() => setProfessions('Straight')}
                 >
                   <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">Straight</div>
                 </div>
                 <div
                   className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage"
-                  onClick={() => handleprofession('Confident')}
+                  onClick={() => setProfessions('Confident')}
                 >
                   <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">Confident</div>
                 </div>
                 <div
                   className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage"
-                  onClick={() => handleprofession('Friendly')}
+                  onClick={() => setProfessions('Friendly')}
                 >
                   <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">Friendly</div>
                 </div>
@@ -673,17 +802,24 @@ export default SocialPopup = ({ fromPosition }) => {
                             className="p-[1px] textArea resize-none"
                             style={{ width: '100%', boxShadow: 'none' }}
                             value={IdeasValue}
-                            onChange={(e) => setIdeasValue(e.target.value)}
+                            id="socialTextarea"
+                            name="socialTextarea"
+                            onChange={(e) => handleChange(e)}
+                            onPaste={handlePaste}
+                            // onChange={(e) => setIdeasValue(e.target.value)}
                           />
                         </div>
                         <div className={`${IdeasValue === '' ? 'hidden' : 'block'} `}>
                           <div className={`flex gap-[8px] mt-[16px]`}>
-                            <div className="bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-white w-[90px]">
+                            <div
+                              className="bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-white w-[90px]"
+                              onClick={InsertedValue}
+                            >
                               Insert
                             </div>
                             <div
                               className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]"
-                              onClick={copyToClipboard}
+                              onClick={() => copy(IdeasValue)}
                             >
                               Copy
                             </div>
@@ -716,7 +852,7 @@ export default SocialPopup = ({ fromPosition }) => {
                         </div>
                         <div>
                           {IdeasValue === '' ? (
-                            <span className="text-[#8C90A5] text-[12px]">0/4000</span>
+                            <span className="text-[#8C90A5] text-[12px]">{speechLength}/4000</span>
                           ) : (
                             <div onClick={handleEmpty}>
                               <img className="w-[16px] cursor-pointer" src={Trash} />
@@ -935,6 +1071,10 @@ export default SocialPopup = ({ fromPosition }) => {
               <textarea
                 placeholder="Tell me what to write for you"
                 className="p-[1px] textArea resize-none"
+                id="socialTextarea"
+                onChange={(e) => handleChange(e)}
+                onPaste={handlePaste}
+                name="socialTextarea"
                 style={{ width: '100%', height: '100%', boxShadow: 'none' }}
               />
             </div>
@@ -943,7 +1083,7 @@ export default SocialPopup = ({ fromPosition }) => {
                 <img className="" src={Send} />
               </div>
               <div>
-                <span className="text-[#8C90A5] text-[12px]">0/4000</span>
+                <span className="text-[#8C90A5] text-[12px]">{speechLength}/4000</span>
               </div>
             </div>
           </div>

@@ -1,19 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import FlashIcon from '../../utils/Account/Profile/FlashIcon.svg';
-import AddIcon from '../../utils/Account/Profile/AddIcon.svg';
-import BookIcon from '../../utils/Account/Profile/BookIcon.svg';
-import YoutubeIcon from '../../utils/Account/Profile/YoutubeIcon.svg';
-import BillingIcon from '../../utils/Account/Profile/BillingIcon.svg';
-import QuestionIcon from '../../utils/Account/Profile/QuestionIcon.svg';
-import LogoutIcon from '../../utils/Account/Profile/LogoutIcon.svg';
-import UserIcon from '../../utils/Account/Profile/UserIcon.svg';
-import ArrowRightIcon from '../../utils/Account/Profile/ArrowRightIcon.svg';
-import { removeToken } from '../../utils/localstorage';
+import FlashIcon from './utils/Account/Profile/FlashIcon.svg';
+import AddIcon from './utils/Account/Profile/AddIcon.svg';
+import BookIcon from './utils/Account/Profile/BookIcon.svg';
+import YoutubeIcon from './utils/Account/Profile/YoutubeIcon.svg';
+import BillingIcon from './utils/Account/Profile/BillingIcon.svg';
+import QuestionIcon from './utils/Account/Profile/QuestionIcon.svg';
+import LogoutIcon from './utils/Account/Profile/LogoutIcon.svg';
+import UserIcon from './utils/Account/Profile/UserIcon.svg';
+import ArrowRightIcon from './utils/Account/Profile/ArrowRightIcon.svg';
+import { removeToken } from './utils/localstorage';
 import { useDispatch } from 'react-redux';
-import { clearDisptach } from '../../redux/reducers/authSlice/AuthSlice';
+import { clearDisptach } from './redux/reducers/authSlice/AuthSlice';
 
-const Profile = ({
+const SocialProfile = ({
   loggedUser,
   setIsLogout,
   setIsProfile,
@@ -54,16 +54,17 @@ const Profile = ({
     <>
       <div
         ref={profileRef}
-        className="absolute top-[100%] right-0 bg-white rounded-[6px]"
+        // className="absolute top-[100%] right-0 bg-white rounded-[6px]"
         style={{
           boxShadow: '0px 10px 20px 0px #3C42571A',
           zIndex: '999999999',
         }}
       >
         <div
-          className="w-[350px] rounded-[6px] overflow-hidden"
+          className="w-[350px] rounded-[6px] overflow-hidden bg-white relative"
           style={{
             boxshadow: '0px 10px 20px 0px #3C42571A',
+            zIndex: '99999999',
           }}
         >
           <div className="flex gap-2 items-center text-[16px] py-[15px] px-[15px] bg-lightblue1">
@@ -178,4 +179,4 @@ const Profile = ({
     </>
   );
 };
-export default Profile;
+export default SocialProfile;
