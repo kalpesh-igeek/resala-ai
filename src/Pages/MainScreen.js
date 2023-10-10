@@ -558,6 +558,22 @@ const MainScreen = ({
     }
   }, [selectTab]);
 
+  useEffect(() => {
+      setSelectedAction({ name: 'Polish' });
+      setSelectedLength({ name: 'Auto' });
+      setSelectedTone({ name: 'Professional' });
+      setSelectedLanguage({ name: 'English' });
+      setSelectedItems([
+        { name: 'Polish' },
+        { name: 'Auto' },
+        { name: 'Professional' },
+        { name: 'English' },
+      ]);
+      console.log("selectedItems =============>",selectedItems);
+  }, [activeTabSub]);
+
+  console.log({selectedItems});
+  
   const updateIsNewFlag = () => {
     const updatedChatData = chatData.map((item) => {
       if (item.isNew) {
@@ -1171,6 +1187,7 @@ const MainScreen = ({
 
   const handleGenerateDraft = async (e) => {
     // setIsActivity(true);
+    setInputButtonBox(!inputButtonBox);
     setIsDraftPrev(true);
     setIsStreamingComp(true);
 
@@ -1528,6 +1545,7 @@ const MainScreen = ({
   };
 
   const handleInputButtonBox = () => {
+    console.log("handleInputButtonBox");
     setInputButtonBox(!inputButtonBox);
   };
 
