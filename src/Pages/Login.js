@@ -97,11 +97,75 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
         Promise.resolve().then(() => {
           const userToken = getToken();
           if (userToken) {
-            // Now we are sure that the token is updated in local storage
             dispatch(newChat());
             navigate('/');
           }
         });
+
+        // chrome.storage.local.set({ userAccessToken: `Bearer ${res.payload?.data?.Result?.access_token}` }, () => {
+        //   if (!chrome.runtime.lastError) {
+        //     const userToken = getToken();
+        //     if (userToken) {
+        //       dispatch(newChat());
+        //       navigate('/');
+        //     }
+        //   } else {
+        //     console.error(chrome.runtime.lastError);
+        //   }
+        // });
+
+        // () => {
+        //   if (chrome.runtime.lastError) {
+        //     console.log('dfdf');
+        //     console.error(chrome.runtime.lastError);
+        //     console.log('dfdf');
+        //   } else {
+        //     chrome.storage.local.get(['userAccessToken'], (result) => {
+        //       console.log('gdfgf');
+        //       const userToken = result.userAccessToken;
+        //       console.log('jgdfj', userToken);
+        //       Promise.resolve().then(() => {
+        //         if (userToken) {
+        //           console.log('djks');
+        //           dispatch(newChat());
+        //           navigate('/');
+        //         }
+        //       });
+        //     });
+        //   }
+        // };
+        // chrome.storage.local.set('userAccessToken', `Bearer ${res.payload?.data?.Result?.access_token}`);
+
+        // Promise.resolve().then(() => {
+        //   const userToken = getToken();
+        //   if (userToken) {
+        //     dispatch(newChat());
+        //     navigate('/');
+        //   }
+        // });
+        // const userAccessToken = `Bearer ${res.payload?.data?.Result?.access_token}`;
+        // chrome.storage.local.set({ userAccessToken }, () => {
+        //   // if (chrome.runtime.lastError) {
+        //   //   console.error(chrome.runtime.lastError);
+        //   // }
+        //   if (userAccessToken) {
+        //     dispatch(newChat());
+        //     navigate('/');
+        //     // console.error(chrome.runtime.lastError);
+        //   } else {
+        //     Promise.resolve().then(() => {
+        //       const userToken = getToken();
+        //       console.log(userToken, 'usertoken');
+        //       if (userToken) {
+        //         console.log('gdfg');
+        //         dispatch(newChat());
+        //         navigate('/');
+        //         console.log('dgfdfg');
+        //       }
+        //     });
+        //   }
+
+        // });
       }
     }
     // setIsRegistered(false);
@@ -116,7 +180,7 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
   const handleClose = () => {
     document.querySelectorAll('[style="margin-right: 500px;"]')[0].style = 'position: relative;';
     document.getElementsByClassName('MAINBODY')[0].style = 'display: none;';
-    document.body.style.width = '100%'
+    document.body.style.width = '100%';
   };
 
   return (

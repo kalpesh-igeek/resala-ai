@@ -45,6 +45,8 @@ const CHAT = 'chat';
 const SUMMARIZEVIDEO = 'summarize-video';
 
 export const DrawerContext = React.createContext(null);
+// todo
+export const LocalContext = React.createContext(null);
 
 const sites = [
   {
@@ -53,11 +55,13 @@ const sites = [
   },
 ];
 
-export default function Panel() {
+export default function Panel({ local }) {
+  console.log(local, 'localvddfvdfvfd');
   const TOKEN = getToken();
   const dispatch = useDispatch();
   const [isSideBarOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('');
+  // chrome.storage.local.set({ test: 'test' });
 
   const [ifConfirmClose, setIfConfirmClose] = useState(false);
   const [ifOpenConfirmBox, setIfOpenConfirmBox] = useState(false);
@@ -282,7 +286,10 @@ export default function Panel() {
           }
         }, 3000);
       }
-
+      const SocialButton = document.getElementById('SocialButton');
+      if (SocialButton) {
+        SocialButton.classList.add('hidden');
+      }
       // const quickPosition = document.querySelectorAll('[aria-label="Print all"]')[0];
       // if (quickPosition) {
       // quickReply.classList.remove('hidden');
@@ -724,50 +731,52 @@ export default function Panel() {
   return (
     <>
       {/* FloatIcon */}
-      <div
-        id="floatingIcon"
-        style={{
-          borderRadius: '20px 20px 0px 20px',
-          transition: 'unset',
-          display: isSideBarOpen ? 'none' : 'flex',
-        }}
-        className={`fixed bottom-[20px] select-none ${
-          !isFloatIconClicked && 'new-btn-without-scale'
-        } group/icon right-[20px] cursor-pointer w-fit p-[5px] hover:pr-[8px] h-fit flex justify-center items-center !z-[99999999999] bg-lightblue1`}
-      >
-        <FloatBtn
-          isClicked={isFloatIconClicked}
-          onClick={() => {
-            setIsFloatIconClicked(!isFloatIconClicked);
+      {/* todo */}
+      <LocalContext.Provider value={{ ...local }}>
+        <div
+          id="floatingIcon"
+          style={{
+            borderRadius: '20px 20px 0px 20px',
+            transition: 'unset',
+            display: isSideBarOpen ? 'none' : 'flex',
           }}
+          className={`fixed bottom-[20px] select-none ${
+            !isFloatIconClicked && 'new-btn-without-scale'
+          } group/icon right-[20px] cursor-pointer w-fit p-[5px] hover:pr-[8px] h-fit flex justify-center items-center !z-[99999999999] bg-lightblue1`}
+        >
+          <FloatBtn
+            isClicked={isFloatIconClicked}
+            onClick={() => {
+              setIsFloatIconClicked(!isFloatIconClicked);
+            }}
+          />
+
+          {/* OPTIONS MENU */}
+          <div className={` ${isFloatIconClicked ? 'block' : 'hidden'} absolute bottom-[calc(100%+10px)] right-0`}>
+            <FloatOptions />
+          </div>
+        </div>
+
+        <PopupBox
+          SELECTION={SELECTION}
+          handleSidebar={handleSidebar}
+          selectedText={selectedText}
+          setSelectedText={setSelectedText}
+          requestedText={requestedText}
+          positionX={positionX}
+          positionY={positionY}
         />
 
-        {/* OPTIONS MENU */}
-        <div className={` ${isFloatIconClicked ? 'block' : 'hidden'} absolute bottom-[calc(100%+10px)] right-0`}>
-          <FloatOptions />
-        </div>
-      </div>
-
-      <PopupBox
-        SELECTION={SELECTION}
-        handleSidebar={handleSidebar}
-        selectedText={selectedText}
-        setSelectedText={setSelectedText}
-        requestedText={requestedText}
-        positionX={positionX}
-        positionY={positionY}
-      />
-
-      <QuickButton handleSidebar={handleSidebar} />
-      <YoutubeButton handleSidebar={handleSidebar} />
-      <WikipediaButton
-        handleSidebar={handleSidebar}
-        onClick={() => {
-          setIsWikipediaButtonClicked(!isWikipediaButtonClicked);
-        }}
-      />
-      <SocialButton fromPosition={fromPosition} fromBtnPosition={fromBtnPosition} handleSidebar={handleSidebar} />
-      {/* <div
+        <QuickButton handleSidebar={handleSidebar} />
+        <YoutubeButton handleSidebar={handleSidebar} />
+        <WikipediaButton
+          handleSidebar={handleSidebar}
+          onClick={() => {
+            setIsWikipediaButtonClicked(!isWikipediaButtonClicked);
+          }}
+        />
+        <SocialButton fromPosition={fromPosition} fromBtnPosition={fromBtnPosition} handleSidebar={handleSidebar} />
+        {/* <div
         style={{
           boxShadow: '0px 9px 10px rgba(22, 120, 242, 0.25)',
           zIndex: 9999999,
@@ -780,122 +789,123 @@ export default function Panel() {
         {isSideBarOpen ? <img src={RightArrowIcon} alt=">" /> : <img className="rotate-180" src={RightArrowIcon} alt="<" />}
       </div> */}
 
-      <DrawerContext.Provider value={{ isSideBarOpen }}>
-        <div
-          style={{
-            display: isSideBarOpen ? 'block' : 'none',
-            width: isSideBarOpen ? 500 : 0,
-            boxShadow: '-10px 0px 20px 0px #3C42570D',
-            zIndex: 999999,
-          }}
-          className={`MAINBODY fixed top-0 right-0 bottom-0 bg-white ease-in-out overflow-y-auto`}
-          id="resala-extension"
-        >
+        <DrawerContext.Provider value={{ isSideBarOpen }}>
           <div
             style={{
+              display: isSideBarOpen ? 'block' : 'none',
               width: isSideBarOpen ? 500 : 0,
-              boxShadow: '0px 0px 5px #0000009e',
-              zIndex: 50,
+              boxShadow: '-10px 0px 20px 0px #3C42570D',
+              zIndex: 999999,
             }}
-            className="OVERLAY hidden fixed top-0 right-0 bottom-0"
-          />
+            className={`MAINBODY fixed top-0 right-0 bottom-0 bg-white ease-in-out overflow-y-auto`}
+            id="resala-extension"
+          >
+            <div
+              style={{
+                width: isSideBarOpen ? 500 : 0,
+                boxShadow: '0px 0px 5px #0000009e',
+                zIndex: 50,
+              }}
+              className="OVERLAY hidden fixed top-0 right-0 bottom-0"
+            />
 
-          {!isSideBarOpen ? (
-            <CloseDrawer />
-          ) : (
-            <>
-              {isLogout ? (
-                <div className="py-[90px] px-[75px] flex flex-col justify-center">
-                  <div className="flex items-center justify-center gap-2 mb-[50px]">
-                    <img src={SuccessIcon} alt="SuccessIcon" className="cursor-pointer h-[64px] w-[64px]" />
+            {!isSideBarOpen ? (
+              <CloseDrawer />
+            ) : (
+              <>
+                {isLogout ? (
+                  <div className="py-[90px] px-[75px] flex flex-col justify-center">
+                    <div className="flex items-center justify-center gap-2 mb-[50px]">
+                      <img src={SuccessIcon} alt="SuccessIcon" className="cursor-pointer h-[64px] w-[64px]" />
+                    </div>
+                    <div className="text-[22px] flex justify-center mb-[8px] font-bold">Logout!</div>
+                    <div className="flex justify-center px-[10px] text-center text-gray2 mb-[48px] flex-col text-[12px] gap-2">
+                      You’ve successfully Logout your account.
+                    </div>
                   </div>
-                  <div className="text-[22px] flex justify-center mb-[8px] font-bold">Logout!</div>
-                  <div className="flex justify-center px-[10px] text-center text-gray2 mb-[48px] flex-col text-[12px] gap-2">
-                    You’ve successfully Logout your account.
-                  </div>
-                </div>
-              ) : (
-                <>
-                  {/* <MemoryRouter> */}
-                  <Routes>
-                    <Route
-                      path="/"
-                      element={
-                        <MainScreen
-                          // isLogin={isLogin}
-                          setIsOpen={setIsOpen}
-                          handleSidebar={handleSidebar}
-                          // setIsLogin={setIsLogin}
-                          requestedText={requestedText}
-                          setRequestedText={setRequestedText}
-                          handleClick={handleClick}
-                          handleCloseClick={handleCloseClick}
-                          setIsLogout={setIsLogout}
-                          activeTab={activeTab}
-                          CHAT={CHAT}
-                          SELECTION={SELECTION}
-                          QUICKREPLY={QUICKREPLY}
-                          selectedAction={selectedAction}
-                          setSelectedAction={setSelectedAction}
-                          windowSelectedText={selectedText}
-                          isClickButton={isClickWikiPediaButton}
-                          setIsClickButton={setIsClickWikiPediaButton}
-                        />
-                      }
+                ) : (
+                  <>
+                    {/* <MemoryRouter> */}
+                    <Routes>
+                      <Route
+                        path="/"
+                        element={
+                          <MainScreen
+                            // isLogin={isLogin}
+                            setIsOpen={setIsOpen}
+                            handleSidebar={handleSidebar}
+                            // setIsLogin={setIsLogin}
+                            requestedText={requestedText}
+                            setRequestedText={setRequestedText}
+                            handleClick={handleClick}
+                            handleCloseClick={handleCloseClick}
+                            setIsLogout={setIsLogout}
+                            activeTab={activeTab}
+                            CHAT={CHAT}
+                            SELECTION={SELECTION}
+                            QUICKREPLY={QUICKREPLY}
+                            selectedAction={selectedAction}
+                            setSelectedAction={setSelectedAction}
+                            windowSelectedText={selectedText}
+                            isClickButton={isClickWikiPediaButton}
+                            setIsClickButton={setIsClickWikiPediaButton}
+                          />
+                        }
+                      />
+                      <Route
+                        path="/savedtemplates"
+                        element={
+                          <SavedTemplates
+                            handleSidebar={handleSidebar}
+                            setIsOpen={setIsOpen}
+                            ifOpenDeleteBox={ifOpenDeleteBox}
+                            setActiveTab={setActiveTab}
+                            setIfOpenDeleteBox={setIfOpenDeleteBox}
+                            handleClick={handleClick}
+                            setIsLogout={setIsLogout}
+                          />
+                        }
+                      />
+                      {/* <Route path="/template" element={<Template />} /> */}
+                      <Route path="/preferences" element={<Preferences />} />
+                      <Route
+                        path="/login"
+                        element={
+                          <Login
+                            setActiveTab={setActiveTab}
+                            // isLogin={isLogin}
+                            // setIsLogin={setIsLogin}
+                          />
+                        }
+                      />
+                      <Route path="/signup" element={<SignUp />} />
+                      <Route path="/registerdetails" element={<RegisterDetails />} />
+                      <Route path="/mobileverification" element={<MobileVerification />} />
+                      <Route path="/entercode" element={<EnterCode />} />
+                      <Route path="/successful" element={<Successful />} />
+                      <Route path="/forgetpassword" element={<ForgetPassword />} />
+                      <Route path="/otpverification" element={<OTPVerification />} />
+                      <Route path="/enternewpassword" element={<EnterNewPassword />} />
+                      <Route path="/passwordchanged" element={<PasswordChanged />} />
+                      <Route path="/billings" element={<Billings />} />
+                      <Route path="/manageAccount" element={<ManageAccount />} />
+                    </Routes>
+                    {/* </MemoryRouter> */}
+                    <ConfirmationPopup
+                      setIsOpen={setIsOpen}
+                      ifOpenConfirmBox={ifOpenConfirmBox}
+                      setIfOpenConfirmBox={setIfOpenConfirmBox}
+                      ifConfirmClose={ifConfirmClose}
+                      setIfConfirmClose={setIfConfirmClose}
                     />
-                    <Route
-                      path="/savedtemplates"
-                      element={
-                        <SavedTemplates
-                          handleSidebar={handleSidebar}
-                          setIsOpen={setIsOpen}
-                          ifOpenDeleteBox={ifOpenDeleteBox}
-                          setActiveTab={setActiveTab}
-                          setIfOpenDeleteBox={setIfOpenDeleteBox}
-                          handleClick={handleClick}
-                          setIsLogout={setIsLogout}
-                        />
-                      }
-                    />
-                    {/* <Route path="/template" element={<Template />} /> */}
-                    <Route path="/preferences" element={<Preferences />} />
-                    <Route
-                      path="/login"
-                      element={
-                        <Login
-                          setActiveTab={setActiveTab}
-                          // isLogin={isLogin}
-                          // setIsLogin={setIsLogin}
-                        />
-                      }
-                    />
-                    <Route path="/signup" element={<SignUp />} />
-                    <Route path="/registerdetails" element={<RegisterDetails />} />
-                    <Route path="/mobileverification" element={<MobileVerification />} />
-                    <Route path="/entercode" element={<EnterCode />} />
-                    <Route path="/successful" element={<Successful />} />
-                    <Route path="/forgetpassword" element={<ForgetPassword />} />
-                    <Route path="/otpverification" element={<OTPVerification />} />
-                    <Route path="/enternewpassword" element={<EnterNewPassword />} />
-                    <Route path="/passwordchanged" element={<PasswordChanged />} />
-                    <Route path="/billings" element={<Billings />} />
-                    <Route path="/manageAccount" element={<ManageAccount />} />
-                  </Routes>
-                  {/* </MemoryRouter> */}
-                  <ConfirmationPopup
-                    setIsOpen={setIsOpen}
-                    ifOpenConfirmBox={ifOpenConfirmBox}
-                    setIfOpenConfirmBox={setIfOpenConfirmBox}
-                    ifConfirmClose={ifConfirmClose}
-                    setIfConfirmClose={setIfConfirmClose}
-                  />
-                  {/* <DeletePopup ifOpenDeleteBox={ifOpenDeleteBox} setIfOpenDeleteBox={setIfOpenDeleteBox} /> */}
-                </>
-              )}
-            </>
-          )}
-        </div>
-      </DrawerContext.Provider>
+                    {/* <DeletePopup ifOpenDeleteBox={ifOpenDeleteBox} setIfOpenDeleteBox={setIfOpenDeleteBox} /> */}
+                  </>
+                )}
+              </>
+            )}
+          </div>
+        </DrawerContext.Provider>
+      </LocalContext.Provider>
     </>
   );
 }

@@ -9,7 +9,8 @@ const AppleSocialLogin = () => {
     <div className="w-full flex gap-2 items-center">
       <AppleLogin
         clientId="T7W7J5G3W9.ai.resala.ResalaApp"
-        redirectURI="https://df48-2401-4900-1f3f-e028-f562-ef9c-49bb-a55.ngrok-free.app"
+        // redirectURI="https://df48-2401-4900-1f3f-e028-f562-ef9c-49bb-a55.ngrok-free.app"
+        redirectURI="https://api-qa.resala.ai"
         responseType={'code'}
         responseMode={'query'}
         usePopup={true}

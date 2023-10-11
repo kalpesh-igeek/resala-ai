@@ -4,6 +4,8 @@ import ArrowDown from '../../utils/PopupBox/Icons/ArrowDown.svg';
 import SearchIcon from '../../utils/Chat/Icons/SearchIcon.svg';
 import AllChatIcon from '../../utils/Chat/Icons/History/AllChatIcon.svg';
 import DeleteIcon from '../../utils/Chat/Icons/History/trash.svg';
+import AllHistoryClear from '../../utils/Chat/Icons/History/ClearAllHistory.png';
+
 import ChatIcon from '../../utils/Chat/Icons/Types/ChatIcon.svg';
 import ChatIconA from '../../utils/Chat/Icons/Types/ChatIcon-active.svg';
 import DocChatIcon from '../../utils/Chat/Icons/Types/DocChatIcon.svg';
@@ -175,7 +177,7 @@ const ChatHistory = ({
   setHistoryType,
   setSearchChatHis,
   lastSelectedChat,
-  setlastSelectedChat
+  setlastSelectedChat,
 }) => {
   // console.log('chatsHistory', chatsHistory);
   const dispatch = useDispatch();
@@ -239,7 +241,7 @@ const ChatHistory = ({
   // };
 
   const handleChatSelection = async (chat) => {
-    setlastSelectedChat(chat)
+    setlastSelectedChat(chat);
     // setChatData(chat);
     await dispatch(selectChat(chat?.id));
     setIsChatHistory(false);
@@ -328,6 +330,13 @@ const ChatHistory = ({
     }
   };
 
+  // todo
+  const [clearHistory, setClearHistory] = useState(false);
+
+  const handleYesClearHistory = () => {
+    setChatsHistroy([]);
+    setClearHistory(!clearHistory);
+  };
   return (
     <>
       <div className={`${isChatHistory ? 'block' : 'hidden'}`}>
@@ -406,6 +415,7 @@ const ChatHistory = ({
                   Uploaded Doc
                 </Tab>
               </Tab.List>
+
               <div className="mx-[20px] my-[10px] border border-gray items-center flex rounded-md px-[9px]">
                 <img src={SearchIcon} />
                 <InputField
@@ -416,6 +426,11 @@ const ChatHistory = ({
                   placeholder="Search"
                 />
               </div>
+
+              {/* todo */}
+              {/* <button id="chatHistoryDelete" className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer">
+                <img src={DeleteIcon} />
+              </button> */}
               <Tab.Panels as={Fragment}>
                 <Tab.Panel className="px-[20px]" key="docchats">
                   {chatsHistory.map(
@@ -444,7 +459,11 @@ const ChatHistory = ({
                               id="chatHistoryDelete"
                               content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Delete </div>`}
                             >
-                              <button id="chatHistoryDelete" className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer" onClick={() => handleDeleteChat(index)}>
+                              <button
+                                id="chatHistoryDelete"
+                                className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer"
+                                onClick={() => handleDeleteChat(index)}
+                              >
                                 <img src={DeleteIcon} />
                               </button>
                             </CustomTooltip>
@@ -491,9 +510,11 @@ const ChatHistory = ({
             </Tab.Group>
           ) : (
             <>
-              <div className="mx-[20px] border border-gray items-center flex rounded-md px-[9px] py-[4px]">
-                <img src={SearchIcon} />
-                {/* <InputField
+              {/* todo */}
+              <div className="flex justify-between items-center pr-[22px]">
+                <div className="mx-[20px] border border-gray items-center flex rounded-md px-[9px] mr-[8px] py-[4px] flex-grow">
+                  <img src={SearchIcon} />
+                  {/* <InputField
                   className="block w-full rounded-md border-0 px-[9px] py-[7px] text-[12px] text-darkBlue placeholder:text-gray1 focus:outline-0"
                   name="search"
                   label=""
@@ -501,15 +522,28 @@ const ChatHistory = ({
                   placeholder="Search"
                   handleChange={setSearchChatHis}
                 /> */}
-                <input
-                  className="block w-full rounded-md border-0 px-[9px] py-[7px] text-[12px] text-darkBlue placeholder:text-gray1 focus:outline-0"
-                  name="search"
-                  label=""
-                  type="text"
-                  placeholder="Search"
-                  onChange={(e) => setSearchChatHis(e.target.value)}
-                />
+                  <input
+                    className="block w-full  rounded-md border-0 px-[9px] py-[7px] text-[12px] text-darkBlue placeholder:text-gray1 focus:outline-0"
+                    name="search"
+                    label=""
+                    type="text"
+                    placeholder="Search"
+                    onChange={(e) => setSearchChatHis(e.target.value)}
+                  />
+                </div>
+                {/* todo */}
+                <CustomTooltip
+                  maxWidth="430px"
+                  place="top"
+                  id={'chatHistoryDelete'}
+                  content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Clear History </div>`}
+                >
+                  <div className="relative" onClick={() => setClearHistory(true)}>
+                    <img src={AllHistoryClear} className="w-[40px] h-[40px]" />
+                  </div>
+                </CustomTooltip>
               </div>
+
               <div className="mt-[12px] px-[20px] max-h-[480px] overflow-y-auto">
                 {chatsHistory.length === 0 ? (
                   <div className="text-gray1 text-center py-4">No data found</div>
@@ -521,9 +555,20 @@ const ChatHistory = ({
                         onClick={() => handleChatSelection(item)}
                       >
                         <div className="flex items-center gap-2">
-                          <div className={lastSelectedChat && item.id == lastSelectedChat.id ? 'block w-[41px] h-[18px] relative' : 'hidden'}>
-                              <div className="w-[41px] h-[18px] left-0 top-0 absolute bg-indigo-950 rounded" style={{background:'#19224C'}} />
-                              <div className="left-[6px] top-[3px] absolute text-white text-[10px] font-normal font-['DM Sans'] leading-3">Active</div>
+                          <div
+                            className={
+                              lastSelectedChat && item.id == lastSelectedChat.id
+                                ? 'block w-[41px] h-[18px] relative'
+                                : 'hidden'
+                            }
+                          >
+                            <div
+                              className="w-[41px] h-[18px] left-0 top-0 absolute bg-indigo-950 rounded"
+                              style={{ background: '#19224C' }}
+                            />
+                            <div className="left-[6px] top-[3px] absolute text-white text-[10px] font-normal font-['DM Sans'] leading-3">
+                              Active
+                            </div>
                           </div>
                           <div className="icon">
                             <Icons item={item} />
@@ -550,10 +595,14 @@ const ChatHistory = ({
                         <CustomTooltip
                           maxWidth="430px"
                           place="top"
-                          id={'chatHistoryDelete'+ item?.id}
+                          id={'chatHistoryDelete' + item?.id}
                           content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Delete </div>`}
                         >
-                          <button id={'chatHistoryDelete'+ item?.id} className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer" onClick={() => handleDeleteChat(item?.id, item?.Type)}>
+                          <button
+                            id={'chatHistoryDelete' + item?.id}
+                            className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer"
+                            onClick={() => handleDeleteChat(item?.id, item?.Type)}
+                          >
                             <img src={DeleteIcon} />
                           </button>
                         </CustomTooltip>

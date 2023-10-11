@@ -29,18 +29,18 @@ async function init() {
   // Set the href attribute to the Google Fonts URL
   linkElement2.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap';
 
-//   const floatingIcon = document.createElement('div');
-//   floatingIcon.id = 'floatingIcon';
-//   floatingIcon.style.cssText = `
-//   width: 50px;
-//   height: 50px;
-//   background-color: blue;
-//   position: fixed;
-//   bottom: 20px;
-//   right: 20px;
-//   z-index:999999999 !important;
-//   cursor: pointer;
-// `;
+  //   const floatingIcon = document.createElement('div');
+  //   floatingIcon.id = 'floatingIcon';
+  //   floatingIcon.style.cssText = `
+  //   width: 50px;
+  //   height: 50px;
+  //   background-color: blue;
+  //   position: fixed;
+  //   bottom: 20px;
+  //   right: 20px;
+  //   z-index:999999999 !important;
+  //   cursor: pointer;
+  // `;
 
   // Append the link element to the head of the document
   document.head.appendChild(linkElement1);
@@ -49,33 +49,37 @@ async function init() {
   body.appendChild(app);
 
   const root = createRoot(app);
-  root.render(
-    <Provider store={store}>
-      <MemoryRouter>
-        <Toaster
-        // position="bottom-right"
-        // toastOptions={{
-        //   // Define default options
-        //   className: '',
-        //   duration: 10000,
-        //   style: {
-        //     zIndex: 100000,
-        //   },
+  // todo
+  chrome.storage.local.get(null, (data) => {
+    console.log(data, 'dasjhdgsj');
+    root.render(
+      <Provider store={store}>
+        <MemoryRouter>
+          <Toaster
+          // position="bottom-right"
+          // toastOptions={{
+          //   // Define default options
+          //   className: '',
+          //   duration: 10000,
+          //   style: {
+          //     zIndex: 100000,
+          //   },
 
-        //   // Default options for specific types
-        //   // success: {
-        //   //   duration: 3000,
-        //   //   theme: {
-        //   //     primary: 'green',
-        //   //     secondary: 'black',
-        //   //   },
-        //   // },
-        // }}
-        />
-        <Panel />
-      </MemoryRouter>
-    </Provider>
-  );
+          //   // Default options for specific types
+          //   // success: {
+          //   //   duration: 3000,
+          //   //   theme: {
+          //   //     primary: 'green',
+          //   //     secondary: 'black',
+          //   //   },
+          //   // },
+          // }}
+          />
+          <Panel local={data} />
+        </MemoryRouter>
+      </Provider>
+    );
+  });
 }
 
 init();

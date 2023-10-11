@@ -12,6 +12,8 @@ import Send from './utils/Social/send.png';
 import Left from './utils/Social/arrow-left.png';
 import Trash from './utils/Social/trash.png';
 import Menu from './utils/Social/Vector.png';
+import LoadingGif from './utils/Chat/Gif/loader.gif';
+
 // import { message } from 'antd';
 import Profile from './Pages/Profile';
 import ResalaIconWithText from './utils/Youtube/ResalaIconWithText.svg';
@@ -71,22 +73,8 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
   const [close, setClose] = useState(true);
 
   const handleClose = () => {
-    // const textarea1 = document.getElementById('socialTextarea');
-
-    // setIfConfirmClose(true);
-    // if (textarea1) {
-    //   // console.log(textarea1.value);
-    //   console.log(textarea1.value);
-    //   if (textarea1.value.trim() === '') {
-    //     console.log('Hello');
-    //     setClose(!close);
-    //   } else {
-    //     // setIfOpenConfirmBox(true);
-    //   }
-    // }
-    // setIfOpenConfirmBox(true);
-    setClose(!close);
     setIdeasValue('');
+    setClose(!close);
   };
 
   // api integration: social ideas
@@ -116,33 +104,246 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
 
   //todo
   const [selectedIdea, setSelectedIdea] = useState([]);
-  const [visible, setVisible] = useState(true);
+  const [SocialHome, setSocialHome] = useState(true);
+  const [visible, setVisible] = useState(false);
+  const [visible2, setVisible2] = useState(false);
+  const [IdeasValueHome, setIdeasValueHome] = useState('');
+  const [IdeasValueHome1, setIdeasValueHome1] = useState('');
+  const [PostIdea1, setPostIdea1] = useState(true);
+  const [ButtonsShowHome, setButtonShowHome] = useState(false);
+
+  const handleTextArea = async () => {
+    setPostIdea(!PostIdea);
+    setLoading(false);
+    setVisible2(true);
+    setVisible(false);
+    setSocialHome(false);
+    setPostIdea1(!PostIdea1);
+    setSpeechLength(0);
+    const hostname = window.location.hostname;
+    let response;
+
+    const postData = { text: IdeasValueHome1, action: 'string', language: languages, tone: professions };
+
+    if (hostname === 'www.linkedin.com') {
+      response = await postRequest('/linkedin/linkedin_post_streaming', postData);
+    } else if (hostname === 'www.facebook.com') {
+      response = await postRequest('/facebook/facebook_post_streaming', postData);
+    } else if (hostname === 'twitter.com') {
+      response = await postRequest('/twitter/twitter_post_streaming', postData);
+    }
+    console.log({ 'dgvklsdgdsklgvnsdklgndskgdns => ': response });
+    if (response && response.status === 200) {
+      const text = response.data.replace(/^#@#/, '').replace(/connection closed/, '');
+      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
+      const paragraph = words.join(' ');
+      console.log(paragraph, ';;;;;;dsdhsdh');
+      setIdeasValueHome(paragraph);
+      setButtonShowHome(true);
+      setPostIdea(!PostIdea);
+      setLoading(true);
+      // setIdeasValue(paragraph);
+    }
+    console.log(selectedIdea, 'selectedIdea');
+  };
+  // api for home page
+  const [LoadImprove1, setloadImprove1] = useState(false);
+  const handlePostIdeaImprove1 = async () => {
+    // setLoading(true);
+    setloadImprove1(!LoadImprove1);
+    console.log('regenerated!');
+    const hostname = window.location.hostname;
+    let response;
+    console.log(IdeasValue, 'IdeasValue');
+    // const postData = { text: IdeasValue, action: 'string', tone: 'Improve it', language: 'english' };
+    const postData = { text: IdeasValueHome1, action: 'Improve it', language: languages, tone: professions };
+
+    if (hostname === 'www.linkedin.com') {
+      response = await postRequest('/linkedin/regenrate_post_streaming', postData);
+    } else if (hostname === 'www.facebook.com') {
+      response = await postRequest('/facebook/regenrate_facebook_post_streaming', postData);
+    } else if (hostname === 'twitter.com') {
+      response = await postRequest('/twitter/regenrate_post_streaming', postData);
+    }
+
+    if (response && response.status === 200) {
+      const text = response.data
+        .replace(/^#@#/, '')
+        .replace(/connection closed/, '')
+        .replace(/POST :/, '');
+      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
+      console.log(words, 'words');
+      const paragraph = words.join(' ');
+      console.log(paragraph, ';;;;;;dsdhsdh');
+      setIdeasValueHome1(paragraph);
+      setButtonShowHome(true);
+      setloadImprove1(false);
+    }
+  };
+
+  const [LoadAddDetails1, setLoadAddDetails1] = useState(false);
+  const handlePostIdeaAddDetails1 = async () => {
+    // setLoading(true);
+    console.log('regenerated!');
+    setLoadAddDetails1(!LoadAddDetails1);
+    const hostname = window.location.hostname;
+    let response;
+    console.log(IdeasValueHome1, 'IdeasValueHome1');
+    // const postData = { text: IdeasValueHome1, action: 'string', tone: 'Add Details', language: 'english' };
+    const postData = { text: IdeasValueHome1, action: 'Add details', language: languages, tone: professions };
+
+    if (hostname === 'www.linkedin.com') {
+      response = await postRequest('/linkedin/regenrate_post_streaming', postData);
+    } else if (hostname === 'www.facebook.com') {
+      response = await postRequest('/facebook/regenrate_facebook_post_streaming', postData);
+    } else if (hostname === 'twitter.com') {
+      response = await postRequest('/twitter/regenrate_post_streaming', postData);
+    }
+
+    if (response && response.status === 200) {
+      const text = response.data
+        .replace(/^#@#/, '')
+        .replace(/connection closed/, '')
+
+        .replace(/POST :/, '');
+      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
+      console.log(words, 'words');
+      const paragraph = words.join(' ');
+      console.log(paragraph, ';;;;;;dsdhsdh');
+      setIdeasValueHome1(paragraph);
+      setButtonShowHome(true);
+      setLoadAddDetails1(false);
+    }
+  };
+
+  const [LoadHumor1, setLoadHumor1] = useState(false);
+  const handlePostIdeaHumor1 = async () => {
+    // setLoading(true);
+    console.log('regenerated!');
+    setLoadHumor1(!LoadHumor1);
+    const hostname = window.location.hostname;
+    let response;
+    console.log(IdeasValueHome1, 'IdeasValueHome1');
+    // const postData = { text: IdeasValueHome1, action: 'string', tone: 'Add Humor', language: 'english' };
+    const postData = { text: IdeasValueHome1, action: 'Humor', language: languages, tone: professions };
+
+    if (hostname === 'www.linkedin.com') {
+      response = await postRequest('/linkedin/regenrate_post_streaming', postData);
+    } else if (hostname === 'www.facebook.com') {
+      response = await postRequest('/facebook/regenrate_facebook_post_streaming', postData);
+    } else if (hostname === 'twitter.com') {
+      response = await postRequest('/twitter/regenrate_post_streaming', postData);
+    }
+
+    if (response && response.status === 200) {
+      const text = response.data
+        .replace(/^#@#/, '')
+        .replace(/connection closed/, '')
+        .replace(/POST :/, '');
+      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
+      console.log(words, 'words');
+      const paragraph = words.join(' ');
+      console.log(paragraph, ';;;;;;dsdhsdh');
+      setIdeasValueHome1(paragraph);
+      setButtonShowHome(true);
+      setLoadHumor1(false1);
+    }
+  };
+
+  const [LoadInspire1, setLoadInspire1] = useState(false);
+  const handlePostIdeaInspire1 = async () => {
+    // setLoading(true);
+    console.log('regenerated!');
+    setLoadInspire1(!LoadInspire1);
+    const hostname = window.location.hostname;
+    let response;
+    console.log(IdeasValueHome1, 'IdeasValueHome1');
+    // const postData = { text: IdeasValueHome1, action: 'string', tone: 'Inspire', language: 'english' };
+    const postData = { text: IdeasValueHome1, action: 'Inpire', language: languages, tone: professions };
+
+    if (hostname === 'www.linkedin.com') {
+      response = await postRequest('/linkedin/regenrate_post_streaming', postData);
+    } else if (hostname === 'www.facebook.com') {
+      response = await postRequest('/facebook/regenrate_facebook_post_streaming', postData);
+    } else if (hostname === 'twitter.com') {
+      response = await postRequest('/twitter/regenrate_post_streaming', postData);
+    }
+
+    if (response && response.status === 200) {
+      const text = response.data
+        .replace(/^#@#/, '')
+        .replace(/connection closed/, '')
+        .replace(/POST :/, '');
+      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
+      console.log(words, 'words');
+      const paragraph = words.join(' ');
+      console.log(paragraph, ';;;;;;dsdhsdh');
+      setIdeasValueHome1(paragraph);
+      setButtonShowHome(true);
+      setLoadInspire1(false);
+    }
+  };
+
+  const [LoadShorten1, setLoadShorten1] = useState(false);
+  const handlePostIdeaShorten1 = async () => {
+    // setLoading(true);
+    console.log('regenerated!');
+    setLoadShorten1(!LoadShorten1);
+    const hostname = window.location.hostname;
+    let response;
+    console.log(IdeasValueHome1, 'IdeasValueHome1');
+    // const postData = { text: IdeasValueHome1, action: 'string', tone: 'Shorten it', language: 'english' };
+    const postData = { text: IdeasValueHome1, action: 'Shorten it', language: languages, tone: professions };
+
+    if (hostname === 'www.linkedin.com') {
+      response = await postRequest('/linkedin/regenrate_post_streaming', postData);
+    } else if (hostname === 'www.facebook.com') {
+      response = await postRequest('/facebook/regenrate_facebook_post_streaming', postData);
+    } else if (hostname === 'twitter.com') {
+      response = await postRequest('/twitter/regenrate_post_streaming', postData);
+    }
+
+    if (response && response.status === 200) {
+      const text = response.data
+        .replace(/^#@#/, '')
+        .replace(/connection closed/, '')
+        .replace(/POST :/, '');
+      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
+      console.log(words, 'words');
+      const paragraph = words.join(' ');
+      console.log(paragraph, ';;;;;;dsdhsdh');
+      setIdeasValueHome1(paragraph);
+      setButtonShowHome(true);
+      setLoadShorten1(false);
+    }
+  };
+  // empty
+
+  const handleEmpty1 = () => {
+    setIdeasValueHome1('');
+    setSpeechLength(0);
+  };
+
   const handleIdeas = (element) => {
     const selected = socialIdeas[element];
+    setSocialHome(false);
     setSelectedIdea(selected);
-    setVisible(!visible);
+    setVisible(true);
+    setVisible2(false);
+    setButtonShow(false);
+    setPostIdea(true);
   };
 
   console.log(selectedIdea, 'selectedIdea');
 
   // todo : api for language
   const [languages, setLanguages] = useState('English');
-  // useEffect(async () => {
-  //   let response;
-  //   response = await getRequest('/user/language_list');
 
-  //   if (response.status == 200) {
-  //     console.log(response.data.Result);
-  //     setLanguages(response.data.Result);
-  //   }
-  // }, []);
-
-  // console.log({ languages }, 'languages');
   // todo counting text
   const [speechLength, setSpeechLength] = useState(0);
 
   const handlePaste = (e) => {
-    const maxCharacterCount = 4000;
+    const maxCharacterCount = 1000;
     const pastedText = e.clipboardData.getData('text');
     const { name, value } = e.target;
 
@@ -151,21 +352,10 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
     }
   };
   const handleChange = (e) => {
-    // const { name, value } = e.target;
-    // const maxCharacterCount = 4000;
-    // if (name === 'chatText') {
-    //   if (value.length > maxCharacterCount) {
-    //     const truncatedValue = value.substring(0, maxCharacterCount);
-    //     e.target.value = truncatedValue;
-    //     (maxCharacterCount);
-    //   } else {setSpeechLength
-    //     setSpeechLength(value.length);
-    //   }
-    // }
     setIdeasValue(e.target.value);
     console.log(IdeasValue, 'Ideas');
     const { name, value } = e.target;
-    const maxCharacterCount = 4000;
+    const maxCharacterCount = 1000;
     if (name === 'socialTextarea') {
       if (value.length > maxCharacterCount) {
         const truncatedValue = value.substring(0, maxCharacterCount);
@@ -186,9 +376,39 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
   const [InitialIdeasValue, setInitialIdeasValue] = useState('');
   console.log(IdeasValue, 'IdeasValue');
   const [loading, setLoading] = useState(false);
+  const [PostIdea, setPostIdea] = useState(true);
+  const [ButtonsShow, setButtonShow] = useState(false);
+
+  // const [textareaHome, setTextareaHome] = useState(false);
+  // const handleSendHome = async () => {
+  //   setTextareaHome(true);
+  //   const hostname = window.location.hostname;
+  //   let response;
+
+  //   const postData = { text: IdeasValue, action: 'string', language: languages, tone: professions };
+
+  //   if (hostname === 'www.linkedin.com') {
+  //     response = await postRequest('/linkedin/linkedin_post_streaming', postData);
+  //   } else if (hostname === 'www.facebook.com') {
+  //     response = await postRequest('/facebook/facebook_post_streaming', postData);
+  //   } else if (hostname === 'twitter.com') {
+  //     response = await postRequest('/twitter/twitter_post_streaming', postData);
+  //   }
+  //   console.log({ 'dgvklsdgdsklgvnsdklgndskgdns => ': response });
+  //   if (response && response.status === 200) {
+  //     const text = response.data.replace(/^#@#/, '').replace(/connection closed/, '');
+  //     const words = text.split(/\s+/).filter((word) => word.trim() !== '');
+  //     const paragraph = words.join(' ');
+  //     console.log(paragraph, ';;;;;;dsdhsdh');
+  //     setIdeasValueHome(paragraph);
+  //     setButtonShow(true);
+  //     // setIdeasValue(paragraph);
+  //   }
+  // };
 
   const handlePostIdeas = async () => {
-    // setLoading(true);
+    setLoading(true);
+    setPostIdea(!PostIdea);
     setInitialIdeasValue(IdeasValue);
     console.log('InitialIdeasValue!', InitialIdeasValue);
     const hostname = window.location.hostname;
@@ -205,39 +425,31 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
     }
     console.log({ 'dgvklsdgdsklgvnsdklgndskgdns => ': response });
     if (response && response.status === 200) {
-      const words = response.data.split(/\s+/).filter((word) => word.trim() !== '');
+      const text = response.data.replace(/^#@#/, '').replace(/connection closed/, '');
+      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       const paragraph = words.join(' ');
       console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
+      setButtonShow(true);
+      setLoading(false);
+      setPostIdea(!PostIdea);
+
       // setIdeasValue(paragraph);
     }
     console.log(selectedIdea, 'selectedIdea');
     // setIdeasValue('');
   };
 
-  // const copyToClipboard = () => {
-  //   console.log('copied');
-  //   const textArea = document.querySelector('.textArea');
-
-  //   if (textArea) {
-  //     textArea.select();
-  //     document.execCommand('copy');
-  //   }
-  //   // success();
-  // };
-
-  // regenarate
-  // const [newDivContent, setNewDivContent] = useState('');
   const [responses, setResponses] = useState([]);
 
   const handlePostIdeaRegenerate = async () => {
-    setLoading(true);
+    setLoading(false);
     // setNewDivContent('');
 
     const hostname = window.location.hostname;
     let response;
 
-    const postData = { text: IdeasValue, action: 'string', language: languages, tone: professions };
+    const postData = { text: InitialIdeasValue, action: 'string', language: languages, tone: professions };
     console.log(postData, 'postData');
 
     if (hostname === 'www.linkedin.com') {
@@ -251,13 +463,17 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
     console.log({ 'dgvklsdgdsklgvnsdklgndskgdns => ': response });
     if (response && response.status === 200) {
       console.log('skfsdj,gsdjkgdsjkgkjsdjk');
-      const words = response.data.split(/\s+/).filter((word) => word.trim() !== '');
+      const text = response.data
+        .replace(/^#@#/, '')
+        .replace(/connection closed/, '')
+        .replace(/POST :/, '');
+      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       // const words = response.detail[0].ctx.doc.split(/\s+/).filter((word) => word.trim() !== '');
       console.log(words, 'words');
       const paragraph = words.join(' ');
       console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
-
+      setButtonShow(true);
       const newDiv = (
         <div id="mainContentArea1" className="mb-[15px]">
           <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex">
@@ -284,7 +500,7 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
                   // onChange={(e) => setIdeasValue(e.target.value)}
                 />
               </div>
-              <div className={`${IdeasValue === '' ? 'hidden' : 'block'} `}>
+              <div className={`${!ButtonsShow ? 'hidden' : 'block'} `}>
                 <div className={`flex gap-[8px] mt-[16px]`}>
                   <div
                     className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]"
@@ -296,36 +512,27 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
                     className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]"
                     onClick={() => copy(IdeasValue)}
                   >
-                    Copy
+                    {!copy ? 'Copy' : 'Copied'}
                   </div>
                   <div
                     className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC]"
                     onClick={handlePostIdeaRegenerate}
                   >
-                    {loading ? (
-                      <Spin indicator={antIcon} />
-                    ) : (
-                      // 'loading...'
-                      'Regenerate'
-                    )}
+                    {!loading ? <img id="chat-container" className="w-[50px]" src={LoadingGif} /> : 'Regenerate'}
                   </div>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col justify-between items-end pt-[2px] ">
+            <div id="test123" className="flex flex-col justify-between items-end pt-[2px] ">
               {/* <div className="w-[20px] h-[20px]" onClick={handleIdeasValues}>
                       <img className="" src={Send} />
                     </div> */}
-              <div className="w-[20px] h-[20px] cursor-pointer " onClick={handlePostIdeas}>
-                <img className="" src={Send} />
-              </div>
-              <div>
-                {IdeasValue === '' ? (
-                  <span className="text-[#8C90A5] text-[12px]">{speechLength}/4000</span>
+              <div className="w-[20px] h-[20px] cursor-pointer egdjwej" onClick={handlePostIdeas}>
+                {/* <img className={`${PostIdea ? 'hidden' : 'block'} cursor-pointer `} src={Send} /> */}
+                {!loading ? (
+                  <img id="chat-container" className="w-[100px]" src={LoadingGif} />
                 ) : (
-                  <div onClick={handleEmpty}>
-                    <img className="w-[16px] cursor-pointer" src={Trash} />
-                  </div>
+                  <img className={`${PostIdea ? 'hidden' : 'block'} cursor-pointer `} src={Send} />
                 )}
               </div>
             </div>
@@ -338,11 +545,13 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
       console.log(responses, 'responses');
       // setIdeasValue(paragraph);
     }
-    setLoading(false);
+    setLoading(true);
   };
   // improve it
+  const [LoadImprove, setloadImprove] = useState(false);
   const handlePostIdeaImprove = async () => {
     // setLoading(true);
+    setloadImprove(!LoadImprove);
     console.log('regenerated!');
     const hostname = window.location.hostname;
     let response;
@@ -359,17 +568,25 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
     }
 
     if (response && response.status === 200) {
-      const words = response.data.split(/\s+/).filter((word) => word.trim() !== '');
+      const text = response.data
+        .replace(/^#@#/, '')
+        .replace(/connection closed/, '')
+        .replace(/POST :/, '');
+      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       console.log(words, 'words');
       const paragraph = words.join(' ');
       console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
+      setButtonShow(true);
+      setloadImprove(false);
     }
   };
 
+  const [LoadAddDetails, setLoadAddDetails] = useState(false);
   const handlePostIdeaAddDetails = async () => {
     // setLoading(true);
     console.log('regenerated!');
+    setLoadAddDetails(!LoadAddDetails);
     const hostname = window.location.hostname;
     let response;
     console.log(IdeasValue, 'IdeasValue');
@@ -385,17 +602,25 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
     }
 
     if (response && response.status === 200) {
-      const words = response.data.split(/\s+/).filter((word) => word.trim() !== '');
+      const text = response.data
+        .replace(/^#@#/, '')
+        .replace(/connection closed/, '')
+        .replace(/POST :/, '');
+      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       console.log(words, 'words');
       const paragraph = words.join(' ');
       console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
+      setButtonShow(true);
+      setLoadAddDetails(false);
     }
   };
 
+  const [LoadHumor, setLoadHumor] = useState(false);
   const handlePostIdeaHumor = async () => {
     // setLoading(true);
     console.log('regenerated!');
+    setLoadHumor(!LoadHumor);
     const hostname = window.location.hostname;
     let response;
     console.log(IdeasValue, 'IdeasValue');
@@ -411,17 +636,25 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
     }
 
     if (response && response.status === 200) {
-      const words = response.data.split(/\s+/).filter((word) => word.trim() !== '');
+      const text = response.data
+        .replace(/^#@#/, '')
+        .replace(/connection closed/, '')
+        .replace(/POST :/, '');
+      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       console.log(words, 'words');
       const paragraph = words.join(' ');
       console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
+      setButtonShow(true);
+      setLoadHumor(false);
     }
   };
 
+  const [LoadInspire, setLoadInspire] = useState(false);
   const handlePostIdeaInspire = async () => {
     // setLoading(true);
     console.log('regenerated!');
+    setLoadInspire(!LoadInspire);
     const hostname = window.location.hostname;
     let response;
     console.log(IdeasValue, 'IdeasValue');
@@ -437,17 +670,25 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
     }
 
     if (response && response.status === 200) {
-      const words = response.data.split(/\s+/).filter((word) => word.trim() !== '');
+      const text = response.data
+        .replace(/^#@#/, '')
+        .replace(/connection closed/, '')
+        .replace(/POST :/, '');
+      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       console.log(words, 'words');
       const paragraph = words.join(' ');
       console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
+      setButtonShow(true);
+      setLoadInspire(false);
     }
   };
 
+  const [LoadShorten, setLoadShorten] = useState(false);
   const handlePostIdeaShorten = async () => {
     // setLoading(true);
     console.log('regenerated!');
+    setLoadShorten(!LoadShorten);
     const hostname = window.location.hostname;
     let response;
     console.log(IdeasValue, 'IdeasValue');
@@ -463,17 +704,24 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
     }
 
     if (response && response.status === 200) {
-      const words = response.data.split(/\s+/).filter((word) => word.trim() !== '');
+      const text = response.data
+        .replace(/^#@#/, '')
+        .replace(/connection closed/, '')
+        .replace(/POST :/, '');
+      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       console.log(words, 'words');
       const paragraph = words.join(' ');
       console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
+      setButtonShow(true);
+      setLoadShorten(false);
     }
   };
   // empty
 
   const handleEmpty = () => {
     setIdeasValue('');
+    setSpeechLength(0);
   };
 
   // Insert text
@@ -518,23 +766,7 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
   // setting
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const socialMediaId = document.getElementById('socialMediaPreference');
-  //   console.log('socialMediaId', socialMediaId);
-  //   navigate('/preferences');
-  //   handleSidebar('chat');
-  //   console.log('Navigation completed');
-  // }, []);
-  // const [Preference, setPreference] = useState(false);
-  // const handleSettings = () => {
-  //   console.log('heelllo preference');
-  //   navigate('/preferences');
-  //   handleSidebar('chat');
-  // };
-  // const handleProfile = () => {
-  //   navigate('/preferences');
-  //   handleSidebar('chat');
-  // };
+  const [copied, setCopied] = useState(false);
   return (
     <>
       <div
@@ -554,79 +786,23 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
             <div>
               <img src={ResalaIconWithText} />
             </div>
-            <div className="items-center flex ml-[0.5]">
+            <div className="items-center flex ml-[3px]">
               <div className="w-[34px] h-[17px] rounded-xl border border-blue-600 justify-center flex">
                 <div className="text-blue-600 text-[10px] font-medium font-['DM Sans']">Beta</div>
               </div>
             </div>
           </div>
           <div className="flex gap-[8] ">
-            {/*<div
-              className="rounded-full justify-center items-center flex border border-slate-200 w-[24] h-[24]"
-              id="SettingHeader"
-            >
-              <img className="w-[14] h-[14]" src={Setting} onClick={() => navigate('/preferences')} />
-            </div> */}
-            {/* <CustomTooltip
-              isFloating
-              maxWidth="430px"
-              place="bottom"
-              id="SettingHeader"
-              content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Settings </div>`}
-            > */}
             <div
               id="SettingHeader"
               className="rounded-full justify-center items-center flex border border-slate-200 w-[24] h-[24] cursor-pointer relative"
             >
               <img className="h-[14px] w-[14px]" src={Setting} id="socialMediaPreference" />
-
-              {/* <div
-                className={`${
-                  !Preference ? 'hidden' : 'block'
-                } w-[600px] h-[315px] overflow-y-scroll absolute right-[-82px] top-[36px] bg-white`}
-                style={{
-                  zIndex: '99999999',
-                }}
-              >
-                <SocialPreference setPreference={setPreference} />
-              </div> */}
             </div>
-            {/* </CustomTooltip> */}
-            <div className="cursor-pointer relative">
-              <img
-                className="rounded-full w-[24] h-[24]"
-                src={ProfilePic}
-                onClick={() => {
-                  navigate('/');
-                  console.log('hello');
-                }}
-              />
-              {/* {isProfile && (
-                <div
-                  className="absolute top-[28px] right-0 w-[350px] h-[300px] overflow-y-scroll"
-                  style={{
-                    boxShadow: 'rgba(60, 66, 87, 0.1) 0px 10px 20px 0px',
-                    borderRadius: '5px',
-                  }}
-                >
-                  <SocialProfile
-                    loggedUser={loggedUser}
-                    setIsLogout={setIsLogout}
-                    setIsProfile={setIsProfile}
-                    // setIsLogin={setIsLogin}
-                  />
-                </div>
-              )} */}
-            </div>
-            {/* <div className="absolute bottom-0 right-0 h-[300px] overflow-y-scroll"> */}
-            {/* </div> */}
+            {/* line */}
+            <div className="w-[1px] h-[22px] border border-slate-200"></div>
             <div id="closeSocialBtn" className="cursor-pointer relative">
               <img className="rounded-full w-[24] h-[24]" src={Close} onClick={handleClose} />
-              {/* {close && (
-                <div className={`absolute bottom-[-250px] right-[51px] `} style={{ zIndex: '999999' }}>
-                  <SocialConfirmation setIfOpenConfirmBox={setIfOpenConfirmBox} />
-                </div>
-              )} */}
             </div>
           </div>
         </div>
@@ -655,6 +831,12 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
                 } w-[121px] bg-white rounded-lg shadow flex-col justify-start items-start gap-[8px] inline-flex absolute top-[30px] right-0 p-[8px] pt-[10] pb-[10px]`}
                 style={{ zIndex: '99999999', boxShadow: '0px 2px 20px 0px rgba(0, 0, 0, 0.15)' }}
               >
+                <div
+                  className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage"
+                  onClick={() => setLanguages('Auto')}
+                >
+                  <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">Auto</div>
+                </div>
                 <div
                   className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage"
                   onClick={() => setLanguages('English')}
@@ -748,8 +930,10 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
             </div>
           </div>
         </div>
+
+        {/* second div */}
         <div className="py-[12px] px-[16px] " id="">
-          <p className={`${!visible ? 'hidden' : 'block'} text-[#8C90A5] text-[14px] font-bold font-['DM Sans']`}>
+          <p className={`${!SocialHome ? 'hidden' : 'block'} text-[#8C90A5] text-[14px] font-bold font-['DM Sans']`}>
             IDEAS FOR YOU
           </p>
           {/* todo textarea  */}
@@ -757,8 +941,8 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
 
           <div className="flex gap-[8px] flex-wrap">
             {socialIdeas?.map((idea, index) => (
-              <div key={index} onClick={() => handleIdeas(index)} className={`${!visible ? 'hidden' : 'block'}`}>
-                <div className="p-[8px] bg-blue-50 rounded-md flex-col justify-start items-start gap-2.5 inline-flex  cursor-auto">
+              <div key={index} onClick={() => handleIdeas(index)} className={`${!SocialHome ? 'hidden' : 'block'}`}>
+                <div className="p-[8px] bg-blue-50 rounded-[7px] flex-col justify-start items-start gap-2.5 inline-flex  cursor-pointer hover:bg-[#D9EBFF]">
                   <div className="gap-[8px] justify-start items-start inline-flex">
                     <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
                       <img src={idea.image_link} />
@@ -770,14 +954,21 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
             ))}
           </div>
 
-          {!visible && (
+          {visible && (
             <>
               <div id="wholeAreaContent" className="relative">
                 <div
                   className="flex gap-[8px] mb-[12px] justify-start items-center cursor-pointer"
                   onClick={() => {
-                    setVisible(!visible);
+                    setVisible(false);
+                    setVisible2(false);
                     setIdeasValue('');
+                    setSpeechLength(0);
+                    setSocialHome(true);
+                    setPostIdea(!PostIdea);
+                    setButtonShow(!ButtonsShow);
+                    setResponses([]);
+                    setLoading(false);
                   }}
                 >
                   <img className="w-[14] h-[14]" src={Left} />
@@ -786,7 +977,7 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
 
                 <div className="h-[160px] overflow-y-scroll ">
                   <div id="mainContentArea1" className="mb-[15px]">
-                    <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex">
+                    <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex !cursor-pointer hover:bg-[#D9EBFF]">
                       <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
                         <img src={selectedIdea.image_link} />
                       </div>
@@ -809,7 +1000,7 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
                             // onChange={(e) => setIdeasValue(e.target.value)}
                           />
                         </div>
-                        <div className={`${IdeasValue === '' ? 'hidden' : 'block'} `}>
+                        <div className={`${!ButtonsShow ? 'hidden' : 'block'} `}>
                           <div className={`flex gap-[8px] mt-[16px]`}>
                             <div
                               className="bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-white w-[90px]"
@@ -819,41 +1010,47 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
                             </div>
                             <div
                               className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]"
-                              onClick={() => copy(IdeasValue)}
+                              onClick={() => {
+                                copy(IdeasValue);
+                                setCopied(true);
+                              }}
                             >
-                              Copy
+                              {!copied ? 'Copy' : 'Copied'}
                             </div>
                             <div
                               className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC]"
                               onClick={handlePostIdeaRegenerate}
                             >
-                              {loading
-                                ? // <Audio
-                                  //   height="80"
-                                  //   width="80"
-                                  //   radius="9"
-                                  //   color="green"
-                                  //   ariaLabel="loading"
-                                  //   wrapperStyle
-                                  //   wrapperClass
-                                  // />
-                                  'loading...'
-                                : 'Regenerate'}
+                              {loading ? (
+                                <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                              ) : (
+                                'Regenerate'
+                              )}
                             </div>
                           </div>
                         </div>
                       </div>
                       <div className="flex flex-col justify-between items-end pt-[2px] ">
-                        {/* <div className="w-[20px] h-[20px]" onClick={handleIdeasValues}>
-                      <img className="" src={Send} />
-                    </div> */}
-                        <div className="w-[20px] h-[20px] cursor-pointer " onClick={handlePostIdeas}>
-                          <img className="" src={Send} />
+                        {/* <div className={`w-[20px] h-[20px] cursor-pointer `} onClick={handlePostIdeas}>
+                          <img className=" cursor-pointer " src={Send} />
+                        </div> */}
+                        <div className="w-[30px] h-[20px] cursor-pointer" onClick={handlePostIdeas}>
+                          {/* {PostIdea ? <img className=" cursor-pointer " src={Send} /> : ''} */}
+                          {loading ? (
+                            <img id="chat-container" className="w-[30px]" src={LoadingGif} />
+                          ) : (
+                            <img className={`${!PostIdea ? 'hidden' : 'block'} cursor-pointer `} src={Send} />
+                          )}
                         </div>
                         <div>
-                          {IdeasValue === '' ? (
-                            <span className="text-[#8C90A5] text-[12px]">{speechLength}/4000</span>
+                          {/* {!ButtonsShow ? (
+                            <span className="text-[#8C90A5] text-[12px]">{speechLength}/1000</span>
                           ) : (
+                            <div onClick={handleEmpty}>
+                              <img className="w-[16px] cursor-pointer" src={Trash} />
+                            </div>
+                          )} */}
+                          {ButtonsShow && (
                             <div onClick={handleEmpty}>
                               <img className="w-[16px] cursor-pointer" src={Trash} />
                             </div>
@@ -861,63 +1058,14 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
                         </div>
                       </div>
                     </div>
+                    {!ButtonsShow && (
+                      <div className="flex justify-end items-center mt-[3px]">
+                        <span className="text-[#8C90A5] text-[12px]">{speechLength}/1000</span>
+                      </div>
+                    )}
                     {/* {newDivContent && <div>{newDivContent}</div>} */}
                   </div>
-                  {/* <div id="mainContentArea" className="mb-[15px]">
-                    <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex">
-                      <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
-                        <img src={selectedIdea.image_link} />
-                      </div>
-                      <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div>
-                    </div>
 
-                    <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] h-[120px] flex flex-row gap-[14px]">
-                      <div className="flex flex-col justify-between w-[508px]">
-                        <div>
-                          <textarea
-                            placeholder={`${selectedIdea.placeholder}`}
-                            className="p-[1px] textArea resize-none"
-                            style={{ width: '100%', boxShadow: 'none' }}
-                            value={IdeasValue}
-                            onChange={(e) => setIdeasValue(e.target.value)}
-                          />
-                        </div>
-                        <div className={`${IdeasValue === '' ? 'hidden' : 'block'} `}>
-                          <div className={`flex gap-[8px] mt-[16px]`}>
-                            <div className="bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-white w-[90px]">
-                              Insert
-                            </div>
-                            <div
-                              className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]"
-                              onClick={copyToClipboard}
-                            >
-                              Copy
-                            </div>
-                            <div
-                              className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC]"
-                              onClick={handlePostIdeaRegenerate}
-                            >
-                              {loading ? 'loading...' : 'Regenerate'}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex flex-col justify-between items-end pt-[2px] ">
-                        <div className="w-[20px] h-[20px] cursor-pointer " onClick={handlePostIdeas}>
-                          <img className="" src={Send} />
-                        </div>
-                        <div>
-                          {IdeasValue === '' ? (
-                            <span className="text-[#8C90A5] text-[12px]">0/4000</span>
-                          ) : (
-                            <div onClick={handleEmpty}>
-                              <img className="w-[16px] cursor-pointer" src={Trash} />
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div> */}
                   {responses?.map((divfd, index) => (
                     <div key={index}>{divfd}</div>
                   ))}
@@ -928,139 +1076,385 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
                   </div>
                 ))} */}
                 {/* todo button part   */}
+                <div className={`${!ButtonsShow ? 'hidden' : 'block'} `}>
+                  <div className={`flex justify-end items-center gap-[8px] mt-[15px] absolute right-0 left-0 bg-white`}>
+                    <div
+                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex !cursor-pointer"
+                      onClick={handlePostIdeaImprove}
+                    >
+                      <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
+                      {!LoadImprove ? (
+                        <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Improve it</div>
+                      ) : (
+                        <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                      )}
+                    </div>
+                    <div
+                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex"
+                      onClick={handlePostIdeaAddDetails}
+                    >
+                      <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
+                      {!LoadAddDetails ? (
+                        <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Details</div>
+                      ) : (
+                        <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                      )}
+                    </div>
+                    <div
+                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex"
+                      onClick={handlePostIdeaHumor}
+                    >
+                      <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
+                      {!LoadHumor ? (
+                        <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Humor</div>
+                      ) : (
+                        <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                      )}
+                    </div>
+                    <div
+                      className="w-[12px] flex justify-center items-center cursor-pointer relative"
+                      onClick={() => setPopupMenu(!PopupMenu)}
+                    >
+                      <img className="" src={Menu} />
 
-                <div className="flex justify-end items-center gap-[8px] mt-[15px] absolute right-0 left-0 bg-white">
-                  <div
-                    className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex !cursor-pointer"
-                    onClick={handlePostIdeaImprove}
-                  >
-                    <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
-                    <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Improve it</div>
-                  </div>
-                  <div
-                    className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex"
-                    onClick={handlePostIdeaAddDetails}
-                  >
-                    <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
-                    <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add details</div>
-                  </div>
-                  <div
-                    className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex"
-                    onClick={handlePostIdeaHumor}
-                  >
-                    <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
-                    <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add humor</div>
-                  </div>
-                  <div
-                    className="w-[12px] flex justify-center items-center cursor-pointer relative"
-                    onClick={() => setPopupMenu(!PopupMenu)}
-                  >
-                    <img className="" src={Menu} />
+                      {PopupMenu && (
+                        <div
+                          className="absolute top-[-163px] p-[8px] w-[221px] h-[150px] right-0 bg-[#fff] gap-[8px]"
+                          style={{ boxShadow: '0px 4px 20px 0px rgba(60, 66, 87, 0.10)' }}
+                        >
+                          <div className="flex justify-between items-center py-[4px]">
+                            <p className="text-[#8C90A5] text-[12px] capitalize font-[700] font-['DM Sans']">
+                              IDEAS FOR TEXT
+                            </p>
+                            <div className="w-[12px] cursor-pointer" onClick={() => setPopupMenu(!PopupMenu)}>
+                              <img className="" src={Cross} />
+                            </div>
+                          </div>
+                          {/* todo */}
+                          <div className="flex flex-wrap gap-[6px] h-[108px] overflow-y-scroll">
+                            <div
+                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer "
+                              onClick={handlePostIdeaImprove}
+                            >
+                              <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
+                              {!LoadImprove ? (
+                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">
+                                  Improve it
+                                </div>
+                              ) : (
+                                <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                              )}
+                            </div>
 
-                    {PopupMenu && (
-                      <div
-                        className="absolute top-[-163px] p-[8px] w-[221px] h-[150px] right-0 bg-[#fff] gap-[8px]"
-                        style={{ boxShadow: '0px 4px 20px 0px rgba(60, 66, 87, 0.10)' }}
-                      >
-                        <div className="flex justify-between items-center py-[4px]">
-                          <p className="text-[#8C90A5] text-[12px] capitalize font-[700] font-['DM Sans']">
-                            IDEAS FOR TEXT
-                          </p>
-                          <div className="w-[12px] cursor-pointer" onClick={() => setPopupMenu(!PopupMenu)}>
-                            <img className="" src={Cross} />
+                            <div
+                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                              onClick={handlePostIdeaAddDetails}
+                            >
+                              <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
+                              {!LoadAddDetails ? (
+                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">
+                                  Add Details
+                                </div>
+                              ) : (
+                                <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                              )}
+                            </div>
+
+                            <div
+                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                              onClick={handlePostIdeaHumor}
+                            >
+                              <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
+                              {!LoadHumor ? (
+                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Humor</div>
+                              ) : (
+                                <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                              )}
+                            </div>
+
+                            <div
+                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                              onClick={handlePostIdeaInspire}
+                            >
+                              <div className="text-white text-base font-medium font-['DM Sans']">💡</div>
+
+                              {!LoadInspire ? (
+                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Inspire</div>
+                              ) : (
+                                <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                              )}
+                            </div>
+
+                            <div
+                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex"
+                              onClick={handlePostIdeaShorten}
+                            >
+                              <div className="text-white text-base font-medium font-['DM Sans']">📄</div>
+                              {!LoadShorten ? (
+                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">
+                                  Shorten it
+                                </div>
+                              ) : (
+                                <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                              )}
+                            </div>
                           </div>
                         </div>
-
-                        <div className="flex flex-wrap gap-[6px]">
-                          <div
-                            className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer "
-                            onClick={handlePostIdeaImprove}
-                          >
-                            <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
-                            <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Improve it</div>
-                          </div>
-
-                          <div
-                            className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
-                            onClick={handlePostIdeaAddDetails}
-                          >
-                            <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
-                            <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Details</div>
-                          </div>
-
-                          <div
-                            className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
-                            onClick={handlePostIdeaHumor}
-                          >
-                            <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
-                            <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add humor</div>
-                          </div>
-
-                          <div
-                            className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
-                            onClick={handlePostIdeaInspire}
-                          >
-                            <div className="text-white text-base font-medium font-['DM Sans']">💡</div>
-                            <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Inspire</div>
-                          </div>
-
-                          <div
-                            className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex"
-                            onClick={handlePostIdeaShorten}
-                          >
-                            <div className="text-white text-base font-medium font-['DM Sans']">📄</div>
-                            <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Shorten it</div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </>
           )}
+          {visible2 && (
+            <>
+              <div id="wholeAreaContent" className="relative">
+                <div
+                  className="flex gap-[8px] mb-[12px] justify-start items-center cursor-pointer"
+                  onClick={() => {
+                    setVisible(false);
+                    setVisible2(false);
+                    setIdeasValueHome1('');
+                    setIdeasValueHome('');
+                    setSpeechLength(0);
+                    setSocialHome(true);
+                    setButtonShow(!ButtonsShow);
+                    setResponses([]);
+                    setLoading(false);
+                  }}
+                >
+                  <img className="w-[14] h-[14]" src={Left} />
+                  <p className="text-[#19224C]">Back</p>
+                </div>
 
-          {/* <div className="flex gap-[8px] flex-wrap">
-            <div>
-              <div className="p-[8px] bg-blue-50 rounded-md flex-col justify-start items-start gap-2.5 inline-flex">
-                <div className="gap-[8px] justify-start items-start gap-2 inline-flex items-center">
-                  <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">👋</div>
-                  <div className="text-[#8C90A5] text-[14px] font-medium font-['DM Sans']">
-                    Write a personal introduction
+                <div className="h-[160px] overflow-y-scroll ">
+                  <div id="mainContentArea1" className="mb-[15px]">
+                    <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex !cursor-pointer hover:bg-[#D9EBFF]">
+                      {/* <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
+                        <img src={selectedIdea.image_link} />
+                      </div> */}
+                      <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{IdeasValueHome1}</div>
+                    </div>
+                    {/* <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div> */}
+                    <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] h-[120px] flex flex-row gap-[14px]">
+                      <div className="flex flex-col justify-between w-[508px]">
+                        <div>
+                          {/* <p className="text-[#8C90A5]">{selectedIdea.placeholder}</p> */}
+                          <textarea
+                            // placeholder={`${selectedIdea.placeholder}`}
+                            className="p-[1px] textArea resize-none"
+                            style={{ width: '100%', boxShadow: 'none' }}
+                            value={IdeasValueHome}
+                            id="socialTextarea"
+                            name="socialTextarea"
+                            onChange={(e) => handleChange(e)}
+                            onPaste={handlePaste}
+                            // onChange={(e) => setIdeasValue(e.target.value)}
+                          />
+                        </div>
+                        <div className={`${!ButtonsShowHome ? 'hidden' : 'block'} `}>
+                          <div className={`flex gap-[8px] mt-[16px]`}>
+                            <div
+                              className="bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-white w-[90px]"
+                              onClick={InsertedValue}
+                            >
+                              Insert
+                            </div>
+                            <div
+                              className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]"
+                              onClick={() => {
+                                copy(IdeasValue);
+                                setCopied(true);
+                              }}
+                            >
+                              {!copied ? 'Copy' : 'Copied'}
+                            </div>
+                            <div
+                              className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC]"
+                              onClick={handlePostIdeaRegenerate}
+                            >
+                              {!loading ? (
+                                <img id="chat-container" className="w-[100px]" src={LoadingGif} />
+                              ) : (
+                                'Regenerate'
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex flex-col justify-between items-end pt-[2px] ">
+                        {/* <div className={`w-[20px] h-[20px] cursor-pointer `} onClick={handlePostIdeas}>
+                          <img className=" cursor-pointer " src={Send} />
+                        </div> */}
+                        <div className="w-[20px] h-[20px] cursor-pointer" onClick={handlePostIdeas}>
+                          {/* {!ButtonsShowHome ? <img className=" cursor-pointer " src={Send} /> : ''} */}
+                          {!loading ? (
+                            <img id="chat-container" className="w-[100px]" src={LoadingGif} />
+                          ) : (
+                            <img className={`${!PostIdea ? 'hidden' : 'block'} cursor-pointer `} src={Send} />
+                          )}
+                        </div>
+                        <div>
+                          {!ButtonsShowHome ? (
+                            <span className="text-[#8C90A5] text-[12px]">{speechLength}/1000</span>
+                          ) : (
+                            <div onClick={handleEmpty1}>
+                              <img className="w-[16px] cursor-pointer" src={Trash} />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    {/* {newDivContent && <div>{newDivContent}</div>} */}
+                  </div>
+
+                  {responses?.map((divfd, index) => (
+                    <div key={index}>{divfd}</div>
+                  ))}
+                </div>
+
+                {/* todo button part   */}
+                <div className={`${!ButtonsShowHome ? 'hidden' : 'block'} `}>
+                  <div className={`flex justify-end items-center gap-[8px] mt-[15px] absolute right-0 left-0 bg-white`}>
+                    <div
+                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex !cursor-pointer"
+                      onClick={handlePostIdeaImprove1}
+                    >
+                      <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
+                      {!LoadImprove1 ? (
+                        <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Improve it</div>
+                      ) : (
+                        <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                      )}
+                    </div>
+                    <div
+                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex"
+                      onClick={handlePostIdeaAddDetails1}
+                    >
+                      <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
+                      {!LoadAddDetails1 ? (
+                        <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Details</div>
+                      ) : (
+                        <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                      )}
+                    </div>
+                    <div
+                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex"
+                      onClick={handlePostIdeaHumor1}
+                    >
+                      <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
+                      {!LoadHumor1 ? (
+                        <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Humor</div>
+                      ) : (
+                        <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                      )}
+                    </div>
+                    <div
+                      className="w-[12px] flex justify-center items-center cursor-pointer relative"
+                      onClick={() => setPopupMenu(!PopupMenu)}
+                    >
+                      <img className="" src={Menu} />
+
+                      {PopupMenu && (
+                        <div
+                          className="absolute top-[-163px] p-[8px] w-[221px] h-[150px] right-0 bg-[#fff] gap-[8px]"
+                          style={{ boxShadow: '0px 4px 20px 0px rgba(60, 66, 87, 0.10)' }}
+                        >
+                          <div className="flex justify-between items-center py-[4px]">
+                            <p className="text-[#8C90A5] text-[12px] capitalize font-[700] font-['DM Sans']">
+                              IDEAS FOR TEXT
+                            </p>
+                            <div className="w-[12px] cursor-pointer" onClick={() => setPopupMenu(!PopupMenu)}>
+                              <img className="" src={Cross} />
+                            </div>
+                          </div>
+
+                          <div className="flex flex-wrap gap-[6px]">
+                            <div
+                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer "
+                              onClick={handlePostIdeaImprove1}
+                            >
+                              <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
+                              {!LoadImprove1 ? (
+                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">
+                                  Improve it
+                                </div>
+                              ) : (
+                                <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                              )}
+                            </div>
+
+                            <div
+                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                              onClick={handlePostIdeaAddDetails1}
+                            >
+                              <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
+                              {!LoadAddDetails1 ? (
+                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">
+                                  Add Details
+                                </div>
+                              ) : (
+                                <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                              )}
+                            </div>
+
+                            <div
+                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                              onClick={handlePostIdeaHumor1}
+                            >
+                              <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
+                              {!LoadHumor1 ? (
+                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Humor</div>
+                              ) : (
+                                <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                              )}
+                            </div>
+
+                            <div
+                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                              onClick={handlePostIdeaInspire1}
+                            >
+                              <div className="text-white text-base font-medium font-['DM Sans']">💡</div>
+
+                              {!LoadInspire1 ? (
+                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Inspire</div>
+                              ) : (
+                                <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                              )}
+                            </div>
+
+                            <div
+                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex"
+                              onClick={handlePostIdeaShorten1}
+                            >
+                              <div className="text-white text-base font-medium font-['DM Sans']">📄</div>
+                              {!LoadShorten1 ? (
+                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">
+                                  Shorten it
+                                </div>
+                              ) : (
+                                <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div>
-              <div className="p-[8px] bg-blue-50 rounded-md flex-col justify-start items-start gap-2.5 inline-flex">
-                <div className="gap-[8px] justify-start items-start gap-2 inline-flex items-center">
-                  <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">📱</div>
-                  <div className="text-[#8C90A5] text-[14px] font-medium font-['DM Sans']">
-                    Write a social media post
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div className="p-[8px] bg-blue-50 rounded-md flex-col justify-start items-start gap-2.5 inline-flex">
-                <div className="gap-[8px] justify-start items-start gap-2 inline-flex items-center">
-                  <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">💼</div>
-                  <div className="text-[#8C90A5] text-[14px] font-medium font-['DM Sans']">Job posting</div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div className="p-[8px] bg-blue-50 rounded-md flex-col justify-start items-start gap-2.5 inline-flex">
-                <div className="gap-[8px] justify-start items-start gap-2 inline-flex items-center">
-                  <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">💼</div>
-                  <div className="text-[#8C90A5] text-[14px] font-medium font-['DM Sans']">Job posting</div>
-                </div>
-              </div>
-            </div>
-          </div> */}
+            </>
+          )}
+          {/* textarea */}
         </div>
-        <div className={`${!visible ? 'hidden' : 'block'} p-[16px] absolute bottom-[0px] flex border border-white`}>
-          <div className="w-[565px] p-[14px] pb-[0px] flex border-[1px] border-slate-200 rounded-[6px] gap-[8px]">
+
+        <div
+          className={`${
+            SocialHome ? 'block' : 'hidden'
+          } p-[16px] absolute bottom-[0px] flex border border-white flex-col`}
+        >
+          <div className="w-[565px] p-[14px] pb-[0px] flex border-[1px] border-slate-200 rounded-[6px] gap-[12px]">
             <div
               className="rounded-full w-[24px] h-[24px] background-[#fff] flex justify-center items-center"
               style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.15)' }}
@@ -1072,20 +1466,38 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
                 placeholder="Tell me what to write for you"
                 className="p-[1px] textArea resize-none"
                 id="socialTextarea"
-                onChange={(e) => handleChange(e)}
+                value={IdeasValueHome1}
+                onChange={(e) => {
+                  setIdeasValueHome1(e.target.value);
+                  const { name, value } = e.target;
+                  const maxCharacterCount = 1000;
+                  if (name === 'socialTextarea') {
+                    if (value.length > maxCharacterCount) {
+                      const truncatedValue = value.substring(0, maxCharacterCount);
+                      e.target.value = truncatedValue;
+                      setSpeechLength(truncatedValue.length);
+                    } else {
+                      setSpeechLength(value.length);
+                    }
+                  }
+                  if (value.length >= maxCharacterCount) {
+                    e.preventDefault();
+                    e.stopPropogation();
+                  }
+                }}
                 onPaste={handlePaste}
                 name="socialTextarea"
                 style={{ width: '100%', height: '100%', boxShadow: 'none' }}
               />
             </div>
-            <div className="flex flex-col justify-between items-end pt-[2px] pb-[10px]">
-              <div className="w-[20px] h-[20px]">
-                <img className="" src={Send} />
-              </div>
-              <div>
-                <span className="text-[#8C90A5] text-[12px]">{speechLength}/4000</span>
+            <div className="flex flex-col justify-between items-end pt-[2px] pb-[10px] ml-[27px]">
+              <div className="w-[20px] h-[20px]  cursor-pointer" onClick={handleTextArea}>
+                <img className=" cursor-pointer " src={Send} />
               </div>
             </div>
+          </div>
+          <div className="flex justify-end items-center mt-[3px] fsddfsd">
+            <span className="text-[#8C90A5] text-[12px]">{speechLength}/1000</span>
           </div>
         </div>
       </div>

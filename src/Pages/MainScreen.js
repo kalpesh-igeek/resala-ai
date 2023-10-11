@@ -111,7 +111,8 @@ import stopIcon from '../utils/MainScreen/Icons/stop.svg';
 import { BottomDrawerLayout } from '../Components/Common/BottomDrawerLayout';
 import PromptComp from '../Components/Common/PromptComp';
 import CustomTooltip from '../Components/CustomTooltip/Tooltip';
-
+import { Switch } from 'antd';
+import './style.css';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
@@ -559,21 +560,16 @@ const MainScreen = ({
   }, [selectTab]);
 
   useEffect(() => {
-      setSelectedAction({ name: 'Polish' });
-      setSelectedLength({ name: 'Auto' });
-      setSelectedTone({ name: 'Professional' });
-      setSelectedLanguage({ name: 'English' });
-      setSelectedItems([
-        { name: 'Polish' },
-        { name: 'Auto' },
-        { name: 'Professional' },
-        { name: 'English' },
-      ]);
-      console.log("selectedItems =============>",selectedItems);
+    setSelectedAction({ name: 'Polish' });
+    setSelectedLength({ name: 'Auto' });
+    setSelectedTone({ name: 'Professional' });
+    setSelectedLanguage({ name: 'English' });
+    setSelectedItems([{ name: 'Polish' }, { name: 'Auto' }, { name: 'Professional' }, { name: 'English' }]);
+    console.log('selectedItems =============>', selectedItems);
   }, [activeTabSub]);
 
-  console.log({selectedItems});
-  
+  console.log({ selectedItems });
+
   const updateIsNewFlag = () => {
     const updatedChatData = chatData.map((item) => {
       if (item.isNew) {
@@ -1545,7 +1541,7 @@ const MainScreen = ({
   };
 
   const handleInputButtonBox = () => {
-    console.log("handleInputButtonBox");
+    console.log('handleInputButtonBox');
     setInputButtonBox(!inputButtonBox);
   };
 
@@ -1806,15 +1802,20 @@ const MainScreen = ({
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       try {
         const response = await fetch('https://api-qa.resala.ai/chat/stream_chat', {
+          // const response = await fetch(
+          //   'https://5208-2401-4900-1f3f-864b-1433-bacc-61c9-7a9a.ngrok-free.app/chat/stream_chat',
+          //   {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             // 'Access-Control-Allow-Origin': '*',
             Authorization: getToken(),
           },
+          // todo
           body: JSON.stringify({
             question: message,
             chatId: chatId,
+            web_access: !webAccess,
           }),
           signal: controller.signal, // Associate the AbortController with the request
         });
@@ -1954,11 +1955,14 @@ const MainScreen = ({
     }
 
     setChatData(updatedChatData);
-
-    const payload = { chatId: chatId };
+    // todo
+    const payload = { chatId: chatId, web_access: !webAccess };
 
     try {
       const response = await fetch('https://api-qa.resala.ai/chat/regenerate_stream_response', {
+        // const response = await fetch(
+        //   'https://5208-2401-4900-1f3f-864b-1433-bacc-61c9-7a9a.ngrok-free.app/chat/regenerate_stream_response',
+        //   {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -2190,6 +2194,13 @@ const MainScreen = ({
   //   }
   // }, [resultText, currentPageIndex, selectedTemplate]);
 
+  // todo
+  const [webAccess, setWebAccess] = useState(false);
+  const onChangeOnOff = (checked) => {
+    console.log(`switch to ${checked}`);
+    setWebAccess(!webAccess);
+    console.log(webAccess, 'webAccess');
+  };
   return (
     <>
       {!TOKEN ? (
@@ -2353,6 +2364,11 @@ const MainScreen = ({
                                 <span className={`text-[12px] whitespace-pre`}> {item.label}</span>
                               </div>
                             ))}{' '}
+                            {/* todo */}
+                            <div className="flex justify-center items-center gap-[2px]">
+                              web access
+                              <Switch defaultChecked onChange={onChangeOnOff} />
+                            </div>
                           </div>
                           <div className="flex gap-[15px] items-center">
                             <CustomTooltip

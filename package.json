@@ -17,7 +17,7 @@
     "@draft-js-plugins/mention": "^5.2.1",
     "@headlessui/react": "^1.7.14",
     "@reduxjs/toolkit": "^1.9.5",
-    "antd": "^5.9.4",
+    "antd": "^5.10.0",
     "axios": "^1.4.0",
     "bootstrap-daterangepicker": "^3.1.0",
     "classnames": "^2.3.1",
