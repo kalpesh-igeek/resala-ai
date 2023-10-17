@@ -2512,7 +2512,6 @@ const MainScreen = ({
                                       }),
                                       option: (styles, { data, isDisabled, isFocused, isSelected }) => {
                                         // const color = chroma(data.color);
-                                        // console.log({ data, isDisabled, isFocused, isSelected });
                                         return {
                                           ...styles,
                                           backgroundColor: isFocused ? '#F3F4F8' : null,
@@ -2982,7 +2981,6 @@ const MainScreen = ({
                                     }),
                                     option: (styles, { data, isDisabled, isFocused, isSelected }) => {
                                       // const color = chroma(data.color);
-                                      // console.log({ data, isDisabled, isFocused, isSelected });
                                       return {
                                         ...styles,
                                         backgroundColor: isFocused ? '#F3F4F8' : null,
