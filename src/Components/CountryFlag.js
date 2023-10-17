@@ -8,7 +8,7 @@ function CountryFlag({ style }) {
             .then(res => res.json())
             .then(
                 (result) => {
-                    console.log(result)
+                    // console.log(result)
                     const country = {
                         code : result.country_calling_code,
                         flag : result.country
@@ -16,7 +16,7 @@ function CountryFlag({ style }) {
                     setCurrentCountry(country)
                 },
                 (error) => {
-                    console.log(error);
+                    // console.log(error);
                 }
             )
     }, [])

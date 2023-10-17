@@ -48,7 +48,7 @@ export const SelectLanguageComp = ({ isOpen }) => {
             defaultValue={'English'}
             onChange={(e) => {
               e.preventDefault();
-              console.log(e);
+              // console.log(e);
             }}
             // onChange={setSelectedOption}
             options={languageList.map((data) => ({
@@ -106,7 +106,7 @@ export const SelectLanguageComp = ({ isOpen }) => {
             defaultValue={'English'}
             onChange={(e) => {
               e.preventDefault();
-              console.log(e);
+              // console.log(e);
             }}
             // onChange={setSelectedOption}
             options={languageList.map((data) => ({

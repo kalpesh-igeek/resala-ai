@@ -15,7 +15,7 @@ const WikipediaButton = ({handleSidebar}) => {
     const WikipediaButtonSetting = document.getElementById('WikipediaButtonSetting');
     if(WikipediaButtonSetting){
       WikipediaButtonSetting.onclick = function () {
-        console.log("preferences");
+        // console.log("preferences");
         navigate('/preferences')
         handleSidebar('chat')
       };
@@ -23,7 +23,7 @@ const WikipediaButton = ({handleSidebar}) => {
     const wikiSummarize = document.getElementById('wikiSummarize');
     if(wikiSummarize){
       wikiSummarize.onclick = function () {
-        console.log("wikiSummarize");
+        // console.log("wikiSummarize");
         handleSidebar('chat')
       };
     }

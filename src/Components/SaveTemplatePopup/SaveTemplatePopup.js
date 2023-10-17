@@ -77,7 +77,7 @@ export default function SaveTemplatePopup({ saveTemplateBox, setSaveTemplateBox,
       return;
     }
     if (module === 'quickReply') {
-      console.log('first');
+      // console.log('first');
       const payload = {
         template_name: templateInput?.templatename,
         template_type: selectedOption?.value,
@@ -96,7 +96,7 @@ export default function SaveTemplatePopup({ saveTemplateBox, setSaveTemplateBox,
         navigate('/savedtemplates');
       }
     } else {
-      console.log('second');
+      // console.log('second');
       const payload = {
         name: templateInput?.templatename,
         type: selectedOption?.value,

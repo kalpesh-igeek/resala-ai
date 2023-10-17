@@ -37,10 +37,10 @@ const Header = ({
 
   const handleClose = () => {
     if (activity) {
-      console.log('1');
+      // console.log('1');
       handleClick();
     } else {
-      console.log('2');
+      // console.log('2');
       // setIfOpenConfirmBox(true);
       const textarea1 = document.getElementById('chatText');
       const textarea2 = document.getElementById('requestedText');
@@ -49,11 +49,11 @@ const Header = ({
 
       // setIfConfirmClose(true);
       if (textarea1 || textarea2) {
-        console.log(textarea1.value || textarea1.value);
-        console.log(textarea1.value);
+        // console.log(textarea1.value || textarea1.value);
+        // console.log(textarea1.value);
         if (textarea1.value.trim() === '' || textarea2.value.trim() === '') {
-          console.log('Hello');
-          SocialButton.classList.remove('hidden');
+          // console.log('Hello');
+          // SocialButton.classList.remove('hidden');
           // SocialPopup.classList.remove('hidden');
         } else {
           setIfOpenConfirmBox(true);
@@ -68,7 +68,7 @@ const Header = ({
   return (
     <div className={`h-[100%] font-dmsans`}>
       <div
-        style={{ position: 'sticky', top: 0 }}
+        style={{ position: 'sticky', top: 0, borderLeft:'none' }}
         className="flex items-center justify-between px-[20px] py-[11px] border-b-gray border-b-[1px] border-l-gray border-l-[1px] bg-white relative z-[70]"
       >
         <div className="flex items-center gap-2">
@@ -84,11 +84,11 @@ const Header = ({
             isFloating
             maxWidth="430px"
             place="bottom"
-            id="SettingHeader"
+            id="SettingHeaderTool"
             content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Settings </div>`}
           >
             <div
-              id="SettingHeader"
+              id="SettingHeaderTool"
               className="mr-[10px] h-[34px] w-[34px] border-slate-300 rounded-full border flex justify-center items-center cursor-pointer"
             >
               <img className="h-[20px] w-[20px]" src={SettingsIcon} onClick={() => navigate('/preferences')} />

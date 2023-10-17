@@ -8,7 +8,7 @@ export default function ConfirmationPopup({ ifOpenConfirmBox, setIsOpen, setIfOp
     setIfConfirmClose(true);
     setIfOpenConfirmBox(false);
     setIsOpen(false);
-    SocialButton.classList.remove('hidden');
+    // SocialButton.classList.remove('hidden');
   };
 
   return (

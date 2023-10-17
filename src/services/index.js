@@ -9,7 +9,7 @@ const getRequest = async (path) => {
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: getToken(),
+      Authorization: await getToken(),
     },
   };
   // console.log('Ssajksjkvhkjscjkaschjkashnkj');
@@ -33,7 +33,7 @@ const postRequest = async (path, payload) => {
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: getToken(),
+      Authorization: await getToken(),
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -44,7 +44,7 @@ const postReqWithFormData = async (path, formData) => {
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: getToken(),
+      Authorization: await getToken(),
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -66,7 +66,7 @@ const putRequest = async (path, payload) => {
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: getToken(),
+      Authorization: await getToken(),
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -77,7 +77,7 @@ const putReqWithFormData = async (path, formData) => {
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: getToken(),
+      Authorization: await getToken(),
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -89,7 +89,7 @@ const patchRequest = async (path, payload) => {
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: getToken(),
+      Authorization: await getToken(),
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -100,7 +100,7 @@ const patchReqWithoutToken = async (path, payload) => {
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: getToken(),
+      Authorization:await getToken(),
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;
@@ -112,7 +112,7 @@ const deleteRequest = async (path) => {
   const AXIOS_CONFIG = {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      Authorization: getToken(),
+      Authorization: await getToken(),
     },
   };
   const API_ENDPOINT = `${baseUrl}${path}`;

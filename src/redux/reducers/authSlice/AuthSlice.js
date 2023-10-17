@@ -172,7 +172,7 @@ export const AuthSlice = createSlice({
       state.status = action.payload.status;
     });
     builder.addCase(login.rejected, (state, action) => {
-      console.log('action', action);
+      // console.log('action', action);
       state.isLoading = false;
       state.error = action;
     });

@@ -56,7 +56,7 @@ const sendOtpMail = async (payload) => {
     return await postReqWithoutToken(sendOtpMailPath, payload);
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
-    console.log('error', error?.response?.data?.message);
+    // console.log('error', error?.response?.data?.message);
   }
 };
 

@@ -14,8 +14,8 @@ const promptTab = [
   { id: 2, name: 'My' },
 ];
 
-const Prompts = ({ setIsViewPrompts }) => {
-  const TOKEN = getToken();
+const Prompts = async ({ setIsViewPrompts }) => {
+  const TOKEN = await getToken();
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState(0);
   const [search, setSearch] = useState('');

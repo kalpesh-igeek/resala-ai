@@ -114,7 +114,8 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
 
   useEffect(() => {
     if (menu) {
-      setMenuClasses(`absolute ${positionY > 179 ? 'bottom-[100%]' : 'top-full'}  right-0 z-50 w-44 bg-white px-5 py-4 rounded-lg block`);
+      setMenuClasses(`absolute ${positionY > 665 ? 'bottom-[100%]' : 'top-full'}  right-0 z-50 w-44 bg-white px-5 py-4 rounded-lg block`);
+      // setMenuClasses('absolute top-full right-0 z-50 w-44 bg-white px-5 py-4 rounded-lg block');
     } else {
       setMenuClasses('absolute top-full right-0 z-50 w-44 bg-white px-5 py-4 rounded-lg hidden');
     }
@@ -176,6 +177,7 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
             className={menuClasses}
             style={{
               boxShadow: '0px 2px 20px 0px #00000026',
+              zIndex:'99999999999 !important'
             }}
           >
             <div className="menu-inner">

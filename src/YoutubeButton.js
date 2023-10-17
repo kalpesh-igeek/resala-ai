@@ -20,8 +20,8 @@ const YoutubeButton = ({handleSidebar}) => {
   const navigate = useNavigate();
   const { speak, cancel, speaking } = useSpeechSynthesis();
   const handleSpeak = (msg) => {
-    console.log({msg});
-    console.log({speaking});
+    // console.log({msg});
+    // console.log({speaking});
     if (speaking) {
       cancel();
     } else {
@@ -30,11 +30,11 @@ const YoutubeButton = ({handleSidebar}) => {
   };
 
   useEffect(() => {
-    console.log("dgvskdgjkl");
+    // console.log("dgvskdgjkl");
     const youtubeButtonSetting = document.getElementById('youtubeButtonSetting');
     if(youtubeButtonSetting){
       youtubeButtonSetting.onclick = function () {
-        console.log("preferences");
+        // console.log("preferences");
         navigate('/preferences')
         handleSidebar('chat')
       };
@@ -62,7 +62,7 @@ const YoutubeButton = ({handleSidebar}) => {
       headers: {
         'Content-Type': 'application/json',
         // 'Access-Control-Allow-Origin': '*',
-        Authorization: getToken(),
+        Authorization: await getToken(),
       },
       body: JSON.stringify({
         url: window.location.href,
@@ -113,7 +113,7 @@ const YoutubeButton = ({handleSidebar}) => {
       summarizeVideoId.onclick = function () {
           fetchYoutubeSummary()
           document.querySelectorAll('.summarizeVideo').forEach(function(element) {
-            console.log(element.id);
+            // console.log(element.id);
             element.classList.remove("hidden");
           });
         };
@@ -121,7 +121,7 @@ const YoutubeButton = ({handleSidebar}) => {
         const volumeHigh = document.getElementById('volumeHigh');
         volumeHigh.onclick = () => {
           const summarizeVideoResponse = document.getElementById('summarizeVideoResponse');
-          console.log("sdfjksdhfjk");
+          // console.log("sdfjksdhfjk");
           handleSpeak(summarizeVideoResponse.innerText)
         }
 
@@ -161,7 +161,7 @@ const YoutubeButton = ({handleSidebar}) => {
   }, [])
 
 
-  console.log(summaryData);
+  // console.log(summaryData);
   return (
     <div id="youtubeButton" style={{ marginBottom: '28px', position:'relative'}} className='hidden'>
       <div id="actionPopUpButton" className='hidden top-[6px] absolute w-[52px] h-[28px] flex justify-around items-center rounded-[6px]' style={{border: '1px solid #DFE4EC', boxShadow: '0px 2px 10px 0px rgba(62, 62, 62, 0.10)', background: '#F3F4F8', top: '-18px', right: '12px'}}>

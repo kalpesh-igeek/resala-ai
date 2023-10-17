@@ -103,6 +103,8 @@ const InputField = ({
             ${type === 'date' && 'right-[15px]'}
             ${type === 'number' && 'hidden'}
             ${type === 'text' && !isFixedLabel && 'hidden'}
+            ${type === 'email' && isRegistered && 'hidden'}
+
             `}
         >
           {label}
@@ -119,14 +121,14 @@ const InputField = ({
 
         {isRegistered && !isLoading && (
           <div
-            className="absolute top-[45%] -translate-y-[50%] right-[15px] cursor-pointer"
+            className="absolute top-[50%] -translate-y-[50%] right-[15px] cursor-pointer"
             onClick={() => handleGameClick()}
           >
-            <p className="text-primaryBlue w-[26px] h-[16px] cursor-pointer">Edit</p>
+            <p className="text-primaryBlue w-[26px] h-[16px] text-[14px] cursor-pointer">Edit</p>
           </div>
         )}
       </div>
     </>
   );
-};
+};  
 export default InputField;

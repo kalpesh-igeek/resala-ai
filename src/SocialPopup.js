@@ -41,7 +41,7 @@ const antIcon = (
   />
 );
 export default SocialPopup = ({ fromPosition, handleSidebar }) => {
-  console.log('fromPosition', fromPosition);
+  // console.log('fromPosition', fromPosition);
 
   const [language, setLanguage] = useState(false);
 
@@ -83,7 +83,7 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
   useEffect(() => {
     const SocialButton = document.getElementById('SocialButton');
     SocialButton.addEventListener('click', async () => {
-      console.log('CLICKCKCKCKCKCKCK');
+      // console.log('CLICKCKCKCKCKCKCK');
       const hostname = window.location.hostname;
       let response;
 
@@ -95,12 +95,12 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
         response = await getRequest('/twitter/twitter_idea_list');
       }
       if (response.status == 200) {
-        console.log(response.data.Result);
+        // console.log(response.data.Result);
         setSocialIdeas(response.data.Result);
       }
     });
   }, []);
-  console.log({ socialIdeas });
+  // console.log({ socialIdeas });
 
   //todo
   const [selectedIdea, setSelectedIdea] = useState([]);
@@ -132,29 +132,29 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
     } else if (hostname === 'twitter.com') {
       response = await postRequest('/twitter/twitter_post_streaming', postData);
     }
-    console.log({ 'dgvklsdgdsklgvnsdklgndskgdns => ': response });
+    // console.log({ 'dgvklsdgdsklgvnsdklgndskgdns => ': response });
     if (response && response.status === 200) {
       const text = response.data.replace(/^#@#/, '').replace(/connection closed/, '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       const paragraph = words.join(' ');
-      console.log(paragraph, ';;;;;;dsdhsdh');
+      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValueHome(paragraph);
       setButtonShowHome(true);
       setPostIdea(!PostIdea);
       setLoading(true);
       // setIdeasValue(paragraph);
     }
-    console.log(selectedIdea, 'selectedIdea');
+    // console.log(selectedIdea, 'selectedIdea');
   };
   // api for home page
   const [LoadImprove1, setloadImprove1] = useState(false);
   const handlePostIdeaImprove1 = async () => {
     // setLoading(true);
     setloadImprove1(!LoadImprove1);
-    console.log('regenerated!');
+    // console.log('regenerated!');
     const hostname = window.location.hostname;
     let response;
-    console.log(IdeasValue, 'IdeasValue');
+    // console.log(IdeasValue, 'IdeasValue');
     // const postData = { text: IdeasValue, action: 'string', tone: 'Improve it', language: 'english' };
     const postData = { text: IdeasValueHome1, action: 'Improve it', language: languages, tone: professions };
 
@@ -172,9 +172,9 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
         .replace(/connection closed/, '')
         .replace(/POST :/, '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      console.log(words, 'words');
+      // console.log(words, 'words');
       const paragraph = words.join(' ');
-      console.log(paragraph, ';;;;;;dsdhsdh');
+      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValueHome1(paragraph);
       setButtonShowHome(true);
       setloadImprove1(false);
@@ -184,11 +184,11 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
   const [LoadAddDetails1, setLoadAddDetails1] = useState(false);
   const handlePostIdeaAddDetails1 = async () => {
     // setLoading(true);
-    console.log('regenerated!');
+    // console.log('regenerated!');
     setLoadAddDetails1(!LoadAddDetails1);
     const hostname = window.location.hostname;
     let response;
-    console.log(IdeasValueHome1, 'IdeasValueHome1');
+    // console.log(IdeasValueHome1, 'IdeasValueHome1');
     // const postData = { text: IdeasValueHome1, action: 'string', tone: 'Add Details', language: 'english' };
     const postData = { text: IdeasValueHome1, action: 'Add details', language: languages, tone: professions };
 
@@ -207,9 +207,9 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
 
         .replace(/POST :/, '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      console.log(words, 'words');
+      // console.log(words, 'words');
       const paragraph = words.join(' ');
-      console.log(paragraph, ';;;;;;dsdhsdh');
+      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValueHome1(paragraph);
       setButtonShowHome(true);
       setLoadAddDetails1(false);
@@ -219,11 +219,11 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
   const [LoadHumor1, setLoadHumor1] = useState(false);
   const handlePostIdeaHumor1 = async () => {
     // setLoading(true);
-    console.log('regenerated!');
+    // console.log('regenerated!');
     setLoadHumor1(!LoadHumor1);
     const hostname = window.location.hostname;
     let response;
-    console.log(IdeasValueHome1, 'IdeasValueHome1');
+    // console.log(IdeasValueHome1, 'IdeasValueHome1');
     // const postData = { text: IdeasValueHome1, action: 'string', tone: 'Add Humor', language: 'english' };
     const postData = { text: IdeasValueHome1, action: 'Humor', language: languages, tone: professions };
 
@@ -241,9 +241,9 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
         .replace(/connection closed/, '')
         .replace(/POST :/, '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      console.log(words, 'words');
+      // console.log(words, 'words');
       const paragraph = words.join(' ');
-      console.log(paragraph, ';;;;;;dsdhsdh');
+      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValueHome1(paragraph);
       setButtonShowHome(true);
       setLoadHumor1(false1);
@@ -253,11 +253,11 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
   const [LoadInspire1, setLoadInspire1] = useState(false);
   const handlePostIdeaInspire1 = async () => {
     // setLoading(true);
-    console.log('regenerated!');
+    // console.log('regenerated!');
     setLoadInspire1(!LoadInspire1);
     const hostname = window.location.hostname;
     let response;
-    console.log(IdeasValueHome1, 'IdeasValueHome1');
+    // console.log(IdeasValueHome1, 'IdeasValueHome1');
     // const postData = { text: IdeasValueHome1, action: 'string', tone: 'Inspire', language: 'english' };
     const postData = { text: IdeasValueHome1, action: 'Inpire', language: languages, tone: professions };
 
@@ -275,9 +275,9 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
         .replace(/connection closed/, '')
         .replace(/POST :/, '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      console.log(words, 'words');
+      // console.log(words, 'words');
       const paragraph = words.join(' ');
-      console.log(paragraph, ';;;;;;dsdhsdh');
+      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValueHome1(paragraph);
       setButtonShowHome(true);
       setLoadInspire1(false);
@@ -287,11 +287,11 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
   const [LoadShorten1, setLoadShorten1] = useState(false);
   const handlePostIdeaShorten1 = async () => {
     // setLoading(true);
-    console.log('regenerated!');
+    // console.log('regenerated!');
     setLoadShorten1(!LoadShorten1);
     const hostname = window.location.hostname;
     let response;
-    console.log(IdeasValueHome1, 'IdeasValueHome1');
+    // console.log(IdeasValueHome1, 'IdeasValueHome1');
     // const postData = { text: IdeasValueHome1, action: 'string', tone: 'Shorten it', language: 'english' };
     const postData = { text: IdeasValueHome1, action: 'Shorten it', language: languages, tone: professions };
 
@@ -309,9 +309,9 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
         .replace(/connection closed/, '')
         .replace(/POST :/, '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      console.log(words, 'words');
+      // console.log(words, 'words');
       const paragraph = words.join(' ');
-      console.log(paragraph, ';;;;;;dsdhsdh');
+      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValueHome1(paragraph);
       setButtonShowHome(true);
       setLoadShorten1(false);
@@ -334,7 +334,7 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
     setPostIdea(true);
   };
 
-  console.log(selectedIdea, 'selectedIdea');
+  // console.log(selectedIdea, 'selectedIdea');
 
   // todo : api for language
   const [languages, setLanguages] = useState('English');
@@ -353,7 +353,7 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
   };
   const handleChange = (e) => {
     setIdeasValue(e.target.value);
-    console.log(IdeasValue, 'Ideas');
+    // console.log(IdeasValue, 'Ideas');
     const { name, value } = e.target;
     const maxCharacterCount = 1000;
     if (name === 'socialTextarea') {
@@ -374,7 +374,7 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
   // todo textarea
   const [IdeasValue, setIdeasValue] = useState('');
   const [InitialIdeasValue, setInitialIdeasValue] = useState('');
-  console.log(IdeasValue, 'IdeasValue');
+  // console.log(IdeasValue, 'IdeasValue');
   const [loading, setLoading] = useState(false);
   const [PostIdea, setPostIdea] = useState(true);
   const [ButtonsShow, setButtonShow] = useState(false);
@@ -410,7 +410,7 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
     setLoading(true);
     setPostIdea(!PostIdea);
     setInitialIdeasValue(IdeasValue);
-    console.log('InitialIdeasValue!', InitialIdeasValue);
+    // console.log('InitialIdeasValue!', InitialIdeasValue);
     const hostname = window.location.hostname;
     let response;
 
@@ -423,12 +423,12 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
     } else if (hostname === 'twitter.com') {
       response = await postRequest('/twitter/twitter_post_streaming', postData);
     }
-    console.log({ 'dgvklsdgdsklgvnsdklgndskgdns => ': response });
+    // console.log({ 'dgvklsdgdsklgvnsdklgndskgdns => ': response });
     if (response && response.status === 200) {
       const text = response.data.replace(/^#@#/, '').replace(/connection closed/, '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       const paragraph = words.join(' ');
-      console.log(paragraph, ';;;;;;dsdhsdh');
+      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
       setButtonShow(true);
       setLoading(false);
@@ -436,7 +436,7 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
 
       // setIdeasValue(paragraph);
     }
-    console.log(selectedIdea, 'selectedIdea');
+    // console.log(selectedIdea, 'selectedIdea');
     // setIdeasValue('');
   };
 
@@ -450,7 +450,7 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
     let response;
 
     const postData = { text: InitialIdeasValue, action: 'string', language: languages, tone: professions };
-    console.log(postData, 'postData');
+    // console.log(postData, 'postData');
 
     if (hostname === 'www.linkedin.com') {
       response = await postRequest('/linkedin/regenrate_post_streaming', postData);
@@ -460,18 +460,18 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
       response = await postRequest('/twitter/regenrate_post_streaming', postData);
     }
 
-    console.log({ 'dgvklsdgdsklgvnsdklgndskgdns => ': response });
+    // console.log({ 'dgvklsdgdsklgvnsdklgndskgdns => ': response });
     if (response && response.status === 200) {
-      console.log('skfsdj,gsdjkgdsjkgkjsdjk');
+      // console.log('skfsdj,gsdjkgdsjkgkjsdjk');
       const text = response.data
         .replace(/^#@#/, '')
         .replace(/connection closed/, '')
         .replace(/POST :/, '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       // const words = response.detail[0].ctx.doc.split(/\s+/).filter((word) => word.trim() !== '');
-      console.log(words, 'words');
+      // console.log(words, 'words');
       const paragraph = words.join(' ');
-      console.log(paragraph, ';;;;;;dsdhsdh');
+      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
       setButtonShow(true);
       const newDiv = (
@@ -542,7 +542,7 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
       );
       setResponses((state) => [...state, newDiv]);
       // setIdeasValue('');
-      console.log(responses, 'responses');
+      // console.log(responses, 'responses');
       // setIdeasValue(paragraph);
     }
     setLoading(true);
@@ -552,10 +552,10 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
   const handlePostIdeaImprove = async () => {
     // setLoading(true);
     setloadImprove(!LoadImprove);
-    console.log('regenerated!');
+    // console.log('regenerated!');
     const hostname = window.location.hostname;
     let response;
-    console.log(IdeasValue, 'IdeasValue');
+    // console.log(IdeasValue, 'IdeasValue');
     // const postData = { text: IdeasValue, action: 'string', tone: 'Improve it', language: 'english' };
     const postData = { text: IdeasValue, action: 'Improve it', language: languages, tone: professions };
 
@@ -573,9 +573,9 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
         .replace(/connection closed/, '')
         .replace(/POST :/, '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      console.log(words, 'words');
+      // console.log(words, 'words');
       const paragraph = words.join(' ');
-      console.log(paragraph, ';;;;;;dsdhsdh');
+      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
       setButtonShow(true);
       setloadImprove(false);
@@ -585,11 +585,11 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
   const [LoadAddDetails, setLoadAddDetails] = useState(false);
   const handlePostIdeaAddDetails = async () => {
     // setLoading(true);
-    console.log('regenerated!');
+    // console.log('regenerated!');
     setLoadAddDetails(!LoadAddDetails);
     const hostname = window.location.hostname;
     let response;
-    console.log(IdeasValue, 'IdeasValue');
+    // console.log(IdeasValue, 'IdeasValue');
     // const postData = { text: IdeasValue, action: 'string', tone: 'Add Details', language: 'english' };
     const postData = { text: IdeasValue, action: 'Add details', language: languages, tone: professions };
 
@@ -607,9 +607,9 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
         .replace(/connection closed/, '')
         .replace(/POST :/, '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      console.log(words, 'words');
+      // console.log(words, 'words');
       const paragraph = words.join(' ');
-      console.log(paragraph, ';;;;;;dsdhsdh');
+      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
       setButtonShow(true);
       setLoadAddDetails(false);
@@ -619,11 +619,11 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
   const [LoadHumor, setLoadHumor] = useState(false);
   const handlePostIdeaHumor = async () => {
     // setLoading(true);
-    console.log('regenerated!');
+    // console.log('regenerated!');
     setLoadHumor(!LoadHumor);
     const hostname = window.location.hostname;
     let response;
-    console.log(IdeasValue, 'IdeasValue');
+    // console.log(IdeasValue, 'IdeasValue');
     // const postData = { text: IdeasValue, action: 'string', tone: 'Add Humor', language: 'english' };
     const postData = { text: IdeasValue, action: 'Humor', language: languages, tone: professions };
 
@@ -641,9 +641,9 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
         .replace(/connection closed/, '')
         .replace(/POST :/, '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      console.log(words, 'words');
+      // console.log(words, 'words');
       const paragraph = words.join(' ');
-      console.log(paragraph, ';;;;;;dsdhsdh');
+      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
       setButtonShow(true);
       setLoadHumor(false);
@@ -653,11 +653,11 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
   const [LoadInspire, setLoadInspire] = useState(false);
   const handlePostIdeaInspire = async () => {
     // setLoading(true);
-    console.log('regenerated!');
+    // console.log('regenerated!');
     setLoadInspire(!LoadInspire);
     const hostname = window.location.hostname;
     let response;
-    console.log(IdeasValue, 'IdeasValue');
+    // console.log(IdeasValue, 'IdeasValue');
     // const postData = { text: IdeasValue, action: 'string', tone: 'Inspire', language: 'english' };
     const postData = { text: IdeasValue, action: 'Inpire', language: languages, tone: professions };
 
@@ -675,9 +675,9 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
         .replace(/connection closed/, '')
         .replace(/POST :/, '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      console.log(words, 'words');
+      // console.log(words, 'words');
       const paragraph = words.join(' ');
-      console.log(paragraph, ';;;;;;dsdhsdh');
+      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
       setButtonShow(true);
       setLoadInspire(false);
@@ -687,11 +687,11 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
   const [LoadShorten, setLoadShorten] = useState(false);
   const handlePostIdeaShorten = async () => {
     // setLoading(true);
-    console.log('regenerated!');
+    // console.log('regenerated!');
     setLoadShorten(!LoadShorten);
     const hostname = window.location.hostname;
     let response;
-    console.log(IdeasValue, 'IdeasValue');
+    // console.log(IdeasValue, 'IdeasValue');
     // const postData = { text: IdeasValue, action: 'string', tone: 'Shorten it', language: 'english' };
     const postData = { text: IdeasValue, action: 'Shorten it', language: languages, tone: professions };
 
@@ -709,9 +709,9 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
         .replace(/connection closed/, '')
         .replace(/POST :/, '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      console.log(words, 'words');
+      // console.log(words, 'words');
       const paragraph = words.join(' ');
-      console.log(paragraph, ';;;;;;dsdhsdh');
+      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
       setButtonShow(true);
       setLoadShorten(false);
@@ -726,23 +726,23 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
 
   // Insert text
   const InsertedValue = () => {
-    console.log('sfsfdsf');
+    // console.log('sfsfdsf');
     const LinkedInClass = document.getElementsByClassName('ql-editor');
     const FacebookClass = document.getElementsByClassName('xha3pab');
     const twitterClass = document.querySelectorAll('[data-testid="tweetTextarea_0_label"]');
     const hostname = window.location.hostname;
 
     if (hostname == 'www.linkedin.com') {
-      console.log('llinkedIn');
+      // console.log('llinkedIn');
       const LinkedInText = LinkedInClass[0].children[0];
-      console.log(IdeasValue, 'IdeasValue');
+      // console.log(IdeasValue, 'IdeasValue');
       LinkedInText.textContent = `${IdeasValue}`;
     } else if (hostname == 'www.facebook.com') {
-      console.log('facebook');
+      // console.log('facebook');
       const FacebookText = FacebookClass[0].children[0].children[0].children[0];
       FacebookText.textContent = `${IdeasValue}`;
     } else if (hostname == 'twitter.com') {
-      console.log('twitter');
+      // console.log('twitter');
       const TwitterText =
         twitterClass[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0]
           .children[0].children[0].children[0].children[0];
@@ -752,7 +752,7 @@ export default SocialPopup = ({ fromPosition, handleSidebar }) => {
 
   // todo : menu
   const [PopupMenu, setPopupMenu] = useState(false);
-  console.log({ responses });
+  // console.log({ responses });
 
   // profile
   const loggedUser = {

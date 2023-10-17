@@ -5,7 +5,7 @@ import InputField from '../InputField';
 export const SearchInput = ({name,onChange,value}) => {
   return (
     <>
-      <div className="border border-gray items-center flex rounded-md px-[9px]">
+      <div className="border border-gray items-center flex rounded-md px-[9px] py-1">
         <img src={SearchIcon} alt="s" />
         <InputField
           label=""

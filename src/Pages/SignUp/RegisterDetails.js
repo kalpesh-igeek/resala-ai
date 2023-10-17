@@ -5,7 +5,8 @@ import InputField from '../../Components/InputField';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerCheck } from '../../utils/validation';
 import { userDetails } from '../../redux/reducers/authSlice/AuthSlice';
-
+import Header from '../../Layout/Header';
+import SubHeader from '../../Layout/SubHeader';
 const RegisterDetails = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -50,17 +51,18 @@ const RegisterDetails = () => {
   };
   return (
     <>
+    <SubHeader></SubHeader>
       <div className="py-[90px] px-[75px] flex flex-col justify-center">
-        <div className="flex items-center justify-center gap-2 mb-[50px]">
+        {/* <div className="flex items-center justify-center gap-2 mb-[50px]">
           <img src={Logo} alt="logo" className="cursor-pointer h-[32px] w-[32px]" />
           <div className="text-darkgray text-[18px]">Resala</div>
-        </div>
+        </div> */}
         <div className="text-[22px] flex justify-center mb-[40px] font-bold">Tell us about you</div>
         <form>
           <div className="w-full flex gap-2 justify-center">
             <div className="flex-col w-full">
               <InputField
-                className="w-full rounded-md border border-gray px-[15px] py-[16px] text-[14px] mb-[9px] text-darkBlue placeholder:text-gray2"
+                className="w-full rounded-md border border-gray px-[15px] py-[16px] text-[14px] mb-[9px] text-[#6D77A0] placeholder:text-[#6D77A0]"
                 name="first_name"
                 label="First name"
                 type="text"
@@ -72,7 +74,7 @@ const RegisterDetails = () => {
             </div>
             <div className="flex-col w-full">
               <InputField
-                className="w-full rounded-md border border-gray px-[15px] py-[16px] text-[14px] mb-[9px] text-darkBlue placeholder:text-gray2"
+                className="w-full rounded-md border border-gray px-[15px] py-[16px] text-[14px] mb-[9px] text-[#6D77A0] placeholder:text-[#6D77A0]"
                 name="last_name"
                 label="Last name"
                 type="text"
@@ -85,7 +87,7 @@ const RegisterDetails = () => {
           </div>
 
           <InputField
-            className="block w-full rounded-md border border-gray px-[15px] py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray2"
+            className="block w-full rounded-md border border-gray px-[15px] py-[16px] text-[14px] mb-[12px] text-[#6D77A0] placeholder:text-[#6D77A0]"
             name="organization_name"
             // label="Organization name (optional)"
             type="text"
@@ -94,7 +96,7 @@ const RegisterDetails = () => {
           />
           <div className="flex gap-2 items-center">
             <button
-              className={`w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[16px] text-[12px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50 ${
+              className={`w-full rounded-md focus:outline-none bg-[#1678F2] px-1 py-[16px] text-[16px] font-[700] text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50 ${
                 !inputValue.first_name || !inputValue.last_name ? 'opacity-50 cursor-not-allowed' : ''
               } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               onClick={(e) => handleSubmit(e)}

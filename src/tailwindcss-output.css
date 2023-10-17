@@ -609,9 +609,6 @@ video {
   .right-\[15px\] {
     right: 15px;
   }
-  .top-\[45\%\] {
-    top: 45%;
-  }
   .-right-\[7px\] {
     right: -7px;
   }
@@ -1071,6 +1068,9 @@ video {
   .h-\[31px\] {
     height: 31px;
   }
+  .h-\[52px\] {
+    height: 52px;
+  }
   .h-4 {
     height: 1rem;
   }
@@ -1109,9 +1109,6 @@ video {
   }
   .h-8 {
     height: 2rem;
-  }
-  .h-\[52px\] {
-    height: 52px;
   }
   .max-h-\[530px\] {
     max-height: 530px;
@@ -1834,6 +1831,10 @@ video {
     --tw-bg-opacity: 1;
     background-color: rgb(0 0 0 / var(--tw-bg-opacity));
   }
+  .bg-\[\#FFFFFF\] {
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+  }
   .bg-red1 {
     --tw-bg-opacity: 1;
     background-color: rgb(254 232 232 / var(--tw-bg-opacity));
@@ -2103,13 +2104,25 @@ video {
     padding-left: 66px;
     padding-right: 66px;
   }
+  .py-\[56px\] {
+    padding-top: 56px;
+    padding-bottom: 56px;
+  }
   .px-\[33px\] {
     padding-left: 33px;
     padding-right: 33px;
   }
+  .py-\[68px\] {
+    padding-top: 68px;
+    padding-bottom: 68px;
+  }
   .py-\[18px\] {
     padding-top: 18px;
     padding-bottom: 18px;
+  }
+  .py-\[108px\] {
+    padding-top: 108px;
+    padding-bottom: 108px;
   }
   .pr-1\.5 {
     padding-right: 0.375rem;
@@ -2233,6 +2246,9 @@ video {
   }
   .text-center {
     text-align: center;
+  }
+  .align-middle {
+    vertical-align: middle;
   }
   .font-dmsans {
     font-family: DM Sans;
@@ -2406,6 +2422,14 @@ video {
   .text-darkgray {
     --tw-text-opacity: 1;
     color: rgb(132 129 130 / var(--tw-text-opacity));
+  }
+  .text-\[\#6D77A0\] {
+    --tw-text-opacity: 1;
+    color: rgb(109 119 160 / var(--tw-text-opacity));
+  }
+  .text-\[\#046AF3\] {
+    --tw-text-opacity: 1;
+    color: rgb(4 106 243 / var(--tw-text-opacity));
   }
   .text-black {
     --tw-text-opacity: 1;
@@ -2725,7 +2749,7 @@ video {
     border: 1px solid #dfe4ec;
     padding: 16px 15px;
     font-size: 14px;
-    color: #19224c;
+    color: #6D77A0;
     width: 100%;
     outline: 0px !important;
   }
@@ -3361,6 +3385,16 @@ pre {
 }
 
 .placeholder\:text-gray2::placeholder {
+  --tw-text-opacity: 1;
+  color: rgb(109 119 160 / var(--tw-text-opacity));
+}
+
+.placeholder\:text-\[\#6D77A0\]::-moz-placeholder {
+  --tw-text-opacity: 1;
+  color: rgb(109 119 160 / var(--tw-text-opacity));
+}
+
+.placeholder\:text-\[\#6D77A0\]::placeholder {
   --tw-text-opacity: 1;
   color: rgb(109 119 160 / var(--tw-text-opacity));
 }

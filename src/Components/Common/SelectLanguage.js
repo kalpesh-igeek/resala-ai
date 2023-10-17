@@ -3,7 +3,7 @@ import Select, { components } from 'react-select';
 import ArrowDown from '../../utils/PopupBox/Icons/ArrowDown.svg';
 
 export const SelectLanguage = ({ isOpen, setClose, active, options }) => {
-  console.log({ isOpen, setClose, active, options });
+  // console.log({ isOpen, setClose, active, options });
 
   const CustomOption = ({ data, ...props }) => (
     <components.Option {...props}>
@@ -113,7 +113,7 @@ export const SelectLanguage = ({ isOpen, setClose, active, options }) => {
         }}
         styles={customStyles}
         onChange={(e) => {
-          console.log('--->', e);
+          // console.log('--->', e);
         }}
         // onChange={handleChatTypeChange}
         // menuIsOpen={true}

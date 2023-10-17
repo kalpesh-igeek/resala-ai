@@ -59,7 +59,7 @@ const FileUpload = ({
     if (upload_file) {
       if (file >= 10000) {
         // Toast('error', 'File too Big, please select a file less than 10MB');
-        console.log('error');
+        // console.log('error');
         input.value = '';
         if (!/safari/i.test(navigator.userAgent)) {
           input.type = '';
@@ -82,7 +82,7 @@ const FileUpload = ({
       }
     } else {
       // Toast('error', 'Only jpg, jpeg and png files are allowed!');
-      console.log('errror');
+      // console.log('errror');
     }
   };
 
@@ -119,7 +119,7 @@ const FileUpload = ({
         method: 'POST',
         headers: {
           'Access-Control-Allow-Origin': '*',
-          Authorization: getToken(),
+          Authorization: await getToken(),
         },
         body: formData,
         signal: controller.signal,
@@ -211,7 +211,7 @@ const FileUpload = ({
         method: 'POST',
         headers: {
           'Access-Control-Allow-Origin': '*',
-          Authorization: getToken(),
+          Authorization: await getToken(),
         },
         body: formData,
         signal: controller.signal,

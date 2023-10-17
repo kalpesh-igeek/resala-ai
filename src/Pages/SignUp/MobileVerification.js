@@ -11,6 +11,7 @@ import 'react-phone-number-input/style.css';
 import { useDispatch } from 'react-redux';
 import { sendOtpSMS, userDetails } from '../../redux/reducers/authSlice/AuthSlice';
 import SelectMobileNumber from '../../Components/PhoneNumberInput/SelectMobileNumber';
+import SubHeader from '../../Layout/SubHeader';
 
 const MobileVerification = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const MobileVerification = () => {
     is_whatapp: false,
   });
   const [countries, setcountries] = useState();
-  console.log('countries', countries);
+  // console.log('countries', countries);
   const [country, setCountry] = useState('US');
 
   useEffect(() => {
@@ -41,7 +42,12 @@ const MobileVerification = () => {
   const handleSMSbutton = async (e) => {
     e.preventDefault();
     if (inputValue) {
-      const res = await dispatch(sendOtpSMS({ ...inputValue, is_whatapp: false }));
+      let payload = {
+        country_code : inputValue.country_code,
+        phone_number: inputValue.phone_number.toString().split(inputValue.country_code)[1],
+        is_whatapp: false
+      };
+      const res = await dispatch(sendOtpSMS(payload));
       if (res.payload?.status === 200) {
         const res = await dispatch(
           userDetails({
@@ -54,7 +60,7 @@ const MobileVerification = () => {
         navigate('/entercode', { state: { phone: res.payload, register } });
       }
     }
-    console.log('res', res);
+    // console.log('res', res);
     // else {
     //   setWhatsAppSwitch(true);
     //   setIsVisisbleWhatAppButton(false);
@@ -94,12 +100,13 @@ const MobileVerification = () => {
 
   return (
     <>
+      <SubHeader></SubHeader>
       <div className="py-[90px] px-[75px] flex flex-col justify-center">
-        <div className="flex items-center justify-center gap-2 mb-[50px]">
+        {/* <div className="flex items-center justify-center gap-2 mb-[50px]">
           <img src={Logo} alt="logo" className="cursor-pointer h-[32px] w-[32px]" />
           <div className="text-darkgray text-[18px]">Resala</div>
-        </div>
-        <div className="text-[22px] flex justify-center mb-[40px] font-bold">Verify your phone number</div>
+        </div> */}
+        <div className="text-[22px] flex justify-center mb-[40px] font-bold text-[#19224C]" >Verify your phone number</div>
 
         <div className="">
           {/* <PhoneInput
@@ -132,8 +139,8 @@ const MobileVerification = () => {
                 onChange={() => handleSwitchOnChange()}
               />
               <span class="option w-[45px] h-[30px] right-[48px] absolute transform transition-transform bg-lightblue2" />
-              <span class="off absolute font-bold text-[11px] uppercase right-[15px] text-gray2"> No </span>
-              <span class="on absolute font-bold text-[11px] uppercase right-[60px] text-gray2"> Yes </span>
+              <span class="off absolute font-bold text-[11px] capitalize right-[15px] text-gray2"> No </span>
+              <span class="on absolute font-bold text-[11px] capitalize right-[60px] text-gray2"> Yes </span>
             </label>
           </div>
         </div>
@@ -141,7 +148,7 @@ const MobileVerification = () => {
           <div className="flex flex-col gap-2 items-center">
             {isVisibleWhatAppButton && (
               <button
-                className="w-full rounded-md bg-primaryBlue px-1 py-[16px] text-[12px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
+                className="w-full rounded-md bg-primaryBlue px-1 py-[16px] text-[16px] font-[700] text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
                 // onClick={(e) => handleWhatAppButton(e)}
               >
                 <div className="inline-flex items-center gap-1">
@@ -156,7 +163,7 @@ const MobileVerification = () => {
             <button
               className={`${
                 !isVisibleWhatAppButton ? 'bg-primaryBlue text-white' : 'bg-transparent text-primaryBlue'
-              } w-full rounded-md px-1 py-[16px] text-[12px] font-medium hover:opacity-90 disabled:cursor-none disabled:opacity-50`}
+              } w-full rounded-md px-1 py-[16px] text-[16px] font-medium hover:opacity-90 disabled:cursor-none disabled:opacity-50`}
               onClick={(e) => handleSMSbutton(e)}
             >
               Send via SMS instead
