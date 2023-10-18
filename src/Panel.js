@@ -56,9 +56,11 @@ const sites = [
 ];
 
 export default function Panel({ local }) {
-  // console.log(local, 'local12');
-  const TOKEN = getToken();
-  // console.log(TOKEN, 'TOKEN');
+  const [TOKEN, setToken] = useState(null);
+
+  chrome.storage.sync.get(['userAccessToken'], function (items) {
+    setToken(items.userAccessToken);
+  });
   const dispatch = useDispatch();
   const [isSideBarOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('');
