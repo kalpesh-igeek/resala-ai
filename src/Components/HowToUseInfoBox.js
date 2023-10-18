@@ -30,7 +30,7 @@ const HowToUseInfoBox = ({ setIsAudioInfoPopup }) => {
     >
       <div className="pt-[8px] pb-[8px] mb-[20px] text-[20px] font-medium text-darkBlue">
         <div className="flex items-center justify-between">
-          <div className="gap-2 flex items-center">
+          <div className="gap-2 flex items-center capitalize">
             <img src={HowToIconBg} />
             <span>How to use voice input</span>
           </div>

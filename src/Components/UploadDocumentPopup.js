@@ -51,13 +51,13 @@ const UploadDocumentPopup = ({
         style={{ boxShadow: '0px 10px 30px 0px #3C425726' }}
         // show={open}
       >
-        <div className="pt-[8px] text-[22px] font-medium text-darkBlue">
+        <div className="pt-[8px] text-[20px] font-medium text-darkBlue">
           <div className="flex items-center justify-between mb-[16px]">
             <div className="gap-2 flex items-center">
               <span className="w-[28px] h-[28px] flex items-center justify-center rounded-full">
                 <img src={DocumentUploadBg} />
               </span>
-              <span className="text-primaryBlue">Upload Document</span>
+              <span className="text-primaryBlue font-[20px] font-[500] ">Upload Document</span>
             </div>
             <div className="cursor-pointer -mt-[30px]" onClick={() => handleClose()}>
               <img src={Close} />

@@ -1,0 +1,9 @@
+<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Confirmation icon">
+<circle id="Ellipse 17" opacity="0.2" cx="14" cy="14" r="14" fill="#FF0000"/>
+<circle id="Ellipse 19" cx="14" cy="14" r="10" fill="white"/>
+<circle id="Ellipse 18" cx="14" cy="14" r="9" stroke="#FF0000" stroke-width="2"/>
+<path id="Vector" d="M14 15.5V9" stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_2" d="M14 19V18.5" stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

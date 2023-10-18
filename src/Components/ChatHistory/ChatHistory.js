@@ -147,6 +147,8 @@ const customStyles = {
       ...styles,
       backgroundColor: isFocused ? '#F3F4F8' : null,
       color: !isFocused ? '#8C90A5' : '#19224C',
+      fontWeight : 400,
+      cursor:'pointer',
       margin: '8px',
       width: 'auto',
       borderRadius: '4px',
@@ -523,7 +525,7 @@ const ChatHistory = ({
                   handleChange={setSearchChatHis}
                 /> */}
                   <input
-                    className="block w-full  rounded-md border-0 px-[9px] py-[7px] text-[12px] text-darkBlue placeholder:text-gray1 focus:outline-0"
+                    className="block w-full  rounded-md border-0 px-[9px] py-[7px] text-[14px] text-darkBlue placeholder:text-[#8C90A5] focus:outline-0"
                     name="search"
                     label=""
                     type="text"
@@ -535,20 +537,22 @@ const ChatHistory = ({
                 <CustomTooltip
                   maxWidth="430px"
                   place="top"
-                  id={'chatHistoryDelete'}
-                  content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Clear History </div>`}
+                  id='clearAllHistory'
+                  content={`<div class="capitalize font-normal text-[12px] leading-[18px]"> Clear all conversations </div>`}
                 >
-                  <div className="relative" onClick={() => setClearHistory(true)}>
+                  <div id='clearAllHistory' className="relative cursor-pointer" onClick={() => setClearHistory(true)}>
                     <img src={AllHistoryClear} className="w-[40px] h-[40px]" />
                   </div>
                 </CustomTooltip>
               </div>
 
-              <div className="mt-[12px] px-[20px] max-h-[480px] overflow-y-auto">
+              <div className="mt-[12px] px-[12px] max-h-[480px] overflow-y-auto">
                 {chatsHistory.length === 0 ? (
                   <div className="text-gray1 text-center py-4">No data found</div>
                 ) : (
                   chatsHistory.map((item, index) => (
+                    <>
+                    <div className='px-[8px] hover:bg-[#F3F4F8] hover:rounded-[7px]'>
                     <div className="border-b border-gray py-[8px] selectText cursor-pointer" key={index}>
                       <div
                         className="flex items-center justify-between mb-[8px]"
@@ -577,7 +581,7 @@ const ChatHistory = ({
                             {item?.Type === 1 ? item.chat_dict?.human_question : 'Doc chat'}
                           </div>
                         </div>
-                        <div className="text-gray1 lowercase whitespace-nowrap">
+                        <div className="text-[#8C90A5] text-[12px] lowercase whitespace-nowrap">
                           {getDateDisplay(new Date(item?.created_at))}
                           {/* {formatDistanceToNow(new Date(item?.created_at), { addSuffix: true, timeZone: 'Etc/UTC' })} */}
                           {/* {formatDistanceToNow(utcToZonedTime(new Date(item?.created_at), 'Asia/Kolkata'), {
@@ -596,7 +600,7 @@ const ChatHistory = ({
                           maxWidth="430px"
                           place="top"
                           id={'chatHistoryDelete' + item?.id}
-                          content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Delete </div>`}
+                          content={`<div class="font-normal text-[12px] leading-[18px]" > Delete conversations </div>`}
                         >
                           <button
                             id={'chatHistoryDelete' + item?.id}
@@ -608,6 +612,8 @@ const ChatHistory = ({
                         </CustomTooltip>
                       </div>
                     </div>
+                    </div>
+                    </>
                   ))
                 )}
               </div>

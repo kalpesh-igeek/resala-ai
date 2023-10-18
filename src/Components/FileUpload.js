@@ -30,7 +30,6 @@ const FileUpload = ({
   setChatType,
 }) => {
   const [summeriseContent, setSummeriseContent] = useState([]);
-
   const hiddenFileInput = React.useRef(null);
   const chatId = sessionStorage.getItem('chatId');
   const dispatch = useDispatch();
@@ -280,10 +279,10 @@ const FileUpload = ({
     <>
       {selectedFile ? (
         <>
-          <div className="h-[166px] rounded-[6px] w-[166px] text-[20px] flex items-center bg-lightblue1 text-primaryBlue justify-center mb-[18px]">
-            {selectedFile.type}
+          <div className="h-[166px] uppercase rounded-[6px] w-[166px] text-[20px] flex items-center bg-lightblue1 text-primaryBlue justify-center mb-[18px]">
+            {selectedFile.type &&  selectedFile?.type.toString().split("/")[1] ? selectedFile?.type.toString().split("/")[1] : selectedFile.type}
           </div>
-          <div className="text-[14px] mb-[8px]"> {selectedFile.name}</div>
+          <div className="text-[14px] mb-[8px] font-[400]"> {selectedFile.name}</div>
           <div className="flex justify-center gap-2">
             <button
               className="rounded-md bg-white px-[16px] py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
@@ -304,7 +303,7 @@ const FileUpload = ({
         </>
       ) : (
         <>
-          <span>Drop your documents [pdf, docx, pptx or txt] here or </span>
+          <span className='font-[400] text-[#8C90A5] text-[14px] '>Drop your documents [pdf, docx, pptx or txt] here or </span>
           <button
             className="flex gap-1 items-center justify-center w-full rounded-full px-[9px] py-[5px] text-[12px] font-medium text-primaryBlue"
             onClick={handleClick}
