@@ -1,11 +1,13 @@
-
 .scrollbarFace::-webkit-scrollbar {
-    width: 0;
-  }
-  .textArea:focus {
-    outline: none;
-    resize: none;
-  }
-  .hoverLanguage:hover{
-    background-color: #F3F4F8 !important;
-  }
+  width: 0;
+}
+.textArea:focus {
+  outline: none;
+  resize: none;
+}
+.hoverLanguage:hover {
+  background-color: #f3f4f8 !important;
+}
+.hoveringOver:hover {
+  background-color: #d9ebff !important;
+}

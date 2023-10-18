@@ -51,7 +51,7 @@ async function init() {
   const root = createRoot(app);
   // todo
   chrome.storage.local.get(null, (data) => {
-    console.log(data, 'dasjhdgsj');
+    // console.log(data, 'dasjhdgsj');
     root.render(
       <Provider store={store}>
         <MemoryRouter>

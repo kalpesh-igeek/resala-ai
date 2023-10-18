@@ -56,8 +56,9 @@ const sites = [
 ];
 
 export default function Panel({ local }) {
-  console.log(local, 'localvddfvdfvfd');
+  // console.log(local, 'local12');
   const TOKEN = getToken();
+  // console.log(TOKEN, 'TOKEN');
   const dispatch = useDispatch();
   const [isSideBarOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('');
@@ -268,6 +269,10 @@ export default function Panel({ local }) {
       }, 3000);
     } else if (hostname == 'mail.google.com') {
       console.log('mail is already');
+      const SocialButton = document.getElementById('SocialButton');
+      if (SocialButton) {
+        SocialButton.classList.add('hidden');
+      }
       const oldQuickReply = document.getElementById('cloneQuickReply');
       if (!oldQuickReply) {
         const quickReply = document.getElementById('quickButton');
@@ -286,10 +291,7 @@ export default function Panel({ local }) {
           }
         }, 3000);
       }
-      const SocialButton = document.getElementById('SocialButton');
-      if (SocialButton) {
-        SocialButton.classList.add('hidden');
-      }
+
       // const quickPosition = document.querySelectorAll('[aria-label="Print all"]')[0];
       // if (quickPosition) {
       // quickReply.classList.remove('hidden');
@@ -380,6 +382,8 @@ export default function Panel({ local }) {
           postButton.addEventListener('click', () => {
             setTimeout(() => {
               let BtnPosition = document.getElementById('share-to-linkedin-modal__header');
+              // let BtnPosition = document.querySelectorAll('[aria-labelledby="share-to-linkedin-modal__header"]');
+
               console.log('BtnPosition', BtnPosition);
               if (BtnPosition) {
                 BtnPosition = BtnPosition.getBoundingClientRect();
@@ -426,6 +430,8 @@ export default function Panel({ local }) {
 
               let socialMediaId = document.getElementById('socialMediaPreference');
               socialMediaId.addEventListener('click', () => {
+                const SocialPopup = document.getElementById('SocialPopup');
+                const SocialButton = document.getElementById('SocialButton');
                 console.log('socialMediaId', socialMediaId);
                 navigate('/preferences');
                 handleSidebar('chat');
@@ -436,25 +442,27 @@ export default function Panel({ local }) {
                 SocialPopup.classList.add('hidden');
                 console.log('sdshdbjw');
               });
-            }, 3000);
+            }, 500);
           });
         }
-      }, 3000);
+      }, 500);
     } else if (hostname == 'www.facebook.com') {
       setTimeout(() => {
-        let postButton = document.querySelectorAll('[aria-label="Create a post"]')[0];
-        console.log('postButton');
+        let postButton = document.querySelectorAll('[aria-label="Create a post"]');
+        // let postButton = document.getElementsByClassName('xha3pab')[0];
+
+        console.log('postButton', postButton);
         if (postButton) {
-          postButton = postButton.children[0];
-          console.log(postButton);
+          postButton = postButton[0].children[0];
+          // console.log(postButton, 'postButton dfd');
           postButton.addEventListener('click', () => {
-            console.log('postButton click');
+            // console.log('postButton click');
             setTimeout(() => {
               let BtnPosition = document.getElementsByClassName('x1afcbsf')[0];
-              console.log('BtnPosition', BtnPosition);
+              // console.log('BtnPosition', BtnPosition);
               if (BtnPosition) {
                 BtnPosition = BtnPosition.getBoundingClientRect();
-                console.log('BtnPosition', BtnPosition);
+                // console.log('BtnPosition', BtnPosition);
                 setFromBtnPosition({
                   bottom: BtnPosition.bottom - 116,
                   left: BtnPosition.left + 444,
@@ -464,14 +472,14 @@ export default function Panel({ local }) {
               SocialButton.classList.remove('hidden');
               SocialButton.addEventListener('click', () => {
                 const SocialPopup = document.getElementById('SocialPopup');
-                console.log(SocialPopup);
+                // console.log(SocialPopup);
                 if (SocialPopup) {
                   SocialPopup.classList.remove('hidden');
                   let FormPosition = document.getElementsByClassName('x1afcbsf')[0];
-                  console.log('FormPosition', FormPosition);
+                  // console.log('FormPosition', FormPosition);
                   if (FormPosition) {
                     FormPosition = FormPosition.getBoundingClientRect();
-                    console.log('FormPosition', FormPosition);
+                    // console.log('FormPosition', FormPosition);
                     setFromPosition({
                       bottom: FormPosition.bottom + 78,
                       top: -FormPosition.bottom - 78,
@@ -483,21 +491,43 @@ export default function Panel({ local }) {
               });
               let closeSocialBtn = document.getElementById('closeSocialBtn');
               closeSocialBtn.addEventListener('click', () => {
-                console.log('SocialButton');
+                // console.log('SocialButton');
                 const SocialButton = document.getElementById('SocialButton');
                 SocialButton.classList.remove('hidden');
               });
               let Dismiss = document.querySelectorAll('[aria-label="Close"]')[0];
               Dismiss.addEventListener('click', () => {
-                console.log('Dismiss');
+                // console.log('Dismiss');
                 const SocialButton = document.getElementById('SocialButton');
                 SocialButton.classList.add('hidden');
               });
-            }, 2000);
+            }, 1000);
           });
         }
-      }, 3000);
+        let socialMediaId = document.getElementById('socialMediaPreference');
+        socialMediaId.addEventListener('click', () => {
+          const SocialPopup = document.getElementById('SocialPopup');
+          const SocialButton = document.getElementById('SocialButton');
+          // console.log('socialMediaId', socialMediaId);
+          navigate('/preferences');
+          handleSidebar('chat');
+          // console.log('sdshdbjw');
+          // console.log(SocialButton, 'SocialButton');
+          // console.log(SocialPopup, 'SocialPopup');
+          SocialButton.classList.add('hidden');
+          SocialPopup.classList.add('hidden');
+          // console.log('sdshdbjw');
+        });
+      }, 1000);
     } else if (hostname == 'twitter.com') {
+      // function disableScroll() {
+      //   document.body.style.overflow = 'hidden';
+      // }
+
+      // function enableScroll() {
+      //   document.body.style.overflow = 'auto';
+      // }
+
       setTimeout(() => {
         let BtnPosition = document.querySelectorAll('[data-testid="toolBar"]')[0];
         console.log('BtnPosition');
@@ -513,21 +543,28 @@ export default function Panel({ local }) {
           });
 
           const SocialButton = document.getElementById('SocialButton');
-          SocialButton.classList.remove('hidden');
+          // SocialButton.classList.remove('hidden');
+          // todo
+
+          if (SocialButton) {
+            SocialButton.classList.remove('hidden');
+          }
+          // Disable scrolling
+
           SocialButton.addEventListener('click', () => {
             const SocialPopup = document.getElementById('SocialPopup');
             console.log(SocialPopup);
             if (SocialPopup) {
               SocialPopup.classList.remove('hidden');
               let FormPosition = document.querySelectorAll('[data-testid="toolBar"]')[0];
-              console.log('FormPosition', FormPosition);
+
               if (FormPosition) {
                 FormPosition = FormPosition.parentElement.getBoundingClientRect();
-                console.log('FormPosition', FormPosition);
+
                 setFromPosition({
                   bottom: FormPosition.bottom + 601,
                   top: -FormPosition.bottom - 601,
-                  left: FormPosition.left + 227,
+                  left: FormPosition.left + 200,
                 });
                 SocialButton.classList.add('hidden');
               }
@@ -541,9 +578,99 @@ export default function Panel({ local }) {
             SocialButton.classList.remove('hidden');
           });
         }
+        let socialMediaId = document.getElementById('socialMediaPreference');
+        socialMediaId.addEventListener('click', () => {
+          const SocialPopup = document.getElementById('SocialPopup');
+          const SocialButton = document.getElementById('SocialButton');
+
+          console.log('socialMediaId', socialMediaId);
+          navigate('/preferences');
+          handleSidebar('chat');
+          console.log('sdshdbjw');
+          console.log(SocialButton, 'SocialButton');
+          console.log(SocialPopup, 'SocialPopup');
+          SocialButton.classList.add('hidden');
+          SocialPopup.classList.add('hidden');
+          console.log('sdshdbjw');
+        });
       }, 3000);
     }
   }, [isFloatIconClicked, isGmailActive]);
+
+  // todo
+  // out side click functionality
+
+  // useEffect(() => {
+  //   const hostname = window.location.hostname;
+  //   const modal1 = document.getElementById('SocialButton');
+  //   const modal2 = document.getElementById('SocialPopup');
+  //   if (hostname == 'www.linkedin.com') {
+  //     const postButton = document.getElementsByClassName('share-box-feed-entry__top-bar')[0];
+
+  //     let isModal2Open = false; // Initially, modal2 is not open
+
+  //     if (postButton) {
+  //       postButton.addEventListener('click', () => {
+  //         setTimeout(() => {
+  //           // When postButton is clicked, open modal2
+  //           isModal2Open = true;
+  //           modal1.addEventListener('click', () => {
+  //             modal2.classList.remove('hidden');
+  //           });
+  //           console.log('hello linkedIn');
+
+  //           const handleClickOutside = (event) => {
+  //             if (isModal2Open && !modal2.contains(event.target)) {
+  //               console.log('outside clicked successfully');
+  //               modal2.classList.add('hidden');
+  //               isModal2Open = false; // Set the flag to indicate modal2 is closed
+  //             } else {
+  //               console.log('inside click');
+  //             }
+  //           };
+
+  //           document.addEventListener('click', handleClickOutside);
+
+  //           return () => {
+  //             document.removeEventListener('click', handleClickOutside);
+  //           };
+  //         }, 500);
+  //       });
+  //     }
+  //   } else if (hostname == 'www.facebook.com') {
+  //     console.log('hello');
+  //   } else if (hostname == 'twitter.com') {
+  //     console.log('hello from twitter');
+  //   }
+  // }, []);
+
+  // useEffect(() => {
+  //   const hostname = window.location.hostname;
+
+  //   if (hostname == 'www.linkedin.com' || hostname == 'www.facebook.com' || hostname == 'twitter.com') {
+  // const modal1 = document.getElementById('SocialButton');
+  // const modal2 = document.getElementById('SocialPopup');
+
+  // const handleClickOutside = (event) => {
+  //   console.log('outside click');
+  //   if (modal1 && !modal1.contains(event.target) && modal2 && !modal2.contains(event.target)) {
+  //     if (modal1) {
+  //       modal1.classList.add('hidden');
+  //     }
+  //     if (modal2) {
+  //       modal2.classList.add('hidden');
+  //     }
+  //   }
+  // };
+  // document.addEventListener('click', handleClickOutside);
+
+  // return () => {
+  //   document.removeEventListener('click', handleClickOutside);
+  // };
+  //   }
+  // }, []);
+
+  // out side click functionality
 
   // console.log({fromPosition});
   // console.log({fromBtnPosition});

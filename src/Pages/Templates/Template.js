@@ -42,12 +42,7 @@ const Template = ({ selectedTemplate, setActiveTab }) => {
   };
 
   const isInputField = (element) => {
-    return (
-      element.tagName === 'INPUT' ||
-      element.tagName === 'TEXTAREA' ||
-      // Add more conditions for other input field types as needed
-      false
-    );
+    return element.tagName === 'INPUT' || element.tagName === 'TEXTAREA' || false;
   };
 
   const findClosestButton = (element) => {

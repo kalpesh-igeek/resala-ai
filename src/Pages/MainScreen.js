@@ -113,6 +113,7 @@ import PromptComp from '../Components/Common/PromptComp';
 import CustomTooltip from '../Components/CustomTooltip/Tooltip';
 import { Switch } from 'antd';
 import './style.css';
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
@@ -507,6 +508,7 @@ const MainScreen = ({
       const button = findClosestButton(focusedElement);
 
       if (button) {
+        console.log('buttonnnnnn', button);
         button.removeAttribute('disabled');
       }
 
@@ -704,6 +706,7 @@ const MainScreen = ({
     }
   }, [isClickButton]);
 
+  // todo  insert
   //Prompt
   useEffect(() => {
     function handleClickOutside(event) {
@@ -822,7 +825,7 @@ const MainScreen = ({
 
   function transformResponse(response) {
     return {
-      value: response?.value?.toLowerCase().substring(0, 2), // or any other logic you use to generate ids
+      value: response?.value?.toLowerCase().substring(0, 2),
       label: response?.label,
     };
   }
@@ -1557,6 +1560,7 @@ const MainScreen = ({
     }, 2000);
   };
 
+  // todo
   const handleApply = () => {
     const parentElement = document.querySelector('div[gmail_original="1"]');
     if (focusedTextarea) {
@@ -1649,7 +1653,7 @@ const MainScreen = ({
     resetTranscript();
   };
   const handlePaste = (e) => {
-    const maxCharacterCount = 4000;
+    const maxCharacterCount = 1000;
     const pastedText = e.clipboardData.getData('text');
     const { name, value } = e.target;
 
@@ -1659,7 +1663,7 @@ const MainScreen = ({
   };
   const handleChange = (e) => {
     // const { name, value } = e.target;
-    // const maxCharacterCount = 4000;
+    // const maxCharacterCount = 1000;
     // if (name === 'chatText') {
     //   if (value.length > maxCharacterCount) {
     //     const truncatedValue = value.substring(0, maxCharacterCount);
@@ -1670,7 +1674,7 @@ const MainScreen = ({
     //   }
     // }
     const { name, value } = e.target;
-    const maxCharacterCount = 4000;
+    const maxCharacterCount = 1000;
     if (name === 'chatText') {
       if (value.length > maxCharacterCount) {
         const truncatedValue = value.substring(0, maxCharacterCount);
@@ -2751,7 +2755,7 @@ const MainScreen = ({
                               // />
                               <div
                                 className={`flex items-top gap-[8px] border border-gray px-[10px] rounded-lg ${
-                                  chatType === 'summarize' ? 'blur-sm shadow-md pointer-events-none' : '' // Add the blur class conditionally
+                                  chatType === 'summarize' ? 'blur-sm shadow-md pointer-events-none' : ''
                                 }`}
                               >
                                 <div
@@ -2821,7 +2825,7 @@ const MainScreen = ({
                           </form>
                         </div>
                         <div className="absolute text-lightgray2 right-[21px] bottom-[10px] text-[12px]">
-                          {speechLength}/4000
+                          {speechLength}/1000
                         </div>
                       </>
                     )}
@@ -3031,7 +3035,7 @@ const MainScreen = ({
                                   name="input_text"
                                   rows="6"
                                   value={selectedText.input_text}
-                                  maxLength="4000"
+                                  maxLength="1000"
                                   onChange={(e) => handleChangeCompose(e)}
                                   placeholder="Tell me what to write for you"
                                   className="text-[14px] border-gray block w-full rounded-md border p-1.5 mb-[10px]"
