@@ -2574,7 +2574,7 @@ const MainScreen = ({
                             className="mb-[10px]"
                           >
                             {audioInput ? (
-                              <div className="flex flex-col border border-gray p-[10px]">
+                              <div className="flex flex-col border border-gray p-[10px] rounded-[6px]">
                                 <div className="flex items-center gap-4 mb-[16px]">
                                   <div
                                     className="flex items-center justify-center w-[24px] h-[24px] rounded-full cursor-pointer"

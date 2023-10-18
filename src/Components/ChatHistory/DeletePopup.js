@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { deleteChatHistory } from '../../redux/reducers/chatSlice/ChatSlice';
 import Close from '../../utils/MainScreen/Icons/Close.svg';
-import WarningIcon from '../../utils/MainScreen/Icons/WarningIcon.svg';
+import alertIcon from '../../utils/MainScreen/Icons/alertIcon.svg';
 
 export default function DeletePopup({
   deleteContent,
@@ -51,9 +51,9 @@ export default function DeletePopup({
           <div className="flex items-center justify-between">
             <div className="gap-2 flex items-center">
               <span className="w-[28px] h-[28px] flex items-center justify-center bg-rose-200 rounded-full">
-                <img src={WarningIcon} />
+                <img src={alertIcon} />
               </span>
-              <span className="text-red">Delete History</span>
+              <span className="text-red">Alert</span>
             </div>
             <div className="cursor-pointer -mt-[30px]" onClick={() => setIfOpenDeleteBox(false)}>
               <img src={Close} />
@@ -66,16 +66,16 @@ export default function DeletePopup({
         <div className="mt-1 flex justify-end">
           <div className="flex gap-2 items-center">
             <button
-              className="rounded-md bg-white px-[16px] py-[10px] text-[16px] font-medium text-darkBlue border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
+              className="rounded-md bg-white px-[16px] py-[10px] text-[16px] font-medium text-[#5F6583] border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
               onClick={() => setIfOpenDeleteBox(false)}
             >
-              No
+              Cancel
             </button>
             <button
               className="rounded-md bg-primaryBlue px-[16px] py-[10px] text-[16px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
               onClick={(e) => handleDeleteTemplate(e)}
             >
-              Yes
+              Delete
             </button>
           </div>
         </div>
