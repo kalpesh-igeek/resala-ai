@@ -24,6 +24,8 @@ const Profile = ({
   const profileRef = useRef(null);
 
   const handleLogout = () => {
+    chrome.storage.local.clear();
+    chrome.storage.sync.clear();
     // setIsLogout(true);
     removeToken();
     navigate('/login');

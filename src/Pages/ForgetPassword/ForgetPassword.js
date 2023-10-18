@@ -5,6 +5,7 @@ import InputField from '../../Components/InputField';
 import { forgotPasswordDetails, sendOtpMail } from '../../redux/reducers/authSlice/AuthSlice';
 import { emailCheck } from '../../utils/validation';
 import { useDispatch, useSelector } from 'react-redux';
+import SubHeader from '../../Layout/SubHeader';
 
 const ForgetPassword = () => {
   const navigate = useNavigate();
@@ -50,19 +51,20 @@ const ForgetPassword = () => {
 
   return (
     <>
+    <SubHeader></SubHeader>
       <div className="py-[90px] px-[75px] flex flex-col justify-center">
-        <div className="flex items-center justify-center gap-2 mb-[50px]">
+        {/* <div className="flex items-center justify-center gap-2 mb-[50px]">
           <img src={Logo} alt="logo" className="cursor-pointer h-[32px] w-[32px]" />
           <div className="text-darkgray text-[18px]">Resala</div>
-        </div>
-        <div className="text-[22px] flex justify-center mb-[8px] font-bold">Reset your password</div>
+        </div> */}
+        <div className="text-[22px] flex justify-center mb-[8px] font-bold text-[#19224C]">Reset your password</div>
         <div className="flex justify-center px-[10px] text-center text-gray2 mb-[40px] flex-col text-[12px] gap-2">
           Enter your email address and we will send you instructions to reset your password.
         </div>
         <form onSubmit={handleSubmit}>
           <div className="flex justify-center flex-col">
             <InputField
-              className="block w-full rounded-md border border-gray px-[15px] py-[16px] mb-[10px] text-[14px] text-darkBlue placeholder:text-gray1"
+              className="block w-full rounded-md border border-gray px-[15px] py-[16px] mb-[10px] text-[14px] text-[#6D77A0] placeholder:text-[#6D77A0]"
               name="email"
               label="Email Address"
               type="email"
@@ -75,7 +77,7 @@ const ForgetPassword = () => {
           <div className="col-span-full">
             <div className="flex gap-2 items-center">
               <button
-                className="w-full rounded-md bg-primaryBlue focus:outline-none px-1 py-[16px] text-[12px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
+                className="w-full rounded-md bg-primaryBlue focus:outline-none px-1 py-[16px] text-[16px] font-[700] text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
                 type="submit"
                 // onClick={(e) => handleSubmit(e)}
               >

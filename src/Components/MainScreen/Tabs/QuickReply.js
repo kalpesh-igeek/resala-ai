@@ -102,7 +102,7 @@ const QuickReply = ({
     setSelectedOption(selectedOption);
   };
   const handleSelectLangChange = (selectedLang) => {
-    console.log(selectedLang);
+    // console.log(selectedLang);
     setSelectedLang(selectedLang);
   };
   const defaultTone = tones[0];
@@ -165,7 +165,7 @@ const QuickReply = ({
           headers: {
             'Content-Type': 'application/json',
             // 'Access-Control-Allow-Origin': '*',
-            Authorization: getToken(),
+            Authorization: await getToken(),
           },
           body: JSON.stringify({
             email: content,
@@ -237,7 +237,7 @@ const QuickReply = ({
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
-          Authorization: getToken(),
+          Authorization: await getToken(),
         },
         body: JSON.stringify({
           sender_intent: senderIntent.trim(),
@@ -329,7 +329,7 @@ const QuickReply = ({
       .writeText(textToCopy)
       .then(() => {
         // Text successfully copied to clipboard
-        console.log('Text copied to clipboard:', textToCopy);
+        // console.log('Text copied to clipboard:', textToCopy);
       })
       .catch((error) => {
         // Handle any errors that may occur
@@ -441,7 +441,7 @@ const QuickReply = ({
     setLanguage(false);
   };
 
-  console.log({selectedLang});
+  // console.log({selectedLang});
   return (
     <>
       <div className="px-[20px] py-[12px] relative">

@@ -7,6 +7,7 @@ import InputField from '../../Components/InputField';
 import { otpCheck } from '../../utils/validation';
 import { forgotPasswordDetails, otpVerification, sendOtpMail } from '../../redux/reducers/authSlice/AuthSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import SubHeader from '../../Layout/SubHeader';
 
 const OTPVerification = () => {
   const navigate = useNavigate();
@@ -112,6 +113,7 @@ const OTPVerification = () => {
 
   return (
     <>
+    <SubHeader></SubHeader>
       {isOTPSent ? (
         <div className="flex gap-1 bg-lightblue1 justify-center">
           <div className="flex gap-2 justify-center py-[12px]">
@@ -130,7 +132,7 @@ const OTPVerification = () => {
           Go Back
         </div>
       )}
-      <div className="py-[90px] px-[75px] flex flex-col justify-center">
+      <div className="py-[56px] px-[75px] flex flex-col justify-center">
         {/* {isOTPSent ? (
           // <>
           //   <div className="flex items-center justify-center gap-2 mb-[40px]">
@@ -146,7 +148,7 @@ const OTPVerification = () => {
           <div className="flex items-center justify-center gap-2 mb-[40px]">
             <img src={OTPVerificationLogo} alt="OTPVerificationLogo" className="cursor-pointer h-[70px] w-[70px]" />
           </div>
-          <div className="text-[22px] flex justify-center mb-[8px] font-bold">OTP Verification</div>
+          <div className="text-[22px] flex justify-center mb-[8px] font-bold text-[#19224C]">Verification Code</div>
           <div className="px-[10px] text-center text-gray2 mb-[24px] flex-col text-[12px] gap-2">
             Enter the code we sent to <span className="font-bold"> {userEmail.email}</span>
           </div>
@@ -198,7 +200,7 @@ const OTPVerification = () => {
             </span>
           </div> */}
           <button
-            className={`w-full rounded-md bg-primaryBlue mt-[12px] px-1 py-[16px] focus:outline-none text-[12px] font-medium text-white hover:opacity-90 disabled:bg-lightblue5 disabled:cursor-none disabled:opacity-50 ${
+            className={`w-full rounded-md bg-primaryBlue mt-[12px] px-1 py-[16px] focus:outline-none text-[16px] font-[700] text-white hover:opacity-90 disabled:bg-lightblue5 disabled:cursor-none disabled:opacity-50 ${
               inputValue.otp?.length !== 6 ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             onClick={(e) => otpVerificationMail(e)}

@@ -178,7 +178,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     } else if (hostname === 'twitter.com') {
       response = await postRequest('/twitter/twitter_post_streaming', postData);
     }
-
     if (response && response.status === 200) {
       let text = response.data
         .replace(/#@#/g, '')
@@ -598,6 +597,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       //   setIdeadload(false);
       // });
     }
+    // console.log(selectedIdea, 'selectedIdea');
+    // setIdeasValue('');
   };
   // home-ideaPost
   const [typing, setTyping] = useState(true);
@@ -646,7 +647,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     // console.log({ 'dgvklsdgdsklgvnsdklgndskgdns => ': response });
     if (response && response.status === 200) {
       // console.log('skfsdj,gsdjkgdsjkgkjsdjk');
-      console.log(response.data, 'response.data');
+      //console.log(response.data, 'response.data');
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST :/g, '')

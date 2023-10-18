@@ -92,79 +92,55 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
       }
       if (res.payload.status === 200) {
         setInvalidCred('');
-        localStorage.setItem('userAccessToken', `Bearer ${res.payload?.data?.Result?.access_token}`);
 
-        Promise.resolve().then(() => {
-          const userToken = getToken();
-          if (userToken) {
-            dispatch(newChat());
-            navigate('/');
-          }
-        });
+        try {
+            var token = "Bearer "+res.payload?.data?.Result?.access_token;
+            chrome.storage.sync.set({ "userAccessToken": token }, function () {});
 
-        // chrome.storage.local.set({ userAccessToken: `Bearer ${res.payload?.data?.Result?.access_token}` }, () => {
-        //   if (!chrome.runtime.lastError) {
-        //     const userToken = getToken();
-        //     if (userToken) {
-        //       dispatch(newChat());
-        //       navigate('/');
-        //     }
-        //   } else {
-        //     console.error(chrome.runtime.lastError);
+            // access token from the chrome storage
+          // chrome.storage.sync.get(["userAccessToken"], function (items) {
+          //   console.log("userAccessToken : ", items);
+          // });
+
+          dispatch(newChat());
+          navigate('/');
+        } catch (error) {
+          console.log(error);
+        }
+
+        // chrome.storage.local.set({ "userAccessToken": "Piyush" }).then((result) => {
+        //   console.log("Value is set",result);
+
+        //   chrome.storage.local.get('userAccessToken', function (result) {
+
+        //     alert(result.channels);
+        //   });
+        // });
+        //   if (re?.payload?.status == 200) {
+
+        //     chrome.storage.local.get("userAccessToken", function (value) {
+        //       console.log("userAccessToken : ", value); // 1
+        //     });
+
+
+        //     console.log("Called after navigate");
         //   }
         // });
+        // console.log("Token : ",res.payload?.data?.Result?.access_token);
+        // chrome.storage.local.set({ loginToken: JSON.stringify(`Bearer ${res.payload?.data?.Result?.access_token}`) });
+        // navigate('/');
+        // dispatch(newChat());
+        // console.log("Called after navigate");
 
-        // () => {
-        //   if (chrome.runtime.lastError) {
-        //     console.log('dfdf');
-        //     console.error(chrome.runtime.lastError);
-        //     console.log('dfdf');
-        //   } else {
-        //     chrome.storage.local.get(['userAccessToken'], (result) => {
-        //       console.log('gdfgf');
-        //       const userToken = result.userAccessToken;
-        //       console.log('jgdfj', userToken);
-        //       Promise.resolve().then(() => {
-        //         if (userToken) {
-        //           console.log('djks');
-        //           dispatch(newChat());
-        //           navigate('/');
-        //         }
-        //       });
-        //     });
-        //   }
-        // };
-        // chrome.storage.local.set('userAccessToken', `Bearer ${res.payload?.data?.Result?.access_token}`);
+        //   localStorage.setItem('userAccessToken', `Bearer ${res.payload?.data?.Result?.access_token}`);
 
         // Promise.resolve().then(() => {
         //   const userToken = getToken();
+        //   console.log({userToken});
         //   if (userToken) {
         //     dispatch(newChat());
         //     navigate('/');
         //   }
-        // });
-        // const userAccessToken = `Bearer ${res.payload?.data?.Result?.access_token}`;
-        // chrome.storage.local.set({ userAccessToken }, () => {
-        //   // if (chrome.runtime.lastError) {
-        //   //   console.error(chrome.runtime.lastError);
-        //   // }
-        //   if (userAccessToken) {
-        //     dispatch(newChat());
-        //     navigate('/');
-        //     // console.error(chrome.runtime.lastError);
-        //   } else {
-        //     Promise.resolve().then(() => {
-        //       const userToken = getToken();
-        //       console.log(userToken, 'usertoken');
-        //       if (userToken) {
-        //         console.log('gdfg');
-        //         dispatch(newChat());
-        //         navigate('/');
-        //         console.log('dgfdfg');
-        //       }
-        //     });
-        //   }
-
         // });
       }
     }
@@ -186,7 +162,7 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
   return (
     <>
       <div
-        style={{ position: 'sticky', top: 0 }}
+        style={{ position: 'sticky', top: 0 ,borderLeft:'none' }}
         className="flex items-center justify-between px-[20px] py-[11px] border-b-gray border-b-[1px] border-l-gray border-l-[1px] bg-white relative z-[70] font-dmsans"
       >
         <div className="flex items-center gap-2">
@@ -213,11 +189,13 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
           <img src={Logo} alt="logo" className="cursor-pointer h-[32px] w-[32px]" />
           <div className="text-darkgray text-[18px] font-Poppins font-medium">Resala</div>
         </div> */}
-        <div className="text-[22px] flex justify-center mb-[40px] font-bold">Welcome Back</div>
+        <div className="text-[22px] flex justify-center mb-[40px] font-bold text-[#19224C]">
+          {!isSecondStep ? 'Welcome Back' : 'Enter your password'} 
+        </div>
         <div className="flex justify-center flex-col gap-2">
           <form onSubmit={handleSubmit}>
             <InputField
-              className="block w-full rounded-md border border-gray px-7 py-[16px] mb-[12px] text-[14px] text-darkBlue placeholder:text-gray1"
+              className={`block w-full rounded-md border border-gray px-7 py-[16px] mb-[12px] text-[14px] text-[#6D77A0] placeholder:text-[#6D77A0] ${isSecondStep ? 'bg-[#FFFFFF]' :''}` }
               name="email"
               label="Email Address"
               type="email"
@@ -250,7 +228,7 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
               <div className="relative">
                 <InputField
                   isFixedLabel
-                  className="block w-full rounded-md border border-gray mt-[4px] pl-[15px] pr-[47px] py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
+                  className="block w-full rounded-md border border-gray mt-[4px] pl-[15px] pr-[47px] py-[16px] text-[14px] mb-[12px] text-[#6D77A0] placeholder:text-[#6D77A0]"
                   name="password"
                   label="Password"
                   type={isPasswordVisible ? 'text' : 'password'}
@@ -258,7 +236,7 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
                   // isvisible={true}
                   handleChange={(e) => handleChange(e)}
                   value={inputValue.password}
-                  // isLoading={isLoading}
+                // isLoading={isLoading}
                 />
                 <div
                   className="absolute right-[15px] top-[15px] cursor-pointer"
@@ -284,9 +262,8 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
                 > */}
                 <button
                   type="button"
-                  className={`flex justify-center bg-transparent text-primaryBlue w-full mb-[24px] rounded-md px-1 py-[5px] text-[14px] font-medium hover:opacity-90 disabled:opacity-50  ${
-                    isLoading ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
+                  className={`flex justify-center bg-transparent text-[#046AF3] w-full mb-[24px] rounded-md px-1 py-[5px] text-[14px] font-[400] hover:opacity-90 disabled:opacity-50  ${isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
                   style={{ cursor: 'unset' }}
                   disabled={isLoading}
                 >
@@ -301,9 +278,8 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
             <div className="col-span-full mb-[15px]">
               <div className="flex gap-2 items-center">
                 <button
-                  className={`w-full rounded-md bg-primaryBlue px-1 py-[16px] text-[12px] font-medium text-white hover:opacity-90 focus:outline-none disabled:cursor-none disabled:opacity-50 ${
-                    isLoading ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
+                  className={`w-full h-[52px] rounded-md bg-[#1678F2] px-1 py-[16px] text-[16px] font-[700] text-white hover:opacity-90 focus:outline-none disabled:cursor-none disabled:opacity-50 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
                   type="submit"
                   disabled={isLoading}
                 >
@@ -334,9 +310,9 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
           </form>
         </div>
         <div className="flex justify-center items-center gap-1 mt-[10px] text-[14px]">
-          <span className="text-gray2">Don't have account?</span>
+          <span className="text-gray2 font-[500]">Don't have account?</span>
           <button
-            className={`text-primaryBlue ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`text-primaryBlue ${isLoading ? 'opacity-50 cursor-not-allowed' : ''} font-[700]`}
             onClick={handleSignUp}
             disabled={isLoading}
           >

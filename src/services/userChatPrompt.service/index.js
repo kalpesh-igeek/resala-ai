@@ -21,7 +21,7 @@ const getPrompt = async (id) => {
     return await getRequest(promptPath);
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
-    console.log('error', error?.response?.data?.message);
+    // console.log('error', error?.response?.data?.message);
   }
 };
 
@@ -37,7 +37,8 @@ const getPromptList = async (queryParams) => {
 };
 
 const getDefauPromptList = async (queryParams) => {
-  if (getToken()) {
+  let token = await getToken();
+  if (token) {
     try {
       const { search } = queryParams;
       const promptPath = `${PROMPT_URL}/get_default_prompt_list?search=${search}`;
@@ -63,7 +64,7 @@ const searchPrompt = async (queryParams) => {
 };
 
 const updatePrompt = async (id, payload) => {
-  console.log('payload', payload, id);
+  // console.log('payload', payload, id);
   try {
     const updatePromptPath = `${PROMPT_URL}/edit_prompt/${id}`;
     return await patchRequest(updatePromptPath, payload);

@@ -90,7 +90,7 @@ const UsingPromptInputBox = ({
   const handleChange = (e, index) => {
     const tmp = Array.from(multiplePlaceholder.fields);
     tmp[index] = e.target.value;
-    console.log('tmp', tmp);
+    // console.log('tmp', tmp);
     setMultiplePlaceholder((prev) => {
       return {
         ...prev,
@@ -224,7 +224,7 @@ const UsingPromptInputBox = ({
             { multiplePlaceholder.fields.map((itm, index) => (
                 multiplePlaceholder.fields.length == 1
                 ? <div index={`input-${index}`}>
-                  {console.log('itm', typeof itm)}
+                  {/* {console.log('itm', typeof itm)} */}
                   <textarea
                     placeholder={`${itm}`}
                     className="w-full rounded-md border border-gray p-[12px] text-[14px] text-darkBlue placeholder:text-gray2"
@@ -236,7 +236,7 @@ const UsingPromptInputBox = ({
                   />
                 </div>
                 : <div index={`input-${index}`}>
-                {console.log('itm', typeof itm)}
+                {/* {console.log('itm', typeof itm)} */}
                 {/* <input value={itm} placeholder={itm} onChange={(e) => handleChange(e, index)} /> */}
                 <InputField
                   className="w-full rounded-md border border-gray p-[12px] text-[14px] text-darkBlue placeholder:text-gray2"

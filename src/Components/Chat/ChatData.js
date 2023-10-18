@@ -149,7 +149,7 @@ const ChatData = ({
                           </CustomTooltip>
                         </div>
 
-                        <pre className="font-dmsans text-[14px]" style={{ textWrap: 'wrap' }}>
+                        <pre className="font-dmsans text-[#19224C] font-[400] text-[14px]" style={{ textWrap: 'wrap' }}>
                           {renderMessage(item)}
                         </pre>
                       </div>

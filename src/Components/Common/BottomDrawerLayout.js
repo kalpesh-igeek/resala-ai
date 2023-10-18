@@ -32,7 +32,7 @@ export const BottomDrawerLayout = ({ children, setClose, title = '' }) => {
         <div className="flex items-center justify-between px-[20px] pt-[13px] pb-[8px]">
           <div className="flex items-center gap-2">
             <div className="gap-2 flex items-center">
-              <span className="text-[22px] font-medium text-darkBlue">{title}</span>
+              <span className="text-[20px] font-medium text-darkBlue">{title}</span>
             </div>
           </div>
           <div className="cursor-pointer -mt-[30px]" onClick={() => setClose(false)}>

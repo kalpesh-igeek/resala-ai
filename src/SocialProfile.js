@@ -25,6 +25,7 @@ const SocialProfile = ({
 
   const handleLogout = () => {
     // setIsLogout(true);
+    chrome.storage.local.clear();
     removeToken();
     navigate('/login');
     dispatch(clearDisptach());

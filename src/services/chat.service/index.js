@@ -20,7 +20,7 @@ const userChat = async (payload) => {
     const userChatPath = `${CHAT_URL}/stream_chat`;
     return await postRequest(userChatPath, payload);
   } catch (error) {
-    console.log('error', error);
+    // console.log('error', error);
     // Toast('error', error?.response?.data?.message);
     // console.log('error', error?.response?.data?.message);
     Toast('error', error.response.data.Message);
@@ -32,7 +32,7 @@ const generalPromptChat = async (payload) => {
     const userChatPath = `${CHAT_URL}/general_prompt_response`;
     return await postRequest(userChatPath, payload);
   } catch (error) {
-    console.log('error', error);
+    // console.log('error', error);
     // Toast('error', error?.response?.data?.message);
     // console.log('error', error?.response?.data?.message);
     Toast('error', error.response.data.Message);
@@ -44,7 +44,7 @@ const userChatNew = async (payload) => {
     const userChatPath = `${CHAT_URL}/chat_test`;
     return await postRequest(userChatPath, payload);
   } catch (error) {
-    console.log('error', error);
+    // console.log('error', error);
     // Toast('error', error?.response?.data?.message);
     // console.log('error', error?.response?.data?.message);
     Toast('error', error.response.data.Message);

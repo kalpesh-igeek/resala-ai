@@ -81,6 +81,7 @@ export default function Panel({ local }) {
   const [selectedAction, setSelectedAction] = useState();
   const [isClickWikiPediaButton, setIsClickWikiPediaButton] = useState(false);
   const [positionY, setPoistionY] = useState(0);
+  // console.log('positionY', positionY);
   const [isFloatIconClicked, setIsFloatIconClicked] = useState(false);
   const [isWikipediaButtonClicked, setIsWikipediaButtonClicked] = useState(false);
   const [backToInbox, setBackToInbox] = useState('');
@@ -104,8 +105,8 @@ export default function Panel({ local }) {
   }, []);
 
   const handleSpeak = (msg) => {
-    console.log({ msg });
-    console.log({ speaking });
+    // console.log({ msg });
+    // console.log({ speaking });
     if (speaking) {
       cancel();
     } else {
@@ -143,11 +144,11 @@ export default function Panel({ local }) {
       const rect = selected.getRangeAt(0).getBoundingClientRect();
       const positionX = rect.left + window.scrollX + rect.width / 2;
       // Add the height of the element to position it below the selected text
-      const positionY = rect.top + window.scrollY + rect.height + 20;
+      const positionY = rect.top + window.scrollY + rect.height + 10;
 
       document.getElementById('selectmenu').style.display = 'block';
-      setPoistionX(positionX + window.scrollX);
-      setPoistionY(positionY + window.scrollY);
+      setPoistionX(positionX);
+      setPoistionY(positionY);
     } else {
       document.getElementById('selectmenu').style.display = 'none';
     }
@@ -178,7 +179,7 @@ export default function Panel({ local }) {
 
     if (floatIcon) {
       if (isFloatIconClicked) {
-        console.log('remove');
+        // console.log('remove');
         window.removeEventListener('mousedown', (e) => {
           isDragging = true;
           offsetX = e.clientX - floatIcon.getBoundingClientRect().left;
@@ -244,15 +245,15 @@ export default function Panel({ local }) {
           const actionPopUpButton = document.getElementById('actionPopUpButton');
           const actionCloseButton = document.getElementById('actionCloseButton');
           actionCloseButton.addEventListener('click', () => {
-            console.log('actionCloseButton click');
+            // console.log('actionCloseButton click');
             youtubeButton.classList.add('hidden');
           });
           youtubeButton.addEventListener('mouseover', () => {
-            console.log('mouseover');
+            // console.log('mouseover');
             actionPopUpButton.classList.remove('hidden');
           });
           youtubeButton.addEventListener('mouseout', () => {
-            console.log('mouseout');
+            // console.log('mouseout');
             actionPopUpButton.classList.add('hidden');
           });
           if (youtubeButton) {
@@ -260,7 +261,7 @@ export default function Panel({ local }) {
             youtubeButton.classList.remove('hidden');
             const ContinueInChat = document.getElementById('ContinueInChat');
             ContinueInChat.addEventListener('click', () => {
-              console.log('ContinueInChat');
+              // console.log('ContinueInChat');
               handleSidebar('chat');
               setIsClickWikiPediaButton(true);
             });
@@ -268,18 +269,20 @@ export default function Panel({ local }) {
         }
       }, 3000);
     } else if (hostname == 'mail.google.com') {
-      console.log('mail is already');
-      const SocialButton = document.getElementById('SocialButton');
-      if (SocialButton) {
-        SocialButton.classList.add('hidden');
-      }
-      const oldQuickReply = document.getElementById('cloneQuickReply');
-      if (!oldQuickReply) {
-        const quickReply = document.getElementById('quickButton');
-        const cloneQuickReply = quickReply.cloneNode(true);
-        cloneQuickReply.id = 'cloneQuickReply';
-        cloneQuickReply.classList.add('hidden');
-        setTimeout(() => {
+      // console.log('mail is already');
+      setTimeout(() => {
+        // Get a reference to the scrollable element
+        const scrollableContent = document.getElementsByClassName('a98')[0];
+        // Add a scroll event listener to the scrollable element
+        scrollableContent.addEventListener('wheel', (event) => {
+          myFunction();
+        });
+        const oldQuickReply = document.getElementById('cloneQuickReply');
+        if (oldQuickReply == undefined) {
+          const quickReply = document.getElementById('quickButton');
+          const cloneQuickReply = quickReply.cloneNode(true);
+          cloneQuickReply.id = 'cloneQuickReply';
+          cloneQuickReply.classList.add('hidden');
           const quickPosition = document.getElementsByClassName('hj')[0];
           if (quickPosition) {
             cloneQuickReply.classList.remove('hidden');
@@ -289,9 +292,8 @@ export default function Panel({ local }) {
               handleSidebar('quickreply');
             });
           }
-        }, 3000);
-      }
-
+        }
+      }, 3000);
       // const quickPosition = document.querySelectorAll('[aria-label="Print all"]')[0];
       // if (quickPosition) {
       // quickReply.classList.remove('hidden');
@@ -310,7 +312,7 @@ export default function Panel({ local }) {
         if (WikipediaButton) {
           WikipediaButton.classList.remove('hidden');
           if (isWikipediaButtonClicked) {
-            console.log('remove');
+            // console.log('remove');
             window.removeEventListener('mousedown', (e) => {
               isWikiDragging = true;
               offsetWikiX = e.clientX - WikipediaButton.getBoundingClientRect().left;
@@ -370,24 +372,22 @@ export default function Panel({ local }) {
 
         const wikiSummarize = document.getElementById('wikiSummarize');
         wikiSummarize.addEventListener('click', () => {
-          console.log('Fsdhkj');
+          // console.log('Fsdhkj');
           setIsClickWikiPediaButton(true);
         });
       }, 3000);
     } else if (hostname == 'www.linkedin.com') {
       setTimeout(() => {
         const postButton = document.getElementsByClassName('share-box-feed-entry__top-bar')[0];
-        console.log('postButton');
+        // console.log('postButton');
         if (postButton) {
           postButton.addEventListener('click', () => {
             setTimeout(() => {
               let BtnPosition = document.getElementById('share-to-linkedin-modal__header');
-              // let BtnPosition = document.querySelectorAll('[aria-labelledby="share-to-linkedin-modal__header"]');
-
-              console.log('BtnPosition', BtnPosition);
+              // console.log('BtnPosition', BtnPosition);
               if (BtnPosition) {
                 BtnPosition = BtnPosition.getBoundingClientRect();
-                console.log('BtnPosition', BtnPosition);
+                // console.log('BtnPosition', BtnPosition);
                 setFromBtnPosition({
                   top: BtnPosition.top + 50,
                   left: BtnPosition.left + 660,
@@ -402,10 +402,10 @@ export default function Panel({ local }) {
                 if (SocialPopup) {
                   SocialPopup.classList.remove('hidden');
                   let FormPosition = document.getElementsByClassName('share-box')[0];
-                  console.log('FormPosition', FormPosition);
+                  // console.log('FormPosition', FormPosition);
                   if (FormPosition) {
                     FormPosition = FormPosition.getBoundingClientRect();
-                    console.log('FormPosition', FormPosition);
+                    // console.log('FormPosition', FormPosition);
                     setFromPosition({
                       bottom: FormPosition.bottom,
                       top: FormPosition.top + 105,
@@ -417,13 +417,13 @@ export default function Panel({ local }) {
               });
               let closeSocialBtn = document.getElementById('closeSocialBtn');
               closeSocialBtn.addEventListener('click', () => {
-                console.log('SocialButton');
+                // console.log('SocialButton');
                 const SocialButton = document.getElementById('SocialButton');
                 SocialButton.classList.remove('hidden');
               });
               let Dismiss = document.querySelectorAll('[aria-label="Dismiss"]')[0];
               Dismiss.addEventListener('click', () => {
-                console.log('Dismiss');
+                // console.log('Dismiss');
                 const SocialButton = document.getElementById('SocialButton');
                 SocialButton.classList.add('hidden');
               });
@@ -435,12 +435,12 @@ export default function Panel({ local }) {
                 console.log('socialMediaId', socialMediaId);
                 navigate('/preferences');
                 handleSidebar('chat');
-                console.log('sdshdbjw');
-                console.log(SocialButton, 'SocialButton');
-                console.log(SocialPopup, 'SocialPopup');
+                // console.log('sdshdbjw');
+                // console.log(SocialButton, 'SocialButton');
+                // console.log(SocialPopup, 'SocialPopup');
                 SocialButton.classList.add('hidden');
                 SocialPopup.classList.add('hidden');
-                console.log('sdshdbjw');
+                // console.log('sdshdbjw');
               });
             }, 500);
           });
@@ -448,13 +448,11 @@ export default function Panel({ local }) {
       }, 500);
     } else if (hostname == 'www.facebook.com') {
       setTimeout(() => {
-        let postButton = document.querySelectorAll('[aria-label="Create a post"]');
-        // let postButton = document.getElementsByClassName('xha3pab')[0];
-
-        console.log('postButton', postButton);
+        let postButton = document.querySelectorAll('[aria-label="Create a post"]')[0];
+        // console.log('postButton');
         if (postButton) {
-          postButton = postButton[0].children[0];
-          // console.log(postButton, 'postButton dfd');
+          postButton = postButton.children[0];
+          // console.log(postButton);
           postButton.addEventListener('click', () => {
             // console.log('postButton click');
             setTimeout(() => {
@@ -530,12 +528,12 @@ export default function Panel({ local }) {
 
       setTimeout(() => {
         let BtnPosition = document.querySelectorAll('[data-testid="toolBar"]')[0];
-        console.log('BtnPosition');
+        // console.log('BtnPosition');
         if (BtnPosition) {
           BtnPosition = BtnPosition.parentElement;
-          console.log(BtnPosition);
+          // console.log(BtnPosition);
           BtnPosition = BtnPosition.getBoundingClientRect();
-          console.log('BtnPosition', BtnPosition);
+          // console.log('BtnPosition', BtnPosition);
           setFromBtnPosition({
             top: BtnPosition.top - 48,
             bottom: BtnPosition.bottom + 595,
@@ -553,14 +551,14 @@ export default function Panel({ local }) {
 
           SocialButton.addEventListener('click', () => {
             const SocialPopup = document.getElementById('SocialPopup');
-            console.log(SocialPopup);
+            // console.log(SocialPopup);
             if (SocialPopup) {
               SocialPopup.classList.remove('hidden');
               let FormPosition = document.querySelectorAll('[data-testid="toolBar"]')[0];
-
+              // console.log('FormPosition', FormPosition);
               if (FormPosition) {
                 FormPosition = FormPosition.parentElement.getBoundingClientRect();
-
+                // console.log('FormPosition', FormPosition);
                 setFromPosition({
                   bottom: FormPosition.bottom + 601,
                   top: -FormPosition.bottom - 601,
@@ -573,7 +571,7 @@ export default function Panel({ local }) {
 
           let closeSocialBtn = document.getElementById('closeSocialBtn');
           closeSocialBtn.addEventListener('click', () => {
-            console.log('SocialButton');
+            // console.log('SocialButton');
             const SocialButton = document.getElementById('SocialButton');
             SocialButton.classList.remove('hidden');
           });
@@ -749,7 +747,7 @@ export default function Panel({ local }) {
       handleSidebar(CHAT);
     } else if (request.hasOwnProperty('gmailId')) {
       const isInsideMail = request.gmailId.split('#inbox/').length > 1;
-      console.log('--->', isInsideMail);
+      // console.log('--->', isInsideMail);
       setIsGmailActive(isInsideMail);
     } else {
       setIsOpen(false);
@@ -976,6 +974,7 @@ export default function Panel({ local }) {
                             windowSelectedText={selectedText}
                             isClickButton={isClickWikiPediaButton}
                             setIsClickButton={setIsClickWikiPediaButton}
+                            local={local}
                           />
                         }
                       />

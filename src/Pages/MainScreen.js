@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useRef } from 'react';
+import React, { useState, useEffect, Fragment, useRef, useContext } from 'react';
 import { useNavigate, useLocation, useRoutes } from 'react-router-dom';
 import { RadioGroup } from '@headlessui/react';
 import TypeWriterEffect from 'react-typewriter-effect';
@@ -113,7 +113,7 @@ import PromptComp from '../Components/Common/PromptComp';
 import CustomTooltip from '../Components/CustomTooltip/Tooltip';
 import { Switch } from 'antd';
 import './style.css';
-
+import { LocalContext } from '../Panel';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
@@ -196,8 +196,14 @@ const MainScreen = ({
   windowSelectedText,
   isClickButton,
   setIsClickButton,
+  local,
 }) => {
-  const TOKEN = getToken();
+  const localContext = useContext(LocalContext);
+  //  const TOKEN = await getToken();
+  const [TOKEN, setToken] = useState(null);
+  chrome.storage.sync.get(['userAccessToken'], function (items) {
+    setToken(items.userAccessToken);
+  });
   const navigate = useNavigate();
   const redux = useSelector((state) => state);
   // console.log('redux', redux);
@@ -229,6 +235,10 @@ const MainScreen = ({
     { name: selectedTone?.name },
     { name: selectedLanguage?.name },
   ]);
+  // console.log(selectedItems);
+  // useEffect(() => {
+  //   getToken().then((res) => console.log('reseswrfserse main', res));
+  // }, []);
 
   const [aiToolsLength, setAiToolsLength] = useState(selectedItems.filter((data) => data?.name)?.length);
 
@@ -567,10 +577,10 @@ const MainScreen = ({
     setSelectedTone({ name: 'Professional' });
     setSelectedLanguage({ name: 'English' });
     setSelectedItems([{ name: 'Polish' }, { name: 'Auto' }, { name: 'Professional' }, { name: 'English' }]);
-    console.log('selectedItems =============>', selectedItems);
+    // console.log('selectedItems =============>', selectedItems);
   }, [activeTabSub]);
 
-  console.log({ selectedItems });
+  // console.log({ selectedItems });
 
   const updateIsNewFlag = () => {
     const updatedChatData = chatData.map((item) => {
@@ -583,7 +593,7 @@ const MainScreen = ({
   };
 
   const getPageSummary = async (type) => {
-    console.log('sdfvsdjkjk');
+    // console.log('sdfvsdjkjk');
     function generateRandomString(length) {
       const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
       let result = '';
@@ -622,7 +632,7 @@ const MainScreen = ({
 
       payload = JSON.stringify(payload);
 
-      console.log({ payload }, getToken());
+      // console.log({ payload }, getToken());
       const hostname = window.location.hostname;
       let url = 'https://api-qa.resala.ai/web_summary/web_summary';
       if (hostname == 'www.youtube.com') {
@@ -633,13 +643,13 @@ const MainScreen = ({
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
-          Authorization: getToken(),
+          Authorization: await getToken(),
         },
         body: payload,
         signal: controller.signal,
       });
 
-      console.log(response);
+      // console.log(response);
       if (response.ok) {
         const reader = response.body.getReader();
         let accumulatedMessage = '';
@@ -660,7 +670,7 @@ const MainScreen = ({
             // console.log('data', data);
 
             if (line.includes('connection closed')) {
-              console.log('df');
+              // console.log('df');
               setAllreadyStreamed(false);
               setIsStreaming(false);
               break;
@@ -689,12 +699,12 @@ const MainScreen = ({
     }
   };
   //wikipedia
-  console.log(isClickButton);
+  // console.log(isClickButton);
   useEffect(() => {
     if (isClickButton) {
-      console.log('dfjkh');
+      // console.log('dfjkh');
       const hostname = window.location.hostname;
-      console.log({ hostname });
+      // console.log({ hostname });
       if (hostname == 'en.wikipedia.org') {
         setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
         getPageSummary('wikipedia');
@@ -1039,7 +1049,7 @@ const MainScreen = ({
   }, [interimTranscript, finalTranscript]);
 
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
-    console.log('Your browser does not support speech recognition software! Try Chrome desktop, maybe?');
+    // console.log('Your browser does not support speech recognition software! Try Chrome desktop, maybe?');
     return null;
   }
   const listenContinuously = () => {
@@ -1227,7 +1237,7 @@ const MainScreen = ({
           headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
-            Authorization: getToken(),
+            Authorization: await getToken(),
           },
           body: JSON.stringify({
             input_text: selectedText.input_text?.trim(),
@@ -1317,7 +1327,7 @@ const MainScreen = ({
           headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
-            Authorization: getToken(),
+            Authorization: await getToken(),
           },
           body: JSON.stringify({
             original_text: replyText.original_text?.trim(),
@@ -1416,7 +1426,7 @@ const MainScreen = ({
           headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
-            Authorization: getToken(),
+            Authorization: await getToken(),
           },
           body: JSON.stringify({
             input_text: editTemplateName.input_text,
@@ -1544,7 +1554,7 @@ const MainScreen = ({
   };
 
   const handleInputButtonBox = () => {
-    console.log('handleInputButtonBox');
+    // console.log('handleInputButtonBox');
     setInputButtonBox(!inputButtonBox);
   };
 
@@ -1743,13 +1753,12 @@ const MainScreen = ({
 
       try {
         // Call your new API here
-        // const USER_TOKEN = getToken();
         const response = await fetch('https://api-qa.resala.ai/chat/general_prompt_response_stream', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             // 'Access-Control-Allow-Origin': '*',
-            Authorization: getToken(),
+            Authorization: await getToken(),
           },
           body: JSON.stringify({
             chat_id: chatId,
@@ -1813,7 +1822,7 @@ const MainScreen = ({
           headers: {
             'Content-Type': 'application/json',
             // 'Access-Control-Allow-Origin': '*',
-            Authorization: getToken(),
+            Authorization: await getToken(),
           },
           // todo
           body: JSON.stringify({
@@ -1879,7 +1888,7 @@ const MainScreen = ({
           headers: {
             'Content-Type': 'application/json',
             // 'Access-Control-Allow-Origin': '*',
-            Authorization: getToken(),
+            Authorization: await getToken(),
           },
           body: JSON.stringify({
             question: message,
@@ -1971,7 +1980,7 @@ const MainScreen = ({
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
-          Authorization: getToken(),
+          Authorization: await getToken(),
         },
         body: JSON.stringify(payload),
       });
@@ -2052,7 +2061,7 @@ const MainScreen = ({
       setIsDocChat(false);
     }
     if (id === 'book') {
-      console.log('book');
+      // console.log('book');
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       getPageSummary('book');
     }
@@ -2201,10 +2210,41 @@ const MainScreen = ({
   // todo
   const [webAccess, setWebAccess] = useState(false);
   const onChangeOnOff = (checked) => {
-    console.log(`switch to ${checked}`);
+    // console.log(`switch to ${checked}`);
     setWebAccess(!webAccess);
-    console.log(webAccess, 'webAccess');
+    // console.log(webAccess, 'webAccess');
   };
+
+  useEffect(() => {
+    if (selectTab) {
+      // setSelectedAction('');
+      // setSelectedFormat('');
+      // setSelectedLength('');
+      // setSelectedTone('');
+      // setSelectedLanguage('');
+    }
+    setSelectedFormat({ name: 'Auto' });
+    setSelectedLength({ name: 'Auto' });
+    setSelectedTone({ name: 'Professional' });
+    setSelectedLanguage({ name: 'English' });
+    if (!selectedAction) {
+      setSelectedAction({ name: 'Polish' });
+      setSelectedItems([{ name: 'Polish' }, { name: 'Auto' }, { name: 'Professional' }, { name: 'English' }]);
+    } else {
+      setSelectedAction({ name: selectedAction.name });
+      if (selectTab === 1) {
+        setSelectedItems([
+          { name: selectedAction.name },
+          { name: 'Auto' },
+          { name: 'Professional' },
+          { name: 'English' },
+        ]);
+      } else {
+        setSelectedItems([{ name: 'Auto' }, { name: 'Auto' }, { name: 'Professional' }, { name: 'English' }]);
+      }
+    }
+  }, [selectTab]);
+
   return (
     <>
       {!TOKEN ? (
@@ -2224,7 +2264,7 @@ const MainScreen = ({
             <Tab.Group as="div" defaultIndex={activeTab === SELECTION ? 1 : activeTab === QUICKREPLY ? 2 : 0}>
               {!selectedTemplate ? (
                 <div
-                  className="flex items-center justify-between px-[20px] bg-white relative z-20 border-b-gray border-b-[1px] border-l-gray border-l-[1px]"
+                  className="flex items-center justify-between px-[20px] bg-white relative z-20 border-b-gray border-b-[1px]"
                   // style={{ boxShadow: '0px 2px 8px 0px #0000000D' }}
                   // style={{ position: 'sticky', top: '57px', zIndex: '20px' }}
                 >
@@ -2233,7 +2273,7 @@ const MainScreen = ({
                       key="chat"
                       className={({ selected }) =>
                         classNames(
-                          selected ? 'border-primaryBlue text-black' : 'border-transparent text-gray1',
+                          selected ? 'border-primaryBlue text-[#19224C]' : 'border-transparent text-gray1',
                           'flex-1 whitespace-nowrap border-b-2 py-[12px] text-[16px] font-medium mr-[30px] focus:outline-0'
                         )
                       }
@@ -2252,7 +2292,7 @@ const MainScreen = ({
                         data-headlessui-state="selected"
                         className={({ selected }) =>
                           classNames(
-                            selected ? 'border-primaryBlue text-black' : 'border-transparent text-gray1',
+                            selected ? 'border-primaryBlue text-[#19224C]' : 'border-transparent text-gray1',
                             'flex-1 whitespace-nowrap border-b-2 py-[12px] text-[16px] font-medium mr-[30px] focus:outline-0'
                           )
                         }
@@ -2443,8 +2483,10 @@ const MainScreen = ({
                                   boxShadow: '0px 2px 20px 0px #00000026',
                                 }}
                               >
-                                <div className="text-[12px] font-medium text-gray1 px-[8px] py-[4px]">CHAT SETTING</div>
-                                <div className="text-[14px] flex items-center gap-2 text-darkblue bg-gray4 px-[6px] py-[4px] rounded-[4px]">
+                                <div className="text-[12px] font-[700] text-[#8C90A5] px-[8px] py-[4px]">
+                                  CHAT SETTING
+                                </div>
+                                <div className="text-[14px] text-[#19224C] flex items-center gap-2 text-darkblue bg-gray4 px-[6px] py-[4px] rounded-[4px]">
                                   <img src={TranslateIcon} />
                                   Response Language
                                 </div>
@@ -2479,7 +2521,6 @@ const MainScreen = ({
                                       }),
                                       option: (styles, { data, isDisabled, isFocused, isSelected }) => {
                                         // const color = chroma(data.color);
-                                        // console.log({ data, isDisabled, isFocused, isSelected });
                                         return {
                                           ...styles,
                                           backgroundColor: isFocused ? '#F3F4F8' : null,
@@ -2516,7 +2557,7 @@ const MainScreen = ({
                                   setIsViewPrompts(false);
                                   setIsSpeechEnabled(!isSpeechEnabled);
                                 }}
-                                className="w-[20px] h-[20px]"
+                                className="w-[20px] h-[20px] flex align-middle"
                               >
                                 <img src={isSpeechEnabled ? UnMuteIcon : MuteIcon} alt="I" />
                               </button>
@@ -2949,7 +2990,6 @@ const MainScreen = ({
                                     }),
                                     option: (styles, { data, isDisabled, isFocused, isSelected }) => {
                                       // const color = chroma(data.color);
-                                      // console.log({ data, isDisabled, isFocused, isSelected });
                                       return {
                                         ...styles,
                                         backgroundColor: isFocused ? '#F3F4F8' : null,

@@ -89,7 +89,7 @@ const AudioInput = ({
   }, [interimTranscript, finalTranscript]);
 
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
-    console.log('Your browser does not support speech recognition software! Try Chrome desktop, maybe?');
+    // console.log('Your browser does not support speech recognition software! Try Chrome desktop, maybe?');
     return null;
   }
 

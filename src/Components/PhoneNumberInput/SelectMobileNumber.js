@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react
 import { getCountryCallingCode } from 'react-phone-number-input';
 import { getCountries } from 'react-phone-number-input';
 import countryNames from 'react-phone-number-input/locale/en';
-import 'react-phone-number-input/style.css';
+import 'react-phone-number-input/style.css'
 import {
   isValidPhoneNumber,
   formatPhoneNumber,
@@ -71,6 +71,7 @@ const SelectMobileNumber = ({ setInputValue }) => {
     setInputValue((prev) => {
       return {
         ...prev,
+        country_code:`+${getCountryCallingCode(countryLib)}`,
         phone_number: data,
       };
     });
@@ -81,13 +82,13 @@ const SelectMobileNumber = ({ setInputValue }) => {
       {/* COUNTRY SELECT COMPONENT */}
       <div
         ref={countryRef}
-        style={{ display: !isOpen ? 'none' : 'block', boxShadow: '0px 0px 10px 0px #00000026' }}
+        style={{ display: !isOpen ? 'none' : 'block', boxShadow: '0px 0px 10px 0px #00000026', borderColor:'#FFF' }}
         className="absolute z-30 w-full top-[52px] border-[1px]  border-gray rounded-[7px] h-[288px] overflow-y-auto left-0 bg-white"
       >
         <div className="relative">
           <input
             placeholder="Search for country"
-            className="border-b-gray border-b-[1px] text-gray1 h-[40px] w-full pl-[40px] focus:outline-none placeholder:text-gray1"
+            className="border-b-gray border-b-[1px] text-[14px] text-[#6D77A0] h-[40px] w-full pl-[40px] focus:outline-none placeholder:text-[#6D77A0]"
             name="searchInput"
             value={searchInput}
             onChange={handleOnChangeSearch}

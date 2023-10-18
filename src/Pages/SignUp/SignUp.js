@@ -109,11 +109,11 @@ const SignUp = () => {
     document.body.style.width = '100%'
   };
 
-  console.log('isRegistered', isRegistered);
+  // console.log('isRegistered', isRegistered);
   return (
     <>
       <div
-        style={{ position: 'sticky', top: 0 }}
+        style={{ position: 'sticky', top: 0, borderLeft:'none' }}
         className="flex items-center justify-between px-[20px] py-[11px] border-b-gray border-b-[1px] border-l-gray border-l-[1px] bg-white relative z-[70] font-dmsans"
       >
         <div className="flex items-center gap-2">
@@ -143,12 +143,13 @@ const SignUp = () => {
         <div
           className={
             !isRegistered
-              ? 'text-[22px] flex justify-center mb-[8px] font-bold'
+              ? 'text-[22px] flex justify-center mb-[8px] font-bold text-[#19224C]'
               : 'text-[22px] flex justify-center mb-[40px] font-bold'
           }
         >
-          Create your account
+         {!isRegistered ? 'Create your account' : 'Enter your password'} 
         </div>
+
         {!isRegistered && (
           <div className="flex justify-center px-[10px] text-center text-gray2 mb-[48px] flex-col text-[12px] gap-2">
             Phone verification may be required for signup. Your number will only be used to verify your identity for
@@ -158,9 +159,9 @@ const SignUp = () => {
         <div className="flex justify-center flex-col gap-2">
           <form onSubmit={handleSubmit}>
             <InputField
-              className="block w-full rounded-md border border-gray px-7 py-[16px] mb-[12px] text-[14px] text-darkBlue placeholder:text-gray1"
+              className={`block w-full rounded-md border border-gray px-7 py-[16px] mb-[12px] text-[14px] font-[400] text-[#6D77A0] placeholder:text-gray1 ${isRegistered ? 'bg-[#FFFFFF]' :''}`}
               name="email"
-              label="Email Address"
+              label="Email address"
               type="email"
               placeholder=""
               disabled={isRegistered}
@@ -188,9 +189,16 @@ const SignUp = () => {
               </>
             ) : (
               <div className="px-[15px] mt-[12px] py-[18px] bg-lightblue1 rounded-[6px]">
-                <div class="flex items-center">
-                  <input className="cursor-pointer" required type="checkbox" value="" onChange={handleCaptch} />
-                  <label for="link-checkbox" class="ml-2 text-sm font-medium text-primaryBlue">
+                <div class="flex items-center bg-lightblue1">
+                  <input className="cursor-pointer" required type="checkbox" value="" onChange={handleCaptch} 
+                  style={{
+                    borderRadius:'0px',
+                    border:'1px solid #1678F2',
+                    background: '#EEF6FF',
+                    width:'16px',
+                    height:'16px'
+                  }} />
+                  <label for="link-checkbox" class="ml-2 text-sm font-normal text-[#046AF3]">
                     I’m not robot
                   </label>
                 </div>
@@ -207,7 +215,7 @@ const SignUp = () => {
             <div className="col-span-full mt-[16px]">
               <div className="flex gap-2 items-center">
                 <button
-                  className={`w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[16px] text-[12px] font-medium text-white hover:opacity-90 focus:outline-none disable:bg-lightblue5 disabled:cursor-none disabled:opacity-50 ${
+                  className={`w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[16px] text-[16px] font-[700] text-white hover:opacity-90 focus:outline-none disable:bg-lightblue5 disabled:cursor-none disabled:opacity-50 ${
                     isLoading ? 'opacity-50 bg-lightblue5  cursor-not-allowed' : ''
                   }`}
                   type="submit"
@@ -248,9 +256,9 @@ const SignUp = () => {
             </div>
           </form>
           <div className="flex justify-center items-center gap-1 mt-[24px] text-[14px]">
-            <span className="text-gray2">Already have an account?</span>
+            <span className="text-gray2 font-[500]">Already have an account?</span>
             <button
-              className={`text-primaryBlue ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`text-primaryBlue font-[700]  ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               onClick={() => navigate('/login')}
               disabled={isLoading}
             >

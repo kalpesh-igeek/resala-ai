@@ -7,6 +7,7 @@ import { forgotPassword } from '../../redux/reducers/authSlice/AuthSlice';
 import { resetPasswordCheck } from '../../utils/validation';
 import { useDispatch, useSelector } from 'react-redux';
 import PasswordRequirements from '../../Components/PasswordRequirement';
+import SubHeader from '../../Layout/SubHeader';
 
 const EnterNewPassword = () => {
   const navigate = useNavigate();
@@ -78,17 +79,18 @@ const EnterNewPassword = () => {
 
   return (
     <>
+    <SubHeader></SubHeader>
       <div className="py-[90px] px-[75px] flex flex-col justify-center">
-        <div className="flex items-center justify-center gap-2 mb-[50px]">
+        {/* <div className="flex items-center justify-center gap-2 mb-[50px]">
           <img src={Logo} alt="logo" className="cursor-pointer h-32px] w-[32px]" />
           <div className="text-darkgray text-[18px]">Resala</div>
-        </div>
+        </div> */}
         <div className="text-[22px] flex justify-center mb-[40px] font-bold">Reset your password</div>
 
         <div className="flex justify-center flex-col gap-2">
           <form onSubmit={handleSubmit}>
             <InputField
-              className="block w-full rounded-md border border-gray mt-[4px] pl-[15px] pr-[47px] py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
+              className="block w-full rounded-md border border-gray mt-[4px] pl-[15px] pr-[47px] py-[16px] text-[14px] mb-[12px] text-[#6D77A0] placeholder:text-[#6D77A0]"
               name="password"
               label="New password"
               type="password"
@@ -99,7 +101,7 @@ const EnterNewPassword = () => {
             />
             {errors.password && <p className="text-red text-[12px] mb-[10px]">{errors.password}</p>}
             <InputField
-              className="block w-full rounded-md border border-gray mt-[4px] pl-[15px] pr-[47px] py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
+              className="block w-full rounded-md border border-gray mt-[4px] pl-[15px] pr-[47px] py-[16px] text-[14px] mb-[12px] text-[#6D77A0] placeholder:text-[#6D77A0]"
               name="re_password"
               label="Re-enter new password"
               type="password"
@@ -114,7 +116,7 @@ const EnterNewPassword = () => {
             <div className="col-span-full mt-[16px]">
               <div className="flex gap-2 items-center">
                 <button
-                  className="w-full rounded-md bg-primaryBlue px-1 py-[16px] focus:outline-none text-[12px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
+                  className="w-full rounded-md bg-primaryBlue px-1 py-[16px] focus:outline-none text-[16px] font-[700] text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
                   type="submit"
                   //   onClick={(e) => handleSubmit(e)}
                 >
@@ -144,8 +146,8 @@ const EnterNewPassword = () => {
             </div>
           </form>
           <div className="flex justify-center items-center text-gray2 gap-1 mt-[23px] text-[14px]">
-            <span className="text-gray2">Don’t have account?</span>
-            <button className="text-primaryBlue font-bold" onClick={() => navigate('/login')}>
+            <span className="text-gray2 font-[500]">Don’t have account?</span>
+            <button className="text-[#1678F2] font-[700]" onClick={() => navigate('/login')}>
               Sign up
             </button>
           </div>

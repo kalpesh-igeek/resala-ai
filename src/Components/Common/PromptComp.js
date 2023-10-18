@@ -28,10 +28,10 @@ function PromptComp({
 
   useEffect(() => {
     if (currentActive === 0) {
-      console.log('generalSearch', generalSearch);
+      // console.log('generalSearch', generalSearch);
       setPersonalSearch('');
     } else {
-      console.log('personalSearch', personalSearch);
+      // console.log('personalSearch', personalSearch);
       setGeneralSearch('');
     }
   }, [currentActive]);
@@ -56,7 +56,7 @@ function PromptComp({
               key={index}
               className={({ selected }) =>
                 classNames(
-                  selected ? 'border-primaryBlue text-black' : 'border-transparent text-gray1',
+                  selected ? 'border-primaryBlue text-[#19224C]' : 'border-transparent text-gray1',
                   'flex-1 whitespace-nowrap border-b-2 py-[12px] text-[14px] font-medium mr-[30px] focus:outline-0'
                 )
               }
@@ -137,9 +137,9 @@ function PromptComp({
                         key={index}
                       >
                         <div
-                          className="flex items-start grow justify-center flex-col mb-[8px]"
+                          className="flex items-start grow justify-center flex-col mb-[8px] "
                           onClick={() => {
-                            console.log('item', item.prompt);
+                            // console.log('item', item.prompt);
                             const regex = /\[(.*?)\]/g;
                             const matchesArr = item.prompt.match(regex);
                             if (matchesArr) {
@@ -147,7 +147,7 @@ function PromptComp({
                               const matches = matchesArr.map((element) => {
                                 return element.replace(/\[|\]/g, ''); // Use regex to remove square brackets
                               });
-                              console.log('matches', matches);
+                              // console.log('matches', matches);
                               // console.log('multiplePlaceholder', multiplePlaceholder);
                               setMultiplePlaceholder({
                                 ...item,

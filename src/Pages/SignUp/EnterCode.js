@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import InputField from '../../Components/InputField';
 import { useDispatch } from 'react-redux';
 import { otpVerification, sendOtpSMS, userDetails } from '../../redux/reducers/authSlice/AuthSlice';
+import SubHeader from '../../Layout/SubHeader';
 
 const EnterCode = () => {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ const EnterCode = () => {
 
     const otp = value.replace(/\s/g, '');
     const formattedOtp = otp.replace(/\D/g, '').replace(/(\d{3})(?=\d)/g, '$1 ');
-    console.log('formattedOtp', formattedOtp);
+    // console.log('formattedOtp', formattedOtp);
 
     const formattedValue = value.replace(/\D/g, '');
 
@@ -44,7 +45,12 @@ const EnterCode = () => {
       const verifyOTP = async () => {
         try {
           setLoading(true); // Start loading
-          const res = await dispatch(otpVerification(otpInput)); // Dispatch API call
+        //   let payload = {
+        //     otp: "653359",
+        //     country_code: "+91",
+        //     phone_number: "+918758260598"
+        // }
+          const res = await dispatch(otpVerification({...otpInput , phone_number: otpInput.phone_number.toString().split(otpInput.country_code)[1] })); // Dispatch API call
           if (res.payload.status === 200) {
             navigate('/successful', { state: { signUpData: phone } }); // Navigate on success
           } else {
@@ -82,7 +88,7 @@ const EnterCode = () => {
 
     const payload = {
       is_whatapp: phone.is_whatapp,
-      phone_number: phone.phone_number,
+      phone_number: phone.phone_number.toString().split(phone.country_code)[1],
       country_code: phone.country_code,
     };
     const res = await dispatch(sendOtpSMS(payload));
@@ -118,18 +124,19 @@ const EnterCode = () => {
 
   return (
     <>
+    <SubHeader></SubHeader>
       <div
         className="px-[15px] py-[15px] text-[14px] font-bold text-primaryBlue cursor-pointer"
         onClick={() => navigate('/mobileverification', { state: { register: register } })}
       >
         Go Back
       </div>
-      <div className="py-[90px] px-[75px] flex flex-col justify-center">
-        <div className="flex items-center justify-center gap-2 mb-[50px]">
+      <div className="py-[68px] px-[75px] flex flex-col justify-center">
+        {/* <div className="flex items-center justify-center gap-2 mb-[50px]">
           <img src={Logo} alt="logo" className="cursor-pointer h-[32px] w-[32px]" />
           <div className="text-darkgray text-[18px]">Resala</div>
-        </div>
-        <div className="text-[22px] flex justify-center mb-[8px] font-bold">Enter the code</div>
+        </div> */}
+        <div className="text-[22px] flex justify-center mb-[8px] font-bold text-[#19224C]">Enter the code</div>
         <div className="flex justify-center px-[10px] text-center text-gray2 mb-[48px] flex-col text-[12px] gap-2">
           Please enter the code we just sent you.
         </div>
@@ -180,7 +187,7 @@ const EnterCode = () => {
           Don't receive the code?
         </span>
         <button
-          className={`flex cursor-default justify-center bg-transparent text-primaryBlue w-full rounded-md px-1 py-[5px] text-[14px] font-medium hover:opacity-90 ${
+          className={`flex cursor-default justify-center bg-transparent text-[#1678F2] w-full rounded-md px-1 py-[5px] text-[14px] font-[700] hover:opacity-90 ${
             isButtonDisabled ? 'disabled:cursor-none disabled:opacity-50' : ''
           }`}
           disabled={isButtonDisabled}
