@@ -69,6 +69,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   };
 
   // type writer effect
+  const textAreaRef = useRef(null);
   function typewriterEffect(text, element, delay) {
     let charIndex = 0;
     const textLength = text.length;
@@ -77,12 +78,23 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       if (charIndex < textLength) {
         element.value += text.charAt(charIndex);
         charIndex++;
+        element.scrollTop = element.scrollHeight;
         setTimeout(type, delay);
       }
     }
     type();
   }
-  //
+  //textarea height functionality
+  // function calculateTextAreaRows(content) {
+  //   const lines = content.split(/\r?\n|\r/);
+
+  //   const lineCount = Math.max(lines.length, 1);
+
+  //   return lineCount;
+  // }
+
+  //textarea height functionality
+
   const [ideas, setIdeas] = useState(false);
 
   const handleBack = () => {
@@ -187,10 +199,15 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         .replace(/connection closed/g, '');
       text = text.toString().replace('POST : ', '').replace('Post :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
+      const textArea1 = textAreaRef.current;
+      console.log(textArea1, 'textArea1');
       const paragraph = words.join(' ');
-      // console.log(paragraph, ';;;;;;dsdhsdh');
+      const lines = paragraph.split(/[\.,]/);
+      const lineCount = lines.length;
+      textArea1.rows = lineCount + 1;
       const textArea = document.getElementById('socialTextarea');
       typewriterEffect(paragraph, textArea, 20);
+
       setIdeasValueHome(paragraph);
       setButtonShowHome(true);
       setPostIdea(!PostIdea);
@@ -233,7 +250,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       text = text.toString().replace('POST : ', '').replace('Post :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       // console.log(words, 'words');
+      const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
+      const lines = paragraph.split(/[\.,]/);
+      const lineCount = lines.length;
+      textArea1.rows = lineCount + 1;
       // console.log(paragraph, ';;;;;;dsdhsdh');
       const textArea = document.getElementById('socialTextarea');
       typewriterEffect(paragraph, textArea, 20);
@@ -267,6 +288,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
+      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST :/g, '')
@@ -276,7 +298,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       text = text.toString().replace('POST : ', '').replace('Post :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       // console.log(words, 'words');
+      const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
+      const lines = paragraph.split(/[\.,]/);
+      const lineCount = lines.length;
+      textArea1.rows = lineCount + 1;
       const textArea = document.getElementById('socialTextarea');
       typewriterEffect(paragraph, textArea, 20);
       // console.log(paragraph, ';;;;;;dsdhsdh');
@@ -308,6 +334,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
+      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST :/g, '')
@@ -317,7 +344,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       text = text.toString().replace('POST : ', '').replace('Post :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       // console.log(words, 'words');
+      const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
+      const lines = paragraph.split(/[\.,]/);
+      const lineCount = lines.length;
+      textArea1.rows = lineCount + 1;
       // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValueHome(paragraph);
       setButtonShowHome(true);
@@ -347,6 +378,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
+      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST :/g, '')
@@ -356,7 +388,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       text = text.toString().replace('POST : ', '').replace('Post :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       // console.log(words, 'words');
+      const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
+      const lines = paragraph.split(/[\.,]/);
+      const lineCount = lines.length;
+      textArea1.rows = lineCount + 1;
       const textArea = document.getElementById('socialTextarea');
       typewriterEffect(paragraph, textArea, 20);
       // console.log(paragraph, ';;;;;;dsdhsdh');
@@ -388,6 +424,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
+      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST :/g, '')
@@ -397,7 +434,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       text = text.toString().replace('POST : ', '').replace('Post :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       // console.log(words, 'words');
+      const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
+      const lines = paragraph.split(/[\.,]/);
+      const lineCount = lines.length;
+      textArea1.rows = lineCount + 1;
       const textArea = document.getElementById('socialTextarea');
       typewriterEffect(paragraph, textArea, 20);
       // console.log(paragraph, ';;;;;;dsdhsdh');
@@ -429,6 +470,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
+      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST :/g, '')
@@ -438,7 +480,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       text = text.toString().replace('POST : ', '').replace('Post :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       // console.log(words, 'words');
+      const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
+      const lines = paragraph.split(/[\.,]/);
+      const lineCount = lines.length;
+      textArea1.rows = lineCount + 1;
       const textArea = document.getElementById('socialTextarea');
       typewriterEffect(paragraph, textArea, 20);
       // console.log(paragraph, ';;;;;;dsdhsdh');
@@ -575,18 +621,23 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
     // console.log({ 'dgvklsdgdsklgvnsdklgndskgdns => ': response });
     if (response && response.status === 200) {
+      console.log(response.data);
       const text = response.data
         .replace(/#@#/g, '')
         .replace(/connection closed/, '')
         .replace(/Post :/g, '');
 
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
+      const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
+      const lines = paragraph.split(/[\.,]/);
+      const lineCount = lines.length;
+      textArea1.rows = lineCount + 1;
       // console.log(paragraph, ';;;;;;dsdhsdh');
       typewriterEffect(paragraph, textArea, 20);
       setIdeasValue(paragraph);
       settypeWriter(true);
-      setButtonShow(true);
+      setButtonShow(!ButtonsShow);
       setPostIdea(!PostIdea);
       setIdeadload(false);
       // typewriterEffect(paragraph, textArea, 30, () => {
@@ -646,6 +697,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
     // console.log({ 'dgvklsdgdsklgvnsdklgndskgdns => ': response });
     if (response && response.status === 200) {
+      console.log(response.data);
       // console.log('skfsdj,gsdjkgdsjkgkjsdjk');
       //console.log(response.data, 'response.data');
       let text = response.data
@@ -658,7 +710,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       // const words = response.detail[0].ctx.doc.split(/\s+/).filter((word) => word.trim() !== '');
       // console.log(words, 'words');
+      const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
+      const lines = paragraph.split(/[\.,]/);
+      const lineCount = lines.length;
+      textArea1.rows = lineCount + 1;
       typewriterEffect(paragraph, textArea, 20);
       // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
@@ -699,6 +755,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
+      console.log(response.data);
       // console.log(response.data, 'response.data');
 
       let text = response.data
@@ -710,7 +767,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       text = text.toString().replace('POST :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       // console.log(words, 'words');
+      const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
+      const lines = paragraph.split(/[\.,]/);
+      const lineCount = lines.length;
+      textArea1.rows = lineCount + 1;
       typewriterEffect(paragraph, textArea, 20);
       // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
@@ -744,6 +805,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
+      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST\s*:\s*/g, '')
@@ -753,7 +815,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       text = text.toString().replace('POST :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       // console.log(words, 'words');
+      const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
+      const lines = paragraph.split(/[\.,]/);
+      const lineCount = lines.length;
+      textArea1.rows = lineCount + 1;
       typewriterEffect(paragraph, textArea, 20);
       // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
@@ -787,6 +853,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
+      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST\s*:\s*/g, '')
@@ -796,7 +863,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       text = text.toString().replace('POST :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       // console.log(words, 'words');
+      const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
+      const lines = paragraph.split(/[\.,]/);
+      const lineCount = lines.length;
+      textArea1.rows = lineCount + 1;
       typewriterEffect(paragraph, textArea, 20);
       // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
@@ -830,6 +901,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
+      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST\s*:\s*/g, '')
@@ -839,7 +911,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       text = text.toString().replace('POST :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       // console.log(words, 'words');
+      const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
+      const lines = paragraph.split(/[\.,]/);
+      const lineCount = lines.length;
+      textArea1.rows = lineCount + 1;
       typewriterEffect(paragraph, textArea, 20);
       // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
@@ -873,6 +949,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
+      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST\s*:\s*/g, '')
@@ -883,7 +960,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       text = text.toString().replace('POST :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       // console.log(words, 'words');
+      const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
+      const lines = paragraph.split(/[\.,]/);
+      const lineCount = lines.length;
+      textArea1.rows = lineCount + 1;
       typewriterEffect(paragraph, textArea, 20);
       // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
@@ -895,19 +976,20 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   // home-shorten
 
   // empty
-  const [delelePopup, setdelelePopup] = useState(false);
+  // const [delelePopup, setdelelePopup] = useState(false);
 
-  const handleEmpty12 = () => {
-    setdelelePopup(!delelePopup);
-  };
+  // const handleEmpty12 = () => {
+  //   setdelelePopup(!delelePopup);
+  // };
 
-  const handleEmpty = () => {
-    setIdeasValue('');
+  const handleEmpty = (index) => {
+    // console.log('gdfdgdf');
     // setdelelePopup(!delelePopup);
     const updatedResponses = [...responses];
     updatedResponses.splice(index, 1);
     setResponses(updatedResponses);
     setSpeechLength(0);
+    setIdeasValue('');
   };
 
   // empty
@@ -1596,7 +1678,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   return (
     <>
       <div
-        className={`hidden rounded-[10px] bg-white fixed w-[600px] h-[365px] relative shadow border border-white overflow-hidden !font-['DM Sans']`}
+        className={`hidden rounded-[10px] bg-white fixed w-[600px] min-h-[365px] h-[max-content] max-h-[650px] relative shadow border border-white overflow-hidden !font-['DM Sans']`}
         id="SocialPopup"
         // ref={socialPopupRef}
         style={{
@@ -1763,7 +1845,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         </div>
 
         {/* second div */}
-        <div className="py-[12px] px-[16px] " id="">
+        <div className="py-[12px] px-[16px] overflow-y-scroll h-[max-content] max-h-[650px]" id="">
           <p
             className={`${
               !SocialHome ? 'hidden' : 'block'
@@ -1803,7 +1885,149 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
           {visible && (
             <>
-              <div id="wholeAreaContent" className="relative">
+              <div id="wholeAreaContent" className="relative pb-[250px]">
+                <div
+                  className={`${
+                    !ButtonsShow ? 'hidden' : ''
+                  }   flex justify-end items-center gap-[8px] absolute bottom-[14px] right-0 left-0 bg-white`}
+                >
+                  {/* <div className={``}> */}
+                  <div
+                    className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex !cursor-pointer"
+                    onClick={handlePostIdeaImprove}
+                  >
+                    <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
+                    {!LoadImprove ? (
+                      <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                        Improve it
+                      </div>
+                    ) : (
+                      <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                    )}
+                  </div>
+                  <div
+                    className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex"
+                    onClick={handlePostIdeaAddDetails}
+                  >
+                    <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
+                    {!LoadAddDetails ? (
+                      <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                        Add Details
+                      </div>
+                    ) : (
+                      <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                    )}
+                  </div>
+                  <div
+                    className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex"
+                    onClick={handlePostIdeaHumor}
+                  >
+                    <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
+                    {!LoadHumor ? (
+                      <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                        Add Humor
+                      </div>
+                    ) : (
+                      <img id="chat-container" className="w-[50px]" src={LoadingGif} />
+                    )}
+                  </div>
+                  <div
+                    className="w-[12px] flex justify-center items-center cursor-pointer relative"
+                    onClick={() => setPopupMenu(!PopupMenu)}
+                  >
+                    <img className="" src={Menu} />
+
+                    {PopupMenu && (
+                      <div
+                        className="absolute top-[-163px] p-[8px] w-[224px] h-[150px] right-0 bg-[#fff] gap-[8px]"
+                        style={{ boxShadow: '0px 4px 20px 0px rgba(60, 66, 87, 0.10)' }}
+                      >
+                        <div className="flex justify-between items-center py-[4px]">
+                          <p className="text-[#8C90A5] text-[12px] capitalize font-[700] font-['DM Sans']">
+                            IDEAS FOR TEXT
+                          </p>
+                          <div className="w-[12px] cursor-pointer" onClick={() => setPopupMenu(!PopupMenu)}>
+                            <img className="" src={Cross} />
+                          </div>
+                        </div>
+                        {/* todo */}
+                        <div className="flex flex-wrap gap-[6px] h-[108px] overflow-y-scroll">
+                          <div
+                            className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer "
+                            onClick={handlePostIdeaImprove}
+                          >
+                            <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
+                            {!LoadImprove ? (
+                              <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                                Improve it
+                              </div>
+                            ) : (
+                              <img id="chat-container" className="w-[35px]" src={LoadingGif} />
+                            )}
+                          </div>
+
+                          <div
+                            className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                            onClick={handlePostIdeaAddDetails}
+                          >
+                            <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
+                            {!LoadAddDetails ? (
+                              <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                                Add Details
+                              </div>
+                            ) : (
+                              <img id="chat-container" className="w-[35px]" src={LoadingGif} />
+                            )}
+                          </div>
+
+                          <div
+                            className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                            onClick={handlePostIdeaHumor}
+                          >
+                            <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
+                            {!LoadHumor ? (
+                              <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                                Add Humor
+                              </div>
+                            ) : (
+                              <img id="chat-container" className="w-[35px]" src={LoadingGif} />
+                            )}
+                          </div>
+
+                          <div
+                            className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                            onClick={handlePostIdeaInspire}
+                          >
+                            <div className="text-white text-base font-medium font-['DM Sans']">💡</div>
+
+                            {!LoadInspire ? (
+                              <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                                Inspire
+                              </div>
+                            ) : (
+                              <img id="chat-container" className="w-[35px]" src={LoadingGif} />
+                            )}
+                          </div>
+
+                          <div
+                            className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex"
+                            onClick={handlePostIdeaShorten}
+                          >
+                            <div className="text-white text-base font-medium font-['DM Sans']">📄</div>
+                            {!LoadShorten ? (
+                              <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                                Shorten it
+                              </div>
+                            ) : (
+                              <img id="chat-container" className="w-[35px]" src={LoadingGif} />
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  {/* </div> */}
+                </div>
                 <div
                   className="flex gap-[8px] mb-[12px] justify-start items-center cursor-pointer"
                   onClick={() => {
@@ -1818,6 +2042,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     setLoading(false);
                     setvisibleTextarea(false);
                     setIdeadload(false);
+                    setCopied(false);
                   }}
                 >
                   <img className="w-[14] h-[14]" src={Left} />
@@ -1831,7 +2056,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                   </p>
                 </div>
 
-                <div className="h-[160px] overflow-y-scroll ">
+                <div className="h-[auto] overflow-y-scroll pb-[93px]">
                   <div id="mainContentArea1" className="mb-[15px]">
                     <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex !cursor-pointer !hover:bg-[#D9EBFF] ">
                       <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
@@ -1840,49 +2065,15 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                       <div className="text-[#19224C] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div>
                     </div>
                     {/* <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div> */}
-                    <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] h-[120px] flex flex-row gap-[14px]">
+                    <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] h-auto flex flex-row gap-[14px]">
                       <div className="flex flex-col justify-between w-[508px]">
                         <div>
-                          {/* <p className="text-[#8C90A5]">{selectedIdea.placeholder}</p> */}
-                          {/* {typewriter ? (
-                            <TypewriterTextarea text={IdeasValue} />
-                          ) : (
-                            <textarea
-                              placeholder={`${selectedIdea.placeholder}`}
-                              className={`${!visibleTextarea ? 'h-[90px]' : ''} p-[1px] textArea resize-none `}
-                              style={{ width: '100%', boxShadow: 'none' }}
-                              value={IdeasValue}
-                              id="socialTextarea"
-                              name="socialTextarea"
-                              onChange={(e) => {
-                                handleChange(e);
-                                setvisibleTextarea(true);
-                              }}
-                              onPaste={handlePaste}
-                              // onChange={(e) => setIdeasValue(e.target.value)}
-                            />
-                          )} */}
-                          {/* {typing ? (
-                            <textarea
-                              placeholder={selectedIdea.placeholder}
-                              className={`p-[1px] textArea resize-none`}
-                              style={{ width: '100%', boxShadow: 'none' }}
-                              value={typedText}
-                              id="socialTextarea"
-                              name="socialTextarea"
-                              onChange={(e) => {
-                                handleChange(e);
-                                setvisibleTextarea(true);
-                              }}
-                              onPaste={handlePaste}
-                              readOnly // Make the textarea read-only during typing effect
-                            />
-                          ) : ( */}
                           <textarea
                             placeholder={selectedIdea.placeholder}
-                            className={` 'p-[1px] textArea resize-none text-[#8C90A5]`}
-                            style={{ width: '100%', boxShadow: 'none', fontSize: '14px' }}
+                            className={` 'p-[1px] textArea resize-none text-[#8C90A5] h-auto`}
+                            style={{ width: '100%', boxShadow: 'none', fontSize: '14px', height: 'auto' }}
                             value={IdeasValue}
+                            ref={textAreaRef}
                             id="socialTextarea"
                             name="socialTextarea"
                             onChange={(e) => {
@@ -1891,32 +2082,27 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             }}
                             onPaste={handlePaste}
                           />
-                          {/* <Typewriter text={IdeasValue} delay={50} /> */}
-                          {/* {typeWriter ? <TypewriterEffect text={IdeasValue} delay={50} /> : ''} */}
-                          {/* {regenerate1 ? <Typewriter text={IdeasValue} delay={50} /> : null} */}
-
-                          {/* )} */}
                         </div>
-                        {/* <TypewriterTextarea text={IdeasValue} /> */}
+
                         <div className={`${!ButtonsShow ? 'hidden' : 'block'} `}>
-                          <div className={`flex gap-[8px] mt-[16px]`}>
+                          <div className={`flex gap-[8px] `}>
                             <div
-                              className={`bg-[#1678F2] px-[10px] flex justify-center items-center h-[30px] text-[12px] rounded-[4px] text-white w-[90px]  `}
+                              className={`bg-[#1678F2] px-[10px] flex justify-center items-center h-[30px] text-[12px] rounded-[4px] text-white w-[90px]  cursor-pointer `}
                               onClick={InsertedValue}
                             >
                               Insert
                             </div>
                             <div
-                              className="text-[#5F6583] px-[10px] flex justify-center items-center  h-[30px] text-[12px]  rounded-[4px] border border-[#DFE4EC] w-[90px]"
+                              className="text-[#5F6583] px-[10px] flex justify-center items-center  h-[30px] text-[12px]  rounded-[4px] border border-[#DFE4EC] w-[90px]  cursor-pointer"
                               onClick={() => {
                                 copy(IdeasValue);
                                 setCopied(true);
                               }}
                             >
-                              {!copied ? 'Copy' : 'Copied'}
+                              {copied ? 'Copied' : 'Copy'}
                             </div>
                             <div
-                              className="text-[#5F6583] px-[10px] flex justify-center items-center  h-[30px] text-[12px] rounded-[4px] border border-[#DFE4EC]"
+                              className="text-[#5F6583] px-[10px] flex justify-center items-center  h-[30px] text-[12px] rounded-[4px] border border-[#DFE4EC]  cursor-pointer"
                               onClick={handlePostIdeaRegenerate}
                             >
                               {regenerate1 ? (
@@ -1949,7 +2135,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             </div>
                           )} */}
                           {ButtonsShow && (
-                            <div onClick={handleEmpty12} className="relative">
+                            <div onClick={handleEmpty} className="relative">
                               <img className="w-[16px] cursor-pointer" src={Trash} />
                             </div>
                           )}
@@ -1975,15 +2161,16 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                         </div>
                       </div>
                       {/* <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div> */}
-                      <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] h-[120px] flex flex-row gap-[14px]">
+                      <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] h-auto flex flex-row gap-[14px]">
                         <div className="flex flex-col justify-between w-[508px]">
                           <div>
                             <textarea
                               placeholder={`${selectedIdea.placeholder}`}
-                              className="p-[1px] textArea resize-none text-[#8C90A5]"
-                              style={{ width: '100%', boxShadow: 'none', fontSize: '14px' }}
+                              className="p-[1px] textArea resize-none text-[#8C90A5] h-auto"
+                              style={{ width: '100%', boxShadow: 'none', fontSize: '14px', height: 'auto' }}
                               name="socialTextarea"
                               value={divfd}
+                              ref={textAreaRef}
                               // onChange={(e) => handleChange(e)}
                               onChange={handleChange}
                               onPaste={handlePaste}
@@ -1993,21 +2180,22 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                           </div>
 
                           <div className={`${!ButtonsShow ? 'hidden' : 'block'} `}>
-                            <div className={`flex gap-[8px] mt-[16px]`}>
+                            {/* todo */}
+                            <div className={`flex gap-[8px]`}>
                               <div
-                                className={`bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-[12px] text-white w-[90px] h-[30px]`}
+                                className={`bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-[12px] text-white w-[90px] h-[30px]  cursor-pointer`}
                                 onClick={InsertedValue}
                               >
                                 Insert
                               </div>
                               <div
-                                className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] text-[12px] border border-[#DFE4EC] w-[90px] h-[30px]"
+                                className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] text-[12px] border border-[#DFE4EC] w-[90px] h-[30px]  cursor-pointer"
                                 onClick={() => copy(IdeasValue)}
                               >
-                                {!copy ? 'Copy' : 'Copied'}
+                                {copied ? 'Copy' : 'Copied'}
                               </div>
                               <div
-                                className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] text-[12px] border border-[#DFE4EC] h-[30px]"
+                                className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] text-[12px] border border-[#DFE4EC] h-[30px]  cursor-pointer"
                                 onClick={handlePostIdeaRegenerate}
                               >
                                 {loading ? (
@@ -2030,7 +2218,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                                 ''
                               : ''}
                           </div>
-                          <div onClick={handleEmpty12}>
+                          <div onClick={handleEmpty}>
                             <img className="w-[16px] cursor-pointer" src={Trash} />
                           </div>
                         </div>
@@ -2041,142 +2229,12 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 </div>
 
                 {/* todo button part   */}
-                <div className={`${!ButtonsShow ? 'hidden' : 'block'} `}>
-                  <div
-                    className={`flex justify-end items-center gap-[8px] absolute bottom-[-50px] right-0 left-0 bg-white`}
-                  >
-                    <div
-                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex !cursor-pointer"
-                      onClick={handlePostIdeaImprove}
-                    >
-                      <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
-                      {!LoadImprove ? (
-                        <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Improve it</div>
-                      ) : (
-                        <img id="chat-container" className="w-[50px]" src={LoadingGif} />
-                      )}
-                    </div>
-                    <div
-                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex"
-                      onClick={handlePostIdeaAddDetails}
-                    >
-                      <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
-                      {!LoadAddDetails ? (
-                        <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Details</div>
-                      ) : (
-                        <img id="chat-container" className="w-[50px]" src={LoadingGif} />
-                      )}
-                    </div>
-                    <div
-                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex"
-                      onClick={handlePostIdeaHumor}
-                    >
-                      <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
-                      {!LoadHumor ? (
-                        <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Humor</div>
-                      ) : (
-                        <img id="chat-container" className="w-[50px]" src={LoadingGif} />
-                      )}
-                    </div>
-                    <div
-                      className="w-[12px] flex justify-center items-center cursor-pointer relative"
-                      onClick={() => setPopupMenu(!PopupMenu)}
-                    >
-                      <img className="" src={Menu} />
-
-                      {PopupMenu && (
-                        <div
-                          className="absolute top-[-163px] p-[8px] w-[224px] h-[150px] right-0 bg-[#fff] gap-[8px]"
-                          style={{ boxShadow: '0px 4px 20px 0px rgba(60, 66, 87, 0.10)' }}
-                        >
-                          <div className="flex justify-between items-center py-[4px]">
-                            <p className="text-[#8C90A5] text-[12px] capitalize font-[700] font-['DM Sans']">
-                              IDEAS FOR TEXT
-                            </p>
-                            <div className="w-[12px] cursor-pointer" onClick={() => setPopupMenu(!PopupMenu)}>
-                              <img className="" src={Cross} />
-                            </div>
-                          </div>
-                          {/* todo */}
-                          <div className="flex flex-wrap gap-[6px] h-[108px] overflow-y-scroll">
-                            <div
-                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer "
-                              onClick={handlePostIdeaImprove}
-                            >
-                              <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
-                              {!LoadImprove ? (
-                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">
-                                  Improve it
-                                </div>
-                              ) : (
-                                <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                              )}
-                            </div>
-
-                            <div
-                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
-                              onClick={handlePostIdeaAddDetails}
-                            >
-                              <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
-                              {!LoadAddDetails ? (
-                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">
-                                  Add Details
-                                </div>
-                              ) : (
-                                <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                              )}
-                            </div>
-
-                            <div
-                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
-                              onClick={handlePostIdeaHumor}
-                            >
-                              <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
-                              {!LoadHumor ? (
-                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Humor</div>
-                              ) : (
-                                <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                              )}
-                            </div>
-
-                            <div
-                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
-                              onClick={handlePostIdeaInspire}
-                            >
-                              <div className="text-white text-base font-medium font-['DM Sans']">💡</div>
-
-                              {!LoadInspire ? (
-                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Inspire</div>
-                              ) : (
-                                <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                              )}
-                            </div>
-
-                            <div
-                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex"
-                              onClick={handlePostIdeaShorten}
-                            >
-                              <div className="text-white text-base font-medium font-['DM Sans']">📄</div>
-                              {!LoadShorten ? (
-                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">
-                                  Shorten it
-                                </div>
-                              ) : (
-                                <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
               </div>
             </>
           )}
           {visible2 && (
             <>
-              <div id="wholeAreaContent" className="relative">
+              <div id="" className="relative">
                 <div
                   className="flex gap-[8px] mb-[12px] justify-start items-center cursor-pointer"
                   onClick={() => {
@@ -2192,6 +2250,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     setResponsesText([]);
                     setLoading(false);
                     setvisibleTextarea(false);
+                    setCopied(false);
                   }}
                 >
                   <img className="w-[14] h-[14]" src={Left} />
@@ -2207,15 +2266,16 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                       <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{IdeasValueHome1}</div>
                     </div>
                     {/* <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div> */}
-                    <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] h-[120px] flex flex-row gap-[14px]">
+                    <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] h-auto flex flex-row gap-[14px]">
                       <div className="flex flex-col justify-between w-[508px]">
                         <div>
                           {/* <p className="text-[#8C90A5]">{selectedIdea.placeholder}</p> */}
                           <textarea
                             // placeholder={`${selectedIdea.placeholder}`}
                             // className={`${!loading ? 'h-[58px]' : ''} p-[1px] textArea resize-none`}
-                            className={` p-[1px] textArea resize-none`}
-                            style={{ width: '100%', boxShadow: 'none' }}
+                            className={` p-[1px] textArea resize-none h-auto`}
+                            style={{ width: '100%', boxShadow: 'none', height: 'auto' }}
+                            ref={textAreaRef}
                             value={IdeasValueHome}
                             id="socialTextarea"
                             name="socialTextarea"
@@ -2225,24 +2285,24 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                           />
                         </div>
                         <div className={`${!ButtonsShowHome ? 'hidden' : 'block'} `}>
-                          <div className={`flex gap-[8px] mt-[8px]`}>
+                          <div className={`flex gap-[8px]`}>
                             <div
-                              className={`bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-white w-[90px]  `}
+                              className={`bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-white w-[90px]  cursor-pointer`}
                               onClick={InsertedValue}
                             >
                               Insert
                             </div>
                             <div
-                              className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px] "
+                              className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]  cursor-pointer"
                               onClick={() => {
                                 copy(IdeasValue);
                                 setCopied(true);
                               }}
                             >
-                              {!copied ? 'Copy' : 'Copied'}
+                              {copied ? 'Copied' : 'Copy'}
                             </div>
                             <div
-                              className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] "
+                              className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC]  cursor-pointer"
                               onClick={handleRegenerate}
                             >
                               {LoadRegenerate ? (
@@ -2271,7 +2331,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                           {!ButtonsShowHome ? (
                             ''
                           ) : (
-                            <div onClick={handleEmpty12}>
+                            <div onClick={handleEmpty}>
                               <img className="w-[16px] cursor-pointer" src={Trash} />
                             </div>
                           )}
@@ -2296,15 +2356,16 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                         <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{IdeasValueHome1}</div>
                       </div>
                       {/* <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div> */}
-                      <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] h-[120px] flex flex-row gap-[14px]">
+                      <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] flex flex-row gap-[14px] ">
                         <div className="flex flex-col justify-between w-[508px]">
-                          <div>
+                          <div style={{ flex: '1', height: 'auto' }}>
                             {/* <p className="text-[#8C90A5]">{selectedIdea.placeholder}</p> */}
                             <textarea
                               // placeholder={`${selectedIdea.placeholder}`}
                               className={`textArea resize-none`}
                               style={{ width: '100%', boxShadow: 'none' }}
                               value={divfd}
+                              ref={textAreaRef}
                               id="socialTextarea"
                               name="socialTextarea"
                               onChange={(e) => handleChange(e)}
@@ -2313,25 +2374,25 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             />
                           </div>
                           <div className={`${!ButtonsShowHome ? 'hidden' : 'block'} `}>
-                            <div className={`flex gap-[8px] mt-[16px]`}>
+                            <div className={`flex gap-[8px] `}>
                               <div
-                                className={`bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-white w-[90px]  `}
+                                className={`bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-white w-[90px]  cursor-pointer `}
                                 onClick={InsertedValue}
                                 // disabled={buttonDisabled}
                               >
                                 Insert
                               </div>
                               <div
-                                className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]"
+                                className="text-[#5F6583] px-[10px] flex justify-center items-center  cursor-pointer rounded-[4px] border border-[#DFE4EC] w-[90px]"
                                 onClick={() => {
                                   copy(IdeasValue);
                                   setCopied(true);
                                 }}
                               >
-                                {!copied ? 'Copy' : 'Copied'}
+                                {copied ? 'Copied' : 'Copy'}
                               </div>
                               <div
-                                className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC]"
+                                className="text-[#5F6583] px-[10px] flex justify-center items-center  cursor-pointer  rounded-[4px] border border-[#DFE4EC]"
                                 onClick={handleRegenerate}
                               >
                                 {LoadRegenerate ? (
@@ -2360,7 +2421,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             {!ButtonsShowHome ? (
                               ''
                             ) : (
-                              <div onClick={handleEmpty12}>
+                              <div onClick={handleEmpty}>
                                 <img className="w-[16px] cursor-pointer" src={Trash} />
                               </div>
                             )}
@@ -2380,7 +2441,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 {/* todo button part   */}
                 <div className={`${!ButtonsShowHome ? 'hidden' : 'block'} `}>
                   <div
-                    className={`flex justify-end items-center gap-[8px]  absolute bottom-[-50px] right-0 left-0 bg-white`}
+                    className={`flex justify-end items-center gap-[8px]  absolute bottom-[-43px] right-0 left-0 bg-white`}
                   >
                     <div
                       className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex !cursor-pointer"
@@ -2388,13 +2449,15 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     >
                       <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
                       {!LoadImprove1 ? (
-                        <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Improve it</div>
+                        <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                          Improve it
+                        </div>
                       ) : (
                         <img id="chat-container" className="w-[50px]" src={LoadingGif} />
                       )}
                     </div>
                     <div
-                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex"
+                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex  cursor-pointer"
                       onClick={handlePostIdeaAddDetails1}
                     >
                       <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
@@ -2405,7 +2468,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                       )}
                     </div>
                     <div
-                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex"
+                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex  cursor-pointer"
                       onClick={handlePostIdeaHumor1}
                     >
                       <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
@@ -2437,7 +2500,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
                           <div className="flex flex-wrap gap-[6px]">
                             <div
-                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer "
+                              className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer "
                               onClick={handlePostIdeaImprove1}
                             >
                               <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
@@ -2451,7 +2514,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             </div>
 
                             <div
-                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                              className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
                               onClick={handlePostIdeaAddDetails1}
                             >
                               <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
@@ -2465,7 +2528,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             </div>
 
                             <div
-                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                              className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
                               onClick={handlePostIdeaHumor1}
                             >
                               <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
@@ -2477,7 +2540,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             </div>
 
                             <div
-                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                              className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
                               onClick={handlePostIdeaInspire1}
                             >
                               <div className="text-white text-base font-medium font-['DM Sans']">💡</div>
@@ -2490,7 +2553,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             </div>
 
                             <div
-                              className="px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex"
+                              className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex"
                               onClick={handlePostIdeaShorten1}
                             >
                               <div className="text-white text-base font-medium font-['DM Sans']">📄</div>
@@ -2817,6 +2880,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                   placeholder="Tell me what to write for you"
                   className="p-[1px] textArea resize-none "
                   id="socialTextarea"
+                  ref={textAreaRef}
                   value={IdeasValueHome1}
                   onChange={(e) => {
                     setIdeasValueHome1(e.target.value);
