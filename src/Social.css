@@ -6,23 +6,35 @@
   resize: none;
 }
 .hoverLanguage {
-
-  color: #8C90A5 !important;
+  color: #8c90a5 !important;
 }
 .hoverLanguage:hover {
   background-color: #f3f4f8 !important;
-  color: #19224C !important;
+  color: #19224c !important;
 }
 .hoveringOver:hover {
   background-color: #d9ebff !important;
 }
 
 .hoverIdeas {
-  background-color:#EEF6FF !important;
-
+  background-color: #eef6ff !important;
 }
 .hoverIdeas:hover {
-  background-color:#D9EBFF !important;
-
+  background-color: #d9ebff !important;
 }
 
+.stickyBack {
+  position: sticky !important;
+  top: -12px !important;
+  right: 0 !important;
+  left: 0 !important;
+  background-color: white !important;
+  z-index: 999;
+}
+.hoverEffectIdeas:hover {
+  background-color: #eef6ff !important;
+  color: #1678f2 !important;
+}
+.hoverEffectIdeas div:hover {
+  color: #1678f2 !important;
+}

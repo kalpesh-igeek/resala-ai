@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Social.css';
-import Logo from './utils/Social/Risala.ai - LOGO - 13.png';
 import Setting from './utils/Social/solar_settings-broken.png';
 import ProfilePic from './utils/Social/Ellipse 31.png';
 import Cross from './utils/Social/cross.png';
 import Closed from './utils/Social/close-circle.png';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
-import TypewriterEffect from './TypewriterEffect';
 import Arrow from './utils/Social/arrow-down.png';
 import Mic from './utils/Social/microphone2.png';
 import Send from './utils/Social/send.png';
@@ -14,46 +12,21 @@ import Left from './utils/Social/arrow-left.png';
 import Trash from './utils/Social/trash.png';
 import Menu from './utils/Social/Vector.png';
 import LoadingGif from './utils/Chat/Gif/loader.gif';
+import Loader from './utils/89.gif';
 import KeyboardIcon from './utils/Chat/Icons/KeyboardIcon.svg';
-import HowToUseInfoBox from './Components/HowToUseInfoBox';
 import Select from 'react-select';
 import MicrophoneWhiteIcon from './utils/Chat/Icons/MicrophoneWhiteIcon.svg';
 import SmallClose from './utils/Chat/Icons/SmallClose.svg';
 import HowToIcon from './utils/Chat/Icons/HowToIcon.svg';
 import HowToIconBg from './utils/Chat/Icons/HowToIconBg.svg';
 import Close from './utils/MainScreen/Icons/Close.svg';
-
-// import { message } from 'antd';
-import Profile from './Pages/Profile';
 import ResalaIconWithText from './utils/Youtube/ResalaIconWithText.svg';
-import axios from 'axios';
 import { getToken } from './utils/localstorage';
 import { getRequest, postRequest } from './services';
-import { Audio } from 'react-loader-spinner';
-import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
-import CustomTooltip from './Components/CustomTooltip/Tooltip';
 import { useNavigate } from 'react-router-dom';
-// import Preferences from './Pages/Preferences/Preferences';
-// import SocialPreference from './SocialPreference';
-// import SocialProfile from './SocialProfile';
-// import ConfirmationPopup from './Components/ConfirmationPopup';
-import SocialConfirmation from './SocialConfirmation';
 import copy from 'copy-to-clipboard';
-import { stubTrue } from 'lodash';
-import SocialDeletePopup from './SocialDeletePopup';
 
-const antIcon = (
-  <LoadingOutlined
-    style={{
-      fontSize: 24,
-    }}
-    spin
-  />
-);
 export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, delay }) => {
-  // console.log('fromPosition', fromPosition);
-
   const [language, setLanguage] = useState(false);
 
   const handleLanguage = () => {
@@ -224,6 +197,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   const [ResponsesText, setResponsesText] = useState([]);
   const handleRegenerate = async () => {
     // setLoading(true);
+    setLoadingText(true);
+
     setLoadRegenerate(!LoadImprove1);
     // console.log('regenerated!');
     const hostname = window.location.hostname;
@@ -255,10 +230,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       const lines = paragraph.split(/[\.,]/);
       const lineCount = lines.length;
       textArea1.rows = lineCount + 1;
-      // console.log(paragraph, ';;;;;;dsdhsdh');
       const textArea = document.getElementById('socialTextarea');
       typewriterEffect(paragraph, textArea, 20);
       setIdeasValueHome(paragraph);
+      setLoadingText(false);
+
       setResponsesText((state) => [...state, IdeasValueHome]);
 
       setButtonShowHome(true);
@@ -270,13 +246,12 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   // textarea-improve
   const [LoadImprove1, setloadImprove1] = useState(false);
   const handlePostIdeaImprove1 = async () => {
-    // setLoading(true);
     setloadImprove1(!LoadImprove1);
-    // console.log('regenerated!');
+    setLoadingText(true);
+
     const hostname = window.location.hostname;
     let response;
-    // console.log(IdeasValue, 'IdeasValue');
-    // const postData = { text: IdeasValue, action: 'string', tone: 'Improve it', language: 'english' };
+
     const postData = { text: IdeasValueHome1, action: 'Improve it', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
@@ -297,7 +272,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         .replace(/connection closed/g, '');
       text = text.toString().replace('POST : ', '').replace('Post :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      // console.log(words, 'words');
       const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
       const lines = paragraph.split(/[\.,]/);
@@ -305,8 +279,9 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       textArea1.rows = lineCount + 1;
       const textArea = document.getElementById('socialTextarea');
       typewriterEffect(paragraph, textArea, 20);
-      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValueHome(paragraph);
+      setLoadingText(false);
+      setResponsesText((state) => [...state, IdeasValueHome]);
       setButtonShowHome(true);
       setloadImprove1(false);
     }
@@ -316,13 +291,12 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   // textarea-details
   const [LoadAddDetails1, setLoadAddDetails1] = useState(false);
   const handlePostIdeaAddDetails1 = async () => {
-    // setLoading(true);
-    // console.log('regenerated!');
     setLoadAddDetails1(!LoadAddDetails1);
+    setLoadingText(true);
+
     const hostname = window.location.hostname;
     let response;
-    // console.log(IdeasValueHome1, 'IdeasValueHome1');
-    // const postData = { text: IdeasValueHome1, action: 'string', tone: 'Add Details', language: 'english' };
+
     const postData = { text: IdeasValueHome1, action: 'Add details', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
@@ -343,14 +317,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         .replace(/connection closed/g, '');
       text = text.toString().replace('POST : ', '').replace('Post :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      // console.log(words, 'words');
       const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
       const lines = paragraph.split(/[\.,]/);
       const lineCount = lines.length;
       textArea1.rows = lineCount + 1;
-      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValueHome(paragraph);
+      setLoadingText(false);
+      setResponsesText((state) => [...state, IdeasValueHome]);
       setButtonShowHome(true);
       setLoadAddDetails1(false);
     }
@@ -360,13 +334,12 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   // textarea-humor
   const [LoadHumor1, setLoadHumor1] = useState(false);
   const handlePostIdeaHumor1 = async () => {
-    // setLoading(true);
-    // console.log('regenerated!');
     setLoadHumor1(!LoadHumor1);
+    setLoadingText(true);
+
     const hostname = window.location.hostname;
     let response;
-    // console.log(IdeasValueHome1, 'IdeasValueHome1');
-    // const postData = { text: IdeasValueHome1, action: 'string', tone: 'Add Humor', language: 'english' };
+
     const postData = { text: IdeasValueHome1, action: 'Humor', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
@@ -387,7 +360,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         .replace(/connection closed/g, '');
       text = text.toString().replace('POST : ', '').replace('Post :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      // console.log(words, 'words');
       const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
       const lines = paragraph.split(/[\.,]/);
@@ -395,8 +367,9 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       textArea1.rows = lineCount + 1;
       const textArea = document.getElementById('socialTextarea');
       typewriterEffect(paragraph, textArea, 20);
-      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValueHome(paragraph);
+      setLoadingText(false);
+      setResponsesText((state) => [...state, IdeasValueHome]);
       setButtonShowHome(true);
       setLoadHumor1(false1);
     }
@@ -406,13 +379,12 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   // textarea-inspire
   const [LoadInspire1, setLoadInspire1] = useState(false);
   const handlePostIdeaInspire1 = async () => {
-    // setLoading(true);
-    // console.log('regenerated!');
     setLoadInspire1(!LoadInspire1);
+    setLoadingText(true);
+
     const hostname = window.location.hostname;
     let response;
-    // console.log(IdeasValueHome1, 'IdeasValueHome1');
-    // const postData = { text: IdeasValueHome1, action: 'string', tone: 'Inspire', language: 'english' };
+
     const postData = { text: IdeasValueHome1, action: 'Inpire', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
@@ -433,7 +405,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         .replace(/connection closed/g, '');
       text = text.toString().replace('POST : ', '').replace('Post :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      // console.log(words, 'words');
       const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
       const lines = paragraph.split(/[\.,]/);
@@ -441,8 +412,9 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       textArea1.rows = lineCount + 1;
       const textArea = document.getElementById('socialTextarea');
       typewriterEffect(paragraph, textArea, 20);
-      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValueHome(paragraph);
+      setLoadingText(false);
+      setResponsesText((state) => [...state, IdeasValueHome]);
       setButtonShowHome(true);
       setLoadInspire1(false);
     }
@@ -452,13 +424,12 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   // textarea-shorten
   const [LoadShorten1, setLoadShorten1] = useState(false);
   const handlePostIdeaShorten1 = async () => {
-    // setLoading(true);
-    // console.log('regenerated!');
     setLoadShorten1(!LoadShorten1);
+    setLoadingText(true);
+
     const hostname = window.location.hostname;
     let response;
-    // console.log(IdeasValueHome1, 'IdeasValueHome1');
-    // const postData = { text: IdeasValueHome1, action: 'string', tone: 'Shorten it', language: 'english' };
+
     const postData = { text: IdeasValueHome1, action: 'Shorten it', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
@@ -489,6 +460,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       typewriterEffect(paragraph, textArea, 20);
       // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValueHome(paragraph);
+      setLoadingText(false);
+      setResponsesText((state) => [...state, IdeasValueHome]);
       setButtonShowHome(true);
       setLoadShorten1(false);
     }
@@ -496,13 +469,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   // textarea-shorten
 
   // empty
-  const handleEmpty1 = () => {
-    setIdeasValueHome1('');
-    setSpeechLength(0);
-  };
+  // const handleEmpty12 = () => {
+  //   setIdeasValueHome1('');
+  //   setSpeechLength(0);
+  // };
 
   const handleIdeas = (element) => {
     const selected = socialIdeas[element];
+    console.log('Selected ', selected);
     setSocialHome(false);
     setSelectedIdea(selected);
     setVisible(true);
@@ -562,49 +536,21 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   const [Ideadload, setIdeadload] = useState(false);
   const [visibleTextarea, setvisibleTextarea] = useState(false);
   const [typeWriter, settypeWriter] = useState(false);
-  // typewriter effect
+  const [textarea2reg, settextarea2reg] = useState(false);
 
   // typewriter effect
 
-  // outside click
-  // const socialPopupRef = useRef(null);
-  // // const socialButtonRef = useRef(null);
-  // // const SocialBUtton = document.getElementById('SocialButton');
-  // // const [showSocialPopup, setshowSocialPopup] = useState(false);
-  // useEffect(() => {
-  //   const handleOutsideClick = (event) => {
-  //     console.log('outside clicked first');
-
-  //     if (socialPopupRef.current && !socialPopupRef.current.contains(event.target)) {
-  //       console.log('outside clicked');
-  //       if (socialPopupRef.current) {
-  //         console.log('outside clicked second');
-  //         socialPopupRef.current.classList.add('hidden');
-  //         // setSocialsButton(true);
-  //       }
-  //     }
-  //   };
-
-  //   // Add an event listener to the document to detect clicks outside of the SocialPopup
-  //   document.addEventListener('mousedown', handleOutsideClick);
-
-  //   return () => {
-  //     // Clean up the event listener when the component unmounts
-  //     document.removeEventListener('mousedown', handleOutsideClick);
-  //   };
-  // }, []);
-
+  // typewriter effect
   //
   const handlePostIdeas = async () => {
     if (IdeasValue.trim() === '') {
       return;
     }
-    // setvisibleTextarea(true);
-    // setTyping(true);
-    setIdeadload(!Ideadload);
+
+    setIdeadload(true);
+    settextarea2reg(true);
     setPostIdea(!PostIdea);
     setInitialIdeasValue(IdeasValue);
-    // console.log('InitialIdeasValue!', InitialIdeasValue);
     const hostname = window.location.hostname;
     const textArea = document.getElementById('socialTextarea');
 
@@ -619,7 +565,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     } else if (hostname === 'twitter.com') {
       response = await postRequest('/twitter/twitter_post_streaming', postData);
     }
-    // console.log({ 'dgvklsdgdsklgvnsdklgndskgdns => ': response });
+
     if (response && response.status === 200) {
       console.log(response.data);
       const text = response.data
@@ -634,22 +580,16 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       const lineCount = lines.length;
       textArea1.rows = lineCount + 1;
       // console.log(paragraph, ';;;;;;dsdhsdh');
+      setIdeadload(false);
+      settextarea2reg(false);
+
       typewriterEffect(paragraph, textArea, 20);
       setIdeasValue(paragraph);
       settypeWriter(true);
+
       setButtonShow(!ButtonsShow);
       setPostIdea(!PostIdea);
-      setIdeadload(false);
-      // typewriterEffect(paragraph, textArea, 30, () => {
-      //   setIdeasValue(paragraph);
-      //   settypeWriter(true);
-      //   setButtonShow(true);
-      //   setPostIdea(!PostIdea);
-      //   setIdeadload(false);
-      // });
     }
-    // console.log(selectedIdea, 'selectedIdea');
-    // setIdeasValue('');
   };
   // home-ideaPost
   const [typing, setTyping] = useState(true);
@@ -677,7 +617,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   const [regenerate1, setRegenerate1] = useState(false);
   const handlePostIdeaRegenerate = async () => {
     setRegenerate1(!regenerate1);
-    // setNewDivContent('');
+    settextarea2reg(true);
+    setIdeadload(true);
 
     const hostname = window.location.hostname;
     const textArea = document.getElementById('socialTextarea');
@@ -685,7 +626,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     let response;
 
     const postData = { text: InitialIdeasValue, action: 'string', language: languages, tone: professions };
-    // console.log(postData, 'postData');
 
     if (hostname === 'www.linkedin.com') {
       response = await postRequest('/linkedin/regenrate_post_streaming', postData);
@@ -695,11 +635,9 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       response = await postRequest('/twitter/regenrate_post_streaming', postData);
     }
 
-    // console.log({ 'dgvklsdgdsklgvnsdklgndskgdns => ': response });
     if (response && response.status === 200) {
       console.log(response.data);
-      // console.log('skfsdj,gsdjkgdsjkgkjsdjk');
-      //console.log(response.data, 'response.data');
+
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST :/g, '')
@@ -708,25 +646,20 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         .replace(/connection closed/g, '');
       text = text.toString().replace('POST :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      // const words = response.detail[0].ctx.doc.split(/\s+/).filter((word) => word.trim() !== '');
-      // console.log(words, 'words');
+
       const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
       const lines = paragraph.split(/[\.,]/);
       const lineCount = lines.length;
       textArea1.rows = lineCount + 1;
       typewriterEffect(paragraph, textArea, 20);
-      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
-      setButtonShow(true);
-      // console.log(IdeasValue, 'arranging array');
-      // const newDiv = (
-      // );
-      setResponses((state) => [...state, IdeasValue]);
+      settextarea2reg(false);
+      setIdeadload(false);
 
-      // setIdeasValue('');
-      // console.log(responses, 'responses');
-      // setIdeasValue(paragraph);
+      setButtonShow(true);
+
+      setResponses((state) => [...state, IdeasValue]);
     }
     setRegenerate1(false);
   };
@@ -735,15 +668,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   // home-improve
   const [LoadImprove, setloadImprove] = useState(false);
   const handlePostIdeaImprove = async () => {
-    // setLoading(true);
     setloadImprove(!LoadImprove);
-    // console.log('regenerated!');
+    settextarea2reg(true);
+
     const hostname = window.location.hostname;
     const textArea = document.getElementById('socialTextarea');
 
     let response;
-    // console.log(IdeasValue, 'IdeasValue');
-    // const postData = { text: IdeasValue, action: 'string', tone: 'Improve it', language: 'english' };
+
     const postData = { text: IdeasValue, action: 'Improve it', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
@@ -756,7 +688,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
     if (response && response.status === 200) {
       console.log(response.data);
-      // console.log(response.data, 'response.data');
 
       let text = response.data
         .replace(/#@#/g, '')
@@ -766,15 +697,15 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         .replace(/connection closed/g, '');
       text = text.toString().replace('POST :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      // console.log(words, 'words');
       const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
       const lines = paragraph.split(/[\.,]/);
       const lineCount = lines.length;
       textArea1.rows = lineCount + 1;
       typewriterEffect(paragraph, textArea, 20);
-      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
+      settextarea2reg(false);
+
       setResponses((state) => [...state, IdeasValue]);
       setButtonShow(true);
       setloadImprove(false);
@@ -785,15 +716,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   // home-details
   const [LoadAddDetails, setLoadAddDetails] = useState(false);
   const handlePostIdeaAddDetails = async () => {
-    // setLoading(true);
-    // console.log('regenerated!');
     setLoadAddDetails(!LoadAddDetails);
+    settextarea2reg(true);
+
     const hostname = window.location.hostname;
     const textArea = document.getElementById('socialTextarea');
 
     let response;
-    // console.log(IdeasValue, 'IdeasValue');
-    // const postData = { text: IdeasValue, action: 'string', tone: 'Add Details', language: 'english' };
+
     const postData = { text: IdeasValue, action: 'Add details', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
@@ -814,15 +744,15 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         .replace(/connection closed/g, '');
       text = text.toString().replace('POST :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      // console.log(words, 'words');
       const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
       const lines = paragraph.split(/[\.,]/);
       const lineCount = lines.length;
       textArea1.rows = lineCount + 1;
       typewriterEffect(paragraph, textArea, 20);
-      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
+      settextarea2reg(false);
+
       setResponses((state) => [...state, IdeasValue]);
       setButtonShow(true);
       setLoadAddDetails(false);
@@ -833,15 +763,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   // home-Humor
   const [LoadHumor, setLoadHumor] = useState(false);
   const handlePostIdeaHumor = async () => {
-    // setLoading(true);
-    // console.log('regenerated!');
+    settextarea2reg(true);
+
     setLoadHumor(!LoadHumor);
     const hostname = window.location.hostname;
     const textArea = document.getElementById('socialTextarea');
 
     let response;
-    // console.log(IdeasValue, 'IdeasValue');
-    // const postData = { text: IdeasValue, action: 'string', tone: 'Add Humor', language: 'english' };
+
     const postData = { text: IdeasValue, action: 'Humor', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
@@ -862,15 +791,15 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         .replace(/connection closed/g, '');
       text = text.toString().replace('POST :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      // console.log(words, 'words');
       const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
       const lines = paragraph.split(/[\.,]/);
       const lineCount = lines.length;
       textArea1.rows = lineCount + 1;
       typewriterEffect(paragraph, textArea, 20);
-      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
+      settextarea2reg(false);
+
       setResponses((state) => [...state, IdeasValue]);
       setButtonShow(true);
       setLoadHumor(false);
@@ -881,15 +810,13 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   // home-Inspire
   const [LoadInspire, setLoadInspire] = useState(false);
   const handlePostIdeaInspire = async () => {
-    // setLoading(true);
-    // console.log('regenerated!');
     setLoadInspire(!LoadInspire);
+    settextarea2reg(true);
+
     const hostname = window.location.hostname;
     const textArea = document.getElementById('socialTextarea');
 
     let response;
-    // console.log(IdeasValue, 'IdeasValue');
-    // const postData = { text: IdeasValue, action: 'string', tone: 'Inspire', language: 'english' };
     const postData = { text: IdeasValue, action: 'Inpire', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
@@ -910,15 +837,15 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         .replace(/connection closed/g, '');
       text = text.toString().replace('POST :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      // console.log(words, 'words');
       const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
       const lines = paragraph.split(/[\.,]/);
       const lineCount = lines.length;
       textArea1.rows = lineCount + 1;
       typewriterEffect(paragraph, textArea, 20);
-      // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
+      settextarea2reg(false);
+
       setResponses((state) => [...state, IdeasValue]);
       setButtonShow(true);
       setLoadInspire(false);
@@ -929,15 +856,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   // home-shorten
   const [LoadShorten, setLoadShorten] = useState(false);
   const handlePostIdeaShorten = async () => {
-    // setLoading(true);
-    // console.log('regenerated!');
     setLoadShorten(!LoadShorten);
+    settextarea2reg(true);
+
     const hostname = window.location.hostname;
     const textArea = document.getElementById('socialTextarea');
 
     let response;
-    // console.log(IdeasValue, 'IdeasValue');
-    // const postData = { text: IdeasValue, action: 'string', tone: 'Shorten it', language: 'english' };
+
     const postData = { text: IdeasValue, action: 'Shorten it', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
@@ -968,48 +894,39 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       typewriterEffect(paragraph, textArea, 20);
       // console.log(paragraph, ';;;;;;dsdhsdh');
       setIdeasValue(paragraph);
+      settextarea2reg(false);
+
       setResponses((state) => [...state, IdeasValue]);
       setButtonShow(true);
       setLoadShorten(false);
     }
   };
-  // home-shorten
-
-  // empty
-  // const [delelePopup, setdelelePopup] = useState(false);
-
-  // const handleEmpty12 = () => {
-  //   setdelelePopup(!delelePopup);
-  // };
 
   const handleEmpty = (index) => {
-    // console.log('gdfdgdf');
-    // setdelelePopup(!delelePopup);
     const updatedResponses = [...responses];
     updatedResponses.splice(index, 1);
     setResponses(updatedResponses);
     setSpeechLength(0);
+    // setIdeasValue('');
+  };
+  const handleEmpty12 = () => {
+    setSpeechLength(0);
     setIdeasValue('');
   };
-
   // empty
 
   // insert functionality
 
   const InsertedValue = () => {
-    // console.log('sfsfdsf');
     const LinkedInClass = document.getElementsByClassName('ql-editor');
     const FacebookClass = document.getElementsByClassName('xha3pab');
     const twitterClass = document.querySelectorAll('[data-testid="tweetTextarea_0_label"]');
     const hostname = window.location.hostname;
 
     if (hostname == 'www.linkedin.com') {
-      // console.log('llinkedIn');
       const LinkedInText = LinkedInClass[0].children[0];
-      // console.log(IdeasValue, 'IdeasValue');
       LinkedInText.textContent = `${IdeasValue}`;
     } else if (hostname == 'www.facebook.com') {
-      // console.log('facebook', FacebookClass);
       let FacebookText = FacebookClass[0];
       if (
         FacebookText.childNodes[0]?.childNodes[0]?.children?.length > 0 &&
@@ -1020,168 +937,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         const newSpan = document.createElement('span');
         newSpan.textContent = IdeasValue;
         newSpan.setAttribute('data-lexical-text', 'true');
-        // Add the new <span> to FacebookText
         FacebookText.childNodes[0].childNodes[0].appendChild(newSpan);
       }
     } else if (hostname == 'twitter.com') {
-      // console.log('twitter');
       const TwitterText =
         twitterClass[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0];
       TwitterText.textContent = `${IdeasValue}`;
     }
   };
-
-  // const [buttonDisabled, setButtonDisabled] = useState(true);
-  // const [focusedTextarea, setFocusedTextarea] = useState(null);
-
-  // useEffect(() => {
-  //   const messageListener = (message) => {
-  //     if (message.enableButton !== undefined) {
-  //       setButtonDisabled(!message.enableButton);
-  //     }
-  //   };
-
-  //   chrome.runtime.onMessage.addListener(messageListener);
-
-  //   return () => {
-  //     chrome.runtime.onMessage.removeListener(messageListener);
-  //   };
-  // }, []);
-
-  // const isElementInExtension = (element) => {
-  //   // Replace 'your-extension-id' with the actual ID of your extension's root element.
-  //   const extensionRootElement = document.getElementById('side-bar-extension-root');
-  //   console.log(extensionRootElement, 'extensionRootElement');
-  //   return extensionRootElement?.contains(element);
-  // };
-
-  // const isInputField = (element) => {
-  //   return (
-  //     element.tagName === 'INPUT' ||
-  //     element.tagName === 'TEXTAREA' ||
-  //     element.tagName === 'DIV' ||
-  //     element.tagName === 'SPAN' ||
-  //     false
-  //   );
-  // };
-
-  // const findClosestButton = (element) => {
-  //   while (element) {
-  //     if (element.tagName === 'BUTTON' || element.tagName === 'DIV' || element.tagName === 'SPAN') {
-  //       return element;
-  //     }
-  //     element = element.parentElement;
-  //   }
-  //   return null;
-  // };
-
-  // const handleFocusIn = (event) => {
-  //   const focusedElement = event.target;
-  //   console.log(focusedElement, 'focusedElement');
-  //   // linkedin
-  //   const parentElement = document.querySelector('div[gmail_original="1"]');
-  //   // const parentElement = document.querySelector('[data-testid="primaryColumn"]');
-  //   console.log(parentElement, 'parentElement');
-  //   if (!isElementInExtension(focusedElement) || isInputField(focusedElement)) {
-  //     const button = findClosestButton(focusedElement);
-  //     console.log(button, 'closest button');
-  //     if (button) {
-  //       console.log(button, 'social button');
-  //       button.removeAttribute('disabled');
-  //     }
-
-  //     chrome.runtime.sendMessage({ enableButton: true });
-  //     setButtonDisabled(false);
-  //     console.log(focusedElement, 'focusedElement');
-
-  //     if (
-  //       focusedElement.tagName === 'TEXTAREA' ||
-  //       focusedElement.tagName === 'INPUT' ||
-  //       focusedElement.tagName === 'DIV' ||
-  //       focusedElement.tagName === 'SPAN' ||
-  //       parentElement
-  //     ) {
-  //       const lastChild = focusedElement.lastChild.lastChild.lastChild.lastChild;
-  //       setFocusedTextarea(lastChild);
-  //     }
-  //   }
-  // };
-
-  // const handleApply = () => {
-  //   const parentElement = document.querySelector('div[gmail_original="1"]');
-  //   console.log(focusedTextarea, 'ggjjgj');
-  //   // if (focusedTextarea) {
-  //   const valueToInsert = IdeasValue;
-  //   console.log(valueToInsert, 'valueToInsert');
-  //   const selectionStart = focusedTextarea.selectionStart;
-  //   console.log(selectionStart, 'selectionStart');
-  //   const selectionEnd = focusedTextarea.selectionEnd;
-  //   console.log(selectionEnd, 'selectionEnd');
-  //   const currentValue = focusedTextarea.value;
-  //   console.log(currentValue, 'currentValue');
-  //   const newValue = currentValue.substring(0, selectionStart) + valueToInsert + currentValue.substring(selectionEnd);
-  //   console.log(newValue, 'newValue');
-  //   // Set the new value of the textarea
-  //   focusedTextarea.value = newValue;
-
-  //   // Restore focus and cursor position
-  //   focusedTextarea.focus();
-  //   focusedTextarea.setSelectionRange(valueToInsert.length, valueToInsert.length);
-  //   // }
-  //   if (parentElement) {
-  //     // Get the dynamic text from templatePayload.generate_mail
-  //     const dynamicText = IdeasValue;
-
-  //     // Split the dynamic text into sections based on line breaks
-  //     const dynamicTextSections = dynamicText.split('\n');
-
-  //     // Clear any existing content in the parent element
-  //     parentElement.innerHTML = '';
-
-  //     // Create a new div element for each section and add it to the parent element
-  //     dynamicTextSections.forEach((sectionText, index) => {
-  //       if (sectionText.trim() === '') {
-  //         // Add a div element with a line break when there is a line break in the dynamic text
-  //         const newDiv = document.createElement('div');
-  //         newDiv.setAttribute('dir', 'ltr');
-  //         newDiv.setAttribute('gmail_original', '1');
-  //         newDiv.innerHTML = '<br>';
-  //         parentElement.appendChild(newDiv);
-  //       } else {
-  //         // Add a div element with the dynamic text
-  //         const newDiv = document.createElement('div');
-  //         newDiv.setAttribute('dir', 'ltr');
-  //         newDiv.setAttribute('gmail_original', '1');
-  //         newDiv.innerHTML = sectionText;
-  //         parentElement.appendChild(newDiv);
-  //       }
-  //     });
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   document.addEventListener('focusin', handleFocusIn);
-
-  //   return () => {
-  //     document.removeEventListener('focusin', handleFocusIn);
-  //   };
-  // }, []);
-
-  // useEffect(() => {
-  //   const handleFocusOut = (event) => {
-  //     if (focusedTextarea && !event.relatedTarget) {
-  //       setFocusedTextarea(null);
-  //       setButtonDisabled(true);
-  //     }
-  //   };
-
-  //   document.addEventListener('focusout', handleFocusOut);
-
-  //   return () => {
-  //     document.removeEventListener('focusout', handleFocusOut);
-  //   };
-  // }, [focusedTextarea]);
-  // insert functionality
 
   const [PopupMenu, setPopupMenu] = useState(false);
 
@@ -1192,14 +955,13 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     email: 'example@gmail.com',
     password: 'admin123',
   };
-  // const [isProfile, setIsProfile] = useState(false);
 
   // setting
   const navigate = useNavigate();
   // copy
   const [copied, setCopied] = useState(false);
 
-  // voice over search
+  //todo:  voice over search
   const outputLanguagesVoice = [
     { value: 'en', label: 'English' },
     { value: 'ar', label: 'Arabic' },
@@ -1240,10 +1002,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     setAudioInput(false);
     setMicClicked(false);
     setAudioInput(false);
-    // Stop the speech recognition
     SpeechRecognition.stopListening();
 
-    // Reset the relevant states to their initial values
     setStartListen(true);
     setStartSpeech(true);
     setMicClicked(false);
@@ -1253,21 +1013,16 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     setCloseSpeech(true);
     SpeechRecognition.stopListening();
     setAudioInput(false);
-    // Stop the speech recognition
-    // Reset the relevant states to their initial values
+
     setStartListen(true);
     setStartSpeech(true);
     setMicClicked(false);
     setPermission(false);
 
     resetTranscript();
-    // console.log('transcript', transcript);
-    // Show the first div
-    // setShowFirstDiv(true);
   };
   const handleAudioInput = () => {
     setAudioInput(!audioInput);
-    // closeSpeechRecognition();
     SpeechRecognition.stopListening();
     setStartListen(true);
     setStartSpeech(true);
@@ -1275,7 +1030,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     resetTranscript();
   };
   const handleAudioInfoPopup = () => {
-    // closeSpeechRecognition();
     setIsAudioInfoPopup(!isAudioInfoPopup);
     setIsViewPrompts(false);
   };
@@ -1286,7 +1040,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   const handleWindowClick = (e) => {
     if (selectRef.current && !selectRef.current.contains(e.target)) {
       setIsMenuOpen(false);
-      // setSettingsPopupBox(false);
     }
   };
   const requestPermission = () => {
@@ -1306,16 +1059,12 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   useEffect(() => {
     navigator.permissions.query({ name: 'microphone' }).then((permissionStatus) => {
       setMicPermission(permissionStatus.state);
-      // setStartSpeech(true);
-
       permissionStatus.onchange = function () {
         setMicPermission(this.state);
-        // setStartSpeech(true);
       };
     });
   }, []);
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
-    // console.log('Your browser does not support speech recognition software! Try Chrome desktop, maybe?');
     return null;
   }
   const listenContinuously = () => {
@@ -1374,8 +1123,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
 
       try {
-        // Call your new API here
-        // const USER_TOKEN = getToken();
         const response = await fetch('https://api-qa.resala.ai/chat/general_prompt_response_stream', {
           method: 'POST',
           headers: {
@@ -1405,10 +1152,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
           const chunk = new TextDecoder().decode(value);
           const lines = chunk.split('\n');
           for (const line of lines) {
-            // console.log('chunk', line);
-            // if (line.startsWith('data: ')) {
-            // const data = line.substring(6).trim(); // Remove "data: " prefix and trim spaces
-            // Replace <br><br> with a newline
             data = line.replace(/#@#/g, '\n');
             if (line.includes('connection closed')) {
               setIsTypewriterDone(false);
@@ -1438,9 +1181,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       try {
         const response = await fetch('https://api-qa.resala.ai/chat/stream_chat', {
-          // const response = await fetch(
-          //   'https://5208-2401-4900-1f3f-864b-1433-bacc-61c9-7a9a.ngrok-free.app/chat/stream_chat',
-          //   {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1469,10 +1209,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
           // Process and display the received message
           const lines = chunk.split('\n');
           for (const line of lines) {
-            // console.log('chunk', line);
-            // if (line.startsWith('data: ')) {
-            // const data = line.substring(6).trim(); // Remove "data: " prefix and trim spaces
-            // Replace <br><br> with a newline
             data = line.replace(/#@#/g, '\n');
             if (line.includes('connection closed')) {
               // Set the typewriter state to false when "connection closed" is encountered
@@ -1533,13 +1269,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
           // Process and display the received message
           const lines = chunk.split('\n');
           for (const line of lines) {
-            // console.log('chunk', line);
-            // if (line.startsWith('data: ')) {
-            // const data = line.substring(6).trim(); // Remove "data: " prefix and trim spaces
-            // Replace <br><br> with a newline
             data = line.replace(/#@#/g, '\n');
             if (line.includes('connection closed')) {
-              // Set the typewriter state to false when "connection closed" is encountered
               setAllreadyStreamed(false);
               setIsStreaming(false);
               isTypewriterDone = true;
@@ -1585,96 +1316,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [myPromptRef, setIsAudioInfoPopup]);
-  // how to use info box
 
-  // useEffect(() => {
-  //   if (finalTranscript !== '') {
-  //   }
-  // }, [interimTranscript, finalTranscript]);
-
-  // if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
-  //   console.log('Your browser does not support speech recognition software! Try Chrome desktop, maybe?');
-  //   return null;
-  // }
-  // const listenContinuously = () => {
-  //   if (micPermission !== 'granted') {
-  //     requestPermission();
-  //   }
-  //   if (micPermission === 'granted') {
-  //     setPermission(true);
-  //   }
-  //   setStartSpeech(false);
-  //   setStartListen(true);
-  //   setMicClicked(true);
-  //   SpeechRecognition.startListening({
-  //     continuous: true,
-  //     language: selectedOption?.value ? selectedOption?.value : 'en',
-  //   });
-  // };
-  // useEffect(() => {
-  //   if (!startSpeech) {
-  //     setStartListen(true);
-  //   }
-  // }, [startSpeech]);
-
-  // const requestPermission = () => {
-  //   navigator.mediaDevices
-  //     .getUserMedia({ audio: true })
-  //     .then((stream) => {
-  //       setMicPermission('granted');
-  //       setStartListen(false);
-  //       setStartSpeech(true);
-  //       setStartListen(true);
-  //       setPermission(true);
-  //     })
-  //     .catch((err) => {
-  //       // Handle the error
-  //     });
-  // };
-
-  // const closeSpeechRecognition = () => {
-  //   setCloseSpeech(true);
-  //   SpeechRecognition.stopListening();
-  //   setAudioInput(false);
-  //   // Stop the speech recognition
-  //   // Reset the relevant states to their initial values
-  //   setStartListen(true);
-  //   setStartSpeech(true);
-  //   setMicClicked(false);
-  //   setPermission(false);
-
-  //   resetTranscript();
-  //   // console.log('transcript', transcript);
-  //   // Show the first div
-  //   // setShowFirstDiv(true);
-  // };
-
-  // const handleSelectVoice = (voiceText) => {
-  //   setChatInput({ chatText: voiceText });
-  //   setAudioInput(false);
-  //   setMicClicked(false);
-  //   setAudioInput(false);
-  //   // Stop the speech recognition
-  //   SpeechRecognition.stopListening();
-
-  //   // Reset the relevant states to their initial values
-  //   setStartListen(true);
-  //   setStartSpeech(true);
-  //   setMicClicked(false);
-  //   resetTranscript();
-  // };
-
-  // const handleAudioInput = () => {
-  //   setAudioInput(!audioInput);
-  //   // closeSpeechRecognition();
-  //   SpeechRecognition.stopListening();
-  //   setStartListen(true);
-  //   setStartSpeech(true);
-  //   setMicClicked(false);
-  //   resetTranscript();
-  // };
-  // voice over search
-
+  console.log(responses, 'responses');
   return (
     <>
       <div
@@ -1845,7 +1488,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         </div>
 
         {/* second div */}
-        <div className="py-[12px] px-[16px] overflow-y-scroll h-[max-content] max-h-[650px]" id="">
+        <div className="py-[14px] px-[16px] overflow-y-scroll max-h-[554px]" id="">
           <p
             className={`${
               !SocialHome ? 'hidden' : 'block'
@@ -1885,51 +1528,60 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
           {visible && (
             <>
-              <div id="wholeAreaContent" className="relative pb-[250px]">
+              <div id="wholeAreaContent" className={`relative ${ButtonsShow ? 'pb-[40px]' : ''}`}>
                 <div
                   className={`${
                     !ButtonsShow ? 'hidden' : ''
-                  }   flex justify-end items-center gap-[8px] absolute bottom-[14px] right-0 left-0 bg-white`}
+                  }   flex justify-end items-center gap-[8px]   absolute bottom-[7px] right-0 left-0 bg-white`}
                 >
                   {/* <div className={``}> */}
                   <div
-                    className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex !cursor-pointer"
+                    className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex !cursor-pointer hoverEffectIdeas"
                     onClick={handlePostIdeaImprove}
                   >
                     <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
-                    {!LoadImprove ? (
+                    <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer ">
+                      Improve it
+                    </div>
+                    {/* {!LoadImprove ? (
                       <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                         Improve it
                       </div>
                     ) : (
                       <img id="chat-container" className="w-[50px]" src={LoadingGif} />
-                    )}
+                    )} */}
                   </div>
                   <div
-                    className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex"
+                    className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex hoverEffectIdeas"
                     onClick={handlePostIdeaAddDetails}
                   >
                     <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
-                    {!LoadAddDetails ? (
+                    <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                      Add Details
+                    </div>
+                    {/* {!LoadAddDetails ? (
                       <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                         Add Details
                       </div>
                     ) : (
                       <img id="chat-container" className="w-[50px]" src={LoadingGif} />
-                    )}
+                    )} */}
                   </div>
                   <div
-                    className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex"
+                    className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex hoverEffectIdeas"
                     onClick={handlePostIdeaHumor}
                   >
                     <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
-                    {!LoadHumor ? (
+                    <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                      Add Humor
+                    </div>
+                    {/* {!LoadHumor ? (
                       <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                         Add Humor
                       </div>
                     ) : (
                       <img id="chat-container" className="w-[50px]" src={LoadingGif} />
-                    )}
+                    )} */}
                   </div>
                   <div
                     className="w-[12px] flex justify-center items-center cursor-pointer relative"
@@ -1953,74 +1605,88 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                         {/* todo */}
                         <div className="flex flex-wrap gap-[6px] h-[108px] overflow-y-scroll">
                           <div
-                            className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer "
+                            className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer hoverEffectIdeas"
                             onClick={handlePostIdeaImprove}
                           >
                             <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
-                            {!LoadImprove ? (
+                            <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                              Improve it
+                            </div>
+                            {/* {!LoadImprove ? (
                               <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                                 Improve it
                               </div>
                             ) : (
                               <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                            )}
+                            )} */}
                           </div>
 
                           <div
-                            className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                            className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer hoverEffectIdeas"
                             onClick={handlePostIdeaAddDetails}
                           >
                             <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
-                            {!LoadAddDetails ? (
+                            <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                              Add Details
+                            </div>
+                            {/* {!LoadAddDetails ? (
                               <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                                 Add Details
                               </div>
                             ) : (
                               <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                            )}
+                            )} */}
                           </div>
 
                           <div
-                            className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                            className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer hoverEffectIdeas"
                             onClick={handlePostIdeaHumor}
                           >
                             <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
-                            {!LoadHumor ? (
+                            <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                              Add Humor
+                            </div>
+                            {/* {!LoadHumor ? (
                               <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                                 Add Humor
                               </div>
                             ) : (
                               <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                            )}
+                            )} */}
                           </div>
 
                           <div
-                            className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                            className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer hoverEffectIdeas"
                             onClick={handlePostIdeaInspire}
                           >
                             <div className="text-white text-base font-medium font-['DM Sans']">💡</div>
-
-                            {!LoadInspire ? (
+                            <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                              Inspire
+                            </div>
+                            {/* {!LoadInspire ? (
                               <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                                 Inspire
                               </div>
                             ) : (
                               <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                            )}
+                            )} */}
                           </div>
 
                           <div
-                            className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex"
+                            className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex hoverEffectIdeas"
                             onClick={handlePostIdeaShorten}
                           >
                             <div className="text-white text-base font-medium font-['DM Sans']">📄</div>
-                            {!LoadShorten ? (
+                            <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                              Shorten it
+                            </div>
+                            {/* {!LoadShorten ? (
                               <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                                 Shorten it
                               </div>
                             ) : (
                               <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                            )}
+                            )} */}
                           </div>
                         </div>
                       </div>
@@ -2029,7 +1695,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                   {/* </div> */}
                 </div>
                 <div
-                  className="flex gap-[8px] mb-[12px] justify-start items-center cursor-pointer"
+                  className="flex gap-[8px] mb-[12px] justify-start items-center cursor-pointer sticky top-[-15px] right-0 left-0 bg-white z-[99]"
                   onClick={() => {
                     setVisible(false);
                     setVisible2(false);
@@ -2043,6 +1709,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     setvisibleTextarea(false);
                     setIdeadload(false);
                     setCopied(false);
+                    settextarea2reg(false);
                   }}
                 >
                   <img className="w-[14] h-[14]" src={Left} />
@@ -2055,8 +1722,24 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     Back
                   </p>
                 </div>
-
-                <div className="h-[auto] overflow-y-scroll pb-[93px]">
+                {textarea2reg ? (
+                  <div className="flex justify-start items-center gap-1 my-2">
+                    <img src={Loader} className="w-[12px]" />
+                    <p className="text-blue-600 text-[12px] font-medium font-['DM Sans']">Working on it...</p>
+                  </div>
+                ) : (
+                  ''
+                )}
+                <div className="h-[auto] overflow-y-scroll ">
+                  {/* todo loader */}
+                  {/* {Ideadload ? (
+                    <div className="flex justify-start items-center gap-1 my-2">
+                      <img src={Loader} className="w-[12px]" />
+                      <p className="text-blue-600 text-[12px] font-medium font-['DM Sans']">Working on it...</p>
+                    </div>
+                  ) : (
+                    ''
+                  )} */}
                   <div id="mainContentArea1" className="mb-[15px]">
                     <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex !cursor-pointer !hover:bg-[#D9EBFF] ">
                       <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
@@ -2065,12 +1748,13 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                       <div className="text-[#19224C] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div>
                     </div>
                     {/* <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div> */}
-                    <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] h-auto flex flex-row gap-[14px]">
+                    <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] min-h-[172px] flex flex-row gap-[14px]">
                       <div className="flex flex-col justify-between w-[508px]">
                         <div>
+                          {/* textarea 2 */}
                           <textarea
                             placeholder={selectedIdea.placeholder}
-                            className={` 'p-[1px] textArea resize-none text-[#8C90A5] h-auto`}
+                            className={` 'p-[1px] textArea resize-none text-[#8C90A5] h-auto min-h-[130px]`}
                             style={{ width: '100%', boxShadow: 'none', fontSize: '14px', height: 'auto' }}
                             value={IdeasValue}
                             ref={textAreaRef}
@@ -2093,7 +1777,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               Insert
                             </div>
                             <div
-                              className="text-[#5F6583] px-[10px] flex justify-center items-center  h-[30px] text-[12px]  rounded-[4px] border border-[#DFE4EC] w-[90px]  cursor-pointer"
+                              className="text-[#5F6583] px-[10px] flex justify-center items-center  h-[30px] text-[12px]  rounded-[4px] border border-[#DFE4EC] w-[90px]  cursor-pointer hoverEffectIdeas"
                               onClick={() => {
                                 copy(IdeasValue);
                                 setCopied(true);
@@ -2102,14 +1786,15 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               {copied ? 'Copied' : 'Copy'}
                             </div>
                             <div
-                              className="text-[#5F6583] px-[10px] flex justify-center items-center  h-[30px] text-[12px] rounded-[4px] border border-[#DFE4EC]  cursor-pointer"
+                              className="text-[#5F6583] px-[10px] flex justify-center items-center  h-[30px] text-[12px] rounded-[4px] border border-[#DFE4EC]  cursor-pointer hoverEffectIdeas"
                               onClick={handlePostIdeaRegenerate}
                             >
-                              {regenerate1 ? (
+                              Regenerate
+                              {/* {regenerate1 ? (
                                 <img id="chat-container" className="w-[35px]" src={LoadingGif} />
                               ) : (
                                 'Regenerate'
-                              )}
+                              )} */}
                             </div>
                           </div>
                         </div>
@@ -2121,7 +1806,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                         <div className="w-[30px] h-[20px] cursor-pointer" onClick={handlePostIdeas}>
                           {/* {PostIdea ? <img className=" cursor-pointer " src={Send} /> : ''} */}
                           {Ideadload ? (
-                            <img id="chat-container" className="w-[30px]" src={LoadingGif} />
+                            // <img id="chat-container" className="w-[30px]" src={LoadingGif} />
+                            ''
                           ) : (
                             <img className={`${!PostIdea ? 'hidden' : 'block'} cursor-pointer `} src={Send} />
                           )}
@@ -2151,80 +1837,92 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                   </div>
 
                   {responses?.map((divfd, index) => (
-                    <div id="mainContentArea1" className="mb-[15px]" key={index}>
-                      <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex hover:bg-[#D9EBFF]">
-                        <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
-                          <img src={selectedIdea.image_link} />
+                    <>
+                      {/* {textarea2reg ? (
+                        <div className="flex justify-start items-center gap-1 my-2">
+                          <img src={Loader} className="w-[12px]" />
+                          <p className="text-blue-600 text-[12px] font-medium font-['DM Sans']">Working on it...</p>
                         </div>
-                        <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">
-                          {selectedIdea.name}
-                        </div>
-                      </div>
-                      {/* <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div> */}
-                      <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] h-auto flex flex-row gap-[14px]">
-                        <div className="flex flex-col justify-between w-[508px]">
-                          <div>
-                            <textarea
-                              placeholder={`${selectedIdea.placeholder}`}
-                              className="p-[1px] textArea resize-none text-[#8C90A5] h-auto"
-                              style={{ width: '100%', boxShadow: 'none', fontSize: '14px', height: 'auto' }}
-                              name="socialTextarea"
-                              value={divfd}
-                              ref={textAreaRef}
-                              // onChange={(e) => handleChange(e)}
-                              onChange={handleChange}
-                              onPaste={handlePaste}
-                              id="socialTextarea"
-                              // onChange={(e) => setIdeasValue(e.target.value)}
-                            />
+                      ) : (
+                        ''
+                      )} */}
+                      <div id="mainContentArea1" className="mb-[15px]" key={index}>
+                        <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex hover:bg-[#D9EBFF]">
+                          <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
+                            <img src={selectedIdea.image_link} />
                           </div>
+                          <div className="text-[#19224C] text-[14px] font-medium font-['DM Sans']">
+                            {selectedIdea.name}
+                          </div>
+                        </div>
+                        {/* <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div> */}
+                        <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] min-h-[172px] flex flex-row gap-[14px]">
+                          <div className="flex flex-col justify-between w-[508px]">
+                            <div>
+                              {/* textarea 2 for regenerate  */}
+                              <textarea
+                                placeholder={`${selectedIdea.placeholder}`}
+                                className="p-[1px] textArea resize-none text-[#8C90A5] h-auto min-h-[130px]"
+                                style={{ width: '100%', boxShadow: 'none', fontSize: '14px', height: 'auto' }}
+                                name="socialTextarea"
+                                value={divfd}
+                                ref={textAreaRef}
+                                // onChange={(e) => handleChange(e)}
+                                onChange={handleChange}
+                                onPaste={handlePaste}
+                                id="socialTextarea"
+                                // onChange={(e) => setIdeasValue(e.target.value)}
+                              />
+                            </div>
 
-                          <div className={`${!ButtonsShow ? 'hidden' : 'block'} `}>
-                            {/* todo */}
-                            <div className={`flex gap-[8px]`}>
-                              <div
-                                className={`bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-[12px] text-white w-[90px] h-[30px]  cursor-pointer`}
-                                onClick={InsertedValue}
-                              >
-                                Insert
-                              </div>
-                              <div
-                                className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] text-[12px] border border-[#DFE4EC] w-[90px] h-[30px]  cursor-pointer"
-                                onClick={() => copy(IdeasValue)}
-                              >
-                                {copied ? 'Copy' : 'Copied'}
-                              </div>
-                              <div
-                                className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] text-[12px] border border-[#DFE4EC] h-[30px]  cursor-pointer"
-                                onClick={handlePostIdeaRegenerate}
-                              >
-                                {loading ? (
-                                  <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                                ) : (
-                                  'Regenerate'
-                                )}
+                            <div className={`${!ButtonsShow ? 'hidden' : 'block'} `}>
+                              {/* todo */}
+                              <div className={`flex gap-[8px]`}>
+                                <div
+                                  className={`bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-[12px] text-white w-[90px] h-[30px]  cursor-pointer`}
+                                  onClick={InsertedValue}
+                                >
+                                  Insert
+                                </div>
+                                <div
+                                  className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] text-[12px] border border-[#DFE4EC] w-[90px] h-[30px]  cursor-pointer hoverEffectIdeas"
+                                  onClick={() => copy(IdeasValue)}
+                                >
+                                  {copied ? 'Copy' : 'Copied'}
+                                </div>
+                                <div
+                                  className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] text-[12px] border border-[#DFE4EC] h-[30px]  cursor-pointer hoverEffectIdeas"
+                                  onClick={handlePostIdeaRegenerate}
+                                >
+                                  Regenerate
+                                  {/* {loading ? (
+                                    <img id="chat-container" className="w-[35px]" src={LoadingGif} />
+                                  ) : (
+                                    'Regenerate'
+                                  )} */}
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        <div id="test123" className="flex flex-col justify-between items-end pt-[2px] ">
-                          {/* <div className="w-[20px] h-[20px]" onClick={handleIdeasValues}>
+                          <div id="test123" className="flex flex-col justify-between items-end pt-[2px] ">
+                            {/* <div className="w-[20px] h-[20px]" onClick={handleIdeasValues}>
                       <img className="" src={Send} />
                     </div> */}
-                          <div className="w-[20px] h-[20px] cursor-pointer egdjwej">
-                            {/* <img className={`${PostIdea ? 'hidden' : 'block'} cursor-pointer `} src={Send} /> */}
-                            {loading
-                              ? // <img id="chat-container" className="w-[100px]" src={LoadingGif} />
-                                ''
-                              : ''}
-                          </div>
-                          <div onClick={handleEmpty}>
-                            <img className="w-[16px] cursor-pointer" src={Trash} />
+                            <div className="w-[20px] h-[20px] cursor-pointer egdjwej">
+                              {/* <img className={`${PostIdea ? 'hidden' : 'block'} cursor-pointer `} src={Send} /> */}
+                              {loading
+                                ? // <img id="chat-container" className="w-[100px]" src={LoadingGif} />
+                                  ''
+                                : ''}
+                            </div>
+                            <div onClick={handleEmpty12}>
+                              <img className="w-[16px] cursor-pointer" src={Trash} />
+                            </div>
                           </div>
                         </div>
+                        {/* {newDivContent && <div>{newDivContent}</div>} */}
                       </div>
-                      {/* {newDivContent && <div>{newDivContent}</div>} */}
-                    </div>
+                    </>
                   ))}
                 </div>
 
@@ -2236,7 +1934,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
             <>
               <div id="" className="relative">
                 <div
-                  className="flex gap-[8px] mb-[12px] justify-start items-center cursor-pointer"
+                  className="flex gap-[8px] mb-[12px] justify-start items-center cursor-pointer stickyBack sticky top-[-25px] right-0 left-0 bg-white z-[99]"
                   onClick={() => {
                     setVisible(false);
                     setVisible2(false);
@@ -2251,13 +1949,22 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     setLoading(false);
                     setvisibleTextarea(false);
                     setCopied(false);
+                    settextarea2reg(false);
                   }}
+                  // style={{ position: 'sticky', top: '-12px', right: '0', left: '0', background: 'white' }}
                 >
                   <img className="w-[14] h-[14]" src={Left} />
                   <p className="text-[#19224C]">Back</p>
                 </div>
-
-                <div className="h-[160px] overflow-y-scroll ">
+                {loadingText ? (
+                  <div className="flex justify-start items-center gap-1 my-2">
+                    <img src={Loader} className="w-[12px]" />
+                    <p className="text-blue-600 text-[12px] font-medium font-['DM Sans']">Working on it...</p>
+                  </div>
+                ) : (
+                  ''
+                )}
+                <div className="h-auto overflow-y-scroll ">
                   <div id="mainContentArea1" className="mb-[15px]">
                     <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex !cursor-pointer hover:bg-[#D9EBFF]">
                       {/* <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
@@ -2266,14 +1973,15 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                       <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{IdeasValueHome1}</div>
                     </div>
                     {/* <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div> */}
-                    <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] h-auto flex flex-row gap-[14px]">
+                    <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] min-h-[172px] flex flex-row gap-[14px]">
                       <div className="flex flex-col justify-between w-[508px]">
                         <div>
                           {/* <p className="text-[#8C90A5]">{selectedIdea.placeholder}</p> */}
+                          {/* textarea 3 */}
                           <textarea
                             // placeholder={`${selectedIdea.placeholder}`}
                             // className={`${!loading ? 'h-[58px]' : ''} p-[1px] textArea resize-none`}
-                            className={` p-[1px] textArea resize-none h-auto`}
+                            className={` p-[1px] textArea resize-none h-auto min-h-[130px]`}
                             style={{ width: '100%', boxShadow: 'none', height: 'auto' }}
                             ref={textAreaRef}
                             value={IdeasValueHome}
@@ -2293,7 +2001,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               Insert
                             </div>
                             <div
-                              className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]  cursor-pointer"
+                              className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]  cursor-pointer hoverEffectIdeas"
                               onClick={() => {
                                 copy(IdeasValue);
                                 setCopied(true);
@@ -2302,14 +2010,15 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               {copied ? 'Copied' : 'Copy'}
                             </div>
                             <div
-                              className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC]  cursor-pointer"
+                              className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC]  cursor-pointer hoverEffectIdeas"
                               onClick={handleRegenerate}
                             >
-                              {LoadRegenerate ? (
+                              Regenerate
+                              {/* {LoadRegenerate ? (
                                 <img id="chat-container" className="w-[35px] ml-1" src={LoadingGif} />
                               ) : (
                                 'Regenerate'
-                              )}
+                              )} */}
                             </div>
                           </div>
                         </div>
@@ -2320,18 +2029,17 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                         </div> */}
                         <div className="w-[50px]  cursor-pointer">
                           {/* {!ButtonsShowHome ? <img className=" cursor-pointer " src={Send} /> : ''} */}
-                          {loadingText ? (
-                            <img id="chat-container" className="w-[80px]" src={LoadingGif} />
-                          ) : (
-                            // <img className={`${!PostIdea ? 'hidden' : 'block'} cursor-pointer `} src={Send} />
-                            ''
-                          )}
+                          {loadingText
+                            ? // <img id="chat-container" className="w-[80px]" src={LoadingGif} />
+                              ''
+                            : // <img className={`${!PostIdea ? 'hidden' : 'block'} cursor-pointer `} src={Send} />
+                              ''}
                         </div>
                         <div>
                           {!ButtonsShowHome ? (
                             ''
                           ) : (
-                            <div onClick={handleEmpty}>
+                            <div onClick={handleEmpty12}>
                               <img className="w-[16px] cursor-pointer" src={Trash} />
                             </div>
                           )}
@@ -2348,135 +2056,153 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
                   {/* todo */}
                   {ResponsesText?.map((divfd, index) => (
-                    <div id="mainContentArea1" className="mb-[15px]" key={index}>
-                      <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex !cursor-pointer hover:bg-[#D9EBFF]">
-                        {/* <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
+                    <>
+                      {/* {loadingText ? (
+                        <div className="flex justify-start items-center gap-1 my-2">
+                          <img src={Loader} className="w-[12px]" />
+                          <p className="text-blue-600 text-[12px] font-medium font-['DM Sans']">Working on it...</p>
+                        </div>
+                      ) : (
+                        ''
+                      )} */}
+                      <div id="mainContentArea1" className="mb-[15px]" key={index}>
+                        <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex !cursor-pointer hover:bg-[#D9EBFF]">
+                          {/* <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
                         <img src={selectedIdea.image_link} />
                       </div> */}
-                        <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{IdeasValueHome1}</div>
-                      </div>
-                      {/* <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div> */}
-                      <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] flex flex-row gap-[14px] ">
-                        <div className="flex flex-col justify-between w-[508px]">
-                          <div style={{ flex: '1', height: 'auto' }}>
-                            {/* <p className="text-[#8C90A5]">{selectedIdea.placeholder}</p> */}
-                            <textarea
-                              // placeholder={`${selectedIdea.placeholder}`}
-                              className={`textArea resize-none`}
-                              style={{ width: '100%', boxShadow: 'none' }}
-                              value={divfd}
-                              ref={textAreaRef}
-                              id="socialTextarea"
-                              name="socialTextarea"
-                              onChange={(e) => handleChange(e)}
-                              onPaste={handlePaste}
-                              // onChange={(e) => setIdeasValue(e.target.value)}
-                            />
+                          <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">
+                            {IdeasValueHome1}
                           </div>
-                          <div className={`${!ButtonsShowHome ? 'hidden' : 'block'} `}>
-                            <div className={`flex gap-[8px] `}>
-                              <div
-                                className={`bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-white w-[90px]  cursor-pointer `}
-                                onClick={InsertedValue}
-                                // disabled={buttonDisabled}
-                              >
-                                Insert
-                              </div>
-                              <div
-                                className="text-[#5F6583] px-[10px] flex justify-center items-center  cursor-pointer rounded-[4px] border border-[#DFE4EC] w-[90px]"
-                                onClick={() => {
-                                  copy(IdeasValue);
-                                  setCopied(true);
-                                }}
-                              >
-                                {copied ? 'Copied' : 'Copy'}
-                              </div>
-                              <div
-                                className="text-[#5F6583] px-[10px] flex justify-center items-center  cursor-pointer  rounded-[4px] border border-[#DFE4EC]"
-                                onClick={handleRegenerate}
-                              >
-                                {LoadRegenerate ? (
-                                  <img id="chat-container" className="w-[35px] ml-1" src={LoadingGif} />
-                                ) : (
-                                  'Regenerate'
-                                )}
+                        </div>
+                        {/* <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div> */}
+                        <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] flex flex-row gap-[14px] ">
+                          <div className="flex flex-col justify-between w-[508px]">
+                            <div style={{ flex: '1', height: 'auto' }}>
+                              {/* <p className="text-[#8C90A5]">{selectedIdea.placeholder}</p> */}
+                              {/* textarea 3 for regenerate */}
+                              <textarea
+                                // placeholder={`${selectedIdea.placeholder}`}
+                                className={`textArea resize-none min-h-[130px]`}
+                                style={{ width: '100%', boxShadow: 'none' }}
+                                value={divfd}
+                                ref={textAreaRef}
+                                id="socialTextarea"
+                                name="socialTextarea"
+                                onChange={(e) => handleChange(e)}
+                                onPaste={handlePaste}
+                                // onChange={(e) => setIdeasValue(e.target.value)}
+                              />
+                            </div>
+                            <div className={`${!ButtonsShowHome ? 'hidden' : 'block'} `}>
+                              <div className={`flex gap-[8px] `}>
+                                <div
+                                  className={`bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-white w-[90px]  cursor-pointer `}
+                                  onClick={InsertedValue}
+                                  // disabled={buttonDisabled}
+                                >
+                                  Insert
+                                </div>
+                                <div
+                                  className="text-[#5F6583] px-[10px] flex justify-center items-center  cursor-pointer rounded-[4px] border border-[#DFE4EC] w-[90px] hoverEffectIdeas"
+                                  onClick={() => {
+                                    copy(IdeasValue);
+                                    setCopied(true);
+                                  }}
+                                >
+                                  {copied ? 'Copied' : 'Copy'}
+                                </div>
+                                <div
+                                  className="text-[#5F6583] px-[10px] flex justify-center items-center  cursor-pointer  rounded-[4px] border border-[#DFE4EC] hoverEffectIdeas"
+                                  onClick={handleRegenerate}
+                                >
+                                  Regenerate
+                                  {/* {LoadRegenerate ? (
+                                    <img id="chat-container" className="w-[35px] ml-1" src={LoadingGif} />
+                                  ) : (
+                                    'Regenerate'
+                                  )} */}
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="flex flex-col justify-between items-end pt-[2px] ">
-                          {/* <div className={`w-[20px] h-[20px] cursor-pointer `} onClick={handlePostIdeas}>
+                          <div className="flex flex-col justify-between items-end pt-[2px] ">
+                            {/* <div className={`w-[20px] h-[20px] cursor-pointer `} onClick={handlePostIdeas}>
                           <img className=" cursor-pointer " src={Send} />
                         </div> */}
-                          <div className="w-[20px] h-[20px] cursor-pointer">
-                            {/* {!ButtonsShowHome ? <img className=" cursor-pointer " src={Send} /> : ''} */}
-                            {loadingText ? (
-                              <img id="chat-container" className="w-[100px]" src={LoadingGif} />
-                            ) : (
-                              // <img className={`${!PostIdea ? 'hidden' : 'block'} cursor-pointer `} src={Send} />
-                              ''
-                            )}
-                          </div>
-                          <div>
-                            {!ButtonsShowHome ? (
-                              ''
-                            ) : (
-                              <div onClick={handleEmpty}>
-                                <img className="w-[16px] cursor-pointer" src={Trash} />
-                              </div>
-                            )}
+                            <div className="w-[20px] h-[20px] cursor-pointer">
+                              {/* {!ButtonsShowHome ? <img className=" cursor-pointer " src={Send} /> : ''} */}
+                              {loadingText
+                                ? // <img id="chat-container" className="w-[100px]" src={LoadingGif} />
+                                  ''
+                                : // <img className={`${!PostIdea ? 'hidden' : 'block'} cursor-pointer `} src={Send} />
+                                  ''}
+                            </div>
+                            <div>
+                              {!ButtonsShowHome ? (
+                                ''
+                              ) : (
+                                <div onClick={handleEmpty}>
+                                  <img className="w-[16px] cursor-pointer" src={Trash} />
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
+                        {!ButtonsShowHome && (
+                          <div className="flex justify-end items-center mt-[2px]">
+                            <p className="text-[#8C90A5] text-[12px]  font-['DM Sans'] ">{speechLength}/1000</p>
+                          </div>
+                        )}
+                        {/* {newDivContent && <div>{newDivContent}</div>} */}
                       </div>
-                      {!ButtonsShowHome && (
-                        <div className="flex justify-end items-center mt-[2px]">
-                          <p className="text-[#8C90A5] text-[12px]  font-['DM Sans'] ">{speechLength}/1000</p>
-                        </div>
-                      )}
-                      {/* {newDivContent && <div>{newDivContent}</div>} */}
-                    </div>
+                    </>
                   ))}
                 </div>
 
                 {/* todo button part   */}
                 <div className={`${!ButtonsShowHome ? 'hidden' : 'block'} `}>
                   <div
-                    className={`flex justify-end items-center gap-[8px]  absolute bottom-[-43px] right-0 left-0 bg-white`}
+                    className={`flex justify-end items-center gap-[8px]  sticky bottom-[7px] right-0 left-0 bg-white`}
                   >
                     <div
-                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex !cursor-pointer"
+                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex !cursor-pointer hoverEffectIdeas"
                       onClick={handlePostIdeaImprove1}
                     >
                       <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
-                      {!LoadImprove1 ? (
+                      <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
+                        Improve it
+                      </div>
+                      {/* {!LoadImprove1 ? (
                         <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                           Improve it
                         </div>
                       ) : (
                         <img id="chat-container" className="w-[50px]" src={LoadingGif} />
-                      )}
+                      )} */}
                     </div>
                     <div
-                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex  cursor-pointer"
+                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex  cursor-pointer hoverEffectIdeas"
                       onClick={handlePostIdeaAddDetails1}
                     >
                       <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
-                      {!LoadAddDetails1 ? (
+                      <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Details</div>
+                      {/* {!LoadAddDetails1 ? (
                         <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Details</div>
                       ) : (
                         <img id="chat-container" className="w-[50px]" src={LoadingGif} />
-                      )}
+                      )} */}
                     </div>
                     <div
-                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex  cursor-pointer"
+                      className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex  cursor-pointer hoverEffectIdeas"
                       onClick={handlePostIdeaHumor1}
                     >
                       <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
-                      {!LoadHumor1 ? (
+                      <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Humor</div>
+                      {/* {!LoadHumor1 ? (
                         <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Humor</div>
                       ) : (
                         <img id="chat-container" className="w-[50px]" src={LoadingGif} />
-                      )}
+                      )} */}
                     </div>
                     <div
                       className="w-[12px] flex justify-center items-center cursor-pointer relative"
@@ -2500,70 +2226,76 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
                           <div className="flex flex-wrap gap-[6px]">
                             <div
-                              className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer "
+                              className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer hoverEffectIdeas"
                               onClick={handlePostIdeaImprove1}
                             >
                               <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
-                              {!LoadImprove1 ? (
+                              <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Improve it</div>
+                              {/* {!LoadImprove1 ? (
                                 <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">
                                   Improve it
                                 </div>
                               ) : (
                                 <img id="chat-container" className="w-[32px]" src={LoadingGif} />
-                              )}
+                              )} */}
                             </div>
 
                             <div
-                              className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                              className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer hoverEffectIdeas"
                               onClick={handlePostIdeaAddDetails1}
                             >
                               <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
-                              {!LoadAddDetails1 ? (
+                              <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Details</div>
+                              {/* {!LoadAddDetails1 ? (
                                 <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">
                                   Add Details
                                 </div>
                               ) : (
                                 <img id="chat-container" className="w-[32px]" src={LoadingGif} />
-                              )}
+                              )} */}
                             </div>
 
                             <div
-                              className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                              className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer hoverEffectIdeas"
                               onClick={handlePostIdeaHumor1}
                             >
                               <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
-                              {!LoadHumor1 ? (
+                              <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Humor</div>
+
+                              {/* {!LoadHumor1 ? (
                                 <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Humor</div>
                               ) : (
                                 <img id="chat-container" className="w-[32px]" src={LoadingGif} />
-                              )}
+                              )} */}
                             </div>
 
                             <div
-                              className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer"
+                              className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex cursor-pointer hoverEffectIdeas"
                               onClick={handlePostIdeaInspire1}
                             >
                               <div className="text-white text-base font-medium font-['DM Sans']">💡</div>
-
+                              <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Inspire</div>
+                              {/* 
                               {!LoadInspire1 ? (
                                 <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Inspire</div>
                               ) : (
                                 <img id="chat-container" className="w-[32px]" src={LoadingGif} />
-                              )}
+                              )} */}
                             </div>
 
                             <div
-                              className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex"
+                              className="px-[6px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex hoverEffectIdeas"
                               onClick={handlePostIdeaShorten1}
                             >
                               <div className="text-white text-base font-medium font-['DM Sans']">📄</div>
-                              {!LoadShorten1 ? (
+                              <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Shorten it</div>
+                              {/* {!LoadShorten1 ? (
                                 <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">
                                   Shorten it
                                 </div>
                               ) : (
                                 <img id="chat-container" className="w-[32px]" src={LoadingGif} />
-                              )}
+                              )} */}
                             </div>
                           </div>
                         </div>
@@ -2876,9 +2608,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
             ></div> */}
 
               <div className="min-w-[444px] min-h-[90px] text-[#8C90A5] text-[14px] font-normal font-['Arial']">
+                {/* textarea 1 */}
                 <textarea
                   placeholder="Tell me what to write for you"
-                  className="p-[1px] textArea resize-none "
+                  className="p-[1px] textArea resize-none min-5-[50px]"
                   id="socialTextarea"
                   ref={textAreaRef}
                   value={IdeasValueHome1}
