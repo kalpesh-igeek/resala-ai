@@ -25,6 +25,7 @@ import { getToken } from './utils/localstorage';
 import { getRequest, postRequest } from './services';
 import { useNavigate } from 'react-router-dom';
 import copy from 'copy-to-clipboard';
+import CustomTooltip from './Components/CustomTooltip/Tooltip';
 
 export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, delay }) => {
   const [language, setLanguage] = useState(false);
@@ -1349,12 +1350,19 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
             </div>
           </div>
           <div className="flex gap-[8] ">
-            <div
+            <CustomTooltip
+              maxWidth="430px"
+              place="top"
               id="SettingHeader"
-              className="rounded-full justify-center items-center flex border border-slate-200 w-[24] h-[24] cursor-pointer relative"
+              content={`<div class="capitalize font-normal text-[12px] leading-[18px]" >Preferences</div>`}
             >
-              <img className="h-[14px] w-[14px]" src={Setting} id="socialMediaPreference" />
-            </div>
+              <div
+                id="SettingHeader"
+                className="rounded-full justify-center items-center flex border border-slate-200 w-[24] h-[24] cursor-pointer relative"
+              >
+                <img className="h-[14px] w-[14px]" src={Setting} />
+              </div>
+            </CustomTooltip>
             {/* line */}
             <div className="w-[1px] h-[22px] border border-slate-200"></div>
             <div id="closeSocialBtn" className="cursor-pointer relative">
@@ -1587,8 +1595,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     className="w-[12px] flex justify-center items-center cursor-pointer relative"
                     onClick={() => setPopupMenu(!PopupMenu)}
                   >
-                    <img className="" src={Menu} />
-
+                    <CustomTooltip
+                      maxWidth="430px"
+                      place="top"
+                      id="SocialPrompts"
+                      content={`<div class="capitalize font-normal text-[12px] leading-[18px]" >Prompts</div>`}
+                    >
+                      <img className="" src={Menu} id="SocialPrompts" />
+                    </CustomTooltip>
                     {PopupMenu && (
                       <div
                         className="absolute top-[-163px] p-[8px] w-[224px] h-[150px] right-0 bg-[#fff] gap-[8px]"
@@ -1821,9 +1835,16 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             </div>
                           )} */}
                           {ButtonsShow && (
-                            <div onClick={handleEmpty} className="relative">
-                              <img className="w-[16px] cursor-pointer" src={Trash} />
-                            </div>
+                            <CustomTooltip
+                              maxWidth="430px"
+                              place="top"
+                              id="SocialDelete"
+                              content={`<div class="capitalize font-normal text-[12px] leading-[18px]" >Delete</div>`}
+                            >
+                              <div onClick={handleEmpty} className="relative" id="SocialDelete">
+                                <img className="w-[16px] cursor-pointer" src={Trash} />
+                              </div>
+                            </CustomTooltip>
                           )}
                         </div>
                       </div>
@@ -1915,9 +1936,16 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                                   ''
                                 : ''}
                             </div>
-                            <div onClick={handleEmpty12}>
-                              <img className="w-[16px] cursor-pointer" src={Trash} />
-                            </div>
+                            <CustomTooltip
+                              maxWidth="430px"
+                              place="top"
+                              id="SocialDelete"
+                              content={`<div class="capitalize font-normal text-[12px] leading-[18px]" >Delete</div>`}
+                            >
+                              <div onClick={handleEmpty12} className="relative" id="SocialDelete">
+                                <img className="w-[16px] cursor-pointer" src={Trash} />
+                              </div>
+                            </CustomTooltip>
                           </div>
                         </div>
                         {/* {newDivContent && <div>{newDivContent}</div>} */}
@@ -2039,9 +2067,16 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                           {!ButtonsShowHome ? (
                             ''
                           ) : (
-                            <div onClick={handleEmpty12}>
-                              <img className="w-[16px] cursor-pointer" src={Trash} />
-                            </div>
+                            <CustomTooltip
+                              maxWidth="430px"
+                              place="top"
+                              id="SocialDelete"
+                              content={`<div class="capitalize font-normal text-[12px] leading-[18px]" >Delete</div>`}
+                            >
+                              <div onClick={handleEmpty12} className="relative" id="SocialDelete">
+                                <img className="w-[16px] cursor-pointer" src={Trash} />
+                              </div>
+                            </CustomTooltip>
                           )}
                         </div>
                       </div>
@@ -2141,9 +2176,16 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               {!ButtonsShowHome ? (
                                 ''
                               ) : (
-                                <div onClick={handleEmpty}>
-                                  <img className="w-[16px] cursor-pointer" src={Trash} />
-                                </div>
+                                <CustomTooltip
+                                  maxWidth="430px"
+                                  place="top"
+                                  id="SocialDelete"
+                                  content={`<div class="capitalize font-normal text-[12px] leading-[18px]" >Delete</div>`}
+                                >
+                                  <div onClick={handleEmpty} className="relative" id="SocialDelete">
+                                    <img className="w-[16px] cursor-pointer" src={Trash} />
+                                  </div>
+                                </CustomTooltip>
                               )}
                             </div>
                           </div>
@@ -2192,6 +2234,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                         <img id="chat-container" className="w-[50px]" src={LoadingGif} />
                       )} */}
                     </div>
+
                     <div
                       className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex  cursor-pointer hoverEffectIdeas"
                       onClick={handlePostIdeaHumor1}
@@ -2204,12 +2247,19 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                         <img id="chat-container" className="w-[50px]" src={LoadingGif} />
                       )} */}
                     </div>
+
                     <div
                       className="w-[12px] flex justify-center items-center cursor-pointer relative"
                       onClick={() => setPopupMenu(!PopupMenu)}
                     >
-                      <img className="" src={Menu} />
-
+                      <CustomTooltip
+                        maxWidth="430px"
+                        place="top"
+                        id="SocialPrompts"
+                        content={`<div class="capitalize font-normal text-[12px] leading-[18px]" >Prompts</div>`}
+                      >
+                        <img className="" src={Menu} id="SocialPrompts" />
+                      </CustomTooltip>
                       {PopupMenu && (
                         <div
                           className="absolute top-[-163px] p-[8px] w-[224px] h-[150px] right-0 bg-[#fff] gap-[8px]"
