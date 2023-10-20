@@ -284,8 +284,8 @@ const QuickReply = ({
           // }
         }
         setTemplatePayload({
-          tone: selectedOption?.label,
-          language: selectedLang?.label,
+          tone: selectedOption,
+          language: selectedLang,
           sender_intent: senderIntent.trim(),
           generate_mail: accumulatedMessage,
         });

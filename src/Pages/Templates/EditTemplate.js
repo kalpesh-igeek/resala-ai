@@ -11,7 +11,7 @@ const EditTemplate = () => {
       <div className="col-span-full">
         <div className="w-full flex gap-2 justify-center mb-[8px]">
           <div className="w-full">
-            <label for="input" className="block text-[12px] font-bold leading-6 text-gray1">
+            <label for="input" className="block text-[12px] font-bold leading-6 text-darkBlue">
               TEMPLATE NAME
             </label>
             <input
@@ -24,7 +24,7 @@ const EditTemplate = () => {
             />
           </div>
           <div className="w-full">
-            <label for="input" className="block text-[12px] font-bold leading-6 text-gray1">
+            <label for="input" className="block text-[12px] font-bold leading-6 text-darkBlue">
               TEMPLATE TYPE
             </label>
             <input
@@ -40,7 +40,7 @@ const EditTemplate = () => {
         </div>
         <div className="pb-[20px] mt-[8]">
           <div className="flex justify-between item-center">
-            <label for="input" className="block text-[12px] font-bold leading-6 text-gray1 whitespace-nowrap">
+            <label for="input" className="block text-[12px] font-bold leading-6 text-darkBlue whitespace-nowrap">
               SAVED TEMPLATE
             </label>
           </div>

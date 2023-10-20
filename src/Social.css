@@ -23,6 +23,22 @@
   background-color: #d9ebff !important;
 }
 
+.savedTemplate {
+  background-color: #ffffff !important;
+}
+
+.savedTemplate:hover {
+  background-color: #f9f9fb !important;
+}
+
+.plan {
+  background-color: #eef6ff !important;
+}
+
+.plan:hover {
+  background-color: #d9ebff !important;
+}
+
 .stickyBack {
   position: sticky !important;
   top: -12px !important;

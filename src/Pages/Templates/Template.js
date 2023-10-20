@@ -118,7 +118,7 @@ const Template = ({ selectedTemplate, setActiveTab }) => {
       <div className="col-span-full">
         <div className="w-full flex gap-2 justify-center mb-[8px]">
           <div className="w-full">
-            <label for="input" className="block text-[12px] font-bold leading-6 text-gray1">
+            <label for="input" className="block text-[12px] font-bold leading-6 text-darkBlue">
               TEMPLATE NAME
             </label>
             <input
@@ -131,7 +131,7 @@ const Template = ({ selectedTemplate, setActiveTab }) => {
             />
           </div>
           <div className="w-full">
-            <label for="input" className="block text-[12px] font-bold leading-6 text-gray1 mb-[4px]">
+            <label for="input" className="block text-[12px] font-bold leading-6 text-darkBlue mb-[4px]">
               TEMPLATE TYPE
             </label>
             {/* align-items: center; width: 100%; height: 52px; display: inline-grid; */}
@@ -198,7 +198,7 @@ const Template = ({ selectedTemplate, setActiveTab }) => {
         </div>
         <div className="pb-[20px] mt-[8]">
           <div className="flex justify-between item-center">
-            <label for="input" className="block text-[12px] font-bold leading-6 text-gray1 whitespace-nowrap">
+            <label for="input" className="block text-[12px] font-bold leading-6 text-darkBlue whitespace-nowrap">
               SAVED TEMPLATE
             </label>
             <div>

@@ -1939,6 +1939,14 @@ video {
     --tw-bg-opacity: 1;
     background-color: rgb(223 228 236 / var(--tw-bg-opacity));
   }
+  .bg-\[\#EEF6FF\] {
+    --tw-bg-opacity: 1;
+    background-color: rgb(238 246 255 / var(--tw-bg-opacity));
+  }
+  .bg-\[\#F8FBFF\] {
+    --tw-bg-opacity: 1;
+    background-color: rgb(248 251 255 / var(--tw-bg-opacity));
+  }
   .bg-lightblue5 {
     --tw-bg-opacity: 1;
     background-color: rgb(162 201 250 / var(--tw-bg-opacity));

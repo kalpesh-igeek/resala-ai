@@ -68,12 +68,12 @@ const Profile = ({
             boxshadow: '0px 10px 20px 0px #3C42571A',
           }}
         >
-          <div className="flex gap-2 items-center text-[16px] py-[15px] px-[15px] bg-lightblue1">
+          <div className="flex gap-2 items-center text-[16px] py-[15px] px-[15px] bg-[#F8FBFF]">
             <div className="h-[40px] w-[40px] flex items-center justify-center">
               <img className="h-[34px] w-[34px]" src={loggedUser.avatar} />
             </div>
             <div className="flex flex-col text-darkBlue">
-              <div className="text-[16px]">{loggedUser.name}</div>
+              <div className="text-[16px] font-[500]">{loggedUser.name}</div>
               <div className="text-[12px]">{loggedUser.email}</div>
             </div>
           </div>
@@ -130,7 +130,7 @@ const Profile = ({
                 >
                   <div className="flex items-center gap-2">
                     <img src={BillingIcon} />
-                    <div className="">Billing</div>
+                    <div className="text-[14px]">Billing</div>
                   </div>
                   <div>
                     <img src={ArrowRightIcon} />
@@ -147,8 +147,8 @@ const Profile = ({
                   }
                 >
                   <div className="flex items-center gap-2">
-                    <img src={QuestionIcon} />
-                    <div className="">Manage Account</div>
+                    <img src={UserIcon} />
+                    <div className="text-[14px]">Manage Account</div>
                   </div>
                   <div>
                     <img src={ArrowRightIcon} />
@@ -156,8 +156,8 @@ const Profile = ({
                 </div>
                 <div className="cursor-pointer flex justify-between items-center gap-2">
                   <div className="flex items-center gap-2">
-                    <img src={LogoutIcon} />
-                    <div className="">Help</div>
+                    <img src={QuestionIcon} />
+                    <div className="text-[14px]">Help</div>
                   </div>
                   <div>
                     <img src={ArrowRightIcon} />
@@ -165,8 +165,8 @@ const Profile = ({
                 </div>
                 <div className="cursor-pointer flex justify-between items-center gap-2" onClick={() => handleLogout()}>
                   <div className="flex items-center gap-2">
-                    <img src={UserIcon} />
-                    <div className="">Logout</div>
+                    <img src={LogoutIcon} />
+                    <div className="text-[14px]">Logout</div>
                   </div>
                   <div>
                     <img src={ArrowRightIcon} />

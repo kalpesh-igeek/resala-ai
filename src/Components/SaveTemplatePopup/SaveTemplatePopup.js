@@ -86,6 +86,7 @@ export default function SaveTemplatePopup({ saveTemplateBox, setSaveTemplateBox,
         sender_intent: draftResponse?.sender_intent,
         generate_mail: draftResponse?.generate_mail,
       };
+
       const res = await dispatch(addTemplateQuickReply(payload));
       if (!res.payload) {
         return;

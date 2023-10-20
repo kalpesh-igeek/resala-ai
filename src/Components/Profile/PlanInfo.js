@@ -19,7 +19,7 @@ const PlanInfo = ({ setSelectedPlan, setIsPaymentPopupBox, item }) => {
 
     return (
         // selectedCard &&
-        <div className={`mb-[16px] ${isInfo ? "bg-primaryBlue text-white" : "bg-lightblue1 text-primaryBlue"} rounded-[6px]`}>
+        <div className={`mb-[16px] cursor-pointer ${isInfo ? "bg-primaryBlue text-white" : "plan text-primaryBlue "} rounded-[6px]`}>
             <div className="flex px-[25px] py-[20px] items-center justify-between gap-2 items-center">
                 <div className="text-[16px]">{item.planTitle}</div>
                 <div className="flex gap-2 items-center">
@@ -53,11 +53,11 @@ const PlanInfo = ({ setSelectedPlan, setIsPaymentPopupBox, item }) => {
                             <span className="h-[8px] w-[8px] bg-white rounded-full"></span>
                             Title Name
                         </div>
-                        <div className="flex text-[12px] items-center gap-2 rounded-full mb-[16px]">
+                        <div className="flex text-[12px] font-[500] items-center gap-2 rounded-full mb-[16px]">
                             <img src={TickCircleIcon} />
                             Lorem ipsum dolor sit amet consectetur.
                         </div>
-                        <div className="flex text-[12px] items-start gap-2 rounded-full mb-[16px]">
+                        <div className="flex text-[12px] font-[500] items-start gap-2 rounded-full mb-[16px]">
                             <img src={TickCircleIcon} />
                             Lorem ipsum dolor sit amet consectetur. Etiam arcu est tortor consectetur sed sed magna.
                         </div>
@@ -67,11 +67,11 @@ const PlanInfo = ({ setSelectedPlan, setIsPaymentPopupBox, item }) => {
                             <span className="h-[8px] w-[8px] bg-white rounded-full"></span>
                             Title Name
                         </div>
-                        <div className="flex text-[12px] items-center gap-2 rounded-full mb-[16px]">
+                        <div className="flex text-[12px] font-[500] items-center gap-2 rounded-full mb-[16px]">
                             <img src={TickCircleIcon} />
                             Lorem ipsum dolor sit amet consectetur.
                         </div>
-                        <div className="flex text-[12px] items-start gap-2 rounded-full mb-[16px]">
+                        <div className="flex text-[12px] font-[500] items-start gap-2 rounded-full mb-[16px]">
                             <img src={TickCircleIcon} />
                             Lorem ipsum dolor sit amet consectetur. Etiam arcu est tortor consectetur sed sed magna.
                         </div>
