@@ -431,23 +431,25 @@ export default function Panel({ local }) {
               });
 
               let socialMediaId = document.getElementById('socialMediaPreference');
-              socialMediaId.addEventListener('click', () => {
-                const SocialPopup = document.getElementById('SocialPopup');
-                const SocialButton = document.getElementById('SocialButton');
-                console.log('socialMediaId', socialMediaId);
-                navigate('/preferences');
-                handleSidebar('chat');
-                // console.log('sdshdbjw');
-                // console.log(SocialButton, 'SocialButton');
-                // console.log(SocialPopup, 'SocialPopup');
-                SocialButton.classList.add('hidden');
-                SocialPopup.classList.add('hidden');
-                // console.log('sdshdbjw');
-              });
+              if (socialMediaId) {
+                socialMediaId.addEventListener('click', () => {
+                  const SocialPopup = document.getElementById('SocialPopup');
+                  const SocialButton = document.getElementById('SocialButton');
+                  console.log('socialMediaId', socialMediaId);
+                  navigate('/preferences');
+                  handleSidebar('chat');
+                  // console.log('sdshdbjw');
+                  // console.log(SocialButton, 'SocialButton');
+                  // console.log(SocialPopup, 'SocialPopup');
+                  SocialButton.classList.add('hidden');
+                  SocialPopup.classList.add('hidden');
+                  // console.log('sdshdbjw');
+                });
+              }
             }, 500);
           });
         }
-      }, 500);
+      }, 1000);
     } else if (hostname == 'www.facebook.com') {
       setTimeout(() => {
         let postButton = document.querySelectorAll('[aria-label="Create a post"]')[0];
@@ -505,19 +507,21 @@ export default function Panel({ local }) {
           });
         }
         let socialMediaId = document.getElementById('socialMediaPreference');
-        socialMediaId.addEventListener('click', () => {
-          const SocialPopup = document.getElementById('SocialPopup');
-          const SocialButton = document.getElementById('SocialButton');
-          // console.log('socialMediaId', socialMediaId);
-          navigate('/preferences');
-          handleSidebar('chat');
-          // console.log('sdshdbjw');
-          // console.log(SocialButton, 'SocialButton');
-          // console.log(SocialPopup, 'SocialPopup');
-          SocialButton.classList.add('hidden');
-          SocialPopup.classList.add('hidden');
-          // console.log('sdshdbjw');
-        });
+        if (socialMediaId) {
+          socialMediaId.addEventListener('click', () => {
+            const SocialPopup = document.getElementById('SocialPopup');
+            const SocialButton = document.getElementById('SocialButton');
+            // console.log('socialMediaId', socialMediaId);
+            navigate('/preferences');
+            handleSidebar('chat');
+            // console.log('sdshdbjw');
+            // console.log(SocialButton, 'SocialButton');
+            // console.log(SocialPopup, 'SocialPopup');
+            SocialButton.classList.add('hidden');
+            SocialPopup.classList.add('hidden');
+            // console.log('sdshdbjw');
+          });
+        }
       }, 1000);
     } else if (hostname == 'twitter.com') {
       // function disableScroll() {
@@ -579,20 +583,22 @@ export default function Panel({ local }) {
           });
         }
         let socialMediaId = document.getElementById('socialMediaPreference');
-        socialMediaId.addEventListener('click', () => {
-          const SocialPopup = document.getElementById('SocialPopup');
-          const SocialButton = document.getElementById('SocialButton');
+        if (socialMediaId) {
+          socialMediaId.addEventListener('click', () => {
+            const SocialPopup = document.getElementById('SocialPopup');
+            const SocialButton = document.getElementById('SocialButton');
 
-          console.log('socialMediaId', socialMediaId);
-          navigate('/preferences');
-          handleSidebar('chat');
-          console.log('sdshdbjw');
-          console.log(SocialButton, 'SocialButton');
-          console.log(SocialPopup, 'SocialPopup');
-          SocialButton.classList.add('hidden');
-          SocialPopup.classList.add('hidden');
-          console.log('sdshdbjw');
-        });
+            console.log('socialMediaId', socialMediaId);
+            navigate('/preferences');
+            handleSidebar('chat');
+            console.log('sdshdbjw');
+            console.log(SocialButton, 'SocialButton');
+            console.log(SocialPopup, 'SocialPopup');
+            SocialButton.classList.add('hidden');
+            SocialPopup.classList.add('hidden');
+            console.log('sdshdbjw');
+          });
+        }
       }, 3000);
     }
   }, [isFloatIconClicked, isGmailActive]);

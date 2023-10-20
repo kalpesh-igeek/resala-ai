@@ -508,7 +508,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     if (IdeasValue.trim() === '') {
       return;
     }
-
     setIdeadload(true);
     settextarea2reg(true);
     setPostIdea(!PostIdea);
@@ -861,6 +860,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     setResponses(updatedResponses);
     setSpeechLength(0);
   };
+
+  const handleEmptyTextarea2 = (index) => {
+    const updatedResponses = [...ResponsesText];
+    updatedResponses.splice(index, 1);
+    setResponsesText(updatedResponses);
+    setSpeechLength(0);
+  };
+
   const handleEmpty12 = () => {
     setSpeechLength(0);
     setIdeasValue('');
@@ -898,6 +905,34 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
   };
 
+  const handleInsert = (divfd2, index) => {
+    const LinkedInClass = document.getElementsByClassName('ql-editor');
+    const FacebookClass = document.getElementsByClassName('xha3pab');
+    const twitterClass = document.querySelectorAll('[data-testid="tweetTextarea_0_label"]');
+    const hostname = window.location.hostname;
+
+    if (hostname == 'www.linkedin.com') {
+      const LinkedInText = LinkedInClass[0].children[0];
+      LinkedInText.textContent = `${divfd2}`;
+    } else if (hostname == 'www.facebook.com') {
+      let FacebookText = FacebookClass[0];
+      if (
+        FacebookText.childNodes[0]?.childNodes[0]?.children?.length > 0 &&
+        FacebookText.childNodes[0]?.childNodes[0]?.children[0]?.tagName == 'SPAN'
+      ) {
+        FacebookText.childNodes[0].childNodes[0].children[0].firstChild.textContent = `${divfd2}`;
+      } else {
+        const newSpan = document.createElement('span');
+        newSpan.textContent = divfd2;
+        newSpan.setAttribute('data-lexical-text', 'true');
+        FacebookText.childNodes[0].childNodes[0].appendChild(newSpan);
+      }
+    } else if (hostname == 'twitter.com') {
+      const TwitterText =
+        twitterClass[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0];
+      TwitterText.textContent = `${divfd2}`;
+    }
+  };
   const [PopupMenu, setPopupMenu] = useState(false);
 
   // profile
@@ -912,7 +947,13 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   const navigate = useNavigate();
   // copy
   const [copied, setCopied] = useState(false);
-
+  const [copiedStates, setCopiedStates] = useState(ResponsesText.map(() => false));
+  const handleCopy = (text, index) => {
+    copy(text);
+    const updatedCopiedStates = [...copiedStates];
+    updatedCopiedStates[index] = true;
+    setCopiedStates(updatedCopiedStates);
+  };
   //todo:  voice over search
   const outputLanguagesVoice = [
     { value: 'en', label: 'English' },
@@ -1663,7 +1704,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               id="SocialDelete"
                               content={`<div class="capitalize font-normal text-[12px] leading-[18px]" >Delete</div>`}
                             >
-                              <div onClick={handleEmpty} className="relative" id="SocialDelete">
+                              <div onClick={handleEmpty12} className="relative" id="SocialDelete">
                                 <img className="w-[16px] cursor-pointer" src={Trash} />
                               </div>
                             </CustomTooltip>
@@ -1739,7 +1780,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               id="SocialDelete"
                               content={`<div class="capitalize font-normal text-[12px] leading-[18px]" >Delete</div>`}
                             >
-                              <div onClick={handleEmpty12} className="relative" id="SocialDelete">
+                              <div onClick={() => handleEmpty(index)} className="relative" id="SocialDelete">
                                 <img className="w-[16px] cursor-pointer" src={Trash} />
                               </div>
                             </CustomTooltip>
@@ -1767,7 +1808,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     setSpeechLength(0);
                     setSocialHome(true);
                     setButtonShow(!ButtonsShow);
-
                     setButtonShowHome(!ButtonsShowHome);
                     setResponsesText([]);
                     setLoading(false);
@@ -1819,11 +1859,15 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             <div
                               className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]  cursor-pointer hoverEffectIdeas"
                               onClick={() => {
-                                copy(IdeasValue);
+                                copy(IdeasValueHome);
                                 setCopied(true);
+                                // const updatedCopiedStates = [...copiedStates];
+                                // updatedCopiedStates[index] = true; // Update the copied state for this element
+                                // setCopiedStates(updatedCopiedStates);
                               }}
                             >
                               {copied ? 'Copied' : 'Copy'}
+                              {/* {copiedStates[index] ? 'Copied' : 'Copy'} */}
                             </div>
                             <div
                               className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC]  cursor-pointer hoverEffectIdeas"
@@ -1862,7 +1906,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                   </div>
 
                   {/* todo */}
-                  {ResponsesText?.map((divfd, index) => (
+                  {ResponsesText?.map((divfd2, index) => (
                     <>
                       <div id="mainContentArea1" className="mb-[15px]" key={index}>
                         <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex !cursor-pointer hover:bg-[#D9EBFF]">
@@ -1877,7 +1921,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               <textarea
                                 className={`textArea resize-none min-h-[130px]`}
                                 style={{ width: '100%', boxShadow: 'none' }}
-                                value={divfd}
+                                value={divfd2}
                                 ref={textAreaRef}
                                 id="socialTextarea"
                                 name="socialTextarea"
@@ -1889,18 +1933,15 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               <div className={`flex gap-[8px] `}>
                                 <div
                                   className={`bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-white w-[90px]  cursor-pointer `}
-                                  onClick={InsertedValue}
+                                  onClick={() => handleInsert(divfd2, index)}
                                 >
                                   Insert
                                 </div>
                                 <div
                                   className="text-[#5F6583] px-[10px] flex justify-center items-center  cursor-pointer rounded-[4px] border border-[#DFE4EC] w-[90px] hoverEffectIdeas"
-                                  onClick={() => {
-                                    copy(IdeasValue);
-                                    setCopied(true);
-                                  }}
+                                  onClick={() => handleCopy(divfd2, index)}
                                 >
-                                  {copied ? 'Copied' : 'Copy'}
+                                  {copiedStates[index] ? 'Copied' : 'Copy'}
                                 </div>
                                 <div
                                   className="text-[#5F6583] px-[10px] flex justify-center items-center  cursor-pointer  rounded-[4px] border border-[#DFE4EC] hoverEffectIdeas"
@@ -1923,7 +1964,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                                   id="SocialDelete"
                                   content={`<div class="capitalize font-normal text-[12px] leading-[18px]" >Delete</div>`}
                                 >
-                                  <div onClick={handleEmpty} className="relative" id="SocialDelete">
+                                  <div
+                                    onClick={() => handleEmptyTextarea2(index)}
+                                    className="relative"
+                                    id="SocialDelete"
+                                  >
                                     <img className="w-[16px] cursor-pointer" src={Trash} />
                                   </div>
                                 </CustomTooltip>
