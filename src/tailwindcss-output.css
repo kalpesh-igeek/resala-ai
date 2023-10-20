@@ -2423,6 +2423,9 @@ video {
   .leading-\[16px\] {
     line-height: 16px;
   }
+  .leading-\[22px\] {
+    line-height: 22px;
+  }
   .text-white {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
@@ -2499,13 +2502,13 @@ video {
     --tw-text-opacity: 1;
     color: rgb(4 106 243 / var(--tw-text-opacity));
   }
-  .text-black {
-    --tw-text-opacity: 1;
-    color: rgb(0 0 0 / var(--tw-text-opacity));
-  }
   .text-\[\#1678F2\] {
     --tw-text-opacity: 1;
     color: rgb(22 120 242 / var(--tw-text-opacity));
+  }
+  .text-black {
+    --tw-text-opacity: 1;
+    color: rgb(0 0 0 / var(--tw-text-opacity));
   }
   .text-lightblue {
     --tw-text-opacity: 1;

@@ -67,7 +67,7 @@ const PauseExtensionSettings = () => {
       <div className="flex justify-between items-center gap-2">
         <div className="w-full">
           <div className="flex gap-2">
-            <div className="text-[16px] text-darkblue font-medium mb-[5px]">Pause Extension</div>
+            <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Pause Extension</div>
             <div
               className={`cursor-pointer `}
               //   style={{ transformOrigin: 'center', transform: `rotate(${dropDown ? '180' : '0'}deg)` }}
@@ -106,7 +106,7 @@ const PauseExtensionSettings = () => {
                   <img src={site.icon} />
                 </div>
                 <div>
-                  <div className="w-full text-[10px] text-darkblue font-medium mb-[3px] text-ellipsis overflow-hidden whitespace-nowrap w-[260px]">
+                  <div className="w-full text-[10px] text-darkBlue font-medium mb-[3px] text-ellipsis overflow-hidden whitespace-nowrap w-[260px]">
                     {site.name}
                   </div>
                   <div className="text-[8px] text-darkgray1 text-ellipsis overflow-hidden whitespace-nowrap w-[365px]">
@@ -127,7 +127,7 @@ const PauseExtensionSettings = () => {
                   <img src={currentSite.icon} />
                 </div>
                 <div>
-                  <div className="w-full text-[10px] text-darkblue font-medium mb-[3px] text-ellipsis overflow-hidden whitespace-nowrap w-[260px]">
+                  <div className="w-full text-[10px] text-darkBlue font-medium mb-[3px] text-ellipsis overflow-hidden whitespace-nowrap w-[260px]">
                     {currentSite.name}{' '}
                     <span className="rounded-[2px] px-[6px] py-[3px] bg-green text-white">Current Tab</span>
                   </div>

@@ -117,7 +117,7 @@ const SocialPreference = ({ selectedItems, setSelectedItems, setPreference }) =>
       <div className="px-[20px] bg-white" style={{ zIndex: '9999999' }}>
         <div className="control py-[24px] border-b border-gray flex justify-between items-center">
           <div>
-            <div className="text-[16px] text-darkblue font-medium mb-[5px]">Dark Mode</div>
+            <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Dark Mode</div>
             <div className="text-[14px] text-darkgray1">Apply Dak mode Theme to Chrome Extension</div>
           </div>
 
@@ -144,7 +144,7 @@ const SocialPreference = ({ selectedItems, setSelectedItems, setPreference }) =>
         </div>
         <div className="control py-[24px] border-b border-gray flex justify-between items-center">
           <div className="flex gap-2">
-            <div className="text-[16px] text-darkblue font-medium mb-[5px]">Extension Sidebar</div>
+            <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Extension Sidebar</div>
             <img className="w-[15px] h-[15px]" src={RequireIcon} />
           </div>
 
@@ -171,7 +171,7 @@ const SocialPreference = ({ selectedItems, setSelectedItems, setPreference }) =>
         </div>
         <div className="control py-[24px] border-b border-gray flex justify-between items-center">
           <div className="flex gap-2">
-            <div className="text-[16px] text-darkblue font-medium mb-[5px]">Extension Icon</div>
+            <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Extension Icon</div>
             <img className="w-[15px] h-[15px]" src={RequireIcon} />
           </div>
           {/* <div>
@@ -202,7 +202,7 @@ const SocialPreference = ({ selectedItems, setSelectedItems, setPreference }) =>
 
         <div className="control py-[24px] border-b border-gray flex justify-between items-center">
           <div>
-            <div className="text-[16px] text-darkblue font-medium mb-[5px]">Language</div>
+            <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Language</div>
           </div>
           <Select
             className="language flex gap-1 items-center justify-center rounded-full bg-gray3 text-[12px] font-bold text-darkBlue cursor-pointer"
@@ -260,7 +260,7 @@ const SocialPreference = ({ selectedItems, setSelectedItems, setPreference }) =>
 
         <div className="control py-[24px] border-b border-gray flex justify-between items-center">
           <div>
-            <div className="text-[16px] text-darkblue font-medium mb-[5px]">Quick Action Button</div>
+            <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Quick Action Button</div>
             <div className="text-[14px] text-darkgray1">Display when text is selected</div>
           </div>
           <div>
@@ -280,7 +280,7 @@ const SocialPreference = ({ selectedItems, setSelectedItems, setPreference }) =>
         </div>
         <div className="control py-[24px] border-b border-gray flex justify-between items-center">
           <div>
-            <div className="text-[16px] text-darkblue font-medium mb-[5px]">Youtube Summary</div>
+            <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Youtube Summary</div>
             <div className="text-[14px] text-darkgray1">Display “YouTube Summary” panel alongside YouTube videos.</div>
           </div>
           <div>
@@ -297,7 +297,7 @@ const SocialPreference = ({ selectedItems, setSelectedItems, setPreference }) =>
         </div>
         <div className="control py-[24px] border-b border-gray flex justify-between items-center">
           <div>
-            <div className="text-[16px] text-darkblue font-medium mb-[5px]">Reading Summary</div>
+            <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Reading Summary</div>
             <div className="text-[14px] text-darkgray1">
               Display “Resala Summary Button” alongside article website pages.
             </div>
@@ -316,7 +316,7 @@ const SocialPreference = ({ selectedItems, setSelectedItems, setPreference }) =>
         </div>
         <div className="control py-[24px] border-b border-gray flex justify-between items-center">
           <div>
-            <div className="text-[16px] text-darkblue font-medium mb-[5px]">Social Media</div>
+            <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Social Media</div>
             <div className="text-[14px] text-darkgray1">
               This feature helps you get ai powered responses on social media platforms.
             </div>

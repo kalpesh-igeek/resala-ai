@@ -41,7 +41,7 @@ const QuickReplySettings = () => {
       <div className="flex justify-between items-center gap-2">
         <div className="w-full">
           <div className="flex gap-2">
-            <div className="text-[16px] text-darkblue font-medium mb-[5px]">Quick Reply</div>
+            <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Quick Reply</div>
             <div className={`cursor-pointer`} onClick={handleToggle}>
               {dropDown ? (
                 <img
@@ -99,7 +99,7 @@ const QuickReplySettings = () => {
         </RadioGroup>
 
         <label for="actions" className="block text-[10px] font-bold leading-6 text-gray1 uppercase mt-[15px]">
-          Language
+        Compose Language
         </label>
         <RadioGroup value={selectedLanguage} onChange={setSelectedLanguage}>
           <div className="inline-flex gap-2 items-center">

@@ -9,6 +9,7 @@ import RegenerateIcon from '../../utils/Chat/Icons/RegenerateIcon.svg';
 import copy from 'copy-to-clipboard';
 import { useSpeechSynthesis } from 'react-speech-kit';
 import CustomTooltip from '../CustomTooltip/Tooltip';
+import { bookIcon } from '../../utils/Chat/Icons/book.svg' 
 
 const ChatData = ({
   chatData,
@@ -51,7 +52,7 @@ const ChatData = ({
     };
   }, [isTypewriterDone, isSpeechEnabled]);
 
-  const renderMessage = (item) => {
+  const renderMessage = (item,index) => {
     if (activeTabSub === 'chat' && item.isNew) {
       // Display typewriter component
       return <Typewriter text={item.msg} delay={50} setIsTypewriterDone={setIsTypewriterDone} contentType="chat" />;
@@ -104,7 +105,7 @@ const ChatData = ({
               case 'ai':
                 return (
                   <>
-                    <div id="chat-container" className="flex justify-start mb-[30px]">
+                    <div id="chat-container" className={`flex justify-start ${index == 0 ? 'mb-[12px]' : 'mb-[30px]'}`}>
                       <div
                         className="message  bg-lightgray max-w-[370px] border-0 border-gray p-[12px] flex flex-col mb-[8px] rounded-tl-[6px] rounded-tr-[6px] rounded-br-[6px] rounded-br-0 rounded-bl-0 relative "
                         style={{
@@ -150,7 +151,7 @@ const ChatData = ({
                         </div>
 
                         <pre className="font-dmsans text-[#19224C] font-[400] text-[14px]" style={{ textWrap: 'wrap' }}>
-                          {renderMessage(item)}
+                          {renderMessage(item,index)}
                         </pre>
                       </div>
                     </div>

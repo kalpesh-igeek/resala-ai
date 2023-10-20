@@ -41,7 +41,7 @@ export const SelectLanguageComp = ({ isOpen }) => {
         }}
       >
         <div className="flex gap-x-[10px] justify-between mb-[8px]">
-          <div className="min-w-[50px] text-[14px] flex items-center gap-2 text-darkblue">Source:</div>
+          <div className="min-w-[50px] text-[14px] flex items-center gap-2 text-darkBlue">Source:</div>
           <Select
             className="border p-[2px] w-[111px] border-gray text-gray1 hover:text-darkBlue rounded-md text-[14px]"
             menuPlacement="top"
@@ -98,7 +98,7 @@ export const SelectLanguageComp = ({ isOpen }) => {
         </div>
 
         <div className="flex gap-x-[10px] justify-between" ref={selectRef}>
-          <div className="min-w-[50px] text-[14px] flex items-center gap-2 text-darkblue">Target:</div>
+          <div className="min-w-[50px] text-[14px] flex items-center gap-2 text-darkBlue">Target:</div>
 
           <Select
             className="border p-[2px] w-[111px] border-gray text-gray1 hover:text-darkBlue rounded-md text-[14px]"

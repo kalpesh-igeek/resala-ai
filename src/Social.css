@@ -5,9 +5,24 @@
   outline: none;
   resize: none;
 }
+.hoverLanguage {
+
+  color: #8C90A5 !important;
+}
 .hoverLanguage:hover {
   background-color: #f3f4f8 !important;
+  color: #19224C !important;
 }
 .hoveringOver:hover {
   background-color: #d9ebff !important;
 }
+
+.hoverIdeas {
+  background-color:#EEF6FF !important;
+
+}
+.hoverIdeas:hover {
+  background-color:#D9EBFF !important;
+
+}
+

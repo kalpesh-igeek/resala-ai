@@ -135,7 +135,7 @@ export default function SaveTemplatePopup({ saveTemplateBox, setSaveTemplateBox,
               <div className="bg-blue-200 w-[28px] h-[28px] rounded-full flex justify-center items-center hover:bg-blue-200">
                 <img src={SaveTemplate} />
               </div>
-              <span>Save Template</span>
+              <span className='text-[20px]'>Save Template</span>
             </div>
             <div
               className="cursor-pointer -mt-[30px]"
@@ -196,6 +196,7 @@ export default function SaveTemplatePopup({ saveTemplateBox, setSaveTemplateBox,
                   margin: '8px',
                   width: 'auto',
                   borderRadius: '4px',
+                  cursor:'pointer',
                   height: '26px',
                   lineHeight: '7px',
                   padding: '10px 12px',
