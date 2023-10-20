@@ -11,7 +11,6 @@ import Send from './utils/Social/send.png';
 import Left from './utils/Social/arrow-left.png';
 import Trash from './utils/Social/trash.png';
 import Menu from './utils/Social/Vector.png';
-import LoadingGif from './utils/Chat/Gif/loader.gif';
 import Loader from './utils/89.gif';
 import KeyboardIcon from './utils/Chat/Icons/KeyboardIcon.svg';
 import Select from 'react-select';
@@ -58,16 +57,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
     type();
   }
-  //textarea height functionality
-  // function calculateTextAreaRows(content) {
-  //   const lines = content.split(/\r?\n|\r/);
 
-  //   const lineCount = Math.max(lines.length, 1);
-
-  //   return lineCount;
-  // }
-
-  //textarea height functionality
+  //textarea reponsive height
 
   const [ideas, setIdeas] = useState(false);
 
@@ -92,11 +83,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     setLoading(false);
     setvisibleTextarea(false);
     setIdeadload(false);
-    // setClose(false);
     const SocialComponent = document.getElementById('SocialPopup');
     SocialComponent.classList.add('hidden');
-
-    // console.log('dsfsdfds', close);
   };
 
   // api integration: social ideas
@@ -106,7 +94,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   useEffect(() => {
     const SocialButton = document.getElementById('SocialButton');
     SocialButton.addEventListener('click', async () => {
-      // console.log('CLICKCKCKCKCKCKCK');
       const hostname = window.location.hostname;
       let response;
 
@@ -118,13 +105,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         response = await getRequest('/twitter/twitter_idea_list');
       }
       if (response.status == 200) {
-        // console.log(response.data.Result, 'idea_list');
-        // console.log(response.data, 'ideasssssssss');
         setSocialIdeas(response.data.Result);
       }
     });
   }, []);
-  // console.log({ socialIdeas });
+
   // get-postIdea
 
   // textarea
@@ -140,8 +125,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
   // textarea-postIdea
   const handleTextArea = async () => {
-    // setLoadRegenerate(true);
-
     if (IdeasValueHome1.trim() === '') {
       return;
     }
@@ -174,7 +157,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       text = text.toString().replace('POST : ', '').replace('Post :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
       const textArea1 = textAreaRef.current;
-      console.log(textArea1, 'textArea1');
+
       const paragraph = words.join(' ');
       const lines = paragraph.split(/[\.,]/);
       const lineCount = lines.length;
@@ -186,10 +169,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       setButtonShowHome(true);
       setPostIdea(!PostIdea);
       setLoadingText(false);
-      // setLoadRegenerate(false);
-      // setIdeasValue(paragraph);
     }
-    // console.log(selectedIdea, 'selectedIdea');
   };
   // textarea-postIdea
 
@@ -197,15 +177,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   const [LoadRegenerate, setLoadRegenerate] = useState(false);
   const [ResponsesText, setResponsesText] = useState([]);
   const handleRegenerate = async () => {
-    // setLoading(true);
     setLoadingText(true);
-
     setLoadRegenerate(!LoadImprove1);
-    // console.log('regenerated!');
     const hostname = window.location.hostname;
     let response;
-    // console.log(IdeasValueHome1, 'IdeasValue');
-    // const postData = { text: IdeasValue, action: 'string', tone: 'Improve it', language: 'english' };
     const postData = { text: IdeasValueHome1, action: 'Improve it', language: languages, tone: professions };
 
     if (hostname === 'www.linkedin.com') {
@@ -225,7 +200,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         .replace(/connection closed/g, '');
       text = text.toString().replace('POST : ', '').replace('Post :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      // console.log(words, 'words');
+
       const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
       const lines = paragraph.split(/[\.,]/);
@@ -264,7 +239,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
-      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST :/g, '')
@@ -309,7 +283,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
-      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST :/g, '')
@@ -352,7 +325,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
-      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST :/g, '')
@@ -397,7 +369,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
-      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST :/g, '')
@@ -442,7 +413,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
-      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST :/g, '')
@@ -451,7 +421,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         .replace(/connection closed/g, '');
       text = text.toString().replace('POST : ', '').replace('Post :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      // console.log(words, 'words');
+
       const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
       const lines = paragraph.split(/[\.,]/);
@@ -459,7 +429,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       textArea1.rows = lineCount + 1;
       const textArea = document.getElementById('socialTextarea');
       typewriterEffect(paragraph, textArea, 20);
-      // console.log(paragraph, ';;;;;;dsdhsdh');
+
       setIdeasValueHome(paragraph);
       setLoadingText(false);
       setResponsesText((state) => [...state, IdeasValueHome]);
@@ -469,15 +439,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   };
   // textarea-shorten
 
-  // empty
-  // const handleEmpty12 = () => {
-  //   setIdeasValueHome1('');
-  //   setSpeechLength(0);
-  // };
-
   const handleIdeas = (element) => {
     const selected = socialIdeas[element];
-    console.log('Selected ', selected);
     setSocialHome(false);
     setSelectedIdea(selected);
     setVisible(true);
@@ -485,8 +448,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     setButtonShow(false);
     setPostIdea(true);
   };
-
-  // console.log(selectedIdea, 'selectedIdea');
 
   // todo : api for language
   const [languages, setLanguages] = useState('English');
@@ -507,7 +468,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   // home-textCounting
   const handleChange = (e) => {
     setIdeasValue(e.target.value);
-    // console.log(IdeasValue, 'Ideas');
+
     const { name, value } = e.target;
     const maxCharacterCount = 1000;
     if (name === 'socialTextarea') {
@@ -542,7 +503,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   // typewriter effect
 
   // typewriter effect
-  //
+
   const handlePostIdeas = async () => {
     if (IdeasValue.trim() === '') {
       return;
@@ -568,7 +529,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
-      console.log(response.data);
       const text = response.data
         .replace(/#@#/g, '')
         .replace(/connection closed/, '')
@@ -580,7 +540,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       const lines = paragraph.split(/[\.,]/);
       const lineCount = lines.length;
       textArea1.rows = lineCount + 1;
-      // console.log(paragraph, ';;;;;;dsdhsdh');
+
       setIdeadload(false);
       settextarea2reg(false);
 
@@ -599,12 +559,12 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
   useEffect(() => {
     if (typing) {
-      const typingDelay = 200; // Adjust the typing speed
+      const typingDelay = 200;
       const typingInterval = setInterval(() => {
         if (typedText.length < textToType.length) {
           setTypedText(textToType.slice(0, typedText.length + 1));
         } else {
-          setTyping(false); // Typing is complete
+          setTyping(false);
         }
       }, typingDelay);
 
@@ -637,8 +597,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
-      console.log(response.data);
-
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST :/g, '')
@@ -688,8 +646,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
-      console.log(response.data);
-
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST\s*:\s*/g, '')
@@ -736,7 +692,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
-      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST\s*:\s*/g, '')
@@ -783,7 +738,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
-      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST\s*:\s*/g, '')
@@ -829,7 +783,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
-      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST\s*:\s*/g, '')
@@ -876,7 +829,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
 
     if (response && response.status === 200) {
-      console.log(response.data);
       let text = response.data
         .replace(/#@#/g, '')
         .replace(/POST\s*:\s*/g, '')
@@ -886,14 +838,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
       text = text.toString().replace('POST :', '');
       const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      // console.log(words, 'words');
+
       const textArea1 = textAreaRef.current;
       const paragraph = words.join(' ');
       const lines = paragraph.split(/[\.,]/);
       const lineCount = lines.length;
       textArea1.rows = lineCount + 1;
       typewriterEffect(paragraph, textArea, 20);
-      // console.log(paragraph, ';;;;;;dsdhsdh');
+
       setIdeasValue(paragraph);
       settextarea2reg(false);
 
@@ -908,7 +860,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     updatedResponses.splice(index, 1);
     setResponses(updatedResponses);
     setSpeechLength(0);
-    // setIdeasValue('');
   };
   const handleEmpty12 = () => {
     setSpeechLength(0);
@@ -1053,9 +1004,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         setStartListen(true);
         setPermission(true);
       })
-      .catch((err) => {
-        // Handle the error
-      });
+      .catch((err) => {});
   };
   useEffect(() => {
     navigator.permissions.query({ name: 'microphone' }).then((permissionStatus) => {
@@ -1101,10 +1050,9 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       return;
     }
 
-    // Check if there's an ongoing fetch request and abort it
     if (abortController) {
       abortController.abort();
-      setAbortController(null); // Clear the abort controller
+      setAbortController(null);
     }
 
     if (alreadyStreamed) {
@@ -1113,12 +1061,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     if (isStreaming && message) {
       return;
     }
-    // Create a new AbortController instance for this fetch request
+
     const controller = new AbortController();
     setAbortController(controller);
 
     if (message?.name) {
-      // Add the user message to the chat data
       setChatData((prevMessages) => [...prevMessages, { msg: message.name, type: 'user' }]);
 
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
@@ -1128,21 +1075,20 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            // 'Access-Control-Allow-Origin': '*',
+
             Authorization: getToken(),
           },
           body: JSON.stringify({
             chat_id: chatId,
             prompt_id: message.id,
-            // Include other necessary parameters
           }),
-          signal: controller.signal, // Associate the AbortController with the request
+          signal: controller.signal,
         });
 
         if (!response.ok) {
           throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
         }
-        // Process the response from your new API here
+
         const reader = response.body.getReader();
         let accumulatedMessage = '';
 
@@ -1158,34 +1104,30 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
               setIsTypewriterDone(false);
               setAllreadyStreamed(false);
               setIsStreaming(false);
-              // Set the typewriter state to false when "connection closed" is encountered
             } else {
-              // Exclude lines containing "connection closed" and append the word
               accumulatedMessage += data + '';
               setChatData((prevMessages) => [
-                ...prevMessages.slice(0, prevMessages.length - 1), // Keep all but the last (Loading...) message
-                { msg: accumulatedMessage, type: 'ai' }, // Add the new message
+                ...prevMessages.slice(0, prevMessages.length - 1),
+                { msg: accumulatedMessage, type: 'ai' },
               ]);
             }
-            // }
           }
         }
       } catch (error) {
         console.error('An error occurred:', error);
       }
     } else if (message && !isDocChat) {
-      // Add the user message to the chat data
       setChatData((prevMessages) => [...prevMessages, { msg: message, type: 'user' }]);
-      let accumulatedMessage = ''; // To accumulate words
-      let isTypewriterDone = false; // Initialize the typewriter state
-      // Add the "Loading..." message initially
+      let accumulatedMessage = '';
+      let isTypewriterDone = false;
+
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       try {
         const response = await fetch('https://api-qa.resala.ai/chat/stream_chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            // 'Access-Control-Allow-Origin': '*',
+
             Authorization: getToken(),
           },
           // todo
@@ -1194,80 +1136,74 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
             chatId: chatId,
             web_access: !webAccess,
           }),
-          signal: controller.signal, // Associate the AbortController with the request
+          signal: controller.signal,
         });
 
-        // const response = await dispatch(userChatNew(payload));
         if (!response.ok) {
           throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
         }
         const reader = response.body.getReader();
-        // Continuously read and append the streaming response
+
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
           const chunk = new TextDecoder().decode(value);
-          // Process and display the received message
+
           const lines = chunk.split('\n');
           for (const line of lines) {
             data = line.replace(/#@#/g, '\n');
             if (line.includes('connection closed')) {
-              // Set the typewriter state to false when "connection closed" is encountered
               setAllreadyStreamed(false);
               setIsStreaming(false);
               isTypewriterDone = true;
             } else {
-              // Exclude lines containing "connection closed" and append the word
               accumulatedMessage += data + '';
             }
-            // }
           }
-          // Update the chat data with the accumulated message, without the "Loading..." message
+
           setChatData((prevMessages) => [
-            ...prevMessages.slice(0, -1), // Remove the last (Loading...) message
-            { msg: accumulatedMessage?.trim(), type: 'ai' }, // Update the chat data
+            ...prevMessages.slice(0, -1),
+            { msg: accumulatedMessage?.trim(), type: 'ai' },
           ]);
         }
       } catch (error) {
         console.error('An error occurred:', error);
-        // Handle the error as needed
       }
-      // Set the isTypewriterDone state to false when "connection closed" is encountered
+
       if (isTypewriterDone) {
         setIsTypewriterDone(false);
       }
     } else if (message && isDocChat) {
       setChatData((prevMessages) => [...prevMessages, { msg: message, type: 'user' }]);
-      let accumulatedMessage = ''; // To accumulate words
-      let isTypewriterDone = false; // Initialize the typewriter state
-      // Add the "Loading..." message initially
+      let accumulatedMessage = '';
+      let isTypewriterDone = false;
+
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       try {
         const response = await fetch('https://api-qa.resala.ai/doc_chat/chat_document', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            // 'Access-Control-Allow-Origin': '*',
+
             Authorization: getToken(),
           },
           body: JSON.stringify({
             question: message,
             chatId: chatId,
           }),
-          signal: controller.signal, // Associate the AbortController with the request
+          signal: controller.signal,
         });
 
-        // const response = await dispatch(userChatNew(payload));
         if (!response.ok) {
           throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
         }
         const reader = response.body.getReader();
-        // Continuously read and append the streaming response
+
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
           const chunk = new TextDecoder().decode(value);
-          // Process and display the received message
+
           const lines = chunk.split('\n');
           for (const line of lines) {
             data = line.replace(/#@#/g, '\n');
@@ -1276,22 +1212,19 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
               setIsStreaming(false);
               isTypewriterDone = true;
             } else {
-              // Exclude lines containing "connection closed" and append the word
               accumulatedMessage += data + '';
             }
-            // }
           }
-          // Update the chat data with the accumulated message, without the "Loading..." message
+
           setChatData((prevMessages) => [
-            ...prevMessages.slice(0, -1), // Remove the last (Loading...) message
-            { msg: accumulatedMessage?.trim(), type: 'ai' }, // Update the chat data
+            ...prevMessages.slice(0, -1),
+            { msg: accumulatedMessage?.trim(), type: 'ai' },
           ]);
         }
       } catch (error) {
         console.error('An error occurred:', error);
-        // Handle the error as needed
       }
-      // Set the isTypewriterDone state to false when "connection closed" is encountered
+
       if (isTypewriterDone) {
         setIsTypewriterDone(false);
       }
@@ -1318,13 +1251,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     };
   }, [myPromptRef, setIsAudioInfoPopup]);
 
-  console.log(responses, 'responses');
   return (
     <>
       <div
         className={`hidden rounded-[10px] bg-white fixed w-[600px] min-h-[365px] h-[max-content] max-h-[650px] relative shadow border border-white overflow-hidden !font-['DM Sans']`}
         id="SocialPopup"
-        // ref={socialPopupRef}
         style={{
           top: fromPosition.top,
           bottom: fromPosition.bottom,
@@ -1333,11 +1264,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
           fontFamily: 'dm Sans, sans-serif',
         }}
       >
-        {/* {delelePopup && (
-          <div className="absolute top-[35%] right-[12%] z-[9999]" onClick={() => setdelelePopup(!delelePopup)}>
-            <SocialDeletePopup onEmpty={handleEmpty} />
-          </div>
-        )} */}
         <div className="flex justify-between p-[12] pl-[16] pr-[16] border-b-[1px] border-b-slate-200">
           <div className="flex">
             <div>
@@ -1363,7 +1289,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 <img className="h-[14px] w-[14px]" src={Setting} />
               </div>
             </CustomTooltip>
-            {/* line */}
+
             <div className="w-[1px] h-[22px] border border-slate-200"></div>
             <div id="closeSocialBtn" className="cursor-pointer relative">
               <img className="rounded-full w-[24] h-[24]" src={Closed} onClick={handleClose} />
@@ -1431,14 +1357,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 >
                   <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">Thai</div>
                 </div>
-                {/* {languages?.map((element, index) => (
-                  <div
-                    className="pt-[4px] pl-[8px] pb-[4px] bg-white rounded-md justify-center items-center inline-flex hoverLanguage"
-                    key={index}
-                  >
-                    <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">{element.language}</div>
-                  </div>
-                ))} */}
               </div>
             </div>
 
@@ -1495,7 +1413,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
           </div>
         </div>
 
-        {/* second div */}
         <div className="py-[14px] px-[16px] overflow-y-scroll max-h-[554px]" id="">
           <p
             className={`${
@@ -1505,7 +1422,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
             IDEAS FOR YOU
           </p>
           {/* todo textarea  */}
-          {/* {contextHolder} */}
 
           <div className={`${visible || visible2 ? 'hidden' : ''} flex gap-[8px] flex-wrap h-[85px] overflow-y-scroll`}>
             {socialIdeas?.map((idea, index) => (
@@ -1520,18 +1436,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 </div>
               </div>
             ))}
-            {/* {socialIdeas?.map((idea, index) => (
-              <div key={index} onClick={() => handleIdeas(index)} className={`${!SocialHome ? 'hidden' : 'block'}`}>
-                <div className="p-[8px] bg-blue-50 rounded-[6px] flex-col justify-start items-start gap-2.5 inline-flex  cursor-pointer hover:bg-[#D9EBFF] hoveringOver">
-                  <div className="gap-[8px] justify-start items-start inline-flex">
-                    <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
-                      <img src={idea.image_link} />
-                    </div>
-                    <div className="text-[#5F6583] text-[14px] font-medium font-['DM Sans']">{idea.name}</div>
-                  </div>
-                </div>
-              </div>
-            ))} */}
           </div>
 
           {visible && (
@@ -1542,7 +1446,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     !ButtonsShow ? 'hidden' : ''
                   }   flex justify-end items-center gap-[8px]   absolute bottom-[7px] right-0 left-0 bg-white`}
                 >
-                  {/* <div className={``}> */}
                   <div
                     className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex !cursor-pointer hoverEffectIdeas"
                     onClick={handlePostIdeaImprove}
@@ -1551,13 +1454,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer ">
                       Improve it
                     </div>
-                    {/* {!LoadImprove ? (
-                      <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
-                        Improve it
-                      </div>
-                    ) : (
-                      <img id="chat-container" className="w-[50px]" src={LoadingGif} />
-                    )} */}
                   </div>
                   <div
                     className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex hoverEffectIdeas"
@@ -1567,13 +1463,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                       Add Details
                     </div>
-                    {/* {!LoadAddDetails ? (
-                      <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
-                        Add Details
-                      </div>
-                    ) : (
-                      <img id="chat-container" className="w-[50px]" src={LoadingGif} />
-                    )} */}
                   </div>
                   <div
                     className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex hoverEffectIdeas"
@@ -1583,13 +1472,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                       Add Humor
                     </div>
-                    {/* {!LoadHumor ? (
-                      <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
-                        Add Humor
-                      </div>
-                    ) : (
-                      <img id="chat-container" className="w-[50px]" src={LoadingGif} />
-                    )} */}
                   </div>
                   <div
                     className="w-[12px] flex justify-center items-center cursor-pointer relative"
@@ -1626,13 +1508,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                               Improve it
                             </div>
-                            {/* {!LoadImprove ? (
-                              <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
-                                Improve it
-                              </div>
-                            ) : (
-                              <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                            )} */}
                           </div>
 
                           <div
@@ -1643,13 +1518,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                               Add Details
                             </div>
-                            {/* {!LoadAddDetails ? (
-                              <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
-                                Add Details
-                              </div>
-                            ) : (
-                              <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                            )} */}
                           </div>
 
                           <div
@@ -1660,13 +1528,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                               Add Humor
                             </div>
-                            {/* {!LoadHumor ? (
-                              <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
-                                Add Humor
-                              </div>
-                            ) : (
-                              <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                            )} */}
                           </div>
 
                           <div
@@ -1677,13 +1538,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                               Inspire
                             </div>
-                            {/* {!LoadInspire ? (
-                              <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
-                                Inspire
-                              </div>
-                            ) : (
-                              <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                            )} */}
                           </div>
 
                           <div
@@ -1694,19 +1548,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                               Shorten it
                             </div>
-                            {/* {!LoadShorten ? (
-                              <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
-                                Shorten it
-                              </div>
-                            ) : (
-                              <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                            )} */}
                           </div>
                         </div>
                       </div>
                     )}
                   </div>
-                  {/* </div> */}
                 </div>
                 <div
                   className="flex gap-[8px] mb-[12px] justify-start items-center cursor-pointer sticky top-[-15px] right-0 left-0 bg-white z-[99]"
@@ -1746,14 +1592,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 )}
                 <div className="h-[auto] overflow-y-scroll ">
                   {/* todo loader */}
-                  {/* {Ideadload ? (
-                    <div className="flex justify-start items-center gap-1 my-2">
-                      <img src={Loader} className="w-[12px]" />
-                      <p className="text-blue-600 text-[12px] font-medium font-['DM Sans']">Working on it...</p>
-                    </div>
-                  ) : (
-                    ''
-                  )} */}
+
                   <div id="mainContentArea1" className="mb-[15px]">
                     <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex !cursor-pointer !hover:bg-[#D9EBFF] ">
                       <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
@@ -1761,7 +1600,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                       </div>
                       <div className="text-[#19224C] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div>
                     </div>
-                    {/* <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div> */}
+
                     <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] min-h-[172px] flex flex-row gap-[14px]">
                       <div className="flex flex-col justify-between w-[508px]">
                         <div>
@@ -1804,36 +1643,19 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               onClick={handlePostIdeaRegenerate}
                             >
                               Regenerate
-                              {/* {regenerate1 ? (
-                                <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                              ) : (
-                                'Regenerate'
-                              )} */}
                             </div>
                           </div>
                         </div>
                       </div>
                       <div className="flex flex-col justify-between items-end pt-[2px] ">
-                        {/* <div className={`w-[20px] h-[20px] cursor-pointer `} onClick={handlePostIdeas}>
-                          <img className=" cursor-pointer " src={Send} />
-                        </div> */}
                         <div className="w-[30px] h-[20px] cursor-pointer" onClick={handlePostIdeas}>
-                          {/* {PostIdea ? <img className=" cursor-pointer " src={Send} /> : ''} */}
                           {Ideadload ? (
-                            // <img id="chat-container" className="w-[30px]" src={LoadingGif} />
                             ''
                           ) : (
                             <img className={`${!PostIdea ? 'hidden' : 'block'} cursor-pointer `} src={Send} />
                           )}
                         </div>
                         <div>
-                          {/* {!ButtonsShow ? (
-                            <span className="text-[#8C90A5] text-[12px]">{speechLength}/1000</span>
-                          ) : (
-                            <div onClick={handleEmpty}>
-                              <img className="w-[16px] cursor-pointer" src={Trash} />
-                            </div>
-                          )} */}
                           {ButtonsShow && (
                             <CustomTooltip
                               maxWidth="430px"
@@ -1854,19 +1676,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                         <span className="text-[#8C90A5] text-[12px]  font-['DM Sans'] ">{speechLength}/1000</span>
                       </div>
                     )}
-                    {/* {newDivContent && <div>{newDivContent}</div>} */}
                   </div>
 
                   {responses?.map((divfd, index) => (
                     <>
-                      {/* {textarea2reg ? (
-                        <div className="flex justify-start items-center gap-1 my-2">
-                          <img src={Loader} className="w-[12px]" />
-                          <p className="text-blue-600 text-[12px] font-medium font-['DM Sans']">Working on it...</p>
-                        </div>
-                      ) : (
-                        ''
-                      )} */}
                       <div id="mainContentArea1" className="mb-[15px]" key={index}>
                         <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex hover:bg-[#D9EBFF]">
                           <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
@@ -1876,7 +1689,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             {selectedIdea.name}
                           </div>
                         </div>
-                        {/* <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div> */}
+
                         <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] min-h-[172px] flex flex-row gap-[14px]">
                           <div className="flex flex-col justify-between w-[508px]">
                             <div>
@@ -1888,11 +1701,9 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                                 name="socialTextarea"
                                 value={divfd}
                                 ref={textAreaRef}
-                                // onChange={(e) => handleChange(e)}
                                 onChange={handleChange}
                                 onPaste={handlePaste}
                                 id="socialTextarea"
-                                // onChange={(e) => setIdeasValue(e.target.value)}
                               />
                             </div>
 
@@ -1916,26 +1727,12 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                                   onClick={handlePostIdeaRegenerate}
                                 >
                                   Regenerate
-                                  {/* {loading ? (
-                                    <img id="chat-container" className="w-[35px]" src={LoadingGif} />
-                                  ) : (
-                                    'Regenerate'
-                                  )} */}
                                 </div>
                               </div>
                             </div>
                           </div>
                           <div id="test123" className="flex flex-col justify-between items-end pt-[2px] ">
-                            {/* <div className="w-[20px] h-[20px]" onClick={handleIdeasValues}>
-                      <img className="" src={Send} />
-                    </div> */}
-                            <div className="w-[20px] h-[20px] cursor-pointer egdjwej">
-                              {/* <img className={`${PostIdea ? 'hidden' : 'block'} cursor-pointer `} src={Send} /> */}
-                              {loading
-                                ? // <img id="chat-container" className="w-[100px]" src={LoadingGif} />
-                                  ''
-                                : ''}
-                            </div>
+                            <div className="w-[20px] h-[20px] cursor-pointer egdjwej">{loading ? '' : ''}</div>
                             <CustomTooltip
                               maxWidth="430px"
                               place="top"
@@ -1948,7 +1745,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             </CustomTooltip>
                           </div>
                         </div>
-                        {/* {newDivContent && <div>{newDivContent}</div>} */}
                       </div>
                     </>
                   ))}
@@ -1971,7 +1767,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     setSpeechLength(0);
                     setSocialHome(true);
                     setButtonShow(!ButtonsShow);
-                    // setResponses([]);
+
                     setButtonShowHome(!ButtonsShowHome);
                     setResponsesText([]);
                     setLoading(false);
@@ -1979,7 +1775,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     setCopied(false);
                     settextarea2reg(false);
                   }}
-                  // style={{ position: 'sticky', top: '-12px', right: '0', left: '0', background: 'white' }}
                 >
                   <img className="w-[14] h-[14]" src={Left} />
                   <p className="text-[#19224C]">Back</p>
@@ -1995,20 +1790,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 <div className="h-auto overflow-y-scroll ">
                   <div id="mainContentArea1" className="mb-[15px]">
                     <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex !cursor-pointer hover:bg-[#D9EBFF]">
-                      {/* <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
-                        <img src={selectedIdea.image_link} />
-                      </div> */}
                       <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{IdeasValueHome1}</div>
                     </div>
-                    {/* <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div> */}
+
                     <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] min-h-[172px] flex flex-row gap-[14px]">
                       <div className="flex flex-col justify-between w-[508px]">
                         <div>
-                          {/* <p className="text-[#8C90A5]">{selectedIdea.placeholder}</p> */}
                           {/* textarea 3 */}
                           <textarea
-                            // placeholder={`${selectedIdea.placeholder}`}
-                            // className={`${!loading ? 'h-[58px]' : ''} p-[1px] textArea resize-none`}
                             className={` p-[1px] textArea resize-none h-auto min-h-[130px]`}
                             style={{ width: '100%', boxShadow: 'none', height: 'auto' }}
                             ref={textAreaRef}
@@ -2017,7 +1806,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             name="socialTextarea"
                             onChange={(e) => handleChange(e)}
                             onPaste={handlePaste}
-                            // onChange={(e) => setIdeasValue(e.target.value)}
                           />
                         </div>
                         <div className={`${!ButtonsShowHome ? 'hidden' : 'block'} `}>
@@ -2042,27 +1830,12 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               onClick={handleRegenerate}
                             >
                               Regenerate
-                              {/* {LoadRegenerate ? (
-                                <img id="chat-container" className="w-[35px] ml-1" src={LoadingGif} />
-                              ) : (
-                                'Regenerate'
-                              )} */}
                             </div>
                           </div>
                         </div>
                       </div>
                       <div className="flex flex-col justify-between items-end pt-[2px] ">
-                        {/* <div className={`w-[20px] h-[20px] cursor-pointer `} onClick={handlePostIdeas}>
-                          <img className=" cursor-pointer " src={Send} />
-                        </div> */}
-                        <div className="w-[50px]  cursor-pointer">
-                          {/* {!ButtonsShowHome ? <img className=" cursor-pointer " src={Send} /> : ''} */}
-                          {loadingText
-                            ? // <img id="chat-container" className="w-[80px]" src={LoadingGif} />
-                              ''
-                            : // <img className={`${!PostIdea ? 'hidden' : 'block'} cursor-pointer `} src={Send} />
-                              ''}
-                        </div>
+                        <div className="w-[50px]  cursor-pointer">{loadingText ? '' : ''}</div>
                         <div>
                           {!ButtonsShowHome ? (
                             ''
@@ -2086,37 +1859,22 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                         <p className="text-[#8C90A5] text-[12px]  font-['DM Sans'] ">{speechLength}/1000</p>
                       </div>
                     )}
-                    {/* {newDivContent && <div>{newDivContent}</div>} */}
                   </div>
 
                   {/* todo */}
                   {ResponsesText?.map((divfd, index) => (
                     <>
-                      {/* {loadingText ? (
-                        <div className="flex justify-start items-center gap-1 my-2">
-                          <img src={Loader} className="w-[12px]" />
-                          <p className="text-blue-600 text-[12px] font-medium font-['DM Sans']">Working on it...</p>
-                        </div>
-                      ) : (
-                        ''
-                      )} */}
                       <div id="mainContentArea1" className="mb-[15px]" key={index}>
                         <div className="p-[8px] bg-blue-50 rounded-tl-md rounded-tr-md border border-slate-200  w-[-webkit-fill-available] justify-start items-start gap-2 inline-flex !cursor-pointer hover:bg-[#D9EBFF]">
-                          {/* <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
-                        <img src={selectedIdea.image_link} />
-                      </div> */}
                           <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">
                             {IdeasValueHome1}
                           </div>
                         </div>
-                        {/* <div className="text-[#8c90a5] text-[14px] font-medium font-['DM Sans']">{selectedIdea.name}</div> */}
+
                         <div className=" bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px] flex flex-row gap-[14px] ">
                           <div className="flex flex-col justify-between w-[508px]">
                             <div style={{ flex: '1', height: 'auto' }}>
-                              {/* <p className="text-[#8C90A5]">{selectedIdea.placeholder}</p> */}
-                              {/* textarea 3 for regenerate */}
                               <textarea
-                                // placeholder={`${selectedIdea.placeholder}`}
                                 className={`textArea resize-none min-h-[130px]`}
                                 style={{ width: '100%', boxShadow: 'none' }}
                                 value={divfd}
@@ -2125,7 +1883,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                                 name="socialTextarea"
                                 onChange={(e) => handleChange(e)}
                                 onPaste={handlePaste}
-                                // onChange={(e) => setIdeasValue(e.target.value)}
                               />
                             </div>
                             <div className={`${!ButtonsShowHome ? 'hidden' : 'block'} `}>
@@ -2133,7 +1890,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                                 <div
                                   className={`bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-white w-[90px]  cursor-pointer `}
                                   onClick={InsertedValue}
-                                  // disabled={buttonDisabled}
                                 >
                                   Insert
                                 </div>
@@ -2151,27 +1907,12 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                                   onClick={handleRegenerate}
                                 >
                                   Regenerate
-                                  {/* {LoadRegenerate ? (
-                                    <img id="chat-container" className="w-[35px] ml-1" src={LoadingGif} />
-                                  ) : (
-                                    'Regenerate'
-                                  )} */}
                                 </div>
                               </div>
                             </div>
                           </div>
                           <div className="flex flex-col justify-between items-end pt-[2px] ">
-                            {/* <div className={`w-[20px] h-[20px] cursor-pointer `} onClick={handlePostIdeas}>
-                          <img className=" cursor-pointer " src={Send} />
-                        </div> */}
-                            <div className="w-[20px] h-[20px] cursor-pointer">
-                              {/* {!ButtonsShowHome ? <img className=" cursor-pointer " src={Send} /> : ''} */}
-                              {loadingText
-                                ? // <img id="chat-container" className="w-[100px]" src={LoadingGif} />
-                                  ''
-                                : // <img className={`${!PostIdea ? 'hidden' : 'block'} cursor-pointer `} src={Send} />
-                                  ''}
-                            </div>
+                            <div className="w-[20px] h-[20px] cursor-pointer">{loadingText ? '' : ''}</div>
                             <div>
                               {!ButtonsShowHome ? (
                                 ''
@@ -2195,7 +1936,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             <p className="text-[#8C90A5] text-[12px]  font-['DM Sans'] ">{speechLength}/1000</p>
                           </div>
                         )}
-                        {/* {newDivContent && <div>{newDivContent}</div>} */}
                       </div>
                     </>
                   ))}
@@ -2214,13 +1954,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                       <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
                         Improve it
                       </div>
-                      {/* {!LoadImprove1 ? (
-                        <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
-                          Improve it
-                        </div>
-                      ) : (
-                        <img id="chat-container" className="w-[50px]" src={LoadingGif} />
-                      )} */}
                     </div>
                     <div
                       className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex  cursor-pointer hoverEffectIdeas"
@@ -2228,11 +1961,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     >
                       <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
                       <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Details</div>
-                      {/* {!LoadAddDetails1 ? (
-                        <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Details</div>
-                      ) : (
-                        <img id="chat-container" className="w-[50px]" src={LoadingGif} />
-                      )} */}
                     </div>
 
                     <div
@@ -2241,11 +1969,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     >
                       <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
                       <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Humor</div>
-                      {/* {!LoadHumor1 ? (
-                        <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Humor</div>
-                      ) : (
-                        <img id="chat-container" className="w-[50px]" src={LoadingGif} />
-                      )} */}
                     </div>
 
                     <div
@@ -2281,13 +2004,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             >
                               <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
                               <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Improve it</div>
-                              {/* {!LoadImprove1 ? (
-                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">
-                                  Improve it
-                                </div>
-                              ) : (
-                                <img id="chat-container" className="w-[32px]" src={LoadingGif} />
-                              )} */}
                             </div>
 
                             <div
@@ -2296,13 +2012,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             >
                               <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
                               <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Details</div>
-                              {/* {!LoadAddDetails1 ? (
-                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">
-                                  Add Details
-                                </div>
-                              ) : (
-                                <img id="chat-container" className="w-[32px]" src={LoadingGif} />
-                              )} */}
                             </div>
 
                             <div
@@ -2311,12 +2020,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             >
                               <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
                               <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Humor</div>
-
-                              {/* {!LoadHumor1 ? (
-                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Humor</div>
-                              ) : (
-                                <img id="chat-container" className="w-[32px]" src={LoadingGif} />
-                              )} */}
                             </div>
 
                             <div
@@ -2325,12 +2028,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             >
                               <div className="text-white text-base font-medium font-['DM Sans']">💡</div>
                               <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Inspire</div>
-                              {/* 
-                              {!LoadInspire1 ? (
-                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Inspire</div>
-                              ) : (
-                                <img id="chat-container" className="w-[32px]" src={LoadingGif} />
-                              )} */}
                             </div>
 
                             <div
@@ -2339,13 +2036,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             >
                               <div className="text-white text-base font-medium font-['DM Sans']">📄</div>
                               <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Shorten it</div>
-                              {/* {!LoadShorten1 ? (
-                                <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">
-                                  Shorten it
-                                </div>
-                              ) : (
-                                <img id="chat-container" className="w-[32px]" src={LoadingGif} />
-                              )} */}
                             </div>
                           </div>
                         </div>
@@ -2356,7 +2046,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
               </div>
             </>
           )}
-          {/* textarea */}
         </div>
 
         <div
@@ -2387,12 +2076,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     <span className="text-[12px] text-darkBlue">How to use</span>
                     {isAudioInfoPopup && (
                       <div className="!overflow-y-scroll absolute top-[-205px] h-[189px] w-[460px] right-0 left-0 shadow-md">
-                        {/* <HowToUseInfoBox setIsAudioInfoPopup={setIsAudioInfoPopup} /> */}
                         <div
                           ref={myPromptRef}
                           className=" rounded-[10px] bg-white p-[20px] z-[999202] w-[460px]"
                           style={{ boxShadow: '0px 10px 30px 0px #3C425726' }}
-                          // show={open}
                         >
                           <div className="pt-[8px] pb-[8px] mb-[20px] text-[20px] font-medium text-darkBlue">
                             <div className="flex items-center justify-between">
@@ -2477,7 +2164,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                         onBlur={handleBlur}
                         onFocus={() => setIsMenuOpen(true)}
                         isMenuOpen={isMenuOpen}
-                        // menuIsOpen={true}
                         styles={{
                           control: (base) => ({
                             ...base,
@@ -2533,17 +2219,9 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     }}
                   >
                     <img src={MicrophoneWhiteIcon} />
-                    {/* {!isMicEnabled ? (
-                                      ) : ( */}
-                    {/* <span>Voice input disabled: Mic access denied</span> */}
-                    {/* )} */}
                     <span>Hold Space or Click button to speak</span>
                   </div>
-                  <div
-                    className="cursor-pointer"
-                    // onClick={() => setAudioInput(false)}
-                    onClick={() => closeSpeechRecognition()}
-                  >
+                  <div className="cursor-pointer" onClick={() => closeSpeechRecognition()}>
                     <img src={SmallClose} />
                   </div>
                 </div>
@@ -2554,17 +2232,9 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 >
                   <div className="flex gap-2 items-center" onClick={requestPermission}>
                     <img src={MicrophoneWhiteIcon} />
-                    {/* {!isMicEnabled ? (
-                                      <span>Hold Space or Click button to speak</span>
-                                    ) : ( */}
                     <span>Please allow Resala to use your microphone</span>
-                    {/* )} */}
                   </div>
-                  <div
-                    className="cursor-pointer"
-                    // onClick={() => setAudioInput(false)}
-                    onClick={() => closeSpeechRecognition()}
-                  >
+                  <div className="cursor-pointer" onClick={() => closeSpeechRecognition()}>
                     <img src={SmallClose} />
                   </div>
                 </div>
@@ -2575,17 +2245,9 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 >
                   <div className="flex gap-2 items-center">
                     <img src={MicrophoneWhiteIcon} />
-                    {/* {!isMicEnabled ? (
-                                      <span>Hold Space or Click button to speak</span>
-                                    ) : ( */}
                     <span>Listening. Click again to submit, Esc to cancel</span>
-                    {/* )} */}
                   </div>
-                  <div
-                    className="cursor-pointer"
-                    // onClick={() => setAudioInput(false)}
-                    onClick={() => closeSpeechRecognition()}
-                  >
+                  <div className="cursor-pointer" onClick={() => closeSpeechRecognition()}>
                     <img src={SmallClose} />
                   </div>
                 </div>
@@ -2596,22 +2258,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 >
                   <div
                     className="flex gap-2 items-center"
-                    // onClick={() => handleSelectVoice(transcript)}
                     onClick={(e) => {
-                      // if (!isStreaming) {
-                      // setController(new AbortController());
-                      // setIsStreaming(true);
-
                       handleSendMessage(e, transcript);
                       setIsTypewriterDone(true);
                       setIsViewPrompts(false);
                       setAudioInput(false);
                       setMicClicked(false);
                       setAudioInput(false);
-                      // Stop the speech recognition
                       SpeechRecognition.stopListening();
-
-                      // Reset the relevant states to their initial values
                       setStartListen(true);
                       setStartSpeech(true);
                       setMicClicked(false);
@@ -2621,17 +2275,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     }}
                   >
                     <img src={MicrophoneWhiteIcon} />
-                    {/* {!isMicEnabled ? (
-                                      <span>Hold Space or Click button to speak</span>
-                                    ) : ( */}
+
                     <span className="cursor-pointer">{transcript}</span>
                     {/* )} */}
                   </div>
-                  <div
-                    className="cursor-pointer"
-                    // onClick={() => setAudioInput(false)}
-                    onClick={() => closeSpeechRecognition()}
-                  >
+                  <div className="cursor-pointer" onClick={() => closeSpeechRecognition()}>
                     <img src={SmallClose} />
                   </div>
                 </div>
@@ -2647,15 +2295,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
               >
                 <img className="w-[16px] h-[16px]" src={Mic} />
               </div>
-              {/* <div
-              className={`flex items-center justify-center mt-[10px] w-[24px] h-[24px] rounded-full cursor-pointer ${
-                isStreaming ? 'disabled cursor-default' : ''
-              }`}
-              onClick={() => !isStreaming && handleAudioInput()} // Conditionally set the onClick handler
-              style={{
-                boxShadow: '0px 0px 10px 0px #00000026',
-              }}
-            ></div> */}
 
               <div className="min-w-[444px] min-h-[90px] text-[#8C90A5] text-[14px] font-normal font-['Arial']">
                 {/* textarea 1 */}
