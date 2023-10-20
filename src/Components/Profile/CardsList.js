@@ -78,7 +78,7 @@ export default function CardsList({ setIsUpgrad, isAddCard, setAddCard, cardList
                                 <div className="pt-[8px] pb-[20px] text-[22px] font-medium text-darkBlue">
                                     <div className='flex items-center justify-between'>
                                         <div className='gap-2 flex items-center'>
-                                            <span className='text-darkblue'>Select card</span>
+                                            <span className='text-darkBlue'>Select card</span>
                                         </div>
                                         <div className='cursor-pointer -mt-[30px]' onClick={() => handleCardPopup(false)}>
                                             <img src={Close} />
@@ -146,7 +146,7 @@ export default function CardsList({ setIsUpgrad, isAddCard, setAddCard, cardList
                                 <div className="pt-[8px] pb-[20px] text-[22px] font-medium text-darkBlue">
                                     <div className='flex items-center justify-between'>
                                         <div className='gap-2 flex items-center'>
-                                            <span className='text-darkblue'>Card Details</span>
+                                            <span className='text-darkBlue'>Card Details</span>
                                         </div>
                                         <div className='cursor-pointer -mt-[30px]' onClick={() => handleCardPopup(false)}>
                                             <img src={Close} />

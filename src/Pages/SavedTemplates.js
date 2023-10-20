@@ -193,7 +193,7 @@ const SavedTemplates = ({
                         <img src={TemplateDocIcon} />
                       </div>
                       <div className="flex flex-col gap-[4px]">
-                        <div className="text-[16px] text-darkblue">{template.name}</div>
+                        <div className="text-[16px] text-darkBlue">{template.name}</div>
                         <div className="text-sm text-darkgray1">{template.type?.name}</div>
                       </div>
                     </div>

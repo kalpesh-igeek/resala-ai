@@ -33,7 +33,7 @@ export default function PlanSelection({ setSelectedPlan, plans, isPlansPopupBox,
                 <div className="pt-[8px] pb-[20px] text-[22px] font-medium text-darkBlue">
                     <div className='flex items-center justify-between'>
                         <div className='gap-2 flex items-center'>
-                            <span className='text-darkblue'>Select Plan</span>
+                            <span className='text-darkBlue'>Select Plan</span>
                         </div>
                         <div className='cursor-pointer -mt-[30px]' onClick={() => handlePopupBox()}>
                             <img src={Close} />

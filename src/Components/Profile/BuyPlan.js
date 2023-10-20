@@ -49,7 +49,7 @@ export default function AddCardPopup({ selectedPlan, isPaymentPopupBox, setIsPay
                 <div className="pt-[8px] pb-[20px] text-[22px] font-medium text-darkBlue">
                   <div className="flex items-center justify-between mb-[21px]">
                     <div className="gap-2 flex items-center">
-                      <span className="text-darkblue">{selectedPlan.planTitle}</span>
+                      <span className="text-darkBlue">{selectedPlan.planTitle}</span>
                     </div>
                     <div className="cursor-pointer -mt-[30px]" onClick={() => handlePayOption(false)}>
                       <img src={Close} />
@@ -57,7 +57,7 @@ export default function AddCardPopup({ selectedPlan, isPaymentPopupBox, setIsPay
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="gap-2 flex items-center text-[16px] text-darkBlue">
-                      <span className="text-darkblue">Total: </span>
+                      <span className="text-darkBlue">Total: </span>
                     </div>
                     <div className="flex text-primaryBlue items-center">
                       <span className="text-[14px] font-medium -mt-[10px]">$</span>

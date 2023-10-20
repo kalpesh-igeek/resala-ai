@@ -470,7 +470,7 @@ const QuickReply = ({
                     key={index}
                     onClick={() => handleSelectLangChange(element.value)}
                   >
-                    <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">{element.label}</div>
+                    <div className="w-[97px] text-[14px] font-['DM Sans']">{element.label}</div>
                   </div>
                 ))}
               </div>
@@ -500,7 +500,7 @@ const QuickReply = ({
                     key={index}
                     onClick={() => handleSelectChange(element.value)}
                   >
-                    <div className="w-[97px] text-[#8C90A5] text-[14px] font-['DM Sans']">{element.label}</div>
+                    <div className="w-[97px] text-[14px] font-['DM Sans']">{element.label}</div>
                   </div>
                 ))}
               </div>
@@ -626,7 +626,7 @@ const QuickReply = ({
           </button>
         </div>
         <div className="col-span-full mb-[11px]">
-          <label for="input" className="block text-[12px] font-bold leading-6 text-gray1">
+          <label for="input" className="block text-[12px] font-bold leading-6 text-darkBlue">
             SENDER'S INTENT
           </label>
           <div className="mt-2">
@@ -638,14 +638,14 @@ const QuickReply = ({
               value={senderIntent}
               onChange={(e) => handleInputChange(e)}
               placeholder=""
-              className="text-[12px] border-gray block w-full rounded-md border p-1.5"
+              className="text-[14px] border-gray block text-[#19224C] w-full rounded-md border p-1.5"
             />
           </div>
         </div>
 
         <div className="mb-[20px]">
           <div className="flex px-[10px] py-[12px] bg-lightblue1 font-medium rounded-md items-center justify-between gap-2">
-            <div className="cursor-pointer w-full" onClick={handlePlanInfo}>
+            <div className="cursor-pointer w-full text-[12px]" onClick={handlePlanInfo}>
               IDEAS FOR REPLY
             </div>
             {isReplies ? (
@@ -658,7 +658,7 @@ const QuickReply = ({
             <div className="flex flex-col gap-2 border-t border-white py-[10px]">
               {ideasList.map((idea, index) => (
                 <div
-                  className="flex text-[12px] p-[15px] bg-lightblue1 items-start gap-2 rounded-[6px] cursor-pointer"
+                  className="flex text-[12px] p-[15px] hoverIdeas items-start gap-2 rounded-[6px] cursor-pointer "
                   onClick={() => {
                     handleGetReply(idea);
                     setSelectedIdea(idea);
@@ -670,7 +670,7 @@ const QuickReply = ({
                   <img src={idea.image_link} />
                   <div className="block">
                     <span className="text-[12px] font-bold mr-[5px]">{idea.type}</span>
-                    <span className="text-[12px] font-medium">{idea.idea}</span>
+                    <span className="text-[12px] font-[400]">{idea.idea}</span>
                   </div>
                 </div>
               ))}
@@ -697,7 +697,7 @@ const QuickReply = ({
             rows="1"
             value={customIdea}
             placeholder="Tell me what to write for you"
-            className="text-[12px] pt-[5px] block w-full rounded-md focus:outline-0"
+            className="text-[14px] text-[#8C90A5] pt-[5px] block w-full rounded-md focus:outline-0"
             onChange={(e) => setCustomIdea(e.target.value)}
             onKeyDown={(e) => {
               // if (!isStreaming) {

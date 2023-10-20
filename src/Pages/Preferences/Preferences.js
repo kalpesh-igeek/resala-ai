@@ -109,7 +109,7 @@ const Preferences = ({ selectedItems, setSelectedItems }) => {
           className="flex items-center px-[20px] py-[11px] justify-between bg-white  border-b-gray border-b-[1px] border-l-gray border-l-[1px]"
           style={{ position: 'sticky', top: '57px', zIndex: '9999999' }}
         >
-          <div className="gap-2 flex items-center text-[16px] text-darkBlue">
+          <div className="gap-2 flex font-[500] items-center text-[16px] text-darkBlue">
             <div className="cursor-pointer" onClick={() => navigate('/')}>
               <img src={ArrowLeft} />
             </div>
@@ -119,7 +119,7 @@ const Preferences = ({ selectedItems, setSelectedItems }) => {
         <div className="px-[20px] ">
           <div className="control py-[24px] border-b border-gray flex justify-between items-center">
             <div>
-              <div className="text-[16px] text-darkblue font-medium mb-[5px]">Dark Mode</div>
+              <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Dark Mode</div>
               <div className="text-[14px] text-darkgray1">Apply Dak mode Theme to Chrome Extension</div>
             </div>
 
@@ -133,7 +133,7 @@ const Preferences = ({ selectedItems, setSelectedItems }) => {
                     className={
                       selectTabMode === data.id
                         ? 'rounded-[100px] gap-[8px] text-darkBlue text-[12px] font-bold bg-graywhite shadow-sm focus:outline-0 px-[6px] py-[6px] '
-                        : 'text-[12px] text-lightgray2 px-[6px] py-[6px]'
+                        : 'text-[12px] text-[#5F6583] px-[6px] py-[6px]'
                     }
                     key={id}
                     onClick={() => handleSelectTabMode(data.id)}
@@ -146,7 +146,7 @@ const Preferences = ({ selectedItems, setSelectedItems }) => {
           </div>
           <div className="control py-[24px] border-b border-gray flex justify-between items-center">
             <div className="flex gap-2">
-              <div className="text-[16px] text-darkblue font-medium mb-[5px]">Extension Sidebar</div>
+              <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Extension Sidebar</div>
               <img className="w-[15px] h-[15px]" src={RequireIcon} />
             </div>
 
@@ -160,7 +160,7 @@ const Preferences = ({ selectedItems, setSelectedItems }) => {
                     className={
                       selectTabPlace === data.id
                         ? 'rounded-[100px] gap-[8px] text-darkBlue text-[12px] font-bold bg-graywhite shadow-sm focus:outline-0 px-[6px] py-[6px]'
-                        : 'text-[12px] text-lightgray2 px-[6px] py-[6px]'
+                        : 'text-[12px] text-[#5F6583] px-[6px] py-[6px]'
                     }
                     key={id}
                     onClick={() => handleSelectTabPlace(data.id)}
@@ -173,7 +173,7 @@ const Preferences = ({ selectedItems, setSelectedItems }) => {
           </div>
           <div className="control py-[24px] border-b border-gray flex justify-between items-center">
             <div className="flex gap-2">
-              <div className="text-[16px] text-darkblue font-medium mb-[5px]">Extension Icon</div>
+              <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Extension Icon</div>
               <img className="w-[15px] h-[15px]" src={RequireIcon} />
             </div>
             {/* <div>
@@ -189,7 +189,7 @@ const Preferences = ({ selectedItems, setSelectedItems }) => {
                     className={
                       selectTabEffect === data.id
                         ? 'rounded-[100px] gap-[8px] text-darkBlue text-[12px] font-bold bg-graywhite shadow-sm focus:outline-0 px-[6px] py-[6px]'
-                        : 'text-[12px] text-lightgray2 px-[6px] py-[6px]'
+                        : 'text-[12px] text-[#5F6583] px-[6px] py-[6px]'
                     }
                     key={id}
                     onClick={() => handleSelectTabEffect(data.id)}
@@ -204,7 +204,7 @@ const Preferences = ({ selectedItems, setSelectedItems }) => {
 
           <div className="control py-[24px] border-b border-gray flex justify-between items-center">
             <div>
-              <div className="text-[16px] text-darkblue font-medium mb-[5px]">Language</div>
+              <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Language</div>
             </div>
             <Select
               className="language flex gap-1 items-center justify-center rounded-full bg-gray3 text-[12px] font-bold text-darkBlue cursor-pointer"
@@ -262,7 +262,7 @@ const Preferences = ({ selectedItems, setSelectedItems }) => {
 
           <div className="control py-[24px] border-b border-gray flex justify-between items-center">
             <div>
-              <div className="text-[16px] text-darkblue font-medium mb-[5px]">Quick Action Button</div>
+              <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Quick Action Button</div>
               <div className="text-[14px] text-darkgray1">Display when text is selected</div>
             </div>
             <div>
@@ -282,8 +282,8 @@ const Preferences = ({ selectedItems, setSelectedItems }) => {
           </div>
           <div className="control py-[24px] border-b border-gray flex justify-between items-center">
             <div>
-              <div className="text-[16px] text-darkblue font-medium mb-[5px]">Youtube Summary</div>
-              <div className="text-[14px] text-darkgray1">
+              <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Youtube Summary</div>
+              <div className="text-[14px] text-darkgray1 leading-[22px]">
                 Display “YouTube Summary” panel alongside YouTube videos.
               </div>
             </div>
@@ -301,8 +301,8 @@ const Preferences = ({ selectedItems, setSelectedItems }) => {
           </div>
           <div className="control py-[24px] border-b border-gray flex justify-between items-center">
             <div>
-              <div className="text-[16px] text-darkblue font-medium mb-[5px]">Reading Summary</div>
-              <div className="text-[14px] text-darkgray1">
+              <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Reading Summary</div>
+              <div className="text-[14px] text-darkgray1 leading-[22px]">
                 Display “Resala Summary Button” alongside article website pages.
               </div>
             </div>
@@ -320,8 +320,8 @@ const Preferences = ({ selectedItems, setSelectedItems }) => {
           </div>
           <div className="control py-[24px] border-b border-gray flex justify-between items-center">
             <div>
-              <div className="text-[16px] text-darkblue font-medium mb-[5px]">Social Media</div>
-              <div className="text-[14px] text-darkgray1">
+              <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Social Media</div>
+              <div className="text-[14px] text-darkgray1 leading-[22px]">
                 This feature helps you get ai powered responses on social media platforms.
               </div>
             </div>

@@ -706,6 +706,7 @@ const MainScreen = ({
       const hostname = window.location.hostname;
       // console.log({ hostname });
       if (hostname == 'en.wikipedia.org') {
+       // setChatData((prevMessages) => [...prevMessages, { msg: 'Summarizing : '+ document.title, type: 'ai' }]);
         setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
         getPageSummary('wikipedia');
       }
@@ -2312,8 +2313,8 @@ const MainScreen = ({
                         data-headlessui-state="selected"
                         className={({ selected }) =>
                           classNames(
-                            selected ? 'border-primaryBlue text-black' : 'border-transparent text-gray1',
-                            'flex-1 whitespace-nowrap border-b-2 py-[12px] text-[14px] font-medium mr-[30px] focus:outline-0'
+                            selected ? 'border-primaryBlue text-[#19224C]' : 'border-transparent text-gray1',
+                            'flex-1 whitespace-nowrap border-b-2 py-[12px] text-[16px] font-medium mr-[30px] focus:outline-0'
                           )
                         }
                         onClick={() => {
@@ -2486,7 +2487,7 @@ const MainScreen = ({
                                 <div className="text-[12px] font-[700] text-[#8C90A5] px-[8px] py-[4px]">
                                   CHAT SETTING
                                 </div>
-                                <div className="text-[14px] text-[#19224C] flex items-center gap-2 text-darkblue bg-gray4 px-[6px] py-[4px] rounded-[4px]">
+                                <div className="text-[14px] text-[#19224C] flex items-center gap-2 text-darkBlue bg-gray4 px-[6px] py-[4px] rounded-[4px]">
                                   <img src={TranslateIcon} />
                                   Response Language
                                 </div>
@@ -2611,7 +2612,7 @@ const MainScreen = ({
                                       <div ref={selectRef}>
                                         <Select
                                           className="border border-gray rounded-md text-[12px]"
-                                          menuPlacement="top"
+                                          menuPlacement="top" 
                                           defaultValue={outputLanguagesVoice[0]}
                                           onChange={setSelectedOption}
                                           options={outputLanguagesVoice}
@@ -2638,6 +2639,7 @@ const MainScreen = ({
                                               minHeight: '216px',
                                               right: '-9px',
                                               overflow: 'scroll',
+                                              borderWidth : '0px'
                                             }),
                                             option: (styles, { data, isDisabled, isFocused, isSelected }) => {
                                               return {
