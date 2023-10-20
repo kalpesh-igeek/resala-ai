@@ -150,13 +150,13 @@ const Billings = () => {
         </div>
       </div>
       <div className="py-[12px] px-[20px]">
-        <label for="input" className="block text-[10px] font-bold leading-6 text-gray1 uppercase">
+        <label for="input" className="block text-[12px] font-bold text-gray1 uppercase">
           Current Plan
         </label>
         <div className="border border-gray pt-[14px] rounded-[6px]">
           {selectedPlan ? (
-            <div className="flex flex-col px-[10px]">
-              <div className="flex items-center justify-between mb-[12px]">
+            <div className="flex flex-col ">
+              <div className="flex items-center justify-between mb-[12px] px-[10px]">
                 <div className="flex items-center gap-2">
                   <span>{selectedPlan.planTitle}</span>
                   <div className="flex px-[8px] py-[4px] text-[12px] font-medium items-center border border-primaryBlue gap-2 rounded-full">
@@ -170,9 +170,9 @@ const Billings = () => {
                   <span className="text-[16px] font-medium -mb-[10px]">/{selectedPlan.planRenewal}</span>
                 </div>
               </div>
-              <div className="flex flex-col text-[10px] mb-[10px]">
-                <span className="text-darkgray1">Expire Plan on</span>
-                <span className="text-darkBlue">5th July - 2023</span>
+              <div className="flex flex-col text-[12px] mb-[10px] px-[10px]">
+                <span className="text-[#8C90A5] font-[700]">Expire Plan on</span>
+                <span className="text-darkBlue font-[500]">5th July - 2023</span>
               </div>
               <div className="flex items-center justify-end px-[10px] border-t border-gray py-[10px]">
                 <button
@@ -221,7 +221,7 @@ const Billings = () => {
       )}
       <div className="py-[12px] px-[20px]">
         <div className="mb-[16px]">
-          <label for="input" className="block text-[10px] font-bold leading-6 text-gray1 uppercase mb-[10px]">
+          <label for="input" className="block text-[12px] font-bold leading-6 text-gray1 uppercase mb-[10px]">
             Reisala.ai Pro plan
           </label>
           <RadioGroup value={currentRenewal} onChange={setCurrentRenewal}>
@@ -251,6 +251,7 @@ const Billings = () => {
             </div>
           </RadioGroup>
         </div>
+        
         {plans.map((item) => (
           <PlanInfo
             selectedCard={selectedCard}

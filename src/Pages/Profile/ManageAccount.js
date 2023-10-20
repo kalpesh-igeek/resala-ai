@@ -53,7 +53,7 @@ const ManageAccount = () => {
                 <div className="cursor-pointer" onClick={() => navigate('/')}>
                   <img src={ArrowLeft} />
                 </div>
-                <span>Billings</span>
+                <span>Profile</span>
               </div>
               <div
                 className="cursor-pointer"
@@ -62,9 +62,11 @@ const ManageAccount = () => {
                 <img className="w-[14px] h-[14px]" src={Close} />
               </div>
             </div>
+            <form>
             <div className="flex flex-col justify-center p-[20px]">
               <InputField
-                className="block w-full rounded-md border border-gray px-[15px] py-[16px] text-[14px] mb-[20px] text-darkBlue placeholder:text-gray2 focus:bg-white"
+                isFixedLabel={true}
+                className="block w-full rounded-md border bg-[#EEF6FF] border-gray px-[15px] py-[16px] text-[14px] mb-[20px] text-darkBlue placeholder:text-gray2 focus:bg-white"
                 name="email"
                 label="Email Address"
                 type="text"
@@ -74,7 +76,8 @@ const ManageAccount = () => {
 
               <div className="relative">
                 <InputField
-                  className="w-full rounded-md border border-gray px-[15px] py-[16px] text-[14px] mb-[20px] text-darkBlue placeholder:text-gray2 focus:bg-white"
+                  isFixedLabel={true}
+                  className="w-full rounded-md border bg-[#EEF6FF] border-gray px-[15px] py-[16px] text-[14px] mb-[20px] text-darkBlue placeholder:text-gray2 focus:bg-white"
                   name="name"
                   label="Name"
                   type="text"
@@ -90,7 +93,8 @@ const ManageAccount = () => {
               </div>
               <div className="relative">
                 <InputField
-                  className="block w-full rounded-md border border-gray px-[15px] py-[16px] text-[14px] mb-[20px] cursor-text text-gray2 empty:text-gray2 focus:bg-white"
+                  isFixedLabel={true}
+                  className="block w-full rounded-md border bg-[#EEF6FF] border-gray px-[15px] py-[16px] text-[14px] mb-[20px] cursor-text text-gray2 empty:text-gray2 focus:bg-white"
                   name="password"
                   label="Password"
                   type="password"
@@ -115,6 +119,7 @@ const ManageAccount = () => {
                 </button>
               </div>
             </div>
+            </form>
           </Header>
           <ModificationPopup
             isModificationBox={isModificationBox}

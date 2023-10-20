@@ -2920,7 +2920,7 @@ const MainScreen = ({
                         <React.Fragment>
                           <div className="flex items-center gap-3 mb-[15px]">
                             <div className="col-span-full items-center w-full">
-                              <label for="input" className="block text-[12px] font-bold leading-6 text-gray1">
+                              <label for="input" className="block text-[12px] font-bold leading-6 text-darkBlue">
                                 TEMPLATE NAME
                               </label>
                               <div>
@@ -2936,7 +2936,7 @@ const MainScreen = ({
                               </div>
                             </div>
                             <div className="col-span-full items-center w-full">
-                              <label for="input" className="block text-[12px] font-bold leading-6 text-gray1">
+                              <label for="input" className="block text-[12px] font-bold leading-6 text-darkBlue">
                                 TEMPLATE TYPE
                               </label>
                               <div>
@@ -3022,7 +3022,7 @@ const MainScreen = ({
                             <div className="flex justify-between item-center">
                               <label
                                 for="input"
-                                className="block text-[12px] font-bold leading-6 text-gray1 whitespace-nowrap"
+                                className="block text-[12px] font-bold leading-6 text-darkBlue whitespace-nowrap"
                               >
                                 SAVED TEMPLATE
                               </label>
@@ -3067,7 +3067,7 @@ const MainScreen = ({
                           </Tab.Group>
                           {selectTab === 1 ? (
                             <div className="col-span-full">
-                              <label for="input" className="block text-[12px] font-bold leading-6 text-gray1">
+                              <label for="input" className="block text-[12px] font-bold leading-6 text-[]">
                                 INPUT
                               </label>
                               <div>
@@ -3088,7 +3088,7 @@ const MainScreen = ({
                             </div>
                           ) : (
                             <div className="col-span-full">
-                              <label for="input" className="block text-[12px] font-bold leading-6 text-gray1">
+                              <label for="input" className="block text-[12px] font-bold leading-6 text-[#19224C]">
                                 ORIGINAL INPUT
                               </label>
                               <div>
@@ -3104,7 +3104,7 @@ const MainScreen = ({
                                 />
                               </div>
                               {/* {errors.input_text && <p className="text-red text-[12px]">{errors.input_text}</p>} */}
-                              <label for="input" className="block text-[12px] font-bold leading-6 text-gray1 mt-[16px]">
+                              <label for="input" className="block text-[12px] font-bold leading-6 text-[#19224C] mt-[16px]">
                                 WHAT TO REPLY
                               </label>
                               <div>
@@ -3179,7 +3179,7 @@ const MainScreen = ({
                                         checked || action?.name === selectedAction?.name
                                           ? 'border-lightblue bg-lightblue1'
                                           : '',
-                                        'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
+                                        'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-[#D9EBFF]'
                                       )
                                     }
                                   >
@@ -3211,7 +3211,7 @@ const MainScreen = ({
                                         checked || action?.name === selectedFormat?.name
                                           ? 'border-lightblue bg-lightblue1'
                                           : '',
-                                        'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
+                                        'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-[#D9EBFF]'
                                       )
                                     }
                                   >
@@ -3244,7 +3244,7 @@ const MainScreen = ({
                                       checked || length?.name === selectedLength?.name
                                         ? 'border-lightblue bg-lightblue1'
                                         : '',
-                                      'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
+                                      'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-[#D9EBFF]'
                                     )
                                   }
                                 >
@@ -3275,7 +3275,7 @@ const MainScreen = ({
                                       checked || tone?.name === selectedTone?.name
                                         ? 'border-lightblue bg-lightblue1'
                                         : '',
-                                      'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
+                                      'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-[#D9EBFF]'
                                     )
                                   }
                                 >
@@ -3306,7 +3306,7 @@ const MainScreen = ({
                                       checked || language?.name === selectedLanguage?.name
                                         ? 'border-lightblue bg-lightblue1'
                                         : '',
-                                      'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-lightblue1'
+                                      'w-[87px] group relative flex items-center justify-center rounded-md border border-gray px-1 py-2 text-[12px] font-medium hover:border-lightblue hover:bg-[#D9EBFF]'
                                     )
                                   }
                                 >
@@ -3441,7 +3441,7 @@ const MainScreen = ({
                             <div className="flex gap-2 items-center">
                               <label
                                 for="input"
-                                className="block text-[12px] font-bold leading-6 text-gray1 whitespace-nowrap"
+                                className="block text-[12px] font-bold leading-6 text-darkBlue whitespace-nowrap"
                               >
                                 DRAFT PREVIEW
                               </label>
@@ -3589,7 +3589,7 @@ const MainScreen = ({
                             <div className="flex gap-2 items-center">
                               <label
                                 for="input"
-                                className="block text-[12px] font-bold leading-6 text-gray1 whitespace-nowrap"
+                                className="block text-[12px] font-bold leading-6 text-darkBlue whitespace-nowrap"
                               >
                                 DRAFT PREVIEW
                               </label>

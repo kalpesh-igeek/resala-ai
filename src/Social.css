@@ -18,11 +18,26 @@
 }
 
 .hoverIdeas {
-  background-color:#EEF6FF !important;
+  background-color: #EEF6FF !important;
 
 }
 .hoverIdeas:hover {
-  background-color:#D9EBFF !important;
-
+  background-color: #D9EBFF !important;
 }
 
+.savedTemplate {
+  background-color: #FFFFFF !important;
+}
+
+.savedTemplate:hover {
+  background-color: #F9F9FB !important;
+}
+
+.plan {
+  background-color: #EEF6FF !important;
+}
+
+.plan:hover {
+  background-color: #D9EBFF !important;
+
+}

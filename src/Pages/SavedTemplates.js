@@ -163,8 +163,8 @@ const SavedTemplates = ({
                   <Tab
                     className={
                       selectTab === data.id
-                        ? 'w-max rounded-[100px] shadow-sm text-[11px] font-bold bg-graywhite px-[7px] py-[4px]'
-                        : 'w-max text-[11px] text-lightgray2 px-[7px] py-[4px]'
+                        ? 'w-max rounded-[100px] text-darkBlue shadow-sm text-[12px] font-[700] bg-graywhite px-[7px] py-[4px]'
+                        : 'w-max text-[12px] font-[400] text-[#5F6583] px-[7px] py-[4px]'
                     }
                     key={id}
                     onClick={() => handleSelectTab(data)}
@@ -182,7 +182,7 @@ const SavedTemplates = ({
                 .filter((template) => selectTab === 0 || template.type.id === selectTab)
                 .map((template, index) => (
                   <div
-                    className="p-[11px] bg-white border rounded-[6px] border-gray mb-[15px] flex items-center justify-between"
+                    className="p-[11px] savedTemplate border rounded-[6px] border-[#DFE4EC] mb-[15px] flex items-center justify-between"
                     key={index}
                   >
                     <div
@@ -193,8 +193,8 @@ const SavedTemplates = ({
                         <img src={TemplateDocIcon} />
                       </div>
                       <div className="flex flex-col gap-[4px]">
-                        <div className="text-[16px] text-darkBlue">{template.name}</div>
-                        <div className="text-sm text-darkgray1">{template.type?.name}</div>
+                        <div className="text-[16px] text-darkBlue font-medium">{template.name}</div>
+                        <div className="text-[12px] text-darkgray1">{template.type?.name}</div>
                       </div>
                     </div>
 
