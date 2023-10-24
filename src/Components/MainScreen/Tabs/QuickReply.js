@@ -16,7 +16,7 @@ import AcknowledgeIcon from '../../../utils/MainScreen/Tab/AcknowledgeIcon.svg';
 import DeclineIcon from '../../../utils/MainScreen/Tab/DeclineIcon.svg';
 
 import { getIdeasReply } from '../../../redux/reducers/QuickReplySlice/QuickReplySlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import { getToken } from '../../../utils/localstorage';
 
@@ -64,7 +64,7 @@ const QuickReply = ({
   const [isReplies, setIsReplies] = useState(false);
   const [selectedIdea, setSelectedIdea] = useState();
   const [ideasList, setIdeasList] = useState([]);
-  const [senderIntent, setSenderIntent] = useState('');
+  const [senderIntent, setSenderIntent] = useState(null);
   const [customIdea, setCustomIdea] = useState('');
   const [selectedOption, setSelectedOption] = useState(tones[0].label);
   const [selectedLang, setSelectedLang] = useState(exeLang[0].label);
@@ -132,6 +132,8 @@ const QuickReply = ({
     }
   }, [resultText, currentPageIndexTab1]);
 
+  const { isExtensionOpen } = useSelector((state) => state.extension);
+
   const fetchIdeasOfReply = async () => {
     const res = await dispatch(getIdeasReply());
 
@@ -149,8 +151,9 @@ const QuickReply = ({
   useEffect(() => {
     if (SELECTION === 'quickreply') {
       fetchIdeasOfReply();
+      setSenderIntent(null)
     }
-  }, []);
+  }, [isExtensionOpen]);
 
   const getSendersIntent = async () => {
     const emailContentElement = document.getElementsByClassName('a3s aiL ')[0]; // Use querySelector for class selectors
@@ -207,9 +210,10 @@ const QuickReply = ({
 
   useEffect(() => {
     // if (emailContent) {
+      setSenderIntent(null)
     getSendersIntent();
     // }
-  }, []);
+  }, [isExtensionOpen]);
 
   const handleGetReply = async (idea) => {
     setIsStreamingComp(true);

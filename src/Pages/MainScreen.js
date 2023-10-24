@@ -3508,7 +3508,7 @@ const MainScreen = ({
                           {activeTab === 'chat' && isNewDraft ? (
                             <textarea
                               ref={draftPreviewTextareaRef}
-                              style={{ resize: 'none', minHeight: '3em' }}
+                              style={{ resize: 'none',  minHeight: '8em', maxHeight: '300px', height:'auto'}}
                               id="draftPreview"
                               name="draftPreview"
                               // rows={calculateTextareaRows() || 2}
@@ -3524,7 +3524,7 @@ const MainScreen = ({
                             // </div>
                             <textarea
                               ref={draftPreviewTextareaRef}
-                              style={{ resize: 'none', minHeight: '3em', maxHeight: '300px' }}
+                              style={{ resize: 'none', minHeight: '8em', maxHeight: '300px', height:'auto' }}
                               id="draftPreview"
                               name="draftPreview"
                               // rows="22"
@@ -3653,7 +3653,7 @@ const MainScreen = ({
                           {activeTab === 'chat' && isNewDraft ? (
                             <textarea
                               ref={draftPreviewTextareaRef}
-                              style={{ resize: 'none', minHeight: '3em' }}
+                              style={{ resize: 'none',  minHeight: '8em', maxHeight: '300px', height:'auto' }}
                               id="draftPreview"
                               name="draftPreview"
                               rows="5"
@@ -3667,7 +3667,7 @@ const MainScreen = ({
                             />
                           ) : (
                             <textarea
-                              style={{ resize: 'none' }}
+                              style={{ resize: 'none', minHeight: '8em', maxHeight: '300px' ,height:'auto'}}
                               id="draftPreview"
                               name="draftPreview"
                               // rows="22"

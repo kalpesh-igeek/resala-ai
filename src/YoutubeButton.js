@@ -184,7 +184,7 @@ const YoutubeButton = ({handleSidebar}) => {
           </div>
           <div id='summarizeVideo' className='w-[112px] text-white !font-dmsans text-[12px] font-[500] w-[112px] h-[28px] p-[6px] bg-[#1678F2] rounded-[4px] m-[16px] justify-center flex items-center cursor-pointer' style={{ wordWrap:'break-word' }} >Summarize Video</div>
         </div>
-        <div id="summarizeVideoData" className='hidden summarizeVideo p-[16px] pt-[6px] text-[#5F6583] text-[12px] !font-dmsans font-[400]' style={{ wordWrap: 'break-word' }}>
+        <div id="summarizeVideoData" className='hidden summarizeVideo p-[16px] pt-[6px] text-[#5F6583] text-[14px] !font-dmsans font-[400]' style={{ wordWrap: 'break-word' }}>
           <div id='summarizeVideoResponse'>{summaryData[0] && summaryData[0].msg}</div>
           <div className='pt-[16px]'>
             <div className='pl-[8px] pr-[8px] pt-[6px] pb-[6px] rounded-[14.40px] justify-flex-start items-center gap-[4px] inline-flex cursor-pointer' style={{ border: '1px #1678F2 solid'}} id='ContinueInChat'>

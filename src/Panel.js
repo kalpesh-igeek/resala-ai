@@ -101,14 +101,18 @@ export default function Panel({ local }) {
   const [height, setHeight] = useState(window.innerHeight);
   const [width, setWidth] = useState(window.innerWidth);
 
+  const [requestGreeting, setRequestGreeting] = useState();
   chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    if (isExtensionOpen) {
+    setRequestGreeting(undefined);
+    if (typeof request.greeting != 'undefined' && isExtensionOpen) {
       dispatch(handleToggle(false));
-    } else {
-      dispatch(handleToggle(request.greeting));
+      setRequestGreeting(false);
+    } else if (typeof request.greeting != 'undefined') {
+      dispatch(handleToggle(true));
+      setRequestGreeting(true);
     }
     sendResponse('我收到你的消息了：' + JSON.stringify('request'));
-    console.log(request.greeting);
+    // console.log(request.greeting);
   });
 
   useEffect(() => {
@@ -286,30 +290,52 @@ export default function Panel({ local }) {
       }, 3000);
     } else if (hostname == 'mail.google.com') {
       // console.log('mail is already');
-      setTimeout(() => {
-        // Get a reference to the scrollable element
-        const scrollableContent = document.getElementsByClassName('a98')[0];
-        // Add a scroll event listener to the scrollable element
-        scrollableContent.addEventListener('wheel', (event) => {
-          myFunction();
-        });
-        const oldQuickReply = document.getElementById('cloneQuickReply');
-        if (oldQuickReply == undefined) {
-          const quickReply = document.getElementById('quickButton');
-          const cloneQuickReply = quickReply.cloneNode(true);
-          cloneQuickReply.id = 'cloneQuickReply';
-          cloneQuickReply.classList.add('hidden');
-          const quickPosition = document.getElementsByClassName('hj')[0];
-          if (quickPosition) {
-            cloneQuickReply.classList.remove('hidden');
-            quickPosition.childNodes[0].prepend(cloneQuickReply);
+
+      setInterval(() => {
+        let presentation = document.getElementsByClassName('amn')[0];
+        if (presentation) {
+          const oldQuickReply = document.getElementById('cloneQuickReply');
+          if (oldQuickReply == undefined) {
+            const quickReply = document.getElementById('quickButton');
+            const cloneQuickReply = quickReply.cloneNode(true);
+            cloneQuickReply.id = 'cloneQuickReply';
+            cloneQuickReply.classList.add('hidden');
+            cloneQuickReply.style = 'margin-left: 8px';
+            presentation.append(cloneQuickReply);
             const cloneQuickReplyButton = document.getElementById('cloneQuickReply');
             cloneQuickReplyButton.addEventListener('click', () => {
+              dispatch(handleToggle(true));
               handleSidebar('quickreply');
             });
           }
         }
-      }, 3000);
+      }, 1000);
+
+      // setTimeout(() => {
+      //   // Get a reference to the scrollable element
+      //   const scrollableContent = document.getElementsByClassName('a98')[0];
+      //   // Add a scroll event listener to the scrollable element
+      //   scrollableContent.addEventListener('wheel', (event) => {
+      //     myFunction();
+      //   });
+      //   const oldQuickReply = document.getElementById('cloneQuickReply');
+      //   if (oldQuickReply == undefined) {
+      //     const quickReply = document.getElementById('quickButton');
+      //     const cloneQuickReply = quickReply.cloneNode(true);
+      //     cloneQuickReply.id = 'cloneQuickReply';
+      //     cloneQuickReply.classList.add('hidden');
+      //     const quickPosition = document.getElementsByClassName('hj')[0];
+      //     if (quickPosition) {
+      //       cloneQuickReply.classList.remove('hidden');
+      //       quickPosition.childNodes[0].prepend(cloneQuickReply);
+      //       const cloneQuickReplyButton = document.getElementById('cloneQuickReply');
+      //       cloneQuickReplyButton.addEventListener('click', () => {
+      //         handleSidebar('quickreply');
+      //       });
+      //     }
+      //   }
+      // }, 3000);
+
       // const quickPosition = document.querySelectorAll('[aria-label="Print all"]')[0];
       // if (quickPosition) {
       // quickReply.classList.remove('hidden');
@@ -938,7 +964,13 @@ export default function Panel({ local }) {
   //   }, 2000);
   // }, [mailId]); // Run this useEffect when mailId changes
 
-  document.getElementsByTagName('body')[0].onmouseup = (e) => myFunction(e);
+  document.getElementsByTagName('body')[0].onmouseup = (e) => {
+    if (e.detail > 1) {
+      e.preventDefault();
+    }else{
+      myFunction(e);
+    }
+  };
   chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     setIsGmailActive(false);
     if (request.greeting === true) {
@@ -969,6 +1001,7 @@ export default function Panel({ local }) {
     // document.querySelectorAll('[style="position: relative;"]')[0]
     //   ? (document.querySelectorAll('[style="position: relative;"]')[0].style = 'margin-right: 500px')
     //   : '';
+    dispatch(handleToggle(true));
   };
 
   useEffect(() => {
@@ -1089,36 +1122,39 @@ export default function Panel({ local }) {
   // }, []);
 
   useLayoutEffect(() => {
-    if (isExtensionOpen) {
-      console.log('add extension width');
-      // Creating a style element
-      var styleElement = document.createElement('style');
-      styleElement.id = 'resala_style_right_space';
+    console.log({ requestGreeting });
+    if (typeof requestGreeting != 'undefined') {
+      if (isExtensionOpen) {
+        console.log('add extension width');
+        // Creating a style element
+        var styleElement = document.createElement('style');
+        styleElement.id = 'resala_style_right_space';
 
-      // Setting the CSS content
-      var cssContent = `
-          html {
-            width: calc(100% - 500px) !important;
-            position: relative !important;
-            min-height: 100vh !important;
-          }
-      `;
+        // Setting the CSS content
+        var cssContent = `
+            html {
+              width: calc(100% - 500px) !important;
+              position: relative !important;
+              min-height: 100vh !important;
+            }
+        `;
 
-      // Adding the CSS content to the style element
-      if (styleElement.styleSheet) {
-        // This is required for IE8 and below.
-        styleElement.styleSheet.cssText = cssContent;
+        // Adding the CSS content to the style element
+        if (styleElement.styleSheet) {
+          // This is required for IE8 and below.
+          styleElement.styleSheet.cssText = cssContent;
+        } else {
+          styleElement.appendChild(document.createTextNode(cssContent));
+        }
+        // Appending the style element to the document head
+        document.head.appendChild(styleElement);
       } else {
-        styleElement.appendChild(document.createTextNode(cssContent));
+        console.log('remove extension width');
+        document.getElementById('resala_style_right_space')
+          ? document.getElementById('resala_style_right_space').remove()
+          : '';
+        // remove extension width
       }
-      // Appending the style element to the document head
-      document.head.appendChild(styleElement);
-    } else {
-      console.log('remove extension width');
-      document.getElementById('resala_style_right_space')
-        ? document.getElementById('resala_style_right_space').remove()
-        : '';
-      // remove extension width
     }
   }, [isExtensionOpen, !isExtensionOpen]);
 
