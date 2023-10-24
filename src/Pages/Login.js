@@ -39,7 +39,7 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
     const { name, value } = e.target;
     setInputValue({
       ...inputValue,
-      [name]: value,
+      [name]: name === 'email' ? value.toString().trim() : value
     });
     if (errors[name])
       setErrors((error) => {
@@ -67,6 +67,11 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
         setInvalidCred(res?.payload?.response?.data?.Message);
         // setTimeout(()=>{},4000)
       }
+
+      if(res.payload?.Error){
+        setErrors({ email : res.payload?.Message});
+      }
+
       if (res.payload?.status === 200) {
         setInvalidCred('');
         setIsRegistered(true);
@@ -232,7 +237,7 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
                   name="password"
                   label="Password"
                   type={isPasswordVisible ? 'text' : 'password'}
-                  placeholder="Password"
+                  placeholder=" "
                   // isvisible={true}
                   handleChange={(e) => handleChange(e)}
                   value={inputValue.password}

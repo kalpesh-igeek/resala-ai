@@ -6,6 +6,7 @@ import Panel from './Panel';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 import { Toaster } from 'react-hot-toast';
+import { SkeletonTheme } from 'react-loading-skeleton';
 
 async function init() {
   // Create div wrapper
@@ -75,7 +76,9 @@ async function init() {
           //   // },
           // }}
           />
-          <Panel local={data} />
+           <SkeletonTheme baseColor="#F3F4F8" highlightColor="#F9F9FB" borderRadius="2px">
+            <Panel local={data} />
+          </SkeletonTheme>
         </MemoryRouter>
       </Provider>
     );

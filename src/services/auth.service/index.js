@@ -57,6 +57,7 @@ const sendOtpMail = async (payload) => {
   } catch (error) {
     // Toast('error', error?.response?.data?.message);
     // console.log('error', error?.response?.data?.message);
+    return error;
   }
 };
 

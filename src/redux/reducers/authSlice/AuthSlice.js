@@ -55,9 +55,9 @@ export const login = createAsyncThunk('auth/login', async (payload) => {
 });
 
 export const sendOtpMail = createAsyncThunk('auth/sendOtpMail', async (payload) => {
-  const { data, status } = await authService.sendOtpMail(payload);
-  data.status = status;
-  return data;
+  const res= await authService.sendOtpMail(payload);
+ //data.status = status;
+  return res;
 });
 
 export const forgotPassword = createAsyncThunk('auth/forgotPassword', async (payload) => {

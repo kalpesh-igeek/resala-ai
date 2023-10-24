@@ -6,6 +6,8 @@ import { forgotPasswordDetails, sendOtpMail } from '../../redux/reducers/authSli
 import { emailCheck } from '../../utils/validation';
 import { useDispatch, useSelector } from 'react-redux';
 import SubHeader from '../../Layout/SubHeader';
+import InforCircleIcon from '../../utils/Account/Icons/info-circle.svg';
+
 
 const ForgetPassword = () => {
   const navigate = useNavigate();
@@ -18,7 +20,7 @@ const ForgetPassword = () => {
     const { name, value } = e.target;
     setInputValue({
       ...inputValue,
-      [name]: value,
+      [name]: value.toString().trim(),
     });
     if (errors[name])
       setErrors((error) => {
@@ -39,6 +41,11 @@ const ForgetPassword = () => {
     if (!res.payload) {
       return;
     }
+
+    if(res.payload?.Error){
+      setErrors({ email : res.payload?.Message});
+    }
+
     if (res.payload.status === 200) {
       const res = await dispatch(forgotPasswordDetails(inputValue));
       navigate('/otpverification', { state: { userEmail: res?.payload } });
@@ -68,11 +75,19 @@ const ForgetPassword = () => {
               name="email"
               label="Email Address"
               type="email"
-              placeholder="Email address"
+              placeholder=" "
               handleChange={(e) => handleChange(e)}
               value={inputValue?.email}
             />
-            {errors.email && <p className="text-red text-[12px] mb-[5px]">{errors.email}</p>}
+            {errors.email && 
+            // <p className="text-red text-[12px] mb-[5px]">{errors.email}</p>
+            <div className="bg-red1 mt-[4px] mb-[16px] rounded-md">
+                <div className="flex gap-2 items-center py-[12px] px-[10px]">
+                  <img src={InforCircleIcon} className="" />
+                  <span className="text-[12px] text-red">{errors.email}</span>
+                </div>
+              </div>
+            }
           </div>
           <div className="col-span-full">
             <div className="flex gap-2 items-center">

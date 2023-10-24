@@ -706,7 +706,7 @@ const MainScreen = ({
       const hostname = window.location.hostname;
       // console.log({ hostname });
       if (hostname == 'en.wikipedia.org') {
-       // setChatData((prevMessages) => [...prevMessages, { msg: 'Summarizing : '+ document.title, type: 'ai' }]);
+        // setChatData((prevMessages) => [...prevMessages, { msg: 'Summarizing : '+ document.title, type: 'ai' }]);
         setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
         getPageSummary('wikipedia');
       }
@@ -2100,6 +2100,7 @@ const MainScreen = ({
 
   const handleChangeCompose = (e) => {
     const { name, value } = e.target;
+    console.log("Valie", value);
     setSelectedText({
       ...selectedText,
       [name]: value,
@@ -2258,16 +2259,16 @@ const MainScreen = ({
           handleClick={handleClick}
           setIsLogout={setIsLogout}
           handleCloseClick={handleCloseClick}
-          // isActivity={isActivity}
-          // setIsLogin={setIsLogin}
+        // isActivity={isActivity}
+        // setIsLogin={setIsLogin}
         >
           <div className="text-[14px] text-darkBlue bg-white">
             <Tab.Group as="div" defaultIndex={activeTab === SELECTION ? 1 : activeTab === QUICKREPLY ? 2 : 0}>
               {!selectedTemplate ? (
                 <div
                   className="flex items-center justify-between px-[20px] bg-white relative z-20 border-b-gray border-b-[1px]"
-                  // style={{ boxShadow: '0px 2px 8px 0px #0000000D' }}
-                  // style={{ position: 'sticky', top: '57px', zIndex: '20px' }}
+                // style={{ boxShadow: '0px 2px 8px 0px #0000000D' }}
+                // style={{ position: 'sticky', top: '57px', zIndex: '20px' }}
                 >
                   <Tab.List>
                     <Tab
@@ -2477,9 +2478,8 @@ const MainScreen = ({
                               </CustomTooltip>
                               <div
                                 ref={languageRef}
-                                className={`chats-settings w-[190px] flex flex-col gap-2 absolute right-0 bottom-[100%] bg-white p-[8px] rounded-[8px] ${
-                                  settingsPopupBox ? 'block' : 'hidden'
-                                }`}
+                                className={`chats-settings w-[190px] flex flex-col gap-2 absolute right-0 bottom-[100%] bg-white p-[8px] rounded-[8px] ${settingsPopupBox ? 'block' : 'hidden'
+                                  }`}
                                 style={{
                                   boxShadow: '0px 2px 20px 0px #00000026',
                                 }}
@@ -2548,9 +2548,8 @@ const MainScreen = ({
                               maxWidth="430px"
                               place="top"
                               id="speaker"
-                              content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Voice respond ${
-                                isSpeechEnabled ? 'enabled' : 'disabled'
-                              } </div>`}
+                              content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Voice respond ${isSpeechEnabled ? 'enabled' : 'disabled'
+                                } </div>`}
                             >
                               <button
                                 id="speaker"
@@ -2567,20 +2566,20 @@ const MainScreen = ({
                         </div>
                         <div className="mt-2 relative">
                           <form
-                            onSubmit={(e) => {
-                              // if (!isStreaming) {
-                              // setController(new AbortController());
-                              // setIsStreaming(true);
-                              e.preventDefault();
-                              handleSendMessage(e, chatInput.chatText);
-                              setChatInput({
-                                ...chatInput,
-                                chatText: '',
-                              });
-                              setIsViewPrompts(false);
-                              setIsTypewriterDone(true);
-                              // }
-                            }}
+                            // onSubmit={(e) => {
+                            //   // if (!isStreaming) {
+                            //   // setController(new AbortController());
+                            //   // setIsStreaming(true);
+                            //     // e.preventDefault();
+                            //     // handleSendMessage(e, chatInput.chatText);
+                            //     // setChatInput({
+                            //     //   ...chatInput,
+                            //     //   chatText: '',
+                            //     // });
+                            //     // setIsViewPrompts(false);
+                            //     // setIsTypewriterDone(true);
+                            //   // }
+                            // }}
                             className="mb-[10px]"
                           >
                             {audioInput ? (
@@ -2612,7 +2611,7 @@ const MainScreen = ({
                                       <div ref={selectRef}>
                                         <Select
                                           className="border border-gray rounded-md text-[12px]"
-                                          menuPlacement="top" 
+                                          menuPlacement="top"
                                           defaultValue={outputLanguagesVoice[0]}
                                           onChange={setSelectedOption}
                                           options={outputLanguagesVoice}
@@ -2639,7 +2638,7 @@ const MainScreen = ({
                                               minHeight: '216px',
                                               right: '-9px',
                                               overflow: 'scroll',
-                                              borderWidth : '0px'
+                                              borderWidth: '0px'
                                             }),
                                             option: (styles, { data, isDisabled, isFocused, isSelected }) => {
                                               return {
@@ -2797,14 +2796,12 @@ const MainScreen = ({
                               //   setIsTypewriterDone={setIsTypewriterDone}
                               // />
                               <div
-                                className={`flex items-top gap-[8px] border border-gray px-[10px] rounded-lg ${
-                                  chatType === 'summarize' ? 'blur-sm shadow-md pointer-events-none' : ''
-                                }`}
+                                className={`flex items-top gap-[8px] border border-gray px-[10px] rounded-lg ${chatType === 'summarize' ? 'blur-sm shadow-md pointer-events-none' : ''
+                                  }`}
                               >
                                 <div
-                                  className={`flex items-center justify-center mt-[10px] w-[24px] h-[24px] rounded-full cursor-pointer ${
-                                    isStreaming ? 'disabled cursor-default' : ''
-                                  }`}
+                                  className={`flex items-center justify-center mt-[10px] w-[24px] h-[24px] rounded-full cursor-pointer ${isStreaming ? 'disabled cursor-default' : ''
+                                    }`}
                                   onClick={() => !isStreaming && handleAudioInput()} // Conditionally set the onClick handler
                                   style={{
                                     boxShadow: '0px 0px 10px 0px #00000026',
@@ -2852,11 +2849,21 @@ const MainScreen = ({
                                   >
                                     <button
                                       id="SubmitSend"
-                                      className={`absolute top-[12px] right-[12px] w-[20px] h-[20px] cursor-pointer focus:outline-0  ${
-                                        chatLoading ? 'opacity-50 cursor-not-allowed' : ''
-                                      }`}
-                                      // onClick={(e) => {}}
-                                      type="submit"
+                                      className={`absolute top-[12px] right-[12px] w-[20px] h-[20px] cursor-pointer focus:outline-0  ${chatLoading ? 'opacity-50 cursor-not-allowed' : ''
+                                        }`}
+                                      onClick={(e) => {
+                                        if (chatInput.chatText.trim() != "") {
+                                          handleSendMessage(e, chatInput.chatText);
+                                          setChatInput({
+                                            ...chatInput,
+                                            chatText: '',
+                                          });
+                                          setIsViewPrompts(false);
+                                          setIsTypewriterDone(true);
+                                        }
+
+                                      }}
+                                      type="button"
                                       disabled={chatLoading || !chatInput.chatText}
                                     >
                                       <img src={SendIcon} />
@@ -3094,11 +3101,12 @@ const MainScreen = ({
                               <div>
                                 <textarea
                                   style={{ resize: 'none' }}
-                                  id="requestedText"
+                                  id="originalText"
                                   name="original_text"
                                   rows="5"
                                   value={replyText.original_text}
                                   onChange={(e) => handleChangeCompose(e)}
+                                  onDoubleClick={(r) => r.preventDefault()}
                                   placeholder="The original text to which you want to reply"
                                   className="text-[14px] border-gray block w-full rounded-md border p-1.5"
                                 />
@@ -3129,9 +3137,8 @@ const MainScreen = ({
 
                         {!inputButtonBox && (
                           <div
-                            className={`${
-                              inputButtonBox && selectedItems.length === 0 ? 'hidden' : 'block animate-fade-in'
-                            } transition duration-500 flex gap-2 items-center w-full`}
+                            className={`${inputButtonBox && selectedItems.length === 0 ? 'hidden' : 'block animate-fade-in'
+                              } transition duration-500 flex gap-2 items-center w-full`}
                             onClick={handleInputButtonBox}
                           >
                             {selectedItems
@@ -3145,9 +3152,8 @@ const MainScreen = ({
                         )}
 
                         <div
-                          className={`w-[20px] flex text-[14px] font-medium text-darkBlue whitespace-nowrap justify-center cursor-pointer ${
-                            !inputButtonBox ? '-rotate-90' : ''
-                          }`}
+                          className={`w-[20px] flex text-[14px] font-medium text-darkBlue whitespace-nowrap justify-center cursor-pointer ${!inputButtonBox ? '-rotate-90' : ''
+                            }`}
                           onClick={handleInputButtonBox}
                         >
                           <img src={ArrowDown} />
@@ -3322,20 +3328,18 @@ const MainScreen = ({
                         {selectTab === 1 ? (
                           <button
                             type="submit"
-                            className={`flex text-[16px] w-full justify-center focus:outline-none rounded-md bg-primaryBlue px-3 py-2 text-sm leading-6 text-white shadow-sm hover:opacity-90  ${
-                              compLoading ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
-                            } ${
-                              !state?.edit
+                            className={`flex text-[16px] w-full justify-center focus:outline-none rounded-md bg-primaryBlue px-3 py-2 text-sm leading-6 text-white shadow-sm hover:opacity-90  ${compLoading ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
+                              } ${!state?.edit
                                 ? (selectTab === 1 &&
-                                    (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                  (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
                                   // !editTemplateName?.input_text
                                   aiToolsLength !== 4
                                   ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
                                   : ''
                                 : !editTemplateName?.input_text || aiToolsLength !== 4
-                                ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
-                                : ''
-                            } `}
+                                  ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
+                                  : ''
+                              } `}
                             onClick={(e) => {
                               handleGenerateDraft(e);
                               setComposeRes(false);
@@ -3344,8 +3348,8 @@ const MainScreen = ({
                               compLoading ||
                               (!state?.edit
                                 ? (selectTab === 1 &&
-                                    (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
-                                  aiToolsLength !== 4
+                                  (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                aiToolsLength !== 4
                                 : !editTemplateName?.input_text || aiToolsLength !== 4)
                             }
                           >
@@ -3379,17 +3383,15 @@ const MainScreen = ({
                         ) : (
                           <button
                             type="submit"
-                            className={`flex text-[16px] w-full focus:outline-none justify-center rounded-md bg-primaryBlue px-3 py-2 text-sm leading-6 text-white shadow-sm hover:opacity-90  ${
-                              compRepLoading ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
-                            } 
-                              ${
-                                (selectTab === 2 && !replyText.original_text) ||
+                            className={`flex text-[16px] w-full focus:outline-none justify-center rounded-md bg-primaryBlue px-3 py-2 text-sm leading-6 text-white shadow-sm hover:opacity-90  ${compRepLoading ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
+                              } 
+                              ${(selectTab === 2 && !replyText.original_text) ||
                                 replyText.original_text.trim() === '' ||
                                 !replyText.reply ||
                                 replyText.reply.trim() === '' ||
                                 aiToolsLength !== 4
-                                  ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
-                                  : ''
+                                ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
+                                : ''
                               }`}
                             onClick={(e) => {
                               handleGenerateDraft(e);
@@ -3566,9 +3568,8 @@ const MainScreen = ({
                               {copied ? 'Copied!' : 'Copy'}
                             </button>
                             <button
-                              className={`w-full relative group rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 ${
-                                buttonDisabled ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
-                              }`}
+                              className={`w-full relative group rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 ${buttonDisabled ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
+                                }`}
                               disabled={buttonDisabled}
                               onClick={handleApply}
                               type="button"
@@ -3704,9 +3705,8 @@ const MainScreen = ({
                               {copied ? 'Copied!' : 'Copy'}
                             </button>
                             <button
-                              className={`w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 ${
-                                buttonDisabled ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
-                              }`}
+                              className={`w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 ${buttonDisabled ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
+                                }`}
                               disabled={buttonDisabled}
                               onClick={handleApply}
                               type="button"
@@ -3726,7 +3726,7 @@ const MainScreen = ({
                                 handleGenerateDraft(e);
                                 setComposeRes(false);
                               }}
-                              // disabled={resultText !== '' ? '' : 'disabled'}
+                            // disabled={resultText !== '' ? '' : 'disabled'}
                             >
                               Regenerate
                             </button>
@@ -3738,24 +3738,23 @@ const MainScreen = ({
                               {copied ? 'Copied!' : 'Copy'}
                             </button>
                             <button
-                              className={`w-full rounded-md bg-primaryBlue px-1 focus:outline-none py-[10px] text-[16px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50 ${
-                                !state?.edit
-                                  ? (selectTab === 1 &&
-                                      (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
-                                    // !editTemplateName?.input_text
-                                    aiToolsLength !== 4
-                                    ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
-                                    : ''
-                                  : !editTemplateName?.input_text || aiToolsLength !== 4
+                              className={`w-full rounded-md bg-primaryBlue px-1 focus:outline-none py-[10px] text-[16px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50 ${!state?.edit
+                                ? (selectTab === 1 &&
+                                  (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                  // !editTemplateName?.input_text
+                                  aiToolsLength !== 4
                                   ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
                                   : ''
-                              } `}
+                                : !editTemplateName?.input_text || aiToolsLength !== 4
+                                  ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
+                                  : ''
+                                } `}
                               disabled={
                                 compLoading ||
                                 (!state?.edit
                                   ? (selectTab === 1 &&
-                                      (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
-                                    aiToolsLength !== 4
+                                    (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                  aiToolsLength !== 4
                                   : !editTemplateName?.input_text || aiToolsLength !== 4)
                               }
                               onClick={(e) => handleUpdateTemplate(e)}

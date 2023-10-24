@@ -187,11 +187,11 @@ export default function PopupBox({ SELECTION, handleSidebar, selectedText, posit
                   <>
                   {pin.name == "Summarize" || pin.name == "Template" ? <div className="bg-slate-300 h-px my-0.5"></div> : ""}
                   <div
-                    className="py-1 font-dmsans text-xs flex justify-between items-center gap-2 selectText hover:bg-gray rounded-lg px-[2px]"
+                    className="py-1 font-dmsans text-xs flex justify-between items-center gap-2 selectText hover:bg-gray rounded-lg px-[2px] cursor-pointer"
                     key={index}
                   >
                     <div
-                      className="flex justify-center items-center gap-2 cursor-pointer"
+                      className="flex justify-start items-center gap-2 cursor-pointer w-full"
                       onClick={() => handleSidebar(SELECTION,pin.name)}
                     >
                       <img src={pin.icon} />
