@@ -19,6 +19,7 @@ import SocialLogin from '../Components/SocialLogin';
 import InforCircleIcon from '../utils/Account/Icons/info-circle.svg';
 import SelectMobileNumber from '../Components/PhoneNumberInput/SelectMobileNumber';
 import Close from '../utils/Header/Close-1.svg';
+import { handleToggle } from '../redux/reducers/extension/extension-slice';
 
 export default function Login({ isLogin, setIsLogin, setActiveTab }) {
   const navigate = useNavigate();
@@ -159,9 +160,14 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
   };
 
   const handleClose = () => {
-    document.querySelectorAll('[style="margin-right: 500px;"]')[0].style = 'position: relative;';
-    document.getElementsByClassName('MAINBODY')[0].style = 'display: none;';
-    document.body.style.width = '100%';
+    console.log("dklsdjdskl");
+    dispatch(handleToggle(false));
+    console.log('remove extension width');
+    document.getElementById('resala_style_right_space') ?document.getElementById('resala_style_right_space').remove() : ''
+
+    // document.querySelectorAll('[style="margin-right: 500px;"]')[0] ? document.querySelectorAll('[style="margin-right: 500px;"]')[0].style = 'position: relative;' : '';
+    // document.getElementsByClassName('MAINBODY')[0].style = 'display: none;';
+    // document.body.style.width = '100%';
   };
 
   return (

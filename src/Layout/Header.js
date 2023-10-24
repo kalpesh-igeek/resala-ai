@@ -9,6 +9,7 @@ import Profile from '../Pages/Profile';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkActivity } from '../redux/reducers/authSlice/AuthSlice';
 import CustomTooltip from '../Components/CustomTooltip/Tooltip';
+import { handleToggle } from '../redux/reducers/extension/extension-slice';
 
 const loggedUser = {
   avatar: Avatar,
@@ -35,34 +36,52 @@ const Header = ({
 
   const [isProfile, setIsProfile] = useState(false);
 
-  const handleClose = () => {
-    if (activity) {
-      // console.log('1');
-      handleClick();
-    } else {
-      // console.log('2');
-      // setIfOpenConfirmBox(true);
-      const textarea1 = document.getElementById('chatText');
-      const textarea2 = document.getElementById('requestedText');
-      const SocialButton = document.getElementById('SocialButton');
-      // const SocialPopup = document.getElementById('SocialPopup');
+  // const handleClose = () => {
+  //   console.log({activity});
+  //   if (activity) {
+  //     console.log('1');
+  //     handleClick();
+  //   } else {
+  //     console.log('2');
+  //     // setIfOpenConfirmBox(true);
+  //     const textarea1 = document.getElementById('chatText');
+  //     const textarea2 = document.getElementById('requestedText');
+  //     const SocialButton = document.getElementById('SocialButton');
+  //     // const SocialPopup = document.getElementById('SocialPopup');
+  //     console.log({textarea1,textarea2});
+  //     // setIfConfirmClose(true);
+  //     if (textarea1 || textarea2) {
+  //       console.log(textarea1.value || textarea1.value);
+  //       // console.log(textarea1.value);
+  //       if (textarea1.value.trim() === '' || textarea2.value.trim() === '') {
+  //         console.log('Hello');
+  //         // SocialButton.classList.remove('hidden');
+  //         // SocialPopup.classList.remove('hidden');
+  //       } else {
+  //         console.log("setIfOpenConfirmBox");
+  //         setIfOpenConfirmBox(true);
+  //       }
+  //     }
+  //     // setIfConfirmClose(true);
+  //     console.log("outer if");
+  //     dispatch(checkActivity(false));
+  //     handleCloseClick();
+  //   }
+  // };
 
-      // setIfConfirmClose(true);
-      if (textarea1 || textarea2) {
-        // console.log(textarea1.value || textarea1.value);
-        // console.log(textarea1.value);
-        if (textarea1.value.trim() === '' || textarea2.value.trim() === '') {
-          // console.log('Hello');
-          // SocialButton.classList.remove('hidden');
-          // SocialPopup.classList.remove('hidden');
-        } else {
-          setIfOpenConfirmBox(true);
-        }
-      }
-      // setIfConfirmClose(true);
-      dispatch(checkActivity(false));
-      handleCloseClick();
-    }
+  const handleCloseExtension = () =>{
+    handleClick();
+  }
+
+
+  const handleClose = () => {
+    console.log("dklsdjdskl");
+    dispatch(handleToggle(false));
+    console.log('remove extension width');
+    document.getElementById('resala_style_right_space') ?document.getElementById('resala_style_right_space').remove() : ''
+    // document.querySelectorAll('[style="margin-right: 500px;"]')[0] ? document.querySelectorAll('[style="margin-right: 500px;"]')[0].style = 'position: relative;' : '';
+    // document.getElementsByClassName('MAINBODY')[0].style = 'display: none;';
+    // document.body.style.width = '100%'
   };
 
   return (

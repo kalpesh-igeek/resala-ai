@@ -9,7 +9,7 @@ const SocialButton = ({ fromPosition, fromBtnPosition, handleSidebar }) => {
         id="SocialButton"
         className="hidden cursor-pointer"
         style={{
-          position: 'absolute',
+          position: 'relative',
           top: fromBtnPosition.top,
           bottom: fromBtnPosition.bottom,
           left: fromBtnPosition.left,
@@ -18,7 +18,7 @@ const SocialButton = ({ fromPosition, fromBtnPosition, handleSidebar }) => {
           zIndex: '99900',
         }}
       >
-        <img className="" src={RisalaAILOGO} style={{ zIndex: '9999999999 !important' }} />
+        <img className="min-w-[24px] min-h-[24px]" src={RisalaAILOGO} style={{ zIndex: '9999999999 !important', cursor:"pointer" }} />
       </div>
       <SocialPopup fromPosition={fromPosition} handleSidebar={handleSidebar} />
     </>

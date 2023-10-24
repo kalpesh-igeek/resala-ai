@@ -38,7 +38,8 @@ import SocialButton from './SocialButton';
 import { unset } from 'lodash';
 import { FloatOptions } from './Components/FloatIcon/FloatOptions';
 import { FloatBtn } from './Components/FloatIcon/FloatBtn';
-
+import { handleToggle } from './redux/reducers/extension/extension-slice';
+import { useLayoutEffect } from 'react';
 const QUICKREPLY = 'quickreply';
 const SELECTION = 'selection';
 const CHAT = 'chat';
@@ -56,6 +57,8 @@ const sites = [
 ];
 
 export default function Panel({ local }) {
+  const { isExtensionOpen } = useSelector((state) => state.extension);
+
   const [TOKEN, setToken] = useState(null);
 
   chrome.storage.sync.get(['userAccessToken'], function (items) {
@@ -96,6 +99,17 @@ export default function Panel({ local }) {
   const { speak, cancel, speaking } = useSpeechSynthesis();
 
   const [height, setHeight] = useState(window.innerHeight);
+  const [width, setWidth] = useState(window.innerWidth);
+
+  chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (isExtensionOpen) {
+      dispatch(handleToggle(false));
+    } else {
+      dispatch(handleToggle(request.greeting));
+    }
+    sendResponse('我收到你的消息了：' + JSON.stringify('request'));
+    console.log(request.greeting);
+  });
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -379,227 +393,403 @@ export default function Panel({ local }) {
         });
       }, 3000);
     } else if (hostname == 'www.linkedin.com') {
-      setTimeout(() => {
-        const postButton = document.getElementsByClassName('share-box-feed-entry__top-bar')[0];
-        // console.log('postButton');
-        if (postButton) {
-          postButton.addEventListener('click', () => {
-            setTimeout(() => {
-              let BtnPosition = document.getElementById('share-to-linkedin-modal__header');
-              // console.log('BtnPosition', BtnPosition);
-              if (BtnPosition) {
-                BtnPosition = BtnPosition.getBoundingClientRect();
-                // console.log('BtnPosition', BtnPosition);
-                setFromBtnPosition({
-                  top: BtnPosition.top + 50,
-                  left: BtnPosition.left + 660,
-                });
-              }
-
-              const SocialButton = document.getElementById('SocialButton');
-              const SocialPopup = document.getElementById('SocialPopup');
-              SocialButton.classList.remove('hidden');
-              SocialButton.addEventListener('click', () => {
-                // const SocialPopup = document.getElementById('SocialPopup');
-                if (SocialPopup) {
-                  SocialPopup.classList.remove('hidden');
-                  let FormPosition = document.getElementsByClassName('share-box')[0];
-                  // console.log('FormPosition', FormPosition);
-                  if (FormPosition) {
-                    FormPosition = FormPosition.getBoundingClientRect();
-                    // console.log('FormPosition', FormPosition);
-                    setFromPosition({
-                      bottom: FormPosition.bottom,
-                      top: FormPosition.top + 105,
-                      left: FormPosition.left + 360,
-                    });
-                    SocialButton.classList.add('hidden');
-                  }
-                }
-              });
-              let closeSocialBtn = document.getElementById('closeSocialBtn');
-              closeSocialBtn.addEventListener('click', () => {
-                // console.log('SocialButton');
-                const SocialButton = document.getElementById('SocialButton');
-                SocialButton.classList.remove('hidden');
-              });
-              let Dismiss = document.querySelectorAll('[aria-label="Dismiss"]')[0];
-              Dismiss.addEventListener('click', () => {
-                // console.log('Dismiss');
-                const SocialButton = document.getElementById('SocialButton');
-                SocialButton.classList.add('hidden');
-              });
-
-              let socialMediaId = document.getElementById('socialMediaPreference');
-              if (socialMediaId) {
-                socialMediaId.addEventListener('click', () => {
-                  const SocialPopup = document.getElementById('SocialPopup');
-                  const SocialButton = document.getElementById('SocialButton');
-                  console.log('socialMediaId', socialMediaId);
-                  navigate('/preferences');
-                  handleSidebar('chat');
-                  // console.log('sdshdbjw');
-                  // console.log(SocialButton, 'SocialButton');
-                  // console.log(SocialPopup, 'SocialPopup');
-                  SocialButton.classList.add('hidden');
-                  SocialPopup.classList.add('hidden');
-                  // console.log('sdshdbjw');
-                });
-              }
-            }, 500);
-          });
-        }
-      }, 1000);
-    } else if (hostname == 'www.facebook.com') {
-      setTimeout(() => {
-        let postButton = document.querySelectorAll('[aria-label="Create a post"]')[0];
-        // console.log('postButton');
-        if (postButton) {
-          postButton = postButton.children[0];
-          // console.log(postButton);
-          postButton.addEventListener('click', () => {
-            // console.log('postButton click');
-            setTimeout(() => {
-              let BtnPosition = document.getElementsByClassName('x1afcbsf')[0];
-              // console.log('BtnPosition', BtnPosition);
-              if (BtnPosition) {
-                BtnPosition = BtnPosition.getBoundingClientRect();
-                // console.log('BtnPosition', BtnPosition);
-                setFromBtnPosition({
-                  bottom: BtnPosition.bottom - 116,
-                  left: BtnPosition.left + 444,
-                });
-              }
-              const SocialButton = document.getElementById('SocialButton');
-              SocialButton.classList.remove('hidden');
-              SocialButton.addEventListener('click', () => {
-                const SocialPopup = document.getElementById('SocialPopup');
-                // console.log(SocialPopup);
-                if (SocialPopup) {
-                  SocialPopup.classList.remove('hidden');
-                  let FormPosition = document.getElementsByClassName('x1afcbsf')[0];
-                  // console.log('FormPosition', FormPosition);
-                  if (FormPosition) {
-                    FormPosition = FormPosition.getBoundingClientRect();
-                    // console.log('FormPosition', FormPosition);
-                    setFromPosition({
-                      bottom: FormPosition.bottom + 78,
-                      top: -FormPosition.bottom - 78,
-                      left: FormPosition.left + 199,
-                    });
-                    SocialButton.classList.add('hidden');
-                  }
-                }
-              });
-              let closeSocialBtn = document.getElementById('closeSocialBtn');
-              closeSocialBtn.addEventListener('click', () => {
-                // console.log('SocialButton');
-                const SocialButton = document.getElementById('SocialButton');
-                SocialButton.classList.remove('hidden');
-              });
-              let Dismiss = document.querySelectorAll('[aria-label="Close"]')[0];
-              Dismiss.addEventListener('click', () => {
-                // console.log('Dismiss');
-                const SocialButton = document.getElementById('SocialButton');
-                SocialButton.classList.add('hidden');
-              });
-            }, 1000);
-          });
-        }
-        let socialMediaId = document.getElementById('socialMediaPreference');
-        if (socialMediaId) {
-          socialMediaId.addEventListener('click', () => {
-            const SocialPopup = document.getElementById('SocialPopup');
-            const SocialButton = document.getElementById('SocialButton');
-            // console.log('socialMediaId', socialMediaId);
-            navigate('/preferences');
-            handleSidebar('chat');
-            // console.log('sdshdbjw');
-            // console.log(SocialButton, 'SocialButton');
-            // console.log(SocialPopup, 'SocialPopup');
-            SocialButton.classList.add('hidden');
-            SocialPopup.classList.add('hidden');
-            // console.log('sdshdbjw');
-          });
-        }
-      }, 1000);
-    } else if (hostname == 'twitter.com') {
-      // function disableScroll() {
-      //   document.body.style.overflow = 'hidden';
-      // }
-
-      // function enableScroll() {
-      //   document.body.style.overflow = 'auto';
-      // }
-
-      setTimeout(() => {
-        let BtnPosition = document.querySelectorAll('[data-testid="toolBar"]')[0];
-        // console.log('BtnPosition');
-        if (BtnPosition) {
-          BtnPosition = BtnPosition.parentElement;
-          // console.log(BtnPosition);
-          BtnPosition = BtnPosition.getBoundingClientRect();
-          // console.log('BtnPosition', BtnPosition);
+      const SocialButton = document.getElementById('SocialButton');
+      function myTimer() {
+        let textBox = document.getElementsByClassName('editor-content');
+        if (textBox && textBox[0]) {
+          textBox = textBox[0];
           setFromBtnPosition({
-            top: BtnPosition.top - 48,
-            bottom: BtnPosition.bottom + 595,
-            left: BtnPosition.left + 471,
+            top: 0,
+            bottom: 0,
+            left: 667,
           });
+          SocialButton.classList.remove('hidden');
+          textBox.append(SocialButton);
+        }
+      }
 
-          const SocialButton = document.getElementById('SocialButton');
-          // SocialButton.classList.remove('hidden');
-          // todo
+      function myStopFunction() {
+        console.log('Close');
+        clearInterval(myInterval);
+      }
+      let myInterval = setInterval(myTimer, 1000);
 
-          if (SocialButton) {
-            SocialButton.classList.remove('hidden');
-          }
-          // Disable scrolling
-
-          SocialButton.addEventListener('click', () => {
+      SocialButton.addEventListener('click', () => {
+        chrome.storage.sync.get(['userAccessToken'], function (items) {
+          if (items.userAccessToken) {
             const SocialPopup = document.getElementById('SocialPopup');
             // console.log(SocialPopup);
+            // const SocialPopup = document.getElementById('SocialPopup');
             if (SocialPopup) {
               SocialPopup.classList.remove('hidden');
-              let FormPosition = document.querySelectorAll('[data-testid="toolBar"]')[0];
+              let FormPosition = document.getElementsByClassName('share-box')[0];
               // console.log('FormPosition', FormPosition);
               if (FormPosition) {
-                FormPosition = FormPosition.parentElement.getBoundingClientRect();
+                FormPosition = FormPosition.getBoundingClientRect();
                 // console.log('FormPosition', FormPosition);
                 setFromPosition({
-                  bottom: FormPosition.bottom + 601,
-                  top: -FormPosition.bottom - 601,
-                  left: FormPosition.left + 200,
+                  bottom: FormPosition.bottom,
+                  top: FormPosition.top + 105,
+                  left: FormPosition.left + 360,
                 });
                 SocialButton.classList.add('hidden');
               }
             }
-          });
-
-          let closeSocialBtn = document.getElementById('closeSocialBtn');
-          closeSocialBtn.addEventListener('click', () => {
-            // console.log('SocialButton');
-            const SocialButton = document.getElementById('SocialButton');
-            SocialButton.classList.remove('hidden');
-          });
-        }
-        let socialMediaId = document.getElementById('socialMediaPreference');
-        if (socialMediaId) {
-          socialMediaId.addEventListener('click', () => {
-            const SocialPopup = document.getElementById('SocialPopup');
-            const SocialButton = document.getElementById('SocialButton');
-
-            console.log('socialMediaId', socialMediaId);
-            navigate('/preferences');
+          } else {
             handleSidebar('chat');
-            console.log('sdshdbjw');
-            console.log(SocialButton, 'SocialButton');
-            console.log(SocialPopup, 'SocialPopup');
-            SocialButton.classList.add('hidden');
-            SocialPopup.classList.add('hidden');
-            console.log('sdshdbjw');
+            dispatch(handleToggle(true));
+          }
+        });
+      });
+
+      // setTimeout(() => {
+      //   const postButton = document.getElementsByClassName('share-box-feed-entry__top-bar')[0];
+      //   // console.log('postButton');
+      //   if (postButton) {
+      //     postButton.addEventListener('click', () => {
+      //       setTimeout(() => {
+      //         let BtnPosition = document.getElementById('share-to-linkedin-modal__header');
+      //         console.log('BtnPosition', BtnPosition);
+      //         if (BtnPosition) {
+      //           BtnPosition = BtnPosition.getBoundingClientRect();
+      //           // console.log('BtnPosition', BtnPosition);
+      //           setFromBtnPosition({
+      //             top: BtnPosition.top + 50,
+      //             left: BtnPosition.left + 660,
+      //           });
+      //         }
+
+      //         const SocialButton = document.getElementById('SocialButton');
+      //         const SocialPopup = document.getElementById('SocialPopup');
+      //         SocialButton.classList.remove('hidden');
+      //         SocialButton.addEventListener('click', () => {
+      //           chrome.storage.sync.get(['userAccessToken'], function (items) {
+      //             if (items.userAccessToken) {
+      //               const SocialPopup = document.getElementById('SocialPopup');
+      //               // console.log(SocialPopup);
+      //               // const SocialPopup = document.getElementById('SocialPopup');
+      //               if (SocialPopup) {
+      //                 SocialPopup.classList.remove('hidden');
+      //                 let FormPosition = document.getElementsByClassName('share-box')[0];
+      //                 // console.log('FormPosition', FormPosition);
+      //                 if (FormPosition) {
+      //                   FormPosition = FormPosition.getBoundingClientRect();
+      //                   // console.log('FormPosition', FormPosition);
+      //                   setFromPosition({
+      //                     bottom: FormPosition.bottom,
+      //                     top: FormPosition.top + 105,
+      //                     left: FormPosition.left + 360,
+      //                   });
+      //                   SocialButton.classList.add('hidden');
+      //                 }
+      //               }
+      //             } else {
+      //               handleSidebar('chat');
+      //               dispatch(handleToggle(true));
+      //             }
+      //           });
+      //         });
+      //         let closeSocialBtn = document.getElementById('closeSocialBtn');
+      //         closeSocialBtn.addEventListener('click', () => {
+      //           // console.log('SocialButton');
+      //           const SocialButton = document.getElementById('SocialButton');
+      //           if (
+      //             typeof document.getElementById('share-to-linkedin-modal__header') != 'undefined' &&
+      //             document.getElementById('share-to-linkedin-modal__header') != null
+      //           ) {
+      //             SocialButton.classList.remove('hidden');
+      //           }
+      //         });
+      //         let Dismiss = document.querySelectorAll('[aria-label="Dismiss"]')[0];
+      //         Dismiss.addEventListener('click', () => {
+      //           // console.log('Dismiss');
+      //           const SocialButton = document.getElementById('SocialButton');
+      //           SocialButton.classList.add('hidden');
+      //         });
+
+      //         let socialMediaId = document.getElementById('socialMediaPreference');
+      //         if (socialMediaId) {
+      //           socialMediaId.addEventListener('click', () => {
+      //             const SocialPopup = document.getElementById('SocialPopup');
+      //             const SocialButton = document.getElementById('SocialButton');
+      //             console.log('socialMediaId', socialMediaId);
+      //             navigate('/preferences');
+      //             handleSidebar('chat');
+      //             // console.log('sdshdbjw');
+      //             // console.log(SocialButton, 'SocialButton');
+      //             // console.log(SocialPopup, 'SocialPopup');
+      //             SocialButton.classList.add('hidden');
+      //             SocialPopup.classList.add('hidden');
+      //             // console.log('sdshdbjw');
+      //           });
+      //         }
+      //       }, 3000);
+      //     });
+      //   }
+      // }, 3000);
+    } else if (hostname == 'www.facebook.com') {
+      const SocialButton = document.getElementById('SocialButton');
+      function myTimer() {
+        let textBox = document.getElementsByClassName('x1afcbsf');
+        if (textBox && textBox[0]) {
+          textBox = textBox[0];
+          let notranslate = document.getElementsByClassName('notranslate');
+          if (notranslate && notranslate[0]) {
+            let finalTextBox = notranslate[0].parentElement;
+            if (finalTextBox) {
+              setFromBtnPosition({
+                top: 0,
+                bottom: 0,
+                left: 442,
+              });
+
+              finalTextBox.append(SocialButton);
+              // myStopFunction();
+
+              let Dismiss = document.querySelectorAll('[aria-label="Close"]');
+              if (Dismiss && Dismiss[0]) {
+                Dismiss[0].addEventListener('click', () => {
+                  myInterval = setInterval(myTimer, 1000);
+                });
+              }
+            }
+          }
+        }
+      }
+
+      function myStopFunction() {
+        console.log('Close');
+        clearInterval(myInterval);
+      }
+      let myInterval = setInterval(myTimer, 1000);
+
+      SocialButton.addEventListener('click', () => {
+        chrome.storage.sync.get(['userAccessToken'], function (items) {
+          if (items.userAccessToken) {
+            const SocialPopup = document.getElementById('SocialPopup');
+            // console.log(SocialPopup);
+            if (SocialPopup) {
+              SocialPopup.classList.remove('hidden');
+              let FormPosition = document.getElementsByClassName('x1afcbsf')[0];
+              // console.log('FormPosition', FormPosition);
+              if (FormPosition) {
+                FormPosition = FormPosition.getBoundingClientRect();
+                // console.log('FormPosition', FormPosition);
+                setFromPosition({
+                  bottom: FormPosition.bottom + 78,
+                  top: -FormPosition.bottom - 78,
+                  left: FormPosition.left + 199,
+                });
+              }
+            }
+          } else {
+            handleSidebar('chat');
+            dispatch(handleToggle(true));
+          }
+        });
+      });
+
+      // setTimeout(() => {
+      //   let postButton = document.querySelectorAll('[aria-label="Create a post"]')[0];
+      //   // console.log('postButton');
+      //   if (postButton) {
+      //     postButton = postButton.children[0];
+      //     // console.log(postButton);
+      //     postButton.addEventListener('click', () => {
+      //       // console.log('postButton click');
+      //       setTimeout(() => {
+      //         let BtnPosition = document.getElementsByClassName('x1afcbsf')[0];
+      //         // console.log('BtnPosition', BtnPosition);
+      //         if (BtnPosition) {
+      //           BtnPosition = BtnPosition.getBoundingClientRect();
+      //           // console.log('BtnPosition', BtnPosition);
+      //           setFromBtnPosition({
+      //             bottom: BtnPosition.bottom - 116,
+      //             left: BtnPosition.left + 444,
+      //           });
+      //         }
+      //         const SocialButton = document.getElementById('SocialButton');
+      //         SocialButton.classList.remove('hidden');
+      //         SocialButton.addEventListener('click', () => {
+      //           chrome.storage.sync.get(['userAccessToken'], function (items) {
+      //             if (items.userAccessToken) {
+      //               const SocialPopup = document.getElementById('SocialPopup');
+      //               // console.log(SocialPopup);
+      //               if (SocialPopup) {
+      //                 SocialPopup.classList.remove('hidden');
+      //                 let FormPosition = document.getElementsByClassName('x1afcbsf')[0];
+      //                 // console.log('FormPosition', FormPosition);
+      //                 if (FormPosition) {
+      //                   FormPosition = FormPosition.getBoundingClientRect();
+      //                   // console.log('FormPosition', FormPosition);
+      //                   setFromPosition({
+      //                     bottom: FormPosition.bottom + 78,
+      //                     top: -FormPosition.bottom - 78,
+      //                     left: FormPosition.left + 199,
+      //                   });
+      //                   SocialButton.classList.add('hidden');
+      //                 }
+      //               }
+      //             } else {
+      //               handleSidebar('chat');
+      //               dispatch(handleToggle(true));
+      //             }
+      //           });
+      //         });
+      //         let closeSocialBtn = document.getElementById('closeSocialBtn');
+      //         closeSocialBtn.addEventListener('click', () => {
+      //           // console.log('SocialButton');
+      //           const SocialButton = document.getElementById('SocialButton');
+      //           SocialButton.classList.remove('hidden');
+      //         });
+      //         let Dismiss = document.querySelectorAll('[aria-label="Close"]')[0];
+      //         Dismiss.addEventListener('click', () => {
+      //           // console.log('Dismiss');
+      //           const SocialButton = document.getElementById('SocialButton');
+      //           SocialButton.classList.add('hidden');
+      //         });
+      //       }, 1000);
+      //     });
+      //   }
+      //   let socialMediaId = document.getElementById('socialMediaPreference');
+      //   if (socialMediaId) {
+      //     socialMediaId.addEventListener('click', () => {
+      //       const SocialPopup = document.getElementById('SocialPopup');
+      //       const SocialButton = document.getElementById('SocialButton');
+      //       // console.log('socialMediaId', socialMediaId);
+      //       navigate('/preferences');
+      //       handleSidebar('chat');
+      //       // console.log('sdshdbjw');
+      //       // console.log(SocialButton, 'SocialButton');
+      //       // console.log(SocialPopup, 'SocialPopup');
+      //       SocialButton.classList.add('hidden');
+      //       SocialPopup.classList.add('hidden');
+      //       // console.log('sdshdbjw');
+      //     });
+      //   }
+      // }, 1000);
+    } else if (hostname == 'twitter.com') {
+      setInterval(() => {
+        let DraftEditorContainer = document.getElementsByClassName('DraftEditor-editorContainer')[0];
+        if (DraftEditorContainer) {
+          DraftEditorContainer.addEventListener('click', () => {
+            setFromBtnPosition({
+              top: 0,
+              bottom: 0,
+              left: 479,
+            });
+            const SocialButton = document.getElementById('SocialButton');
+            DraftEditorContainer.append(SocialButton);
+
+            SocialButton.addEventListener('click', () => {
+              chrome.storage.sync.get(['userAccessToken'], function (items) {
+                if (items.userAccessToken) {
+                  const SocialPopup = document.getElementById('SocialPopup');
+                  // console.log(SocialPopup);
+                  if (SocialPopup) {
+                    SocialPopup.classList.remove('hidden');
+                    let FormPosition = document.querySelectorAll('[data-testid="toolBar"]')[0];
+                    // console.log('FormPosition', FormPosition);
+                    if (FormPosition) {
+                      FormPosition = FormPosition.parentElement.getBoundingClientRect();
+                      let FormPosition1 = SocialPopup.parentElement.getBoundingClientRect();
+                      // console.log('FormPosition', FormPosition);
+                      setFromPosition({
+                        bottom: FormPosition.bottom + 601,
+                        top: -(FormPosition1.top + -200),
+                        left: FormPosition.left + 200,
+                      });
+                      SocialButton.classList.add('hidden');
+                    }
+                  }
+                } else {
+                  handleSidebar('chat');
+                  dispatch(handleToggle(true));
+                }
+              });
+            });
           });
         }
-      }, 3000);
+      }, 1000);
+
+      // setTimeout(() => {
+      //   let BtnPosition = document.querySelectorAll('[data-testid="toolBar"]')[0];
+      //   // console.log('BtnPosition');
+      //   if (BtnPosition) {
+      //     BtnPosition = BtnPosition.parentElement;
+      //     // console.log(BtnPosition);
+      //     BtnPosition = BtnPosition.getBoundingClientRect();
+      //     // console.log('BtnPosition', BtnPosition);
+      //     setFromBtnPosition({
+      //       top: BtnPosition.top - 48,
+      //       bottom: BtnPosition.bottom + 595,
+      //       left: BtnPosition.left + 471,
+      //     });
+
+      //     const SocialButton = document.getElementById('SocialButton');
+      //     // SocialButton.classList.remove('hidden');
+      //     // todo
+
+      //     if (SocialButton) {
+      //       SocialButton.classList.remove('hidden');
+      //     }
+      //     // Disable scrolling
+
+      //     SocialButton.addEventListener('click', () => {
+      //       chrome.storage.sync.get(['userAccessToken'], function (items) {
+      //         if (items.userAccessToken) {
+      //           const SocialPopup = document.getElementById('SocialPopup');
+      //           // console.log(SocialPopup);
+      //           if (SocialPopup) {
+      //             SocialPopup.classList.remove('hidden');
+      //             let FormPosition = document.querySelectorAll('[data-testid="toolBar"]')[0];
+      //             // console.log('FormPosition', FormPosition);
+      //             if (FormPosition) {
+      //               FormPosition = FormPosition.parentElement.getBoundingClientRect();
+      //               let FormPosition1 = SocialPopup.parentElement.getBoundingClientRect();
+      //               // console.log('FormPosition', FormPosition);
+      //               setFromPosition({
+      //                 bottom: FormPosition.bottom + 601,
+      //                 top: -(FormPosition1.top + -200),
+      //                 left: FormPosition.left + 200,
+      //               });
+      //               SocialButton.classList.add('hidden');
+      //             }
+      //           }
+      //         } else {
+      //           handleSidebar('chat');
+      //           dispatch(handleToggle(true));
+      //         }
+      //       });
+      //     });
+
+      //     let closeSocialBtn = document.getElementById('closeSocialBtn');
+      //     closeSocialBtn.addEventListener('click', () => {
+      //       // console.log('SocialButton');
+      //       const SocialButton = document.getElementById('SocialButton');
+      //       SocialButton.classList.remove('hidden');
+      //     });
+      //   }
+      //   let socialMediaId = document.getElementById('socialMediaPreference');
+      //   if (socialMediaId) {
+      //     socialMediaId.addEventListener('click', () => {
+      //       console.log('sdshdbjw');
+      //       let BtnPosition = document.querySelectorAll('[data-testid="toolBar"]')[0];
+      //       // console.log('BtnPosition');
+      //       if (BtnPosition) {
+      //         BtnPosition = BtnPosition.parentElement;
+      //         // console.log(BtnPosition);
+      //         BtnPosition = BtnPosition.getBoundingClientRect();
+      //         console.log('BtnPosition', BtnPosition);
+      //         setFromBtnPosition({
+      //           top: BtnPosition.top - 48,
+      //           bottom: BtnPosition.bottom + 595,
+      //           left: BtnPosition.left + 471,
+      //         });
+      //       }
+      //     });
+      //   }
+      // }, 3000);
     }
   }, [isFloatIconClicked, isGmailActive]);
 
@@ -761,7 +951,9 @@ export default function Panel({ local }) {
       setIsOpen(false);
       setIfConfirmClose(true);
       setIfOpenConfirmBox(false);
-      document.querySelectorAll('[style="margin-right: 500px;"]')[0].style = 'position: relative;';
+      // document.querySelectorAll('[style="margin-right: 500px;"]')[0]
+      //   ? (document.querySelectorAll('[style="margin-right: 500px;"]')[0].style = 'position: relative;')
+      //   : '';
     }
     sendResponse('Request : ' + JSON.stringify('request'));
   });
@@ -774,9 +966,9 @@ export default function Panel({ local }) {
     setSelectedAction({ name: tool });
     // setIsPopupVisible(false);
     setRequestedText(selectedText);
-    document.querySelectorAll('[style="position: relative;"]')[0]
-      ? (document.querySelectorAll('[style="position: relative;"]')[0].style = 'margin-right: 500px')
-      : '';
+    // document.querySelectorAll('[style="position: relative;"]')[0]
+    //   ? (document.querySelectorAll('[style="position: relative;"]')[0].style = 'margin-right: 500px')
+    //   : '';
   };
 
   useEffect(() => {
@@ -784,48 +976,83 @@ export default function Panel({ local }) {
   }, [ifConfirmClose]);
 
   const handleClick = () => {
-    setIfOpenConfirmBox(true);
-    setIsLoadedExtension(false);
-    document.querySelectorAll('[style="margin-right: 500px;"]')[0].style = 'position: relative;';
-    dispatch(checkActivity(false));
+    console.log('dklsdjdskl');
+    dispatch(handleToggle(false));
+    console.log('remove extension width');
+    document.getElementById('resala_style_right_space')
+      ? document.getElementById('resala_style_right_space').remove()
+      : '';
+
+    // setIfOpenConfirmBox(true);
+    // setIsLoadedExtension(false);
+    // document.querySelectorAll('[style="margin-right: 500px;"]')[0] ? document.querySelectorAll('[style="margin-right: 500px;"]')[0].style = 'position: relative;' : '';
+    // dispatch(checkActivity(false));
+
+    // console.log("handleClick");
+    // let BtnPosition = document.querySelectorAll('[data-testid="toolBar"]')[0];
+    // if(BtnPosition){
+    //   BtnPosition = BtnPosition.parentElement;
+    //   BtnPosition = BtnPosition.getBoundingClientRect();
+    //   console.log(BtnPosition);
+    //   setFromBtnPosition({
+    //     top: BtnPosition.top - 48,
+    //     bottom: BtnPosition.bottom + 595,
+    //     left: BtnPosition.left + 471,
+    //   });
+    // }
   };
 
   const handleCloseClick = () => {
     // setIfOpenConfirmBox(true);
+    console.log('handleCloseClick');
     setIsOpen(false);
     setIsLoadedExtension(false);
-    document.querySelectorAll('[style="margin-right: 500px;"]')[0].style = 'position: relative;';
+    // document.querySelectorAll('[style="margin-right: 500px;"]')[0]
+    //   ? (document.querySelectorAll('[style="margin-right: 500px;"]')[0].style = 'position: relative;')
+    //   : '';
     dispatch(checkActivity(false));
+    let BtnPosition = document.querySelectorAll('[data-testid="toolBar"]')[0];
+    if (BtnPosition) {
+      // console.log('BtnPosition');
+      BtnPosition = BtnPosition.parentElement;
+      // console.log(BtnPosition);
+      BtnPosition = BtnPosition.getBoundingClientRect();
+      setFromBtnPosition({
+        top: BtnPosition.top - 48,
+        bottom: BtnPosition.bottom + 595,
+        left: BtnPosition.left + 471,
+      });
+    }
   };
 
-  useEffect(() => {
-    const body = document.getElementsByTagName('body')[0];
-    const youTube = document.getElementsByTagName('ytd-app')[0];
-    if (isSideBarOpen) {
-      if (youTube) {
-        youTube.style.width = `calc(100% - 500px)`;
-      } else {
-        body.style.width = `calc(100% - 500px)`;
-      }
-    } else {
-      if (youTube) {
-        youTube.style.width = `calc(100%)`;
-      } else {
-        body.style.width = `calc(100%)`;
-      }
-    }
-    if (TOKEN) {
-      if (isSideBarOpen) {
-        const extensionCloseIcon = document.querySelector('.extensionCloseIcon');
-        extensionCloseIcon.addEventListener('click', handleClick);
-      } else {
-        const DrawerCloseIcon = document.querySelector('.DrawerCloseIcon');
-        if (DrawerCloseIcon) {
-          DrawerCloseIcon.addEventListener('click', handleClick);
-        }
-      }
-    }
-  }, [isSideBarOpen, TOKEN]);
+  // useEffect(() => {
+  //   const body = document.getElementsByTagName('body')[0];
+  //   const youTube = document.getElementsByTagName('ytd-app')[0];
+  //   if (isSideBarOpen) {
+  //     if (youTube) {
+  //       youTube.style.width = `calc(100% - 500px)`;
+  //     } else {
+  //       // body.style.width = `calc(100% - 500px)`;
+  //     }
+  //   } else {
+  //     if (youTube) {
+  //       youTube.style.width = `calc(100%)`;
+  //     } else {
+  //       body.style.width = `calc(100%)`;
+  //     }
+  //   }
+  //   if (TOKEN) {
+  //     if (isSideBarOpen) {
+  //       const extensionCloseIcon = document.querySelector('.extensionCloseIcon');
+  //       extensionCloseIcon.addEventListener('click', handleClick);
+  //     } else {
+  //       const DrawerCloseIcon = document.querySelector('.DrawerCloseIcon');
+  //       if (DrawerCloseIcon) {
+  //         DrawerCloseIcon.addEventListener('click', handleClick);
+  //       }
+  //     }
+  //   }
+  // }, [isSideBarOpen, TOKEN]);
 
   // useEffect(() => {
   //   const handleClick = () => {
@@ -860,6 +1087,40 @@ export default function Panel({ local }) {
   //     window.removeEventListener('scroll', handleScroll);
   //   };
   // }, []);
+
+  useLayoutEffect(() => {
+    if (isExtensionOpen) {
+      console.log('add extension width');
+      // Creating a style element
+      var styleElement = document.createElement('style');
+      styleElement.id = 'resala_style_right_space';
+
+      // Setting the CSS content
+      var cssContent = `
+          html {
+            width: calc(100% - 500px) !important;
+            position: relative !important;
+            min-height: 100vh !important;
+          }
+      `;
+
+      // Adding the CSS content to the style element
+      if (styleElement.styleSheet) {
+        // This is required for IE8 and below.
+        styleElement.styleSheet.cssText = cssContent;
+      } else {
+        styleElement.appendChild(document.createTextNode(cssContent));
+      }
+      // Appending the style element to the document head
+      document.head.appendChild(styleElement);
+    } else {
+      console.log('remove extension width');
+      document.getElementById('resala_style_right_space')
+        ? document.getElementById('resala_style_right_space').remove()
+        : '';
+      // remove extension width
+    }
+  }, [isExtensionOpen, !isExtensionOpen]);
 
   return (
     <>
@@ -925,8 +1186,10 @@ export default function Panel({ local }) {
         <DrawerContext.Provider value={{ isSideBarOpen }}>
           <div
             style={{
-              display: isSideBarOpen ? 'block' : 'none',
-              width: isSideBarOpen ? 500 : 0,
+              display: isExtensionOpen ? 'block' : 'none',
+              width: isExtensionOpen ? 500 : 0,
+              // display: isSideBarOpen ? 'block' : 'none',
+              // width: isSideBarOpen ? 500 : 0,
               boxShadow: '-10px 0px 20px 0px #3C42570D',
               zIndex: 999999,
             }}

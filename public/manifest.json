@@ -20,7 +20,7 @@
       "matches": ["<all_urls>"]
     }
   ],
-  "permissions": ["storage", "scripting", "tabs", "activeTab", "http://*/*", "https://*/*"],
+  "permissions": ["storage", "scripting", "tabs", "activeTab"],
   "icons": {
     "192": "logo192.png"
   }

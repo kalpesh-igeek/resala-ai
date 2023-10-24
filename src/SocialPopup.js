@@ -25,10 +25,12 @@ import { getRequest, postRequest } from './services';
 import { useNavigate } from 'react-router-dom';
 import copy from 'copy-to-clipboard';
 import CustomTooltip from './Components/CustomTooltip/Tooltip';
+import { useDispatch } from 'react-redux';
+import { handleToggle } from './redux/reducers/extension/extension-slice';
 
 export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, delay }) => {
   const [language, setLanguage] = useState(false);
-
+  const dispatch = useDispatch();
   const handleLanguage = () => {
     setLanguage(!language);
     setProfession(false);
@@ -1292,6 +1294,18 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     };
   }, [myPromptRef, setIsAudioInfoPopup]);
 
+  const socialMediaPreference = () => {
+    console.log('socialMediaPreference');
+    const SocialPopup = document.getElementById('SocialPopup');
+    const SocialButton = document.getElementById('SocialButton');
+    console.log({SocialPopup,SocialButton});
+    SocialButton.classList.remove('hidden');
+    SocialPopup.classList.add('hidden');
+    handleSidebar('chat');
+    dispatch(handleToggle(true));
+    navigate('/preferences');
+  };
+
   return (
     <>
       <div
@@ -1327,7 +1341,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 id="SettingHeader"
                 className="rounded-full justify-center items-center flex border border-slate-200 w-[24] h-[24] cursor-pointer relative"
               >
-                <img className="h-[14px] w-[14px]" src={Setting} />
+                <img
+                  className="h-[14px] w-[14px]"
+                  src={Setting}
+                  id="socialMediaPreference"
+                  onClick={() => {
+                    socialMediaPreference();
+                  }}
+                />
               </div>
             </CustomTooltip>
 

@@ -7,9 +7,11 @@ import YoutubeSummarySlice from './reducers/YoutubeSummarySlice/YoutubeSummarySl
 import TemplateSlice from './reducers/templateSlice/TemplateSlice';
 import UserPromptSlice from './reducers/userPromptSlice/UserPromptSlice';
 import UserSlice from './reducers/userSlice/UserSlice';
+import extensionSlice from './reducers/extension/extension-slice';
 
 const store = configureStore({
   reducer: {
+    extension:extensionSlice,
     auth: AuthSlice,
     prompt: UserPromptSlice,
     chat: ChatSlice,
