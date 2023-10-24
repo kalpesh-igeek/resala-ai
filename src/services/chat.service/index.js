@@ -108,6 +108,19 @@ const deleteChatHistory = async (id) => {
   }
 };
 
+const clearChatHistory = async () => {
+  try {
+    const deleteChatHisPath = `${CHAT_URL}/clear_chat_history`;
+    return await deleteRequest(deleteChatHisPath);
+  } catch (error) {
+    // Toast('error', error?.response?.data?.message);
+    // console.log('error', error?.response?.data?.message);
+    Toast('error', error.response.data.Message);
+  }
+};
+
+
+
 const respondeLanguage = async () => {
   try {
     const respondeLanguagePath = `${CHAT_URL}/respond_language_list`;
@@ -128,5 +141,6 @@ export const chatService = {
   userChatHistory,
   userChatList,
   deleteChatHistory,
+  clearChatHistory,
   respondeLanguage,
 };

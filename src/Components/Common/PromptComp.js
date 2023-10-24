@@ -47,7 +47,7 @@ function PromptComp({
       >
         <Tab.List
           style={{
-            boxShadow: '0px 2px 8px 0px #0000000D',
+            borderBottom: '1px solid #DFE4EC',
             paddingInline: '20px',
           }}
         >
@@ -65,11 +65,11 @@ function PromptComp({
             </Tab>
           ))}
         </Tab.List>
-        <div className="px-[20px]">
+        <div className="px-[12px]">
           <Tab.Panels>
             <Tab.Panel>
               {/* SEARCH FIELD */}
-              <div className="my-[12px]">
+              <div className="my-[12px] px-[8px]">
                 <SearchInput
                   name="generalPSearch"
                   value={generalSearch}
@@ -79,31 +79,33 @@ function PromptComp({
                 />
               </div>
               <div className="h-[450px] overflow-y-auto">
-                <div className="grid grid-cols-1 gap-2 pt-[8px]">
+                <div className="grid grid-cols-1 pt-[8px]">
                   {generalPromptList?.map((item, index) =>
                     item.length === 0 ? (
                       <div className="suggestion flex flex-col justify-end rounded-[6px] text-darkgray1 bg-lightblue1 p-[9px] text-[14px] cursor-pointer hover:bg-lightblue3">
                         <div className="flex items-center justify-between">No Prompt</div>
                       </div>
                     ) : (
-                      <div className="border-b border-gray py-[8px] selectText cursor-pointer" key={index}>
-                        <div
-                          className="flex items-start justify-center flex-col mb-[8px]"
-                          onClick={(e) => {
-                            // setChatInput({ chatText: item.prompt });
-                            handleSendMessage(e, item);
-                            setIsTypewriterDone(true);
-                            setIsViewPrompts(false);
-                            setClose(false);
-                          }}
-                        >
-                          <div className="flex items-center gap-2">
-                            <div className="capitalize text-[14px] font-medium cursor-pointer max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis">
-                              {item?.name}
+                      <div className='px-[8px] hover:bg-[#F3F4F8] hover:rounded-[7px]'>
+                        <div className="border-b border-gray py-[8px] selectText cursor-pointer" key={index}>
+                          <div
+                            className="flex items-start justify-center flex-col mb-[8px]"
+                            onClick={(e) => {
+                              // setChatInput({ chatText: item.prompt });
+                              handleSendMessage(e, item);
+                              setIsTypewriterDone(true);
+                              setIsViewPrompts(false);
+                              setClose(false);
+                            }}
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className="capitalize text-[14px] font-medium cursor-pointer max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis">
+                                {item?.name}
+                              </div>
                             </div>
-                          </div>
-                          <div className="mt-[8px] text-gray1 max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis">
-                            {item?.prompt}
+                            <div className="mt-[8px] text-gray1 max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis">
+                              {item?.prompt}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -114,7 +116,7 @@ function PromptComp({
             </Tab.Panel>
             <Tab.Panel>
               {/* SEARCH FIELD */}
-              <div className="my-[12px]">
+              <div className="my-[12px] px-[8px]">
                 <SearchInput
                   name="PersonlaPSearch"
                   value={personalSearch}
@@ -125,61 +127,63 @@ function PromptComp({
               </div>
               {/* <div className="h-[calc(100vh-463px)] overflow-y-auto"> */}
               <div className="h-[450px] overflow-y-auto">
-                <div className="grid grid-cols-1 gap-2 pt-[8px]">
+                <div className="grid grid-cols-1 pt-[8px]">
                   {promptList?.map((item, index) =>
                     item.length === 0 ? (
                       <div className="suggestion flex flex-col justify-end rounded-[6px] text-darkgray1 bg-lightblue1 p-[9px] text-[14px] cursor-pointer hover:bg-lightblue3">
                         <div className="flex items-center justify-between">No Prompt</div>
                       </div>
                     ) : (
-                      <div
-                        className="flex justify-between border-b border-gray py-[8px] selectText cursor-pointer"
-                        key={index}
-                      >
+                      <div className='px-[8px] hover:bg-[#F3F4F8] hover:rounded-[7px]'>
                         <div
-                          className="flex items-start grow justify-center flex-col mb-[8px] "
-                          onClick={() => {
-                            // console.log('item', item.prompt);
-                            const regex = /\[(.*?)\]/g;
-                            const matchesArr = item.prompt.match(regex);
-                            if (matchesArr) {
-                              // Remove brackets from each element in the array
-                              const matches = matchesArr.map((element) => {
-                                return element.replace(/\[|\]/g, ''); // Use regex to remove square brackets
-                              });
-                              // console.log('matches', matches);
-                              // console.log('multiplePlaceholder', multiplePlaceholder);
-                              setMultiplePlaceholder({
-                                ...item,
-                                fields: matches,
-                              });
-                              handleUsePrompt(item);
-                              setIsViewPrompts(false);
-                            } else {
-                              handleUsePrompt(item);
-                              setIsViewPrompts(false);
-                            }
-                          }}
+                          className="flex justify-between border-b border-gray py-[8px] selectText cursor-pointer"
+                          key={index}
                         >
-                          <div className="flex items-center gap-2">
-                            <div className="capitalize text-[14px] font-medium cursor-pointer max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis">
-                              {item?.name}
+                          <div
+                            className="flex items-start grow justify-center flex-col mb-[8px] "
+                            onClick={() => {
+                              // console.log('item', item.prompt);
+                              const regex = /\[(.*?)\]/g;
+                              const matchesArr = item.prompt.match(regex);
+                              if (matchesArr) {
+                                // Remove brackets from each element in the array
+                                const matches = matchesArr.map((element) => {
+                                  return element.replace(/\[|\]/g, ''); // Use regex to remove square brackets
+                                });
+                                // console.log('matches', matches);
+                                // console.log('multiplePlaceholder', multiplePlaceholder);
+                                setMultiplePlaceholder({
+                                  ...item,
+                                  fields: matches,
+                                });
+                                handleUsePrompt(item);
+                                setIsViewPrompts(false);
+                              } else {
+                                handleUsePrompt(item);
+                                setIsViewPrompts(false);
+                              }
+                            }}
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className="capitalize text-[14px] font-medium cursor-pointer max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis">
+                                {item?.name}
+                              </div>
+                            </div>
+                            <div className="mt-[8px] text-gray1 max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis">
+                              {item?.prompt}
                             </div>
                           </div>
-                          <div className="mt-[8px] text-gray1 max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis">
-                            {item?.prompt}
-                          </div>
+                          <CustomTooltip
+                            maxWidth="430px"
+                            place="top"
+                            id={"PromptLibraryEdit" + index}
+                            content={`<div class="capitalize font-normal text-[12px] leading-[18px]">Edit</div>`}
+                          >
+                            <button id={"PromptLibraryEdit" + index} className="cursor-pointer" onClick={() => handleCustomPrompt(item)}>
+                              <img className="w-max" src={EditGrayIcon} />
+                            </button>
+                          </CustomTooltip>
                         </div>
-                        <CustomTooltip
-                          maxWidth="430px"
-                          place="top"
-                          id={"PromptLibraryEdit" + index}
-                          content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Edit Prompt </div>`}
-                        >
-                          <button id={"PromptLibraryEdit" + index} className="cursor-pointer" onClick={() => handleCustomPrompt(item)}>
-                            <img className="w-max" src={EditGrayIcon} />
-                          </button>
-                        </CustomTooltip>
                       </div>
                     )
                   )}
@@ -188,6 +192,7 @@ function PromptComp({
             </Tab.Panel>
           </Tab.Panels>
         </div>
+
       </Tab.Group>
       <CustomTooltip
         maxWidth="430px"

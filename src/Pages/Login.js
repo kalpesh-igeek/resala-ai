@@ -48,6 +48,9 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
         delete errorNew[name];
         return errorNew;
       });
+      if(invalidCred){
+        setInvalidCred('');
+      }
   };
 
   const handleSubmit = async (e) => {
@@ -81,9 +84,14 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
       }
     } else {
       // If it's the second step, check password and login
-      errors = passwordCheck(inputValue);
-      if (Object.keys(errors)?.length) {
-        setErrors(errors);
+      // errors = passwordCheck(inputValue);
+      // if (Object.keys(errors)?.length) {
+      //   setErrors(errors);
+      //   return;
+      // }
+
+      if(!inputValue?.password.trim()){
+        setInvalidCred("Password is required");
         return;
       }
 
@@ -258,7 +266,7 @@ export default function Login({ isLogin, setIsLogin, setActiveTab }) {
                   <img className="" src={isPasswordVisible ? EyeClose : EyeOpen} alt="EyeOpen" />
                 </div>
 
-                {errors.password && <p className="text-red text-[12px]">{errors.password}</p>}
+                {/* {errors.password && <p className="text-red text-[12px]">{errors.password}</p>} */}
                 {invalidCred && !isLoading && isRegistered && (
                   <div className="bg-red1 mt-[4px] mb-[16px] rounded-md">
                     <div className="flex gap-2 items-center py-[12px] px-[10px]">

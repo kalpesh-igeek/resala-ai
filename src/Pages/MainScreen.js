@@ -287,6 +287,8 @@ const MainScreen = ({
   const [isAudioInfoPopup, setIsAudioInfoPopup] = useState(false);
 
   const [isMicEnabled, setIsMicEnabled] = useState(false);
+  const [isClearChatHistrory, setClearChatHistrory] = useState(false);
+
 
   //Shubham
   // {Chat}
@@ -2100,7 +2102,6 @@ const MainScreen = ({
 
   const handleChangeCompose = (e) => {
     const { name, value } = e.target;
-    console.log("Valie", value);
     setSelectedText({
       ...selectedText,
       [name]: value,

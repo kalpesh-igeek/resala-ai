@@ -4,7 +4,9 @@ import ArrowDown from '../../utils/PopupBox/Icons/ArrowDown.svg';
 import SearchIcon from '../../utils/Chat/Icons/SearchIcon.svg';
 import AllChatIcon from '../../utils/Chat/Icons/History/AllChatIcon.svg';
 import DeleteIcon from '../../utils/Chat/Icons/History/trash.svg';
-import AllHistoryClear from '../../utils/Chat/Icons/History/ClearAllHistory.png';
+// import AllHistoryClear from '../../utils/Chat/Icons/History/ClearAllHistory.png';
+import AllHistoryClear from '../../utils/Chat/Icons/History/ClearAllHistory1.svg';
+
 
 import ChatIcon from '../../utils/Chat/Icons/Types/ChatIcon.svg';
 import ChatIconA from '../../utils/Chat/Icons/Types/ChatIcon-active.svg';
@@ -35,6 +37,7 @@ import { utcToZonedTime, format } from 'date-fns-tz';
 import { getDateDisplay } from '../../Helpers/dateFormater';
 import CustomTooltip from '../CustomTooltip/Tooltip';
 import NoDataFound from '../../utils/SavedTemplates/img/nodatafound.svg';
+import { set } from 'lodash';
 // -active
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -105,7 +108,7 @@ const DropdownIndicator = (props) => {
             transform: props.selectProps.menuIsOpen && 'rotate(180deg)',
           }}
           src={ArrowDown}
-          // style={{ transform: props.selectProps.menuIsOpen && 'rotate(180deg)' }}
+        // style={{ transform: props.selectProps.menuIsOpen && 'rotate(180deg)' }}
         />
       </components.DropdownIndicator>
     )
@@ -148,8 +151,8 @@ const customStyles = {
       ...styles,
       backgroundColor: isFocused ? '#F3F4F8' : null,
       color: !isFocused ? '#8C90A5' : '#19224C',
-      fontWeight : 400,
-      cursor:'pointer',
+      fontWeight: 400,
+      cursor: 'pointer',
       margin: '8px',
       width: 'auto',
       borderRadius: '4px',
@@ -198,6 +201,7 @@ const ChatHistory = ({
   const [deleteFileIndex, setDeleteFileIndex] = useState();
 
   const [deleteContent, setDeleteContent] = useState('');
+  const [isClearAllChat, setisClearAllChat] = useState(false);
 
   //Shubham
 
@@ -336,6 +340,14 @@ const ChatHistory = ({
   // todo
   const [clearHistory, setClearHistory] = useState(false);
 
+  const onClearChatHistory = () => {
+    if (chatsHistory.length !== 0) {
+      setClearHistory(true);
+      setisClearAllChat(true);
+      setIfOpenDeleteBox(true);
+    }
+  }
+
   const handleYesClearHistory = () => {
     setChatsHistroy([]);
     setClearHistory(!clearHistory);
@@ -348,7 +360,7 @@ const ChatHistory = ({
           ref={chatHisRef}
           className="absolute rounded-t-[10px] bg-white py-[20px] right-0 bottom-0 z-[70] w-[500px] min-h-[644px]"
           style={{ boxShadow: '0px 10px 30px 0px #3C425726' }}
-          // show={open}
+        // show={open}
         >
           <div className="pt-[8px] px-[20px] pb-[20px] text-[22px] font-medium text-darkBlue">
             <div className="flex items-center justify-between">
@@ -376,8 +388,8 @@ const ChatHistory = ({
                     }}
                     styles={customStyles}
                     onChange={handleChatTypeChange}
-                    // menuIsOpen={true}
-                    // onChange={handleChatTypeChange}
+                  // menuIsOpen={true}
+                  // onChange={handleChatTypeChange}
                   />
                 </div>
               </div>
@@ -538,88 +550,95 @@ const ChatHistory = ({
                   id='clearAllHistory'
                   content={`<div class="capitalize font-normal text-[12px] leading-[18px]"> Clear all conversations </div>`}
                 >
-                  <div id='clearAllHistory' className="relative cursor-pointer" onClick={() => setClearHistory(true)}>
-                    <img src={AllHistoryClear} className="w-[40px] h-[40px]" />
+
+                  <div id='clearAllHistory' className={`relative ${chatsHistory.length ? 'cursor-pointer' : 'cursor-not-allowed'}`} onClick={() => onClearChatHistory()}>
+                    <img src={AllHistoryClear} />
                   </div>
                 </CustomTooltip>
               </div>
 
               <div className="mt-[12px] px-[12px] max-h-[480px] overflow-y-auto">
-                    {chatsHistory.length === 0 ? (
+                {chatsHistory.length === 0 ? (
 
-                      // <div className="text-gray1 text-center py-4">No data found</div>
-                      <div className="text-center pt-[100px] block items-center justify-cente">
-                        <div className="text-center flex items-center justify-center">
-                          <img src={NoDataFound} />
-                        </div>
-                        <div className="text-[24px] text-darkBlue font-bold mt-[30px]">Sorry!</div>
-                        <div className="text-[16px] text-gray1 font-[400]  mt-[8px]">We haven’t found any data.</div>
-                      </div>
-                    ) : (
-                      chatsHistory.map((item, index) => (
-                        <>
-                          <div className='px-[8px] hover:bg-[#F3F4F8] hover:rounded-[7px]'>
-                            <div className="border-b border-gray py-[8px] selectText cursor-pointer" key={index}
-                              onClick={() => handleChatSelection(item)}>
-                              <div className="flex items-center justify-between mb-[8px]">
-                                <div className="flex items-center gap-2">
-                                  <div
-                                    className={
-                                      lastSelectedChat && item.id == lastSelectedChat.id
-                                        ? 'block w-[41px] h-[18px] relative'
-                                        : 'hidden'
-                                    }
-                                  >
-                                    <div
-                                      className="w-[41px] h-[18px] left-0 top-0 absolute bg-indigo-950 rounded"
-                                      style={{ background: '#19224C' }}
-                                    />
-                                    <div className="left-[6px] top-[3px] absolute text-white text-[10px] font-normal font-['DM Sans'] leading-3">
-                                      Active
-                                    </div>
-                                  </div>
-                                  <div className="icon">
-                                    <Icons item={item} />
-                                  </div>
-                                  <div className="text-[14px] font-medium cursor-pointer max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis">
-                                    {item?.Type === 1 ? item.chat_dict?.human_question : 'Doc chat'}
-                                  </div>
-                                </div>
-                                <div className="text-[#8C90A5] text-[12px] lowercase whitespace-nowrap">
-                                  {getDateDisplay(new Date(item?.created_at))}
-                                  {/* {formatDistanceToNow(new Date(item?.created_at), { addSuffix: true, timeZone: 'Etc/UTC' })} */}
-                                  {/* {formatDistanceToNow(utcToZonedTime(new Date(item?.created_at), 'Asia/Kolkata'), {
-                            addSuffix: true,
-                          })} */}
+                  // <div className="text-gray1 text-center py-4">No data found</div>
+                  <div className="text-center pt-[100px] block items-center justify-cente">
+                    <div className="text-center flex items-center justify-center">
+                      <img src={NoDataFound} />
+                    </div>
+                    <div className="text-[24px] text-darkBlue font-bold mt-[30px]">Sorry!</div>
+                    <div className="text-[16px] text-gray1 font-[400]  mt-[8px]">We haven’t found any data.</div>
+                  </div>
+                ) : (
+                  chatsHistory.map((item, index) => (
+                    <>
+                      <div className='px-[8px] hover:bg-[#F3F4F8] hover:rounded-[7px]'>
+                        <div className="border-b border-gray py-[8px] selectText cursor-pointer" key={index}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleChatSelection(item);
+                          }}>
+                          <div className="flex items-center justify-between mb-[8px]">
+                            <div className="flex items-center gap-2">
+                              <div
+                                className={
+                                  lastSelectedChat && item.id == lastSelectedChat.id
+                                    ? 'block w-[41px] h-[18px] relative'
+                                    : 'hidden'
+                                }
+                              >
+                                <div
+                                  className="w-[41px] h-[18px] left-0 top-0 absolute bg-indigo-950 rounded"
+                                  style={{ background: '#19224C' }}
+                                />
+                                <div className="left-[6px] top-[3px] absolute text-white text-[10px] font-normal font-['DM Sans'] leading-3">
+                                  Active
                                 </div>
                               </div>
-                              <div className="flex items-center justify-between">
-                                <div
-                                  className="text-gray1 max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis"
-                                  onClick={() => handleChatSelection(item)}
-                                >
-                                  {item.chat_dict?.ai_answer}
-                                </div>
-                                <CustomTooltip
-                                  maxWidth="430px"
-                                  place="top"
-                                  id={'chatHistoryDelete' + item?.id}
-                                  content={`<div class="font-normal text-[12px] leading-[18px]" > Delete conversations </div>`}
-                                >
-                                  <button
-                                    id={'chatHistoryDelete' + item?.id}
-                                    className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer"
-                                    onClick={() => handleDeleteChat(item?.id, item?.Type)}
-                                  >
-                                    <img src={DeleteIcon} />
-                                  </button>
-                                </CustomTooltip>
+                              <div className="icon">
+                                <Icons item={item} />
+                              </div>
+                              <div className="text-[14px] font-medium cursor-pointer max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis">
+                                {item?.Type === 1 ? item.chat_dict?.human_question : 'Doc chat'}
                               </div>
                             </div>
+                            <div className="text-[#8C90A5] text-[12px] lowercase whitespace-nowrap">
+                              {getDateDisplay(new Date(item?.created_at))}
+                              {/* {formatDistanceToNow(new Date(item?.created_at), { addSuffix: true, timeZone: 'Etc/UTC' })} */}
+                              {/* {formatDistanceToNow(utcToZonedTime(new Date(item?.created_at), 'Asia/Kolkata'), {
+                            addSuffix: true,
+                          })} */}
+                            </div>
                           </div>
-                        </>
-                      ))
-                    )}
+                          <div className="flex items-center justify-between">
+                            <div
+                              className="text-gray1 max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis"
+                            // onClick={() => handleChatSelection(item)}
+                            >
+                              {item.chat_dict?.ai_answer}
+                            </div>
+                            <CustomTooltip
+                              maxWidth="430px"
+                              place="top"
+                              id={'chatHistoryDelete' + item?.id}
+                              content={`<div class="font-normal text-[12px] leading-[18px]" > Delete conversations </div>`}
+                            >
+                              <button
+                                id={'chatHistoryDelete' + item?.id}
+                                className="h-[30px] w-[30px] flex items-center justify-end cursor-pointer"
+                                onClick={(er) => {
+                                  er.stopPropagation();
+                                  handleDeleteChat(item?.id, item?.Type);
+                                }}
+                              >
+                                <img src={DeleteIcon} />
+                              </button>
+                            </CustomTooltip>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  ))
+                )}
               </div>
             </>
           )}
@@ -631,9 +650,13 @@ const ChatHistory = ({
         setIsDeleteFileConfirm={setIsDeleteFileConfirm}
         ifOpenDeleteBox={ifOpenDeleteBox}
         setIfOpenDeleteBox={setIfOpenDeleteBox}
+        setisClearAllChat={setisClearAllChat}
+        setClearHistory={setClearHistory}
         deleteChatIndex={deleteChatIndex}
         fetchChatHistory={fetchChatHistoryList}
         deleteRef={deleteRef}
+        isClearAllChat={isClearAllChat}
+        alertMSG="Are you sure you want to delete all conversation?"
       />
     </>
   );

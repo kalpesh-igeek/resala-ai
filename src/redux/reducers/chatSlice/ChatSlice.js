@@ -63,6 +63,13 @@ export const deleteChatHistory = createAsyncThunk('chat/deleteChatHistory', asyn
   return data;
 });
 
+export const clearChatHistory = createAsyncThunk('chat/clear_chat_history', async () => {
+  const { data, status } = await chatService.clearChatHistory();
+  data.status = status;
+  return data;
+});
+
+
 export const ChatSlice = createSlice({
   name: 'chat',
   initialState,

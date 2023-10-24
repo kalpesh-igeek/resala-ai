@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { deleteChatHistory } from '../../redux/reducers/chatSlice/ChatSlice';
+import { clearChatHistory, deleteChatHistory } from '../../redux/reducers/chatSlice/ChatSlice';
 import Close from '../../utils/MainScreen/Icons/Close.svg';
 import alertIcon from '../../utils/MainScreen/Icons/alertIcon.svg';
 
@@ -8,34 +8,57 @@ export default function DeletePopup({
   deleteContent,
   ifOpenDeleteBox,
   setIfOpenDeleteBox,
+  setisClearAllChat,
+  setClearHistory,
   setIsDeleteChatConfirm,
   setIsDeleteFileConfirm,
   deleteChatIndex,
   fetchChatHistory,
   deleteRef,
+  isClearAllChat = false,
+  alertMSG = "Are you sure you want to delete this conversation?"
 }) {
   const dispatch = useDispatch();
 
   const handleDeleteTemplate = async (e) => {
-    e.stopPropagation();
-    if (deleteChatIndex) {
-      const res = await dispatch(deleteChatHistory(deleteChatIndex));
+    if (isClearAllChat) {
+      e.stopPropagation();
+
+      const res = await dispatch(clearChatHistory(deleteChatIndex));
       if (!res.payload) {
+        setClearHistory(false);
+        setisClearAllChat(false); 
+       // setIfOpenDeleteBox(false);
         return;
       }
       if (res.payload?.status === 200) {
+        setClearHistory(false);
+        setisClearAllChat(false); 
         setIfOpenDeleteBox(false);
         fetchChatHistory();
       }
+    } else {
+      e.stopPropagation();
+      if (deleteChatIndex) {
+        const res = await dispatch(deleteChatHistory(deleteChatIndex));
+        if (!res.payload) {
+          return;
+        }
+        if (res.payload?.status === 200) {
+          setIfOpenDeleteBox(false);
+          fetchChatHistory();
+        }
+      }
     }
-    // if (deleteContent == 'chat') {
-    //   setIsDeleteChatConfirm(true);
-    // } else {
-    //   setIsDeleteFileConfirm(true);
-    // }
   };
   const handleClick = (e) => {
     e.stopPropagation(); // Prevent click events from propagating when clicking anywhere within the popup
+  };
+
+  const onClosePopup = () => {
+    setIfOpenDeleteBox(false);
+    setClearHistory(false);
+    setisClearAllChat(false); 
   };
 
   return (
@@ -55,19 +78,19 @@ export default function DeletePopup({
               </span>
               <span className="text-red">Alert</span>
             </div>
-            <div className="cursor-pointer -mt-[30px]" onClick={() => setIfOpenDeleteBox(false)}>
+            <div className="cursor-pointer -mt-[30px]" onClick={() =>onClosePopup()}>
               <img src={Close} />
             </div>
           </div>
         </div>
         <div className="col-span-full mb-[20px] pl-[36px]">
-          <div className="text-[14px] text-gray1 mb-[8px]">Are you sure you want to delete this conversation?</div>
+          <div className="text-[14px] text-gray1 mb-[8px]">{alertMSG}</div>
         </div>
         <div className="mt-1 flex justify-end">
           <div className="flex gap-2 items-center">
             <button
               className="rounded-md bg-white px-[16px] py-[10px] text-[16px] font-medium text-[#5F6583] border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
-              onClick={() => setIfOpenDeleteBox(false)}
+              onClick={() => onClosePopup()}
             >
               Cancel
             </button>
