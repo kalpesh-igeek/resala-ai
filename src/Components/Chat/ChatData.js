@@ -83,9 +83,9 @@ const ChatData = ({
     <>
       <div
         ref={chatContainerRef}
-        style={{height:'calc(100vh - 280px)'}}
+        style={{height:'calc(100vh - 320px)'}}
         className={`text-[12px] overflow-y-auto flex flex-col-reverse ${
-          isStreaming ? 'mb-[55px]' : ''
+          isStreaming ? '' : ''
         } relative`}
       >
         <div className="">
