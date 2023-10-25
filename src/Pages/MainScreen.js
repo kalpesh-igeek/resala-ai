@@ -726,10 +726,12 @@ const MainScreen = ({
       if (hostname == 'en.wikipedia.org') {
         // setChatData((prevMessages) => [...prevMessages, { msg: 'Summarizing : '+ document.title, type: 'ai' }]);
         setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
+        setReadPage(true)
         getPageSummary('wikipedia');
       }
       if (hostname == 'www.youtube.com') {
         setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
+        setReadPage(true)
         getPageSummary('youtube');
       }
     }
@@ -2021,7 +2023,7 @@ const MainScreen = ({
       const getUserInputs = Array.from(updatedChatData).filter((itm) => itm.type == 'user');
 
       let chatInputQuestion = "";
-      if (getUserInputs[getUserInputs.length - 1].type === 'user') {
+      if (getUserInputs[getUserInputs.length - 1]?.type === 'user') {
         chatInputQuestion = getUserInputs[getUserInputs.length - 1].msg
       }
       payload = { chatId: chatId, web_access: webAccess, question:chatInputQuestion};
