@@ -108,6 +108,8 @@ import prevIcon from '../utils/MainScreen/Icons/prev.svg';
 import nextIcon from '../utils/MainScreen/Icons/next.svg';
 import axios from 'axios';
 import stopIcon from '../utils/MainScreen/Icons/stop.svg';
+import refreshIcon from '../utils/MainScreen/Icons/refresh.svg';
+import magicpenIcon from '../utils/MainScreen/Icons/magicpen.svg';
 import { BottomDrawerLayout } from '../Components/Common/BottomDrawerLayout';
 import PromptComp from '../Components/Common/PromptComp';
 import CustomTooltip from '../Components/CustomTooltip/Tooltip';
@@ -198,6 +200,7 @@ const MainScreen = ({
   setIsClickButton,
   local,
 }) => {
+  const { isExtensionOpen } = useSelector((state) => state.extension);
   const localContext = useContext(LocalContext);
   //  const TOKEN = await getToken();
   const [TOKEN, setToken] = useState(null);
@@ -213,7 +216,7 @@ const MainScreen = ({
   const { Loading } = useSelector((state) => state.compose);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const chatId = sessionStorage.getItem('chatId');
+  const chatId = sessionStorage.getItem('chatId') ?? generateRandomString(45);
 
   // const [suggestionBox, setSuggestionBox] = useState(true);
 
@@ -354,6 +357,7 @@ const MainScreen = ({
   const [searchChatHis, setSearchChatHis] = useState('');
   const ChatHistorySearch = useDebounce(searchChatHis, 1000);
   const [isDocChat, setIsDocChat] = useState(false);
+  const [isReadPage, setReadPage] = useState(false);
   const [controller, setController] = useState(new AbortController());
   const [isStreaming, setIsStreaming] = useState(false);
   const [isStreamingComp, setIsStreamingComp] = useState(false);
@@ -586,9 +590,15 @@ const MainScreen = ({
     setSelectedLanguage({ name: 'English' });
     setSelectedItems([{ name: 'Polish' }, { name: 'Auto' }, { name: 'Professional' }, { name: 'English' }]);
     // console.log('selectedItems =============>', selectedItems);
+  }, [activeTabSub]);  
+  
+  useEffect(() => {
+    if(activeTabSub == 'chat' && chatData.length == 0){
+      console.log("ACTIVE PAGE");
+      setlastSelectedChat(generateRandomString(45))
+    }
   }, [activeTabSub]);
 
-  // console.log({ selectedItems });
 
   const updateIsNewFlag = () => {
     const updatedChatData = chatData.map((item) => {
@@ -600,18 +610,18 @@ const MainScreen = ({
     setChatData(updatedChatData);
   };
 
-  const getPageSummary = async (type) => {
-    // console.log('sdfvsdjkjk');
-    function generateRandomString(length) {
-      const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-      let result = '';
-      for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        result += characters.charAt(randomIndex);
-      }
-      return result;
+  function generateRandomString(length) {
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      result += characters.charAt(randomIndex);
     }
+    sessionStorage.setItem('chatId', result);
+    return result;
+  }
 
+  const getPageSummary = async (type) => {
     try {
       setChatType(type);
       setIsUploadDocument(false);
@@ -862,6 +872,10 @@ const MainScreen = ({
   const [selectedText, setSelectedText] = useState({ input_text: requestedText });
   const [replyText, setReplyText] = useState({ original_text: '', reply: '' });
 
+  useEffect(() => {
+    setSelectedText({ input_text: '' });
+    setReplyText({ original_text: '', reply: '' });
+  }, [isExtensionOpen]);
   useEffect(() => {
     setSelectedText({ input_text: requestedText });
     setReplyText((prev) => {
@@ -1672,7 +1686,7 @@ const MainScreen = ({
     resetTranscript();
   };
   const handlePaste = (e) => {
-    const maxCharacterCount = 1000;
+    const maxCharacterCount = 4000;
     const pastedText = e.clipboardData.getData('text');
     const { name, value } = e.target;
 
@@ -1693,7 +1707,7 @@ const MainScreen = ({
     //   }
     // }
     const { name, value } = e.target;
-    const maxCharacterCount = 1000;
+    const maxCharacterCount = 4000;
     if (name === 'chatText') {
       if (value.length > maxCharacterCount) {
         const truncatedValue = value.substring(0, maxCharacterCount);
@@ -1837,7 +1851,7 @@ const MainScreen = ({
           body: JSON.stringify({
             question: message,
             chatId: chatId,
-            web_access: !webAccess,
+            web_access: webAccess,
           }),
           signal: controller.signal, // Associate the AbortController with the request
         });
@@ -1952,20 +1966,38 @@ const MainScreen = ({
     }
   };
 
+  const [isRetry, setIsRetry] = useState(false)
+
   const handleStopButtonClick = () => {
     // Check if there's an ongoing fetch request and abort it
     if (abortController) {
-      const removedLoadingObj = Array.from(chatData).filter((itm) => itm.type !== 'loading');
-      setChatData(removedLoadingObj);
       abortController.abort();
       setAbortController(null); // Clear the abort controller
-      setIsTypewriterDone(false);
-      setAllreadyStreamed(false);
-      setIsStreaming(false);
+      setIsTypewriterDone(true);
+      setAllreadyStreamed(true);
+      setIsStreaming(true);
+      setIsRetry(true);
+      const updatedChatData = [...chatData];
+      const retryMessage = { msg: 'AbortError: User-initiated request termination.', type: 'retry' };
+      updatedChatData.push(retryMessage);
+      setChatData(updatedChatData);
+  
+      const removedLoadingObj = Array.from(updatedChatData).filter((itm) => itm.type !== 'loading');
+      setChatData(removedLoadingObj);
     }
   };
 
   const handleRegenerate = async () => {
+    // Check if there's an ongoing fetch request and abort it
+    if (abortController) {
+      abortController.abort();
+      setAbortController(null); // Clear the abort controller
+    }
+
+    // Create a new AbortController instance for this fetch request
+    const controller = new AbortController();
+    setAbortController(controller);
+
     const updatedChatData = [...chatData];
     const loadingMessage = { msg: 'Loading...', type: 'loading' };
     setIsStreaming(true);
@@ -1976,15 +2008,31 @@ const MainScreen = ({
       updatedChatData.push(loadingMessage);
     }
 
+    if (updatedChatData[updatedChatData.length - 1].type === 'retry') {
+      updatedChatData.pop();
+      updatedChatData.push(loadingMessage);
+    }
+
     setChatData(updatedChatData);
     // todo
-    const payload = { chatId: chatId, web_access: !webAccess };
+    let payload = { chatId: chatId, web_access: webAccess };
+    let api_url = 'https://api-qa.resala.ai/chat/regenerate_stream_response';
+    if(!isReadPage){
+      const getUserInputs = Array.from(updatedChatData).filter((itm) => itm.type == 'user');
+
+      let chatInputQuestion = "";
+      if (getUserInputs[getUserInputs.length - 1].type === 'user') {
+        chatInputQuestion = getUserInputs[getUserInputs.length - 1].msg
+      }
+      payload = { chatId: chatId, web_access: webAccess, question:chatInputQuestion};
+    }
+    if(isReadPage){
+      api_url = 'https://api-qa.resala.ai/web_summary/web_summary';
+      payload = { chat_id: chatId, url:window.location.href };
+    }
 
     try {
-      const response = await fetch('https://api-qa.resala.ai/chat/regenerate_stream_response', {
-        // const response = await fetch(
-        //   'https://5208-2401-4900-1f3f-864b-1433-bacc-61c9-7a9a.ngrok-free.app/chat/regenerate_stream_response',
-        //   {
+      const response = await fetch(api_url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1992,6 +2040,7 @@ const MainScreen = ({
           Authorization: await getToken(),
         },
         body: JSON.stringify(payload),
+        signal: controller.signal, // Associate the AbortController with the request
       });
 
       // if (updatedChatData?.length) {
@@ -2033,6 +2082,9 @@ const MainScreen = ({
         }
 
         // setIsStreaming(true);
+        setIsTypewriterDone(false);
+        setAllreadyStreamed(false);
+        setIsStreaming(false);
       } else {
         throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
       }
@@ -2053,7 +2105,6 @@ const MainScreen = ({
       setIsStreamingComp(false);
       setIsDocChat(false);
     }
-    s;
   };
   const handleSelectItems = (id) => {
     if (id === 'chat') {
@@ -2071,10 +2122,14 @@ const MainScreen = ({
     }
     if (id === 'book') {
       // console.log('book');
+
+      setChatInput({ chatText: '' });
+      setChatData([]);
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
+      setReadPage(true);
       getPageSummary('book');
     }
-    setlastSelectedChat(null);
+    setlastSelectedChat(generateRandomString(45));
   };
 
   const handleNewPrompt = () => {
@@ -2219,8 +2274,7 @@ const MainScreen = ({
   // todo
   const [webAccess, setWebAccess] = useState(false);
   const onChangeOnOff = (checked) => {
-    // console.log(`switch to ${checked}`);
-    setWebAccess(!webAccess);
+    setWebAccess(checked);
     // console.log(webAccess, 'webAccess');
   };
 
@@ -2381,6 +2435,7 @@ const MainScreen = ({
                       switchedTabs={switchedTabs}
                       isStreaming={isStreaming}
                       isSpeechEnabled={isSpeechEnabled}
+                      isRetry={isRetry}
                     />
 
                     {isUsePrompt ? (
@@ -2417,11 +2472,6 @@ const MainScreen = ({
                                 <span className={`text-[12px] whitespace-pre`}> {item.label}</span>
                               </div>
                             ))}{' '}
-                            {/* todo */}
-                            <div className="flex justify-center items-center gap-[2px]">
-                              web access
-                              <Switch defaultChecked onChange={onChangeOnOff} />
-                            </div>
                           </div>
                           <div className="flex gap-[15px] items-center">
                             <CustomTooltip
@@ -2690,12 +2740,13 @@ const MainScreen = ({
                                   !micClicked && (
                                     <div
                                       className={`flex justify-between gap-2 items-center bg-primaryBlue px-[8px] py-[12px] text-[12px] text-white rounded-[6px] cursor-pointer`}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        listenContinuously();
+                                      }}
                                     >
                                       <div
                                         className="flex gap-2 items-center"
-                                        onClick={() => {
-                                          listenContinuously();
-                                        }}
                                       >
                                         <img src={MicrophoneWhiteIcon} />
                                         {/* {!isMicEnabled ? (
@@ -2707,7 +2758,10 @@ const MainScreen = ({
                                       <div
                                         className="cursor-pointer"
                                         // onClick={() => setAudioInput(false)}
-                                        onClick={() => closeSpeechRecognition()}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          closeSpeechRecognition()}
+                                        }
                                       >
                                         <img src={SmallClose} />
                                       </div>
@@ -2716,8 +2770,12 @@ const MainScreen = ({
                                 {micPermission !== 'granted' && micClicked && (
                                   <div
                                     className={`flex justify-between gap-2 items-center bg-yellow px-[8px] py-[12px] text-[12px] text-white rounded-[6px] cursor-pointer`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      requestPermission();
+                                    }}
                                   >
-                                    <div className="flex gap-2 items-center" onClick={requestPermission}>
+                                    <div className="flex gap-2 items-center">
                                       <img src={MicrophoneWhiteIcon} />
                                       {/* {!isMicEnabled ? (
                                       <span>Hold Space or Click button to speak</span>
@@ -2728,7 +2786,10 @@ const MainScreen = ({
                                     <div
                                       className="cursor-pointer"
                                       // onClick={() => setAudioInput(false)}
-                                      onClick={() => closeSpeechRecognition()}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        closeSpeechRecognition()}
+                                      }
                                     >
                                       <img src={SmallClose} />
                                     </div>
@@ -2743,13 +2804,16 @@ const MainScreen = ({
                                       {/* {!isMicEnabled ? (
                                       <span>Hold Space or Click button to speak</span>
                                     ) : ( */}
-                                      <span>Listening. Click again to submit, Esc to cancel</span>
+                                      <span>Listening.   again to submit, Esc to cancel</span>
                                       {/* )} */}
                                     </div>
                                     <div
                                       className="cursor-pointer"
                                       // onClick={() => setAudioInput(false)}
-                                      onClick={() => closeSpeechRecognition()}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        closeSpeechRecognition()}
+                                      }
                                     >
                                       <img src={SmallClose} />
                                     </div>
@@ -2757,33 +2821,33 @@ const MainScreen = ({
                                 )}
                                 {transcript && (
                                   <div
-                                    className={`flex justify-between gap-2 items-center bg-green px-[8px] py-[12px] text-[12px] text-white rounded-[6px] cursor pointer`}
+                                    className={`flex justify-between gap-2 items-center bg-green px-[8px] py-[12px] text-[12px] text-white rounded-[6px] cursor-pointer`}
+                                    onClick={(e) => {
+                                      // if (!isStreaming) {
+                                      // setController(new AbortController());
+                                      // setIsStreaming(true);
+                                      e.stopPropagation()
+                                      handleSendMessage(e, transcript);
+                                      setIsTypewriterDone(true);
+                                      setIsViewPrompts(false);
+                                      setAudioInput(false);
+                                      setMicClicked(false);
+                                      setAudioInput(false);
+                                      // Stop the speech recognition
+                                      SpeechRecognition.stopListening();
+
+                                      // Reset the relevant states to their initial values
+                                      setStartListen(true);
+                                      setStartSpeech(true);
+                                      setMicClicked(false);
+                                      resetTranscript();
+                                      setIsViewPrompts(false);
+                                      // }
+                                    }}
                                   >
                                     <div
                                       className="flex gap-2 items-center"
                                       // onClick={() => handleSelectVoice(transcript)}
-                                      onClick={(e) => {
-                                        // if (!isStreaming) {
-                                        // setController(new AbortController());
-                                        // setIsStreaming(true);
-
-                                        handleSendMessage(e, transcript);
-                                        setIsTypewriterDone(true);
-                                        setIsViewPrompts(false);
-                                        setAudioInput(false);
-                                        setMicClicked(false);
-                                        setAudioInput(false);
-                                        // Stop the speech recognition
-                                        SpeechRecognition.stopListening();
-
-                                        // Reset the relevant states to their initial values
-                                        setStartListen(true);
-                                        setStartSpeech(true);
-                                        setMicClicked(false);
-                                        resetTranscript();
-                                        setIsViewPrompts(false);
-                                        // }
-                                      }}
                                     >
                                       <img src={MicrophoneWhiteIcon} />
                                       {/* {!isMicEnabled ? (
@@ -2795,7 +2859,10 @@ const MainScreen = ({
                                     <div
                                       className="cursor-pointer"
                                       // onClick={() => setAudioInput(false)}
-                                      onClick={() => closeSpeechRecognition()}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        closeSpeechRecognition()}
+                                      }
                                     >
                                       <img src={SmallClose} />
                                     </div>
@@ -2816,100 +2883,112 @@ const MainScreen = ({
                               //   handleSendMessage={handleSendMessage}
                               //   setIsTypewriterDone={setIsTypewriterDone}
                               // />
+                              <>
                               <div
-                                className={`flex items-top gap-[8px] border border-gray px-[10px] rounded-lg ${chatType === 'summarize' ? 'blur-sm shadow-md pointer-events-none' : ''
+                                className={`border border-gray px-[10px] rounded-lg ${chatType === 'summarize' ? 'blur-sm shadow-md pointer-events-none' : ''
                                   }`}
                               >
-                                <div
-                                  className={`flex items-center justify-center mt-[10px] w-[24px] h-[24px] rounded-full cursor-pointer ${isStreaming ? 'disabled cursor-default' : ''
-                                    }`}
-                                  onClick={() => !isStreaming && handleAudioInput()} // Conditionally set the onClick handler
-                                  style={{
-                                    boxShadow: '0px 0px 10px 0px #00000026',
-                                  }}
-                                >
-                                  <img src={MicrophoneIcon} />
-                                </div>
-                                <textarea
-                                  style={{ resize: 'none', backgroundColor: isStreaming ? 'white' : '' }}
-                                  id="chatText"
-                                  name="chatText"
-                                  rows="5"
-                                  value={chatInput.chatText}
-                                  placeholder={errors.chatText ? errors.chatText : 'Tell me what to write for you'}
-                                  className="text-[14px] pt-[14px] block w-[349px] rounded-lg focus:outline-0"
-                                  onChange={(e) => handleChange(e)}
-                                  onPaste={handlePaste}
-                                  onKeyDown={(e) => {
-                                    // if (!isStreaming) {
-                                    if (e.key === 'Enter' && !e.shiftKey) {
-                                      e.preventDefault();
-                                      // setController(new AbortController());
-                                      // setIsStreaming(true);
-
-                                      handleSendMessage(e, chatInput.chatText);
-                                      setChatInput({
-                                        ...chatInput,
-                                        chatText: '',
-                                      });
-                                      setIsViewPrompts(false);
-                                      setIsTypewriterDone(true);
-                                    }
-                                    // }
-                                  }}
-                                  disabled={isStreaming}
-                                />
-                                {/* {errors.chatText && <p className="text-red text-[12px]">{errors.chatText}</p>} */}
-                                {!isStreaming && !chatLoading && (
-                                  
-                                  <CustomTooltip
-                                    isFloating
-                                    maxWidth="430px"
-                                    place="bottom"
-                                    id="SubmitSend"
-                                    content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Sends </div>`}
+                                <div className='flex items-top gap-[8px]'>
+                                  <div
+                                    className={`flex items-center justify-center mt-[10px] w-[24px] h-[24px] rounded-full cursor-pointer ${isStreaming ? 'disabled cursor-default' : ''
+                                      }`}
+                                    onClick={() => !isStreaming && handleAudioInput()} // Conditionally set the onClick handler
+                                    style={{
+                                      boxShadow: '0px 0px 10px 0px #00000026',
+                                    }}
                                   >
-                                    <button
-                                      id="SubmitSend"
-                                      className={`absolute top-[12px] right-[12px] w-[20px] h-[20px] cursor-pointer focus:outline-0  ${chatLoading ? 'opacity-50 cursor-not-allowed' : ''
-                                        }`}
-                                      onClick={(e) => {
-                                        if (chatInput.chatText.trim() != "") {
-                                          handleSendMessage(e, chatInput.chatText);
-                                          setChatInput({
-                                            ...chatInput,
-                                            chatText: '',
-                                          });
-                                          setIsViewPrompts(false);
-                                          setIsTypewriterDone(true);
-                                        }
+                                    <img src={MicrophoneIcon} />
+                                  </div>
+                                  <textarea
+                                    style={{ resize: 'none', backgroundColor: isStreaming ? 'white' : '' }}
+                                    id="chatText"
+                                    name="chatText"
+                                    rows="5"
+                                    value={chatInput.chatText}
+                                    placeholder={errors.chatText ? errors.chatText : 'Tell me what to write for you'}
+                                    className="text-[14px] pt-[14px] block w-[349px] rounded-lg focus:outline-0"
+                                    onChange={(e) => handleChange(e)}
+                                    onPaste={handlePaste}
+                                    onKeyDown={(e) => {
+                                      // if (!isStreaming) {
+                                      if (e.key === 'Enter' && !e.shiftKey) {
+                                        e.preventDefault();
+                                        // setController(new AbortController());
+                                        // setIsStreaming(true);
 
-                                      }}
-                                      type="button"
-                                      disabled={chatLoading || !chatInput.chatText}
+                                        handleSendMessage(e, chatInput.chatText);
+                                        setChatInput({
+                                          ...chatInput,
+                                          chatText: '',
+                                        });
+                                        setIsViewPrompts(false);
+                                        setIsTypewriterDone(true);
+                                      }
+                                      // }
+                                    }}
+                                    disabled={isStreaming}
+                                  />
+                                  {/* {errors.chatText && <p className="text-red text-[12px]">{errors.chatText}</p>} */}
+                                  {!isStreaming && !chatLoading && (
+                                    <CustomTooltip
+                                      isFloating
+                                      maxWidth="430px"
+                                      place="bottom"
+                                      id="SubmitSend"
+                                      content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > Sends </div>`}
                                     >
-                                      <img src={SendIcon} />
-                                    </button>
-                                  </CustomTooltip>
-                                )}
+                                      <button
+                                        id="SubmitSend"
+                                        className={`absolute top-[12px] right-[12px] w-[20px] h-[20px] cursor-pointer focus:outline-0  ${chatLoading ? 'opacity-50 cursor-not-allowed' : ''
+                                          }`}
+                                        onClick={(e) => {
+                                          if (chatInput.chatText.trim() != "") {
+                                            handleSendMessage(e, chatInput.chatText);
+                                            setChatInput({
+                                              ...chatInput,
+                                              chatText: '',
+                                            });
+                                            setIsViewPrompts(false);
+                                            setIsTypewriterDone(true);
+                                          }
+
+                                        }}
+                                        type="button"
+                                        disabled={chatLoading || !chatInput.chatText}
+                                      >
+                                        <img src={SendIcon} />
+                                      </button>
+                                    </CustomTooltip>
+                                  )}
+                                </div>
+                                <div className='mb-[10px]'>
+                                  {/* todo */}
+                                  <div className="flex justify-start items-center gap-[2px]">
+                                    <img src={magicpenIcon} className='w-[16px] h-[16px]'></img>
+                                    <span className='text-[#8C90A5] ml-[4px] mr-[8px]'>Web Access</span>
+                                    <Switch className={webAccess ? 'bg-[#1678f2]' : 'bg-[#808080]'} size="small" onChange={onChangeOnOff} />
+                                  </div>
+                                </div>
                               </div>
+                              </>
                             )}
                           </form>
                         </div>
                         <div className="absolute text-lightgray2 right-[21px] bottom-[10px] text-[12px]">
-                          {speechLength}/1000
+                          {speechLength}/4000
                         </div>
                       </>
                     )}
                   </div>
-                  {isStreaming && (
+                  {isStreaming && !isRetry && (
                     <div
-                      className="border rounded-md border-primaryBlue w-[138px] cursor-pointer"
+                      className={`border rounded-md border-primaryBlue w-[138px] cursor-pointer ${addPromptBox && "hidden"}`}
                       style={{
                         position: 'absolute',
                         right: '178px',
                         bottom: '200px',
                         boxShadow: '0px 10px 30px 0px #3C425726',
+                        background:'#ffffff'
                       }}
                       onClick={() => {
                         handleStopButtonClick();
@@ -2918,6 +2997,29 @@ const MainScreen = ({
                       <div className="flex gap-2 items-center px-[8px] py-[10px]">
                         <img src={stopIcon} />
                         <p className="text-primaryBlue text-[12px] font-medium whitespace-nowrap">Stop Generating</p>
+                      </div>
+                    </div>
+                  )}
+                  {isRetry && (
+                    <div
+                      className={`border rounded-md border-primaryBlue w-[138px] cursor-pointer ${addPromptBox && "hidden"}`}
+                      style={{
+                        position: 'absolute',
+                        width:'74px',
+                        right: '208px',
+                        bottom: '200px',
+                        boxShadow: '0px 10px 30px 0px #3C425726',
+                        background:'#ffffff'
+                      }}
+                      onClick={() => {                        
+                        setIsRetry(false);
+                        handleRegenerate();
+                        setIsTypewriterDone(true);
+                      }}
+                    >
+                      <div className="flex gap-2 items-center px-[8px] py-[10px]">
+                        <img src={refreshIcon} />
+                        <p className="text-primaryBlue text-[12px] font-medium whitespace-nowrap">Retry</p>
                       </div>
                     </div>
                   )}
@@ -3113,7 +3215,7 @@ const MainScreen = ({
                                   name="input_text"
                                   rows="6"
                                   value={selectedText.input_text}
-                                  maxLength="1000"
+                                  maxLength="4000"
                                   onChange={(e) => handleChangeCompose(e)}
                                   placeholder="Tell me what to write for you"
                                   className="text-[14px] border-gray block w-full rounded-md border p-1.5 mb-[10px]"

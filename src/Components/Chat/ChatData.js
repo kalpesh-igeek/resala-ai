@@ -20,6 +20,7 @@ const ChatData = ({
   activeTabSub,
   isStreaming,
   isSpeechEnabled,
+  isRetry
 }) => {
   const { speak, cancel, speaking } = useSpeechSynthesis();
   const [isCopied, setisCopied] = useState(undefined);
@@ -82,7 +83,8 @@ const ChatData = ({
     <>
       <div
         ref={chatContainerRef}
-        className={`text-[12px] max-h-[530px] overflow-y-auto flex flex-col-reverse ${
+        style={{height:'calc(100vh - 280px)'}}
+        className={`text-[12px] overflow-y-auto flex flex-col-reverse ${
           isStreaming ? 'mb-[55px]' : ''
         } relative`}
       >
@@ -159,12 +161,29 @@ const ChatData = ({
                 );
               case 'loading':
                 return <img id="chat-container" className="w-[100px]" src={LoadingGif} />;
+              case 'retry':
+                return (
+                  <>
+                    <div id="chat-container" className={`flex justify-start ${index == 0 ? 'mb-[70px]' : 'mb-[70px]'}`}>
+                      <div
+                        className="message  bg-[#ff00001a] max-w-[370px] border-0 border-gray p-[12px] flex flex-col mb-[8px] rounded-tl-[6px] rounded-tr-[6px] rounded-br-[6px] rounded-br-0 rounded-bl-0 relative "
+                        style={{
+                          overflowWrap: 'break-word',
+                        }}
+                      >
+                        <pre className="font-dmsans bg-[transparent] text-[#ff0000] font-[400] text-[14px]" style={{ textWrap: 'wrap' }}>
+                          {renderMessage(item,index)}
+                        </pre>
+                      </div>
+                    </div>
+                  </>
+                );
               default:
                 return null;
             }
           })}
         </div>
-        {!isTypewriterDone && chatData?.length >= 2 && (
+        {!isTypewriterDone && !isRetry && chatData?.length >= 2 && (
           <div className="text-[12px] text-lightgray2 mb-[16px] absolute bottom-0 right-0 left-0">
             <span
               className="flex items-center gap-2"

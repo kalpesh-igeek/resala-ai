@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { MemoryRouter, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import MainScreen from './Pages/MainScreen';
 import SavedTemplates from './Pages/SavedTemplates';
@@ -57,6 +57,7 @@ const sites = [
 ];
 
 export default function Panel({ local }) {
+  const chromeWidthRef = useRef();
   const { isExtensionOpen } = useSelector((state) => state.extension);
 
   const [TOKEN, setToken] = useState(null);
@@ -114,6 +115,27 @@ export default function Panel({ local }) {
     sendResponse('我收到你的消息了：' + JSON.stringify('request'));
     // console.log(request.greeting);
   });
+
+  // PREVENT BACKGROUND SCROLL IF MOUSE CURSOR INSIDE EXTNSION
+  useEffect(() => {
+    const body = document.getElementsByTagName('BODY')[0];
+    const handleMouseMove = (event) => {
+      if (chromeWidthRef.current && isExtensionOpen) {
+        const rect = chromeWidthRef.current.getBoundingClientRect();
+        const mouseX = event.clientX;
+        if (rect.left < mouseX) {
+          body.style.overflow = 'hidden';
+        } else {
+          body.style.overflow = 'auto';
+        }
+      }
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      body.style.overflow = 'auto';
+    };
+  }, [isExtensionOpen]);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -1229,6 +1251,7 @@ export default function Panel({ local }) {
               boxShadow: '-10px 0px 20px 0px #3C42570D',
               zIndex: 999999,
             }}
+            ref={chromeWidthRef}
             className={`MAINBODY fixed top-0 right-0 bottom-0 bg-white ease-in-out overflow-y-auto`}
             id="resala-extension"
           >

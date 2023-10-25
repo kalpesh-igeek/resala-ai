@@ -252,7 +252,7 @@ const ChatHistory = ({
   // };
 
   const handleChatSelection = async (chat) => {
-    setlastSelectedChat(chat);
+    setlastSelectedChat(chat?.chat_id);
     // setChatData(chat);
     await dispatch(selectChat(chat?.id));
     setIsChatHistory(false);
@@ -597,7 +597,7 @@ const ChatHistory = ({
                             <div className="flex items-center gap-2">
                               <div
                                 className={
-                                  lastSelectedChat && item.id == lastSelectedChat.id
+                                  lastSelectedChat && item.chat_id == lastSelectedChat
                                     ? 'block w-[41px] h-[18px] relative'
                                     : 'hidden'
                                 }
@@ -632,6 +632,7 @@ const ChatHistory = ({
                             >
                               {item.chat_dict?.ai_answer}
                             </div>
+                            {lastSelectedChat && item.chat_id != lastSelectedChat && 
                             <CustomTooltip
                               maxWidth="430px"
                               place="top"
@@ -649,6 +650,7 @@ const ChatHistory = ({
                                 <img src={DeleteIcon} />
                               </button>
                             </CustomTooltip>
+                            }
                           </div>
                         </div>
                       </div>
