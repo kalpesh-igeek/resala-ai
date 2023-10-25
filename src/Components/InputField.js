@@ -54,12 +54,12 @@ const InputField = ({
           <input
             className={className}
             name={name}
-            type={type}
-            // value={inputValue.value}
-            maxLength="6"
+            type="text"
+            value={value}
             onChange={handleChange}
             placeholder={placeholder}
-            displayValue={displayValue?.otp.toString().replace(/(\d{3})(?=\d)/g, '$1 ')}
+            displayValue={value?.toString().replace(/(\d{3})(?=\d)/g, '$1 ')}
+            disabled={isLoading || disabled}
             // onkeydown="return event.keyCode !== 69"
             // onKeyPress={handleKeyPress}
           />

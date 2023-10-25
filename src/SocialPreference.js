@@ -207,6 +207,7 @@ const SocialPreference = ({ selectedItems, setSelectedItems, setPreference }) =>
           <Select
             className="language flex gap-1 items-center justify-center rounded-full bg-gray3 text-[12px] font-bold text-darkBlue cursor-pointer"
             // menuPlacement="top"
+            isSearchable={false}
             defaultValue={outputLanguages[0]}
             // menuPortalTarget={document.body}
             // onChange={setSelectedOption}
@@ -225,7 +226,7 @@ const SocialPreference = ({ selectedItems, setSelectedItems, setPreference }) =>
                 boxShadow: 'none',
                 backgroundColor: '#F3F3F3',
                 textAlign: 'center',
-                borderRadius: '100%',
+                borderRadius: '100%'
               }),
               menu: (base) => ({
                 ...base,
@@ -244,7 +245,7 @@ const SocialPreference = ({ selectedItems, setSelectedItems, setPreference }) =>
                   borderRadius: '4px',
                   height: '26px',
                   lineHeight: '13px',
-                  cursor: 'pointer',
+                  cursor: 'pointer'
                 };
               },
               dropdownIndicator: (provided, state) => ({

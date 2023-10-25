@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { newChat } from '../redux/reducers/chatSlice/ChatSlice';
 import { getToken } from '../utils/localstorage';
+import DocumentUpload from '../utils/Chat/Icons/document-upload.svg';
+import { round } from 'lodash';
 
 const fileContents2 = `Article summary
 Virat Kohli is an Indian cricketer and former captain of the Indian national cricket team. He is considered one of the best batsmen in the world and has numerous records to his name. Kohli has won several awards for his performances, including the Sir Garfield Sobers Trophy for ICC Cricketer of the Year in 2017 and 2018. He is known for his aggressive style of play and his passion for the game.
@@ -32,6 +34,11 @@ const FileUpload = ({
   const [summeriseContent, setSummeriseContent] = useState([]);
   const hiddenFileInput = React.useRef(null);
   const chatId = sessionStorage.getItem('chatId');
+
+
+  const [counter, setCounter] = useState(0);
+  const [isSelected, setisSelected] = useState(0);
+
   const dispatch = useDispatch();
 
   const handleClick = () => {
@@ -44,7 +51,23 @@ const FileUpload = ({
     setSelectedFile(fileUploaded);
     // props.handleFile(fileUploaded);
   };
+
+  useEffect(() => {
+    let interval;
+    if (isSelected) {
+       interval = setInterval(() => {
+        if (counter < 100) {
+          setCounter(counter + 1);
+        }
+      }, 100);
+    }
+
+    return () => clearInterval(interval);
+  }, [counter,isSelected]);
+
   const handleThumbnailImage = (e) => {
+    setCounter(0);
+    setisSelected(true);
     const input = e.target;
     const imageObj = e.target.files;
 
@@ -279,7 +302,7 @@ const FileUpload = ({
     <>
       {selectedFile ? (
         <>
-          <div className="h-[166px] uppercase rounded-[6px] w-[166px] text-[20px] flex items-center bg-lightblue1 text-primaryBlue justify-center mb-[18px]">
+          {/* <div className="h-[166px] uppercase rounded-[6px] w-[166px] text-[20px] flex items-center bg-lightblue1 text-primaryBlue justify-center mb-[18px]">
             {selectedFile.type &&  selectedFile?.type.toString().split("/")[1] ? selectedFile?.type.toString().split("/")[1] : selectedFile.type}
           </div>
           <div className="text-[14px] mb-[8px] font-[400]"> {selectedFile.name}</div>
@@ -294,23 +317,54 @@ const FileUpload = ({
               className="rounded-md bg-white px-[16px] py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
               onClick={() => {
                 handleStartChatFile();
-                // setChatData([]);
               }}
             >
               Let’s Chat
             </button>
+          </div> */}
+          <div className="p-[6px]  h-[70px] w-full border border-[#DFE4EC] uppercase rounded-[6px] flex items-center justify-between">
+            <div className='flex items-center'>
+              <img className='w-[50px] h-[50px]' src={DocumentUpload} />
+              <div className='flex flex-col items-start text-start pl-[10px]'>
+                <span className='font-[500] text-[14px] text-[#5F6583]'>{selectedFile.name}</span>
+                <span className='font-[400] text-[12px] text-[#5F6583] mt-[8px]'>{Number(selectedFile.size / 1024).toFixed(2)} MB</span>
+              </div>
+            </div>
+            {counter < 100 && <div>{counter}%</div>}
           </div>
+          <div className={`rounded-[6px] bg-[#EEF6FF] h-[70px] mt-[-70px]`} style={{ width: `${counter}%` }}></div>
+          {counter == 100 && (
+            <div className="flex justify-center gap-2 mt-[24px]">
+              <button
+                className="rounded-md bg-white px-[16px] py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
+                onClick={() => handleSummeriseFile()}
+              >
+                Summarize
+              </button>
+              <button
+                className="rounded-md bg-white px-[16px] py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
+                onClick={() => {
+                  handleStartChatFile();
+                }}
+              >
+                Let’s Chat
+              </button>
+            </div>
+          )
+          }
         </>
       ) : (
         <>
-          <span className='font-[400] text-[#8C90A5] text-[14px] '>Drop your documents [pdf, docx, pptx or txt] here or </span>
+          <img className='pt-[12px]' src={DocumentUpload} />
+          <span className='font-[400] pt-[24px] text-[#8C90A5] text-[14px] '>Drop your documents here or </span>
           <button
             className="flex gap-1 items-center justify-center w-full rounded-full px-[9px] py-[5px] text-[12px] font-medium text-primaryBlue"
             onClick={handleClick}
           >
             <span className="text-primaryBlue text-[14px] font-medium">Click Here To Upload</span>
           </button>
-          <input type="file" ref={hiddenFileInput} onChange={handleThumbnailImage} style={{ display: 'none' }} />
+          <span className='font-[400] pt-[40px] text-[#8C90A5] text-[14px] '>File type supported: PDF &nbsp;&nbsp;|&nbsp;&nbsp;Max file size: 100MB</span>
+          <input type="file" ref={hiddenFileInput} onChange={handleThumbnailImage} accept=".pdf" style={{ display: 'none' }} />
         </>
       )}
     </>

@@ -38,6 +38,8 @@ import { getDateDisplay } from '../../Helpers/dateFormater';
 import CustomTooltip from '../CustomTooltip/Tooltip';
 import NoDataFound from '../../utils/SavedTemplates/img/nodatafound.svg';
 import { set } from 'lodash';
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 // -active
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -184,8 +186,10 @@ const ChatHistory = ({
   setSearchChatHis,
   lastSelectedChat,
   setlastSelectedChat,
+  isSkeleton,
+  setIsSkeleton
 }) => {
-  // console.log('chatsHistory', chatsHistory);
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [filesList, setFileList] = useState(filesListData);
@@ -390,6 +394,7 @@ const ChatHistory = ({
                     onChange={handleChatTypeChange}
                   // menuIsOpen={true}
                   // onChange={handleChatTypeChange}
+                  isSearchable={false}
                   />
                 </div>
               </div>
@@ -558,6 +563,17 @@ const ChatHistory = ({
               </div>
 
               <div className="mt-[12px] px-[12px] max-h-[480px] overflow-y-auto">
+                { isSkeleton ? ( <>
+                  {Array.from({ length: 12 }, (_, index) => (
+                    <div className="flex gap-[16px] px-[8px] items-center mb-[24px]">
+                      <Skeleton height={40} width={40}  />
+                      <div className='flex flex-col gap-[8px] item-center'>
+                        <Skeleton height={20} width={404} />
+                        <Skeleton height={20} width={200} />
+                      </div>
+                    </div>
+                    ))}
+                  </>) : ( <>
                 {chatsHistory.length === 0 ? (
 
                   // <div className="text-gray1 text-center py-4">No data found</div>
@@ -639,6 +655,8 @@ const ChatHistory = ({
                     </>
                   ))
                 )}
+                </>) }
+
               </div>
             </>
           )}

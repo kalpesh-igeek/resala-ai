@@ -161,6 +161,7 @@ export default function SaveTemplatePopup({ saveTemplateBox, setSaveTemplateBox,
         </div>
         <div className="col-span-full mb-[15px]">
           <Select
+           isSearchable={false}
             className="border border-gray rounded-md mb-[15px] p-[10px] text-[14px] placeholder:text-gray1"
             menuPlacement="bottom"
             name="templateType"
@@ -180,6 +181,10 @@ export default function SaveTemplatePopup({ saveTemplateBox, setSaveTemplateBox,
                 minHeight: '21px',
                 border: 0,
                 boxShadow: 'none',
+                top: '-5px',
+                ':hover': {
+                  cursor: 'pointer'
+                }
               }),
               menu: (base) => ({
                 ...base,
@@ -202,6 +207,9 @@ export default function SaveTemplatePopup({ saveTemplateBox, setSaveTemplateBox,
                   lineHeight: '7px',
                   padding: '10px 12px',
                   // minWidth: '143px',
+                  ':hover': {
+                    cursor: 'pointer'
+                  }
                 };
               },
               dropdownIndicator: (provided, state) => ({

@@ -63,7 +63,7 @@ const UploadDocumentPopup = ({
               <img src={Close} />
             </div>
           </div>
-          <div className="flex flex-col items-center justify-center p-[18px] text-[14px] text-center text-gray1 border-2 border-dashed border-gray min-h-[228px] rounded-[6px] mb-[20px]">
+          <div className={`p-[18px] text-[14px] text-gray1 border-2 border-dashed border-gray  rounded-[6px] ${selectedFile ? 'min-h-[118px]' : 'min-h-[220px] flex  flex-col items-center  text-center'} `}>
             <FileUpload
               setIsViewPrompts={setIsViewPrompts}
               chatData={chatData}
@@ -81,14 +81,14 @@ const UploadDocumentPopup = ({
               setChatType={setChatType}
             />
           </div>
-          {!selectedFile && (
+          {/* {!selectedFile && (
             <button
               className="flex w-full justify-center rounded-md bg-primaryBlue px-3 py-2 text-sm leading-6 text-white shadow-sm hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               // onClick={() => handleGenerateDraft()}
             >
               Upload
             </button>
-          )}
+          )} */}
         </div>
       </div>
     </div>

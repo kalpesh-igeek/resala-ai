@@ -66,6 +66,7 @@ const otpVerification = async (payload) => {
     const otpPath = `${AUTH_URL}/otp_verification`;
     return await postReqWithoutToken(otpPath, payload);
   } catch (error) {
+    return error;
     // Toast('error', error?.response?.data?.message);
     // console.log('error', error?.response?.data?.message);
     // Toast('error', error.response.data.Message);

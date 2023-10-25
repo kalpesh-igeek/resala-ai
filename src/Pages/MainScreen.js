@@ -282,6 +282,9 @@ const MainScreen = ({
   const [isEdit, setIsEdit] = useState(false);
 
   const [isChatHistory, setIsChatHistory] = useState(false);
+  
+  //For chat
+  const [isSkeleton, setIsSkeleton] = useState(true);
 
   const [audioInput, setAudioInput] = useState(false);
   const [isAudioInfoPopup, setIsAudioInfoPopup] = useState(false);
@@ -539,6 +542,7 @@ const MainScreen = ({
   }, [selectedItems]);
 
   const fetchChatHistoryList = async () => {
+    setIsSkeleton(true);
     const res = await dispatch(
       userChatList({
         history_type: historyType,
@@ -549,11 +553,13 @@ const MainScreen = ({
     );
 
     if (!res.payload) {
+      setIsSkeleton(false);
       return;
     }
 
     if (res.payload.status === 200) {
       setChatsHistroy(res.payload?.Result);
+      setIsSkeleton(false);
       // setTotalData(res.payload?.totalCount);
       // setIsLoading(false);
     }
@@ -2495,6 +2501,7 @@ const MainScreen = ({
 
                                 <div ref={selectRef}>
                                   <Select
+                                   isSearchable={false}
                                     className="border border-gray text-gray1 hover:text-darkBlue rounded-md text-[14px] py-[4px] px-[6px]"
                                     menuPlacement="top"
                                     defaultValue={'English'}
@@ -2514,6 +2521,9 @@ const MainScreen = ({
                                         minHeight: '21px',
                                         border: 0,
                                         boxShadow: 'none',
+                                        ':hover': {
+                                          cursor: 'pointer'
+                                        }
                                       }),
                                       menu: (base) => ({
                                         ...base,
@@ -2534,6 +2544,9 @@ const MainScreen = ({
                                           lineHeight: '7px',
                                           // padding: '4px 0px 4px 8px',
                                           // minWidth: '143px',
+                                          ':hover': {
+                                            cursor: 'pointer'
+                                          }
                                         };
                                       },
                                       dropdownIndicator: (provided, state) => ({
@@ -2565,7 +2578,7 @@ const MainScreen = ({
                             </CustomTooltip>
                           </div>
                         </div>
-                        <div className="mt-2 relative">
+                        <div className="mt-2 relative mb-[10px]">
                           <form
                             // onSubmit={(e) => {
                             //   // if (!isStreaming) {
@@ -2611,6 +2624,7 @@ const MainScreen = ({
 
                                       <div ref={selectRef}>
                                         <Select
+                                         isSearchable={false}
                                           className="border border-gray rounded-md text-[12px]"
                                           menuPlacement="top"
                                           defaultValue={outputLanguagesVoice[0]}
@@ -2630,6 +2644,9 @@ const MainScreen = ({
                                               boxShadow: 'none',
                                               backgroundColor: 'unset',
                                               top: '-3px',
+                                              ':hover': {
+                                                cursor: 'pointer'
+                                              }
                                             }),
                                             menu: (base) => ({
                                               ...base,
@@ -2652,6 +2669,9 @@ const MainScreen = ({
                                                 height: '26px',
                                                 lineHeight: '9px',
                                                 fontSize: '14px',
+                                                ':hover': {
+                                                  cursor: 'pointer'
+                                                }
                                               };
                                             },
                                             dropdownIndicator: (provided, state) => ({
@@ -2841,6 +2861,7 @@ const MainScreen = ({
                                 />
                                 {/* {errors.chatText && <p className="text-red text-[12px]">{errors.chatText}</p>} */}
                                 {!isStreaming && !chatLoading && (
+                                  
                                   <CustomTooltip
                                     isFloating
                                     maxWidth="430px"
@@ -2969,6 +2990,7 @@ const MainScreen = ({
                                 /> */}
 
                                 <Select
+                                 isSearchable={false}
                                   className="border border-gray rounded-md p-[9px] text-[14px] placeholder:text-gray1"
                                   menuPlacement="bottom"
                                   name="templateType"
@@ -2991,6 +3013,9 @@ const MainScreen = ({
                                       minHeight: '21px',
                                       border: 0,
                                       boxShadow: 'none',
+                                      ':hover': {
+                                        cursor: 'pointer'
+                                      }
                                     }),
                                     menu: (base) => ({
                                       ...base,
@@ -3011,6 +3036,9 @@ const MainScreen = ({
                                         lineHeight: '7px',
                                         padding: '10px 12px',
                                         // minWidth: '143px',
+                                        ':hover': {
+                                          cursor: 'pointer'
+                                        }
                                       };
                                     },
                                     placeholder: (base) => ({
@@ -3838,6 +3866,8 @@ const MainScreen = ({
               setSearchChatHis={setSearchChatHis}
               lastSelectedChat={lastSelectedChat}
               setlastSelectedChat={setlastSelectedChat}
+              isSkeleton={isSkeleton}
+              setIsSkeleton={setIsSkeleton}            
             />
           </div>
         </Header>

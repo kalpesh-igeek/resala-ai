@@ -61,6 +61,7 @@ const ChatInput = () => {
                     <Select
                       className="border border-gray rounded-md text-[10px] p-[4px]"
                       menuPlacement="top"
+                      isSearchable={false}
                       defaultValue={outputLanguagesVoice[0]}
                       onChange={setSelectedOption}
                       options={outputLanguagesVoice}
@@ -76,7 +77,7 @@ const ChatInput = () => {
                           border: 0,
                           boxShadow: 'none',
                           backgroundColor: 'unset',
-                          top: '-5px',
+                          top: '-5px'
                         }),
                         menu: (base) => ({
                           ...base,

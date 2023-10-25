@@ -846,6 +846,12 @@ video {
   .mb-\[18px\] {
     margin-bottom: 18px;
   }
+  .mt-\[-70px\] {
+    margin-top: -70px;
+  }
+  .mt-\[24px\] {
+    margin-top: 24px;
+  }
   .mt-\[4px\] {
     margin-top: 4px;
   }
@@ -917,9 +923,6 @@ video {
   }
   .mt-\[6px\] {
     margin-top: 6px;
-  }
-  .mt-\[24px\] {
-    margin-top: 24px;
   }
   .mt-\[23px\] {
     margin-top: 23px;
@@ -1091,6 +1094,12 @@ video {
   .h-\[166px\] {
     height: 166px;
   }
+  .h-\[70px\] {
+    height: 70px;
+  }
+  .h-\[50px\] {
+    height: 50px;
+  }
   .h-10 {
     height: 2.5rem;
   }
@@ -1133,9 +1142,6 @@ video {
   .h-\[1px\] {
     height: 1px;
   }
-  .h-\[70px\] {
-    height: 70px;
-  }
   .h-\[6px\] {
     height: 6px;
   }
@@ -1175,8 +1181,11 @@ video {
   .min-h-\[90px\] {
     min-height: 90px;
   }
-  .min-h-\[228px\] {
-    min-height: 228px;
+  .min-h-\[118px\] {
+    min-height: 118px;
+  }
+  .min-h-\[220px\] {
+    min-height: 220px;
   }
   .min-h-\[644px\] {
     min-height: 644px;
@@ -1892,6 +1901,10 @@ video {
     --tw-bg-opacity: 1;
     background-color: rgb(0 0 0 / var(--tw-bg-opacity));
   }
+  .bg-\[\#EEF6FF\] {
+    --tw-bg-opacity: 1;
+    background-color: rgb(238 246 255 / var(--tw-bg-opacity));
+  }
   .bg-\[\#FFFFFF\] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 255 255 / var(--tw-bg-opacity));
@@ -1926,10 +1939,6 @@ video {
   .bg-gray {
     --tw-bg-opacity: 1;
     background-color: rgb(223 228 236 / var(--tw-bg-opacity));
-  }
-  .bg-\[\#EEF6FF\] {
-    --tw-bg-opacity: 1;
-    background-color: rgb(238 246 255 / var(--tw-bg-opacity));
   }
   .bg-\[\#F8FBFF\] {
     --tw-bg-opacity: 1;
@@ -2264,6 +2273,18 @@ video {
   .pb-\[6px\] {
     padding-bottom: 6px;
   }
+  .pl-\[10px\] {
+    padding-left: 10px;
+  }
+  .pt-\[12px\] {
+    padding-top: 12px;
+  }
+  .pt-\[24px\] {
+    padding-top: 24px;
+  }
+  .pt-\[40px\] {
+    padding-top: 40px;
+  }
   .pt-\[9px\] {
     padding-top: 9px;
   }
@@ -2315,9 +2336,6 @@ video {
   .pl-\[40px\] {
     padding-left: 40px;
   }
-  .pt-\[12px\] {
-    padding-top: 12px;
-  }
   .pb-\[14px\] {
     padding-bottom: 14px;
   }
@@ -2326,6 +2344,9 @@ video {
   }
   .text-center {
     text-align: center;
+  }
+  .text-start {
+    text-align: start;
   }
   .align-middle {
     vertical-align: middle;

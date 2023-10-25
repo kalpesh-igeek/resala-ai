@@ -2230,6 +2230,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                         onBlur={handleBlur}
                         onFocus={() => setIsMenuOpen(true)}
                         isMenuOpen={isMenuOpen}
+                        isSearchable={false}
                         styles={{
                           control: (base) => ({
                             ...base,
@@ -2239,7 +2240,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             width: '100px',
                             boxShadow: 'none',
                             backgroundColor: 'unset',
-                            top: '-3px',
+                            top: '-3px'
                           }),
                           menu: (base) => ({
                             ...base,
@@ -2260,7 +2261,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               borderRadius: '4px',
                               height: '26px',
                               lineHeight: '9px',
-                              fontSize: '14px',
+                              fontSize: '14px'
                             };
                           },
                           dropdownIndicator: (provided, state) => ({

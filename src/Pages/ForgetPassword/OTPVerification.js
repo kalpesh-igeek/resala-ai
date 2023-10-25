@@ -18,7 +18,7 @@ const OTPVerification = () => {
   const { userEmail } = state; // Read values passed on state
 
   const [isOTPSent, setIsOTPSent] = useState(true);
-  const [inputValue, setInputValue] = useState({ otp: 0 });
+  const [inputValue, setInputValue] = useState({ otp: '' });
   const [errors, setErrors] = useState({});
   const [timer, setTimer] = useState(60);
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -31,7 +31,16 @@ const OTPVerification = () => {
   }, []);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    // remove character it's allow only number with 7 digits 
+    value = value.replace(/[^0-9\s]/g, '');
+    value = value.trim();
+    value = value.replace(/(\d{3})(?=\d)/g, '$1 ');
+
+    if (value.toString().length > 7) {
+      value = value.toString().substring(0, 7);
+    }
+
     setInputValue({
       ...inputValue,
       [name]: value,
@@ -48,20 +57,27 @@ const OTPVerification = () => {
     e.preventDefault();
 
     var errors;
-    errors = otpCheck(inputValue);
+    let otpObj = { ...inputValue };
+    otpObj.otp = otpObj.otp.replace(/\s/g, '');
+
+    errors = otpCheck(otpObj);
     if (Object.keys(errors)?.length) {
       setErrors(errors);
       return;
     }
+
     const payload = {
       email: userEmail.email,
-      otp: inputValue.otp,
+      otp: otpObj.otp,
     };
-    const res = await dispatch(otpVerification(payload));
 
-    if (!res?.payload) {
+    const res = await dispatch(otpVerification(payload));
+ 
+    if (res?.payload?.response?.status == 400) {
+      setErrors({ otp : res?.payload?.response?.data?.Message});
       return;
     }
+
     if (res.payload.status === 200) {
       // const res = await dispatch(forgotPasswordDetails(inputValue));
       navigate('/enternewpassword', { state: { email: userEmail } });
@@ -113,7 +129,7 @@ const OTPVerification = () => {
 
   return (
     <>
-    <SubHeader></SubHeader>
+      <SubHeader></SubHeader>
       {isOTPSent ? (
         <div className="flex gap-1 bg-lightblue1 justify-center">
           <div className="flex gap-2 justify-center py-[12px]">
@@ -158,15 +174,17 @@ const OTPVerification = () => {
             label=""
             type="number"
             placeholder="000 000"
+            value={inputValue.otp}
             handleChange={(e) => handleChange(e)}
           />
-          {errors.otp && <p className="text-red text-[12px] mb-[5px]">{errors.otp}</p>}
-          {/* <div className="bg-red1 mt-[4px] mb-[16px] rounded-md">
+          {errors.otp && 
+          <div className="bg-red1 mt-[4px] mb-[16px] rounded-md">
             <div className="flex gap-2 items-center py-[12px] px-[10px]">
               <img src={InforCircleIcon} className="" />
-              <span className="text-[12px] text-red">Code entered is incorrect. Please try again.</span>
+              <span className="text-[12px] text-red">{errors.otp}</span>
             </div>
-          </div> */}
+          </div>}
+
           {timer !== 0 && (
             <div className="flex justify-center bg-transparent text-primaryBlue w-full rounded-md px-1 py-[5px] text-[14px] font-medium disabled:cursor-none disabled:opacity-50 mb-[10px]">
               {timer === 0 ? '00:00' : `00:${timer < 10 ? '0' : ''}${timer}`}
@@ -174,16 +192,14 @@ const OTPVerification = () => {
           )}
           <>
             <span
-              className={`flex justify-center bg-transparent text-gray2 w-full rounded-md px-1 text-[14px] font-medium ${
-                isButtonDisabled ? 'disabled:cursor-none opacity-50' : ''
-              }`}
+              className={`flex justify-center bg-transparent text-gray2 w-full rounded-md px-1 text-[14px] font-medium ${isButtonDisabled ? 'disabled:cursor-none opacity-50' : ''
+                }`}
             >
               Don't receive the code?
             </span>
             <button
-              className={`flex cursor-default justify-center bg-transparent text-primaryBlue w-full rounded-md px-1 py-[5px] text-[14px] font-medium hover:opacity-90 ${
-                isButtonDisabled ? 'disabled:cursor-none disabled:opacity-50' : ''
-              }`}
+              className={`flex cursor-default justify-center bg-transparent text-primaryBlue w-full rounded-md px-1 py-[5px] text-[14px] font-medium hover:opacity-90 ${isButtonDisabled ? 'disabled:cursor-none disabled:opacity-50' : ''
+                }`}
               disabled={isButtonDisabled}
             >
               <span
@@ -200,11 +216,10 @@ const OTPVerification = () => {
             </span>
           </div> */}
           <button
-            className={`w-full rounded-md bg-primaryBlue mt-[12px] px-1 py-[16px] focus:outline-none text-[16px] font-[700] text-white hover:opacity-90 disabled:bg-lightblue5 disabled:cursor-none disabled:opacity-50 ${
-              inputValue.otp?.length !== 6 ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            className={`w-full rounded-md bg-primaryBlue mt-[12px] px-1 py-[16px] focus:outline-none text-[16px] font-[700] text-white hover:opacity-90 disabled:bg-lightblue5 disabled:cursor-none disabled:opacity-50 ${inputValue.otp.toString()?.length == 7 ? '' : 'opacity-50 cursor-not-allowed'
+              }`}
             onClick={(e) => otpVerificationMail(e)}
-            disabled={inputValue.otp?.length !== 6}
+            disabled={inputValue.otp.toString()?.length == 7 ? false : true}
           >
             {isLoading ? (
               <svg

@@ -35,9 +35,8 @@ export const sendOtpSMS = createAsyncThunk('auth/sendOtpSMS', async (payload) =>
 });
 
 export const otpVerification = createAsyncThunk('auth/otpVerification', async (payload) => {
-  const { data, status } = await authService.otpVerification(payload);
-  data.status = status;
-  return data;
+  const result = await authService.otpVerification(payload);
+  return result;
 });
 
 export const signUp = createAsyncThunk('auth/signUp', async (payload) => {

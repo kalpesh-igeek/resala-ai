@@ -100,6 +100,7 @@ export const SelectLanguage = ({ isOpen, setClose, active, options }) => {
       <Select
         id="language-select"
         className="w-full"
+        isSearchable={false}
         components={{ Option: CustomOption, SingleValue, DropdownIndicator }}
         options={options.map((itm) => ({
           value: itm.title,

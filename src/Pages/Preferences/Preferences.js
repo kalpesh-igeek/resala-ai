@@ -207,6 +207,7 @@ const Preferences = ({ selectedItems, setSelectedItems }) => {
               <div className="text-[16px] text-darkBlue font-medium mb-[5px]">Language</div>
             </div>
             <Select
+             isSearchable={false}
               className="language flex gap-1 items-center justify-center rounded-full bg-gray3 text-[12px] font-bold text-darkBlue cursor-pointer"
               // menuPlacement="top"
               defaultValue={outputLanguages[0]}

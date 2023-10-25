@@ -127,7 +127,7 @@ const Template = ({ selectedTemplate, setActiveTab }) => {
               value={selectedTemplate?.name}
               // onChange={(e) => handleChangeCompose(e)}
               placeholder="Lorem ipsum dolor sit amet consectetur."
-              className="block w-full rounded-md border border-gray mt-[4px] px-7 py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
+              className="block w-full rounded-md border h-[40px] border-gray mt-[4px] px-7 py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
             />
           </div>
           <div className="w-full">
@@ -192,7 +192,7 @@ const Template = ({ selectedTemplate, setActiveTab }) => {
               value={selectedTemplate?.type?.name}
               // onChange={(e) => handleChangeCompose(e)}
               placeholder="Lorem ipsum dolor sit amet consectetur."
-              className="block w-full rounded-md border border-gray mt-[4px] px-7 py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
+              className="block w-full rounded-md border h-[40px] border-gray mt-[4px] px-7 py-[16px] text-[14px] mb-[12px] text-darkBlue placeholder:text-gray1"
             />
           </div>
         </div>
