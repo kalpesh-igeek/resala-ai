@@ -362,8 +362,8 @@ const ChatHistory = ({
         <div className="fixed top-0 bottom-0 right-0 w-[500px] bg-black z-[60] opacity-40"></div>
         <div
           ref={chatHisRef}
-          className="absolute rounded-t-[10px] bg-white py-[20px] right-0 bottom-0 z-[70] w-[500px] min-h-[644px]"
-          style={{ boxShadow: '0px 10px 30px 0px #3C425726' }}
+          className="absolute rounded-t-[10px] bg-white py-[20px] right-0 bottom-0 z-[70] w-[500px]"
+          style={{ boxShadow: '0px 10px 30px 0px #3C425726', height:'calc(100vh - 30%)' }}
         // show={open}
         >
           <div className="pt-[8px] px-[20px] pb-[20px] text-[22px] font-medium text-darkBlue">

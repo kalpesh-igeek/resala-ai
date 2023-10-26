@@ -2902,13 +2902,13 @@ const MainScreen = ({
                                     <img src={MicrophoneIcon} />
                                   </div>
                                   <textarea
-                                    style={{ resize: 'none', backgroundColor: isStreaming ? 'white' : '' }}
+                                    style={{ resize: 'none', backgroundColor: isStreaming ? 'white' : 'white' }}
                                     id="chatText"
                                     name="chatText"
                                     rows="5"
                                     value={chatInput.chatText}
                                     placeholder={errors.chatText ? errors.chatText : 'Tell me what to write for you'}
-                                    className="text-[14px] pt-[14px] block w-[349px] rounded-lg focus:outline-0"
+                                    className="text-[14px] pt-[14px] block w-[349px] shadow-none rounded-lg  focus:outline-0"
                                     onChange={(e) => handleChange(e)}
                                     onPaste={handlePaste}
                                     onKeyDown={(e) => {
