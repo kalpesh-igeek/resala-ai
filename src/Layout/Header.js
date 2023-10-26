@@ -22,6 +22,7 @@ const Header = ({
   children,
   handleClick,
   handleCloseClick,
+  handlePopUpCloseClick,
   setIsLogout,
   setIfOpenConfirmBox,
   isActivity,
@@ -75,10 +76,22 @@ const Header = ({
 
 
   const handleClose = () => {
-    console.log("dklsdjdskl");
-    dispatch(handleToggle(false));
-    console.log('remove extension width');
-    document.getElementById('resala_style_right_space') ?document.getElementById('resala_style_right_space').remove() : ''
+    console.log({activity});
+    const chatText = document.getElementById('chatText');
+    if(chatText && chatText.value){
+      console.log("asfas");
+    }
+    console.log({chatText});
+    const requestedText = document.getElementById('requestedText');
+    console.log({requestedText});
+    const originalText = document.getElementById('originalText');
+    console.log({originalText});
+
+    // console.log("dklsdjdskl");
+    // dispatch(handleToggle(false));
+    // console.log('remove extension width');
+    // document.getElementById('resala_style_right_space') ?document.getElementById('resala_style_right_space').remove() : ''
+
     // document.querySelectorAll('[style="margin-right: 500px;"]')[0] ? document.querySelectorAll('[style="margin-right: 500px;"]')[0].style = 'position: relative;' : '';
     // document.getElementsByClassName('MAINBODY')[0].style = 'display: none;';
     // document.body.style.width = '100%'
@@ -132,7 +145,7 @@ const Header = ({
               className="extensionCloseIcon cursor-pointer h-[31px] w-[31px]"
               src={Close}
               alt="Close"
-              onClick={handleClose}
+              onClick={() => handlePopUpCloseClick()}
             />
           </div>
         </div>

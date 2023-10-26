@@ -614,7 +614,10 @@ const ChatHistory = ({
                                 <Icons item={item} />
                               </div>
                               <div className="text-[14px] font-medium cursor-pointer max-h-[30px] max-w-[380px] overflow-hidden whitespace-nowrap text-ellipsis">
-                                {item?.Type === 1 ? item.chat_dict?.human_question : 'Doc chat'}
+                                {item?.Type === 1 && item.chat_dict?.human_question}
+                                {item?.Type === 2 && item.document_name}
+                                {item?.Type === 3 && 'Web summary'}
+                                {item?.Type === 4 && 'Youtube summary'}
                               </div>
                             </div>
                             <div className="text-[#8C90A5] text-[12px] lowercase whitespace-nowrap">

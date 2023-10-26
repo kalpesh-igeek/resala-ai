@@ -74,6 +74,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { chatTextCheck, composeCheck, replyCheck } from '../utils/validation';
 import {
   generalPromptChat,
+  lastChatHistory,
   newChat,
   regenerateChat,
   userChat,
@@ -193,13 +194,19 @@ const MainScreen = ({
   setIsOpen,
   handleSidebar,
   handleCloseClick,
+  handlePopUpCloseClick,
   selectedAction,
   setSelectedAction,
   windowSelectedText,
   isClickButton,
   setIsClickButton,
   local,
+  chatInput,setChatInput,
+  composeSelectedText, setComposeSelectedText,
+  replyText, setReplyText,
+  selectTab,setSelectTab
 }) => {
+  console.log(activeTab,SELECTION);
   const { isExtensionOpen } = useSelector((state) => state.extension);
   const localContext = useContext(LocalContext);
   //  const TOKEN = await getToken();
@@ -216,15 +223,13 @@ const MainScreen = ({
   const { Loading } = useSelector((state) => state.compose);
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const chatId = sessionStorage.getItem('chatId') ?? generateRandomString(45);
-
+  const chatId = sessionStorage.getItem('chatId');
   // const [suggestionBox, setSuggestionBox] = useState(true);
 
   const [selectedTemplate, setSelectedTempate] = useState(state?.template);
   const [isUsePrompt, setIsUsePrompt] = useState(false);
 
   const myRef = document.getElementById('#draftPreview');
-  const [selectTab, setSelectTab] = useState(1);
 
   // const [selectedAction, setSelectedAction] = useState();
   const [selectedFormat, setSelectedFormat] = useState();
@@ -271,7 +276,6 @@ const MainScreen = ({
 
   const [isViewPrompts, setIsViewPrompts] = useState(true);
   const [chatData, setChatData] = useState([]);
-  // console.log('chatData', chatData);
 
   const [settingsPopupBox, setSettingsPopupBox] = useState(false);
 
@@ -298,9 +302,7 @@ const MainScreen = ({
 
   //Shubham
   // {Chat}
-  const [chatInput, setChatInput] = useState({
-    chatText: '',
-  });
+  
 
   const [errors, setErrors] = useState({});
   const [chatLoading, setChatLoading] = useState(false);
@@ -592,12 +594,12 @@ const MainScreen = ({
     // console.log('selectedItems =============>', selectedItems);
   }, [activeTabSub]);  
   
-  useEffect(() => {
-    if(activeTabSub == 'chat' && chatData.length == 0){
-      console.log("ACTIVE PAGE");
-      setlastSelectedChat(generateRandomString(45))
-    }
-  }, [activeTabSub]);
+  // useEffect(() => {
+  //   if(activeTabSub == 'chat' && chatData.length == 0){
+  //     console.log("ACTIVE PAGE");
+  //     setlastSelectedChat(generateRandomString(45))
+  //   }
+  // }, [activeTabSub]);
 
 
   const updateIsNewFlag = () => {
@@ -650,7 +652,6 @@ const MainScreen = ({
 
       payload = JSON.stringify(payload);
 
-      // console.log({ payload }, getToken());
       const hostname = window.location.hostname;
       let url = 'https://api-qa.resala.ai/web_summary/web_summary';
       if (hostname == 'www.youtube.com') {
@@ -722,7 +723,6 @@ const MainScreen = ({
     if (isClickButton) {
       // console.log('dfjkh');
       const hostname = window.location.hostname;
-      // console.log({ hostname });
       if (hostname == 'en.wikipedia.org') {
         // setChatData((prevMessages) => [...prevMessages, { msg: 'Summarizing : '+ document.title, type: 'ai' }]);
         setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
@@ -871,15 +871,14 @@ const MainScreen = ({
   let transformedDefaultLang = transformResponse(defaultLang);
 
   //compose
-  const [selectedText, setSelectedText] = useState({ input_text: requestedText });
-  const [replyText, setReplyText] = useState({ original_text: '', reply: '' });
+  
 
   useEffect(() => {
-    setSelectedText({ input_text: '' });
+    setComposeSelectedText({ input_text: '' });
     setReplyText({ original_text: '', reply: '' });
   }, [isExtensionOpen]);
   useEffect(() => {
-    setSelectedText({ input_text: requestedText });
+    setComposeSelectedText({ input_text: requestedText });
     setReplyText((prev) => {
       return { ...prev, original_text: requestedText };
     });
@@ -962,6 +961,42 @@ const MainScreen = ({
       })
     );
   };
+
+  const fetchLastChatHistory = async () => {
+    console.log("fetchLastChatHistory");
+    const res = await dispatch(lastChatHistory());
+    console.log({res});
+    if (!res.payload) {
+      return;
+    }
+    if (res.payload.status === 200) {
+      const responseData = res.payload.Result.chat;
+      sessionStorage.setItem('chatId', res.payload.Result?.chat_id);
+      const tempChatData = responseData.flatMap((item) => [
+        {
+          msg: item.question, // User's question
+          type: 'user',
+          loading: false,
+        },
+        {
+          msg: item.answer, // AI's response
+          type: 'ai',
+          loading: false,
+        },
+      ]);
+      // Add the new message objects to the existing chatData
+      setChatData(tempChatData);
+      setHistoryMessage(true);
+
+      // You might also want to update the total data and loading states if needed
+      // setTotalData(res.payload.totalCount);
+      // setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLastChatHistory()
+  }, [activeTab === 'chat'])
 
   const fetchChatHistory = async () => {
     const res = await dispatch(userChatHistory(historyId));
@@ -1245,12 +1280,12 @@ const MainScreen = ({
     if (selectTab === 1 && !state?.edit) {
       setIsTypewriterDone(true);
       let errors;
-      errors = composeCheck(selectedText);
+      errors = composeCheck(composeSelectedText);
       if (Object.keys(errors).length) {
         setErrors(errors);
         return;
       }
-      if (!selectedText.input_text || !selectedText.input_text.trim()) {
+      if (!composeSelectedText.input_text || !composeSelectedText.input_text.trim()) {
         return;
       }
 
@@ -1265,7 +1300,7 @@ const MainScreen = ({
             Authorization: await getToken(),
           },
           body: JSON.stringify({
-            input_text: selectedText.input_text?.trim(),
+            input_text: composeSelectedText.input_text?.trim(),
             action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
             length: selectedLength?.name,
             tone: selectedTone?.name,
@@ -1316,7 +1351,7 @@ const MainScreen = ({
           }
           // console.log('accumulatedMessage', accumulatedMessage);
           setTemplatePayload({
-            input_text: selectedText.input_text?.trim(),
+            input_text: composeSelectedText.input_text?.trim(),
             action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
             length: selectedLength?.name,
             tone: selectedTone?.name,
@@ -1506,7 +1541,7 @@ const MainScreen = ({
           }
           // console.log('accumulatedMessage', accumulatedMessage);
           setTemplatePayload({
-            input_text: selectedText.input_text?.trim(),
+            input_text: composeSelectedText.input_text?.trim(),
             action: selectTab === 1 ? selectedAction?.name : selectedFormat?.name,
             length: selectedLength?.name,
             tone: selectedTone?.name,
@@ -1775,7 +1810,6 @@ const MainScreen = ({
       setChatData((prevMessages) => [...prevMessages, { msg: message.name, type: 'user' }]);
 
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
-
       try {
         // Call your new API here
         const response = await fetch('https://api-qa.resala.ai/chat/general_prompt_response_stream', {
@@ -1832,6 +1866,7 @@ const MainScreen = ({
         console.error('An error occurred:', error);
       }
     } else if (message && !isDocChat) {
+      setReadPage(false)
       // Add the user message to the chat data
       setChatData((prevMessages) => [...prevMessages, { msg: message, type: 'user' }]);
       let accumulatedMessage = ''; // To accumulate words
@@ -2016,9 +2051,11 @@ const MainScreen = ({
     }
 
     setChatData(updatedChatData);
+    console.log("chatId => ", chatId);
     // todo
     let payload = { chatId: chatId, web_access: webAccess };
     let api_url = 'https://api-qa.resala.ai/chat/regenerate_stream_response';
+    console.log({isReadPage});
     if(!isReadPage){
       const getUserInputs = Array.from(updatedChatData).filter((itm) => itm.type == 'user');
 
@@ -2030,7 +2067,7 @@ const MainScreen = ({
     }
     if(isReadPage){
       api_url = 'https://api-qa.resala.ai/web_summary/web_summary';
-      payload = { chat_id: chatId, url:window.location.href };
+      payload = { chat_id: generateRandomString(45), url:window.location.href };
     }
 
     try {
@@ -2096,27 +2133,35 @@ const MainScreen = ({
   };
 
   const handleNewChat = async () => {
-    const res = await dispatch(newChat());
-    if (!res.payload) {
-      return;
-    }
-    if (res.payload?.status === 200) {
-      setChatInput({ chatText: '' });
-      setChatData([]);
-      setIsStreaming(false);
-      setIsStreamingComp(false);
-      setIsDocChat(false);
-    }
+
+    let newChatId = generateRandomString(45)
+    setlastSelectedChat(newChatId);
+
+    // const res = await dispatch(newChat());
+    // if (!res.payload) {
+    //   return;
+    // }
+    // if (res.payload?.status === 200) {
+    //   setChatInput({ chatText: '' });
+    //   setChatData([]);
+    //   setIsStreaming(false);
+    //   setIsStreamingComp(false);
+    //   setIsDocChat(false);
+    // }
   };
   const handleSelectItems = (id) => {
     if (id === 'chat') {
       handleNewChat();
+      setReadPage(false);
+      setChatInput({ chatText: '' });
+      setChatData([]);
+      setIsDocChat(false);
       setIsStreaming(false);
       setIsStreamingComp(false);
     }
     if (id === 'doc') {
+      handleNewChat();
       setIsUploadDocument(true);
-      dispatch(newChat());
       setChatData([]);
       setIsStreaming(false);
       setIsStreamingComp(false);
@@ -2124,14 +2169,13 @@ const MainScreen = ({
     }
     if (id === 'book') {
       // console.log('book');
-
+      handleNewChat();
       setChatInput({ chatText: '' });
       setChatData([]);
       setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       setReadPage(true);
       getPageSummary('book');
     }
-    setlastSelectedChat(generateRandomString(45));
   };
 
   const handleNewPrompt = () => {
@@ -2165,8 +2209,8 @@ const MainScreen = ({
 
   const handleChangeCompose = (e) => {
     const { name, value } = e.target;
-    setSelectedText({
-      ...selectedText,
+    setComposeSelectedText({
+      ...composeSelectedText,
       [name]: value,
     });
     setReplyText({
@@ -2322,6 +2366,7 @@ const MainScreen = ({
           handleClick={handleClick}
           setIsLogout={setIsLogout}
           handleCloseClick={handleCloseClick}
+          handlePopUpCloseClick={handlePopUpCloseClick}
         // isActivity={isActivity}
         // setIsLogin={setIsLogin}
         >
@@ -2338,8 +2383,8 @@ const MainScreen = ({
                       key="chat"
                       className={({ selected }) =>
                         classNames(
-                          selected ? 'border-primaryBlue text-[#19224C]' : 'border-transparent text-gray1',
-                          'flex-1 whitespace-nowrap border-b-2 py-[12px] text-[16px] font-medium mr-[30px] focus:outline-0'
+                          selected ? 'after:bg-primaryBlue text-[#19224C]' : 'bg-transparent text-gray1',
+                            'relative outline-none text-[16px] font-medium mr-[30px] py-[14px] after:absolute after:h-[3px] after:w-[30px] after:left-[2px] after:bottom-0'
                         )
                       }
                       onClick={() => {
@@ -2357,8 +2402,8 @@ const MainScreen = ({
                         data-headlessui-state="selected"
                         className={({ selected }) =>
                           classNames(
-                            selected ? 'border-primaryBlue text-[#19224C]' : 'border-transparent text-gray1',
-                            'flex-1 whitespace-nowrap border-b-2 py-[12px] text-[16px] font-medium mr-[30px] focus:outline-0'
+                            selected ? 'after:bg-primaryBlue text-[#19224C]' : 'bg-transparent text-gray1',
+                            'relative outline-none text-[16px] font-medium mr-[30px] py-[14px] after:absolute after:h-[3px] after:w-[30px] after:left-[25px] after:bottom-0'
                           )
                         }
                         onClick={() => {
@@ -2377,8 +2422,8 @@ const MainScreen = ({
                         data-headlessui-state="selected"
                         className={({ selected }) =>
                           classNames(
-                            selected ? 'border-primaryBlue text-[#19224C]' : 'border-transparent text-gray1',
-                            'flex-1 whitespace-nowrap border-b-2 py-[12px] text-[16px] font-medium mr-[30px] focus:outline-0'
+                            selected ? 'after:bg-primaryBlue text-[#19224C]' : 'bg-transparent text-gray1',
+                            'relative outline-none text-[16px] font-medium mr-[30px] py-[14px] after:absolute after:h-[3px] after:w-[30px] after:left-[25px] after:bottom-0'
                           )
                         }
                         onClick={() => {
@@ -3216,7 +3261,7 @@ const MainScreen = ({
                                   id="requestedText"
                                   name="input_text"
                                   rows="6"
-                                  value={selectedText.input_text}
+                                  value={composeSelectedText.input_text}
                                   maxLength="4000"
                                   onChange={(e) => handleChangeCompose(e)}
                                   placeholder="Tell me what to write for you"
@@ -3265,7 +3310,7 @@ const MainScreen = ({
                           )}
                         </>
                       )}
-                      <div className="pt-[16px] pb-[10px] flex gap-2 justify-between items-center">
+                      <div className="pt-[16px] pb-[10px] flex gap-2 justify-between items-center h-[34px]">
                         <div className="flex text-[14px] font-medium text-darkBlue whitespace-nowrap">AI Tools</div>
 
                         {!inputButtonBox && (
@@ -3464,7 +3509,7 @@ const MainScreen = ({
                             className={`flex text-[16px] w-full justify-center focus:outline-none rounded-md bg-primaryBlue px-3 py-2 text-sm leading-6 text-white shadow-sm hover:opacity-90  ${compLoading ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
                               } ${!state?.edit
                                 ? (selectTab === 1 &&
-                                  (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                  (!composeSelectedText.input_text || composeSelectedText.input_text.trim() === '')) ||
                                   // !editTemplateName?.input_text
                                   aiToolsLength !== 4
                                   ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
@@ -3481,7 +3526,7 @@ const MainScreen = ({
                               compLoading ||
                               (!state?.edit
                                 ? (selectTab === 1 &&
-                                  (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                  (!composeSelectedText.input_text || composeSelectedText.input_text.trim() === '')) ||
                                 aiToolsLength !== 4
                                 : !editTemplateName?.input_text || aiToolsLength !== 4)
                             }
@@ -3530,7 +3575,7 @@ const MainScreen = ({
                               handleGenerateDraft(e);
                               setComposeRes(false);
                             }}
-                            // disabled={Loading || !selectedText.input_text}
+                            // disabled={Loading || !composeSelectedText.input_text}
                             disabled={
                               compRepLoading ||
                               (selectTab === 2 &&
@@ -3687,7 +3732,7 @@ const MainScreen = ({
                               disabled={
                                 compLoading ||
                                 (selectTab === 1 &&
-                                  (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                  (!composeSelectedText.input_text || composeSelectedText.input_text.trim() === '')) ||
                                 aiToolsLength !== 4
                               }
                             >
@@ -3873,7 +3918,7 @@ const MainScreen = ({
                             <button
                               className={`w-full rounded-md bg-primaryBlue px-1 focus:outline-none py-[10px] text-[16px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50 ${!state?.edit
                                 ? (selectTab === 1 &&
-                                  (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                  (!composeSelectedText.input_text || composeSelectedText.input_text.trim() === '')) ||
                                   // !editTemplateName?.input_text
                                   aiToolsLength !== 4
                                   ? 'opacity-50 bg-lightblue4 cursor-not-allowed'
@@ -3886,7 +3931,7 @@ const MainScreen = ({
                                 compLoading ||
                                 (!state?.edit
                                   ? (selectTab === 1 &&
-                                    (!selectedText.input_text || selectedText.input_text.trim() === '')) ||
+                                    (!composeSelectedText.input_text || composeSelectedText.input_text.trim() === '')) ||
                                   aiToolsLength !== 4
                                   : !editTemplateName?.input_text || aiToolsLength !== 4)
                               }

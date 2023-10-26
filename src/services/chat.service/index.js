@@ -118,6 +118,16 @@ const clearChatHistory = async () => {
     Toast('error', error.response.data.Message);
   }
 };
+const lastChatHistory = async () => {
+  try {
+    const lastChatHisPath = `${CHAT_URL}/last_chat_history`;
+    return await getRequest(lastChatHisPath);
+  } catch (error) {
+    // Toast('error', error?.response?.data?.message);
+    // console.log('error', error?.response?.data?.message);
+    Toast('error', error.response.data.Message);
+  }
+};
 
 
 
@@ -142,5 +152,6 @@ export const chatService = {
   userChatList,
   deleteChatHistory,
   clearChatHistory,
+  lastChatHistory,
   respondeLanguage,
 };

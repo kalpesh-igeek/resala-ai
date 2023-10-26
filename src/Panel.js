@@ -323,6 +323,7 @@ export default function Panel({ local }) {
             cloneQuickReply.id = 'cloneQuickReply';
             cloneQuickReply.classList.add('hidden');
             cloneQuickReply.style = 'margin-left: 8px';
+            cloneQuickReply.style = 'z-index: 9999999';
             presentation.append(cloneQuickReply);
             const cloneQuickReplyButton = document.getElementById('cloneQuickReply');
             cloneQuickReplyButton.addEventListener('click', () => {
@@ -1011,9 +1012,13 @@ export default function Panel({ local }) {
     }
     sendResponse('Request : ' + JSON.stringify('request'));
   });
+  const [selectTab, setSelectTab] = useState(1);
 
   const handleSidebar = (tab, tool = undefined) => {
-    // console.log({ tab, tool });
+    console.log({ tab, tool });
+    if(tool){
+      setSelectTab(1)
+    }
     setActiveTab(tab);
     setIsOpen(true);
     setIsLoadedExtension(true);
@@ -1077,6 +1082,23 @@ export default function Panel({ local }) {
         bottom: BtnPosition.bottom + 595,
         left: BtnPosition.left + 471,
       });
+    }
+  };
+  const [chatInput, setChatInput] = useState({
+    chatText: '',
+  });
+  const [composeSelectedText, setComposeSelectedText] = useState({ input_text: requestedText });
+  const [replyText, setReplyText] = useState({ original_text: '', reply: '' });
+
+  const handlePopUpCloseClick = () => {
+    console.log("handlePopUpCloseClick");
+    if(chatInput.chatText || composeSelectedText.input_text || replyText.original_text || replyText.reply){
+      console.log("Abort");
+      setIfOpenConfirmBox(true)
+    }else{
+      dispatch(handleToggle(false));
+      console.log('remove extension width');
+      document.getElementById('resala_style_right_space') ?document.getElementById('resala_style_right_space').remove() : ''
     }
   };
 
@@ -1144,7 +1166,6 @@ export default function Panel({ local }) {
   // }, []);
 
   useLayoutEffect(() => {
-    console.log({ requestGreeting });
     if (typeof requestGreeting != 'undefined') {
       if (isExtensionOpen) {
         console.log('add extension width');
@@ -1294,6 +1315,7 @@ export default function Panel({ local }) {
                             setRequestedText={setRequestedText}
                             handleClick={handleClick}
                             handleCloseClick={handleCloseClick}
+                            handlePopUpCloseClick={handlePopUpCloseClick}
                             setIsLogout={setIsLogout}
                             activeTab={activeTab}
                             CHAT={CHAT}
@@ -1305,6 +1327,14 @@ export default function Panel({ local }) {
                             isClickButton={isClickWikiPediaButton}
                             setIsClickButton={setIsClickWikiPediaButton}
                             local={local}
+                            chatInput={chatInput}
+                            setChatInput={setChatInput}
+                            composeSelectedText={composeSelectedText}
+                            setComposeSelectedText={setComposeSelectedText}
+                            replyText={replyText}
+                            setReplyText={setReplyText}
+                            selectTab={selectTab}
+                            setSelectTab={setSelectTab}
                           />
                         }
                       />

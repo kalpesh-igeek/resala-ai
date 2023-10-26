@@ -2595,6 +2595,10 @@ video {
     --tw-shadow-colored: 0 0 #0000;
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
   }
+  .outline-none {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
   .blur-sm {
     --tw-blur: blur(4px);
     filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
@@ -3535,6 +3539,42 @@ input{
 .placeholder\:text-\[\#8C90A5\]::placeholder {
   --tw-text-opacity: 1;
   color: rgb(140 144 165 / var(--tw-text-opacity));
+}
+
+.after\:absolute::after {
+  content: var(--tw-content);
+  position: absolute;
+}
+
+.after\:left-\[2px\]::after {
+  content: var(--tw-content);
+  left: 2px;
+}
+
+.after\:bottom-0::after {
+  content: var(--tw-content);
+  bottom: 0px;
+}
+
+.after\:left-\[25px\]::after {
+  content: var(--tw-content);
+  left: 25px;
+}
+
+.after\:h-\[3px\]::after {
+  content: var(--tw-content);
+  height: 3px;
+}
+
+.after\:w-\[30px\]::after {
+  content: var(--tw-content);
+  width: 30px;
+}
+
+.after\:bg-primaryBlue::after {
+  content: var(--tw-content);
+  --tw-bg-opacity: 1;
+  background-color: rgb(22 120 242 / var(--tw-bg-opacity));
 }
 
 .empty\:text-gray2:empty {

@@ -69,6 +69,12 @@ export const clearChatHistory = createAsyncThunk('chat/clear_chat_history', asyn
   return data;
 });
 
+export const lastChatHistory = createAsyncThunk('chat/last_chat_history', async () => {
+  const { data, status } = await chatService.lastChatHistory();
+  data.status = status;
+  return data;
+});
+
 
 export const ChatSlice = createSlice({
   name: 'chat',
@@ -112,6 +118,19 @@ export const ChatSlice = createSlice({
       state.hasPassword = true;
     });
     builder.addCase(userChatHistory.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+      state.hasPassword = false;
+    });
+    builder.addCase(lastChatHistory.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(lastChatHistory.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.chat = action.payload;
+      state.hasPassword = true;
+    });
+    builder.addCase(lastChatHistory.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.error.message;
       state.hasPassword = false;
