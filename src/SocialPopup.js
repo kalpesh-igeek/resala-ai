@@ -7,7 +7,7 @@ import Closed from './utils/Social/close-circle.png';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import Arrow from './utils/Social/arrow-down.png';
 import Mic from './utils/Social/microphone2.png';
-import Send from './utils/Social/send.png';
+import Send from './utils/Social/send.svg';
 import Left from './utils/Social/arrow-left.png';
 import Trash from './utils/Social/trash.png';
 import Menu from './utils/Social/Vector.png';
@@ -30,6 +30,7 @@ import { handleToggle } from './redux/reducers/extension/extension-slice';
 
 export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, delay }) => {
   const [language, setLanguage] = useState(false);
+  const [abortController, setAbortController] = useState(null);
   const dispatch = useDispatch();
   const handleLanguage = () => {
     setLanguage(!language);
@@ -126,6 +127,64 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   const [loadingText, setLoadingText] = useState(false);
 
   // textarea-postIdea
+  // const handleTextArea = async () => {
+  //   console.log("Clicked=======>");
+  //   if (IdeasValueHome1.trim() === '') {
+  //     return;
+  //   }
+  //   setPostIdea(!PostIdea);
+  //   setLoadingText(!loadingText);
+  //   setVisible2(true);
+  //   setVisible(false);
+  //   setSocialHome(false);
+  //   setPostIdea1(!PostIdea1);
+  //   setSpeechLength(0);
+
+  //   const hostname = window.location.hostname;
+  //   let response;
+
+  //   const postData = { text: IdeasValueHome1, action: 'string', language: languages, tone: professions };
+
+  //   if (hostname === 'www.linkedin.com') {
+  //     response = await postRequest('/linkedin/linkedin_post_streaming', postData);
+  //   } else if (hostname === 'www.facebook.com') {
+  //     response = await postRequest('/facebook/facebook_post_streaming', postData);
+  //   } else if (hostname === 'twitter.com') {
+  //     response = await postRequest('/twitter/twitter_post_streaming', postData);
+  //   }
+  //   if (response && response.status === 200) {
+
+  //     let text = response.data
+  //       .replace(/#@#/g, '')
+  //       .replace(/POST :/g, '')
+  //       .replace(/Post\s*:\s*/, '')
+  //       .replace(/Action :/g, '')
+  //       .replace(/connection closed/g, '');
+  //     text = text.toString().replace('POST : ', '').replace('Post :', '');
+  //     const words = text.split(/\s+/).filter((word) => word.trim() !== '');
+  //     console.log({words});
+  //     const textArea1 = textAreaRef.current;
+
+  //     const paragraph = words.join(' ');
+  //     const lines = paragraph.split(/[\.,]/);
+  //     const lineCount = lines.length;
+  //     textArea1.rows = lineCount + 1;
+  //     const textArea = document.getElementById('socialTextarea');
+  //     console.log({paragraph});
+  //     console.log({textArea});
+
+  //     typewriterEffect(paragraph, textArea, 20);
+  //     setIdeasValueHome(paragraph);
+  //     setButtonShowHome(true);
+  //     setPostIdea(!PostIdea);
+  //     setLoadingText(false);
+  //   }
+  // };
+
+
+
+
+
   const handleTextArea = async () => {
     if (IdeasValueHome1.trim() === '') {
       return;
@@ -137,42 +196,75 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     setSocialHome(false);
     setPostIdea1(!PostIdea1);
     setSpeechLength(0);
+
+    if (abortController) {
+      abortController.abort();
+      setAbortController(null);
+    }
+
+    const controller = new AbortController();
+    setAbortController(controller);
+
+
     const hostname = window.location.hostname;
     let response;
 
+    const textArea = document.getElementById('socialTextarea');
+
     const postData = { text: IdeasValueHome1, action: 'string', language: languages, tone: professions };
-
+    let URL = "";
     if (hostname === 'www.linkedin.com') {
-      response = await postRequest('/linkedin/linkedin_post_streaming', postData);
+      URL = "/linkedin/linkedin_post_streaming";
     } else if (hostname === 'www.facebook.com') {
-      response = await postRequest('/facebook/facebook_post_streaming', postData);
+      URL = "/facebook/facebook_post_streaming";
     } else if (hostname === 'twitter.com') {
-      response = await postRequest('/twitter/twitter_post_streaming', postData);
+      URL = "/twitter/twitter_post_streaming";
     }
-    if (response && response.status === 200) {
-      let text = response.data
-        .replace(/#@#/g, '')
-        .replace(/POST :/g, '')
-        .replace(/Post\s*:\s*/, '')
-        .replace(/Action :/g, '')
-        .replace(/connection closed/g, '');
-      text = text.toString().replace('POST : ', '').replace('Post :', '');
-      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      const textArea1 = textAreaRef.current;
 
-      const paragraph = words.join(' ');
-      const lines = paragraph.split(/[\.,]/);
-      const lineCount = lines.length;
-      textArea1.rows = lineCount + 1;
-      const textArea = document.getElementById('socialTextarea');
-      typewriterEffect(paragraph, textArea, 20);
+    try {
+      const response = await fetch(`https://api-qa.resala.ai${URL}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: await getToken(),
+        },
+        body: JSON.stringify(postData),
+        signal: controller.signal,
+      });
 
-      setIdeasValueHome(paragraph);
-      setButtonShowHome(true);
-      setPostIdea(!PostIdea);
-      setLoadingText(false);
+      if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+      }
+
+      const reader = response.body.getReader();
+      let accumulatedMessage = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = new TextDecoder().decode(value);
+        const lines = chunk.split('\n');
+        for (const line of lines) {
+          data = line.replace(/#@#/g, '\n');
+          if (line.includes('connection closed')) {
+            setIsTypewriterDone(false);
+            // setAllreadyStreamed(false);
+            // setIsStreaming(false);
+          } else {
+            accumulatedMessage += data + '';
+            setIdeasValueHome(accumulatedMessage);
+          }
+        }
+        setButtonShowHome(true);
+        setPostIdea(!PostIdea);
+        setLoadingText(false);
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
     }
   };
+
+
   // textarea-postIdea
 
   // textarea-renegerate
@@ -223,7 +315,9 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
   // textarea-improve
   const [LoadImprove1, setloadImprove1] = useState(false);
+
   const handlePostIdeaImprove1 = async () => {
+
     setloadImprove1(!LoadImprove1);
     setLoadingText(true);
 
@@ -470,7 +564,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   // home-textCounting
   const handleChange = (e) => {
     setIdeasValue(e.target.value);
-
     const { name, value } = e.target;
     const maxCharacterCount = 1000;
     if (name === 'socialTextarea') {
@@ -484,7 +577,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
     if (value.length >= maxCharacterCount) {
       e.preventDefault();
-      e.stopPropogation();
+      // e.stopPropogation();
     }
   };
   // home-textCounting
@@ -506,6 +599,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
   // typewriter effect
 
+
+  // Handle POst Ideas 
   const handlePostIdeas = async () => {
     if (IdeasValue.trim() === '') {
       return;
@@ -521,38 +616,103 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
     const postData = { text: IdeasValue, action: 'string', language: languages, tone: professions };
 
+    // if (hostname === 'www.linkedin.com') {
+    //   response = await postRequest('/linkedin/linkedin_post_streaming', postData);
+    // } else if (hostname === 'www.facebook.com') {
+    //   response = await postRequest('/facebook/facebook_post_streaming', postData);
+    // } else if (hostname === 'twitter.com') {
+    //   response = await postRequest('/twitter/twitter_post_streaming', postData);
+    // }
+
+    // if (response && response.status === 200) {
+    //   const text = response.data
+    //     .replace(/#@#/g, '')
+    //     .replace(/connection closed/, '')
+    //     .replace(/Post :/g, '');
+
+    //   const words = text.split(/\s+/).filter((word) => word.trim() !== '');
+    //   const textArea1 = textAreaRef.current;
+    //   const paragraph = words.join(' ');
+    //   const lines = paragraph.split(/[\.,]/);
+    //   const lineCount = lines.length;
+    //   textArea1.rows = lineCount + 1;
+    //   setIdeasValue("");
+    //   setIdeadload(false);
+    //   settextarea2reg(false);
+    //   typewriterEffect(paragraph, textArea, 20);
+    //   // setIdeasValue(paragraph);
+    //   console.log("Set ideas value", IdeasValue);
+    //   settypeWriter(true);
+    //   setButtonShow(!ButtonsShow);
+    //   setPostIdea(!PostIdea);
+    //}
+
+    if (abortController) {
+      abortController.abort();
+      setAbortController(null);
+    }
+
+    const controller = new AbortController();
+    setAbortController(controller);
+
+    let URL = "";
     if (hostname === 'www.linkedin.com') {
-      response = await postRequest('/linkedin/linkedin_post_streaming', postData);
+      URL = '/linkedin/linkedin_post_streaming';
     } else if (hostname === 'www.facebook.com') {
-      response = await postRequest('/facebook/facebook_post_streaming', postData);
+      URL = '/facebook/facebook_post_streaming';
     } else if (hostname === 'twitter.com') {
-      response = await postRequest('/twitter/twitter_post_streaming', postData);
+      URL = '/twitter/twitter_post_streaming';
     }
 
-    if (response && response.status === 200) {
-      const text = response.data
-        .replace(/#@#/g, '')
-        .replace(/connection closed/, '')
-        .replace(/Post :/g, '');
+    try {
+      const response = await fetch(`https://api-qa.resala.ai${URL}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: await getToken(),
+        },
+        body: JSON.stringify(postData),
+        signal: controller.signal,
+      });
 
-      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      const textArea1 = textAreaRef.current;
-      const paragraph = words.join(' ');
-      const lines = paragraph.split(/[\.,]/);
-      const lineCount = lines.length;
-      textArea1.rows = lineCount + 1;
+      if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+      }
 
-      setIdeadload(false);
-      settextarea2reg(false);
+      const reader = response.body.getReader();
+      let accumulatedMessage = '';
 
-      typewriterEffect(paragraph, textArea, 20);
-      setIdeasValue(paragraph);
-      settypeWriter(true);
-
-      setButtonShow(!ButtonsShow);
-      setPostIdea(!PostIdea);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = new TextDecoder().decode(value);
+        const lines = chunk.split('\n');
+        for (const line of lines) {
+          data = line.replace(/#@#/g, '\n');
+          if (line.includes('connection closed')) {
+            setIsTypewriterDone(false);
+            // setAllreadyStreamed(false);
+            // setIsStreaming(false);
+          } else {
+            accumulatedMessage += data + '';
+            setIdeasValue(accumulatedMessage);
+          }
+        }
+        setIdeadload(false);
+        settextarea2reg(false);
+        settypeWriter(true);
+        setButtonShow(!ButtonsShow);
+        setPostIdea(!PostIdea);
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
     }
+
   };
+
+
+
+
   // home-ideaPost
   const [typing, setTyping] = useState(true);
   const [typedText, setTypedText] = useState('');
@@ -574,9 +734,18 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       };
     }
   }, [typing, textToType, typedText]);
+
+
+
   // home-Regenerate
   const [responses, setResponses] = useState([]);
   const [regenerate1, setRegenerate1] = useState(false);
+
+  useEffect(() => {
+    setCopiedStates1(responses.map(() => false));
+  }, [responses])
+
+
   const handlePostIdeaRegenerate = async () => {
     setRegenerate1(!regenerate1);
     settextarea2reg(true);
@@ -589,39 +758,99 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
     const postData = { text: InitialIdeasValue, action: 'string', language: languages, tone: professions };
 
+    // if (hostname === 'www.linkedin.com') {
+    //   response = await postRequest('/linkedin/regenrate_post_streaming', postData);
+    // } else if (hostname === 'www.facebook.com') {
+    //   response = await postRequest('/facebook/regenrate_facebook_post_streaming', postData);
+    // } else if (hostname === 'twitter.com') {
+    //   response = await postRequest('/twitter/regenrate_post_streaming', postData);
+    // }
+
+    // if (response && response.status === 200) {
+    //   let text = response.data
+    //     .replace(/#@#/g, '')
+    //     .replace(/POST :/g, '')
+    //     .replace(/Action :/g, '')
+    //     .replace(/Post :/g, '')
+    //     .replace(/connection closed/g, '');
+    //   text = text.toString().replace('POST :', '');
+    //   const words = text.split(/\s+/).filter((word) => word.trim() !== '');
+
+    //   const textArea1 = textAreaRef.current;
+    //   const paragraph = words.join(' ');
+    //   const lines = paragraph.split(/[\.,]/);
+    //   const lineCount = lines.length;
+    //   textArea1.rows = lineCount + 1;
+    //   typewriterEffect(paragraph, textArea, 20);
+    //   setIdeasValue(paragraph);
+    //   settextarea2reg(false);
+    //   setIdeadload(false);
+
+    //   setButtonShow(true);
+
+    //   setResponses((state) => [...state, IdeasValue]);
+    // }
+    // setRegenerate1(false);
+
+    if (abortController) {
+      abortController.abort();
+      setAbortController(null);
+    }
+
+    const controller = new AbortController();
+    setAbortController(controller);
+
+    let URL = "";
     if (hostname === 'www.linkedin.com') {
-      response = await postRequest('/linkedin/regenrate_post_streaming', postData);
+      URL = '/linkedin/linkedin_post_streaming';
     } else if (hostname === 'www.facebook.com') {
-      response = await postRequest('/facebook/regenrate_facebook_post_streaming', postData);
+      URL = '/facebook/facebook_post_streaming';
     } else if (hostname === 'twitter.com') {
-      response = await postRequest('/twitter/regenrate_post_streaming', postData);
+      URL = '/twitter/twitter_post_streaming';
     }
 
-    if (response && response.status === 200) {
-      let text = response.data
-        .replace(/#@#/g, '')
-        .replace(/POST :/g, '')
-        .replace(/Action :/g, '')
-        .replace(/Post :/g, '')
-        .replace(/connection closed/g, '');
-      text = text.toString().replace('POST :', '');
-      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
+    try {
+      const response = await fetch(`https://api-qa.resala.ai${URL}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: await getToken(),
+        },
+        body: JSON.stringify(postData),
+        signal: controller.signal,
+      });
 
-      const textArea1 = textAreaRef.current;
-      const paragraph = words.join(' ');
-      const lines = paragraph.split(/[\.,]/);
-      const lineCount = lines.length;
-      textArea1.rows = lineCount + 1;
-      typewriterEffect(paragraph, textArea, 20);
-      setIdeasValue(paragraph);
-      settextarea2reg(false);
-      setIdeadload(false);
+      if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+      }
 
-      setButtonShow(true);
-
+      const reader = response.body.getReader();
+      let accumulatedMessage = '';
       setResponses((state) => [...state, IdeasValue]);
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = new TextDecoder().decode(value);
+        const lines = chunk.split('\n');
+        for (const line of lines) {
+          data = line.replace(/#@#/g, '\n');
+          if (line.includes('connection closed')) {
+            setIsTypewriterDone(false);
+          } else {
+            accumulatedMessage += data + '';
+            setIdeasValue(accumulatedMessage);
+          }
+        }
+        settextarea2reg(false);
+        setIdeadload(false);
+        setButtonShow(true);
+      }
+      setRegenerate1(false);
+
+    } catch (error) {
+      console.error('An error occurred:', error);
     }
-    setRegenerate1(false);
   };
   // home-Regenerate
 
@@ -638,35 +867,95 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
     const postData = { text: IdeasValue, action: 'Improve it', language: languages, tone: professions };
 
-    if (hostname === 'www.linkedin.com') {
-      response = await postRequest('/linkedin/regenrate_post_streaming', postData);
-    } else if (hostname === 'www.facebook.com') {
-      response = await postRequest('/facebook/regenrate_facebook_post_streaming', postData);
-    } else if (hostname === 'twitter.com') {
-      response = await postRequest('/twitter/regenrate_post_streaming', postData);
+    // if (hostname === 'www.linkedin.com') {
+    //   response = await postRequest('/linkedin/regenrate_post_streaming', postData);
+    // } else if (hostname === 'www.facebook.com') {
+    //   response = await postRequest('/facebook/regenrate_facebook_post_streaming', postData);
+    // } else if (hostname === 'twitter.com') {
+    //   response = await postRequest('/twitter/regenrate_post_streaming', postData);
+    // }
+
+    // if (response && response.status === 200) {
+    //   let text = response.data
+    //     .replace(/#@#/g, '')
+    //     .replace(/POST\s*:\s*/g, '')
+    //     .replace(/Action :/g, '')
+    //     .replace(/Post\s*:\s*/g, '')
+    //     .replace(/connection closed/g, '');
+    //   text = text.toString().replace('POST :', '');
+    //   const words = text.split(/\s+/).filter((word) => word.trim() !== '');
+    //   const textArea1 = textAreaRef.current;
+    //   const paragraph = words.join(' ');
+    //   const lines = paragraph.split(/[\.,]/);
+    //   const lineCount = lines.length;
+    //   textArea1.rows = lineCount + 1;
+    //   typewriterEffect(paragraph, textArea, 20);
+    //   setIdeasValue(paragraph);
+    //   settextarea2reg(false);
+
+    //   setResponses((state) => [...state, IdeasValue]);
+    //   setButtonShow(true);
+    //   setloadImprove(false);
+    // }
+
+    if (abortController) {
+      abortController.abort();
+      setAbortController(null);
     }
 
-    if (response && response.status === 200) {
-      let text = response.data
-        .replace(/#@#/g, '')
-        .replace(/POST\s*:\s*/g, '')
-        .replace(/Action :/g, '')
-        .replace(/Post\s*:\s*/g, '')
-        .replace(/connection closed/g, '');
-      text = text.toString().replace('POST :', '');
-      const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-      const textArea1 = textAreaRef.current;
-      const paragraph = words.join(' ');
-      const lines = paragraph.split(/[\.,]/);
-      const lineCount = lines.length;
-      textArea1.rows = lineCount + 1;
-      typewriterEffect(paragraph, textArea, 20);
-      setIdeasValue(paragraph);
-      settextarea2reg(false);
+    const controller = new AbortController();
+    setAbortController(controller);
 
+    let URL = "";
+    if (hostname === 'www.linkedin.com') {
+      URL = '/linkedin/linkedin_post_streaming';
+    } else if (hostname === 'www.facebook.com') {
+      URL = '/facebook/facebook_post_streaming';
+    } else if (hostname === 'twitter.com') {
+      URL = '/twitter/twitter_post_streaming';
+    }
+
+    try {
+      const response = await fetch(`https://api-qa.resala.ai${URL}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: await getToken(),
+        },
+        body: JSON.stringify(postData),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+      }
+
+      const reader = response.body.getReader();
+      let accumulatedMessage = '';
       setResponses((state) => [...state, IdeasValue]);
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = new TextDecoder().decode(value);
+        const lines = chunk.split('\n');
+        for (const line of lines) {
+          data = line.replace(/#@#/g, '\n');
+          if (line.includes('connection closed')) {
+            setIsTypewriterDone(false);
+          } else {
+            accumulatedMessage += data + '';
+            setIdeasValue(accumulatedMessage);
+          }
+        }
+      }
+
+      settextarea2reg(false);
       setButtonShow(true);
-      setloadImprove(false);
+      setloadImprove(false)
+
+    } catch (error) {
+      console.error('An error occurred:', error);
     }
   };
   // home-improve
@@ -873,6 +1162,9 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   const handleEmpty12 = () => {
     setSpeechLength(0);
     setIdeasValue('');
+    setButtonShow(!ButtonsShow)
+    setIdeadload(false);
+    setPostIdea(true);
   };
   // empty
 
@@ -901,11 +1193,35 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         FacebookText.childNodes[0].childNodes[0].appendChild(newSpan);
       }
     } else if (hostname == 'twitter.com') {
-      const TwitterText =
-        twitterClass[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0];
-      TwitterText.textContent = `${IdeasValue}`;
+      // const TwitterText =
+      //   twitterClass[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0];
+      // TwitterText.textContent = `${IdeasValue}`;
+      TwitterInput(IdeasValue);
+      handleClose();
     }
   };
+
+  const TwitterInput =(IdeasValue) => {
+    const input = document.querySelector('[data-testid="tweetTextarea_0"]');
+      if (IdeasValue) {
+        const data = new DataTransfer();
+        data.setData(
+          "text/plain",
+          IdeasValue.replace(/(\r\n|\n|\r)/gm, "")
+        );
+        input.dispatchEvent(
+          new ClipboardEvent("paste", {
+            dataType: "text/plain",
+            data: IdeasValue.replace(/(\r\n|\n|\r)/gm, ""),
+            bubbles: true,
+            clipboardData: data,
+            cancelable: true,
+          })
+        );
+        return true;
+      }
+
+  }
 
   const handleInsert = (divfd2, index) => {
     const LinkedInClass = document.getElementsByClassName('ql-editor');
@@ -933,6 +1249,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       const TwitterText =
         twitterClass[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0];
       TwitterText.textContent = `${divfd2}`;
+      handleClose()
     }
   };
   const [PopupMenu, setPopupMenu] = useState(false);
@@ -950,6 +1267,9 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   // copy
   const [copied, setCopied] = useState(false);
   const [copiedStates, setCopiedStates] = useState(ResponsesText.map(() => false));
+
+  const [copiedStates1, setCopiedStates1] = useState(responses.map(() => false));
+
   const handleCopy = (text, index) => {
     copy(text);
     const updatedCopiedStates = [...copiedStates];
@@ -1047,7 +1367,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         setStartListen(true);
         setPermission(true);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   useEffect(() => {
     navigator.permissions.query({ name: 'microphone' }).then((permissionStatus) => {
@@ -1298,7 +1618,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     console.log('socialMediaPreference');
     const SocialPopup = document.getElementById('SocialPopup');
     const SocialButton = document.getElementById('SocialButton');
-    console.log({SocialPopup,SocialButton});
+    console.log({ SocialPopup, SocialButton });
     SocialButton.classList.remove('hidden');
     SocialPopup.classList.add('hidden');
     handleSidebar('chat');
@@ -1366,6 +1686,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
             <div className="font-['DM Sans'] text-[16px]">Compose</div>
           </div>
           <div className="flex gap-[8px]">
+            {/* Language */}
             <div
               className="p-[4px] pl-[8px] relative cursor-pointer w-[70px] bg-white rounded-[14px] border border-blue-600 justify-around items-center flex"
               onClick={handleLanguage}
@@ -1378,9 +1699,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
               </div>
               {/* drop down */}
               <div
-                className={`${
-                  language ? 'block' : 'hidden'
-                } w-[121px] bg-white rounded-lg shadow flex-col justify-start items-start gap-[8px] inline-flex absolute top-[30px] right-0 p-[8px] pt-[10] pb-[10px]`}
+                className={`${language ? 'block' : 'hidden'
+                  } w-[121px] bg-white rounded-lg shadow flex-col justify-start items-start gap-[8px] inline-flex absolute top-[30px] right-0 p-[8px] pt-[10] pb-[10px]`}
                 style={{ zIndex: '99999999', boxShadow: '0px 2px 20px 0px rgba(0, 0, 0, 0.15)' }}
               >
                 <div
@@ -1435,9 +1755,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
               </div>
 
               <div
-                className={`${
-                  profession ? 'block' : 'hidden'
-                } w-[121px] bg-white rounded-lg shadow flex-col justify-start items-start gap-[8px] inline-flex absolute top-[30px] right-0 p-[8px] pt-[10] pb-[10px]`}
+                className={`${profession ? 'block' : 'hidden'
+                  } w-[121px] bg-white rounded-lg shadow flex-col justify-start items-start gap-[8px] inline-flex absolute top-[30px] right-0 p-[8px] pt-[10] pb-[10px]`}
                 style={{ zIndex: '99999999', boxShadow: '0px 2px 20px 0px rgba(0, 0, 0, 0.15)' }}
               >
                 <div
@@ -1477,9 +1796,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
         <div className="py-[14px] px-[16px] overflow-y-scroll max-h-[554px]" id="">
           <p
-            className={`${
-              !SocialHome ? 'hidden' : 'block'
-            } text-[#8C90A5] text-[12px] font-[700] leading-normal !font-['DM Sans']`}
+            className={`${!SocialHome ? 'hidden' : 'block'
+              } text-[#8C90A5] text-[12px] font-[700] leading-normal !font-['DM Sans']`}
           >
             IDEAS FOR YOU
           </p>
@@ -1487,8 +1805,9 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
           <div className={`${visible || visible2 ? 'hidden' : ''} flex gap-[8px] flex-wrap h-[85px] overflow-y-scroll`}>
             {socialIdeas?.map((idea, index) => (
-              <div key={index} onClick={() => handleIdeas(index)} className={`${!SocialHome ? 'hidden' : 'block'}`}>
-                <div className="p-[8px] bg-blue-50 rounded-[6px] flex-col justify-start items-start gap-2.5 inline-flex  cursor-pointer hover:bg-[#D9EBFF] hoveringOver">
+              <div key={index} className={`${!SocialHome ? 'hidden' : 'block'}`}>
+                <div className="p-[8px] bg-blue-50 rounded-[6px] flex-col justify-start items-start gap-2.5 inline-flex  cursor-pointer hover:bg-[#D9EBFF] hoveringOver"
+                  onClick={() => handleIdeas(index)}>
                   <div className="gap-[8px] justify-start items-start inline-flex">
                     <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
                       <img src={idea.image_link} />
@@ -1504,9 +1823,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
             <>
               <div id="wholeAreaContent" className={`relative ${ButtonsShow ? 'pb-[40px]' : ''}`}>
                 <div
-                  className={`${
-                    !ButtonsShow ? 'hidden' : ''
-                  }   flex justify-end items-center gap-[8px]   absolute bottom-[7px] right-0 left-0 bg-white`}
+                  className={`${!ButtonsShow ? 'hidden' : ''
+                    }   flex justify-end items-center gap-[8px]   absolute bottom-[7px] right-0 left-0 bg-white`}
                 >
                   <div
                     className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex !cursor-pointer hoverEffectIdeas"
@@ -1616,42 +1934,36 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     )}
                   </div>
                 </div>
-                <div
-                  className="flex gap-[8px] mb-[12px] justify-start items-center cursor-pointer sticky top-[-15px] right-0 left-0 bg-white z-[99]"
-                  onClick={() => {
-                    setVisible(false);
-                    setVisible2(false);
-                    setIdeasValue('');
-                    setSpeechLength(0);
-                    setSocialHome(true);
-                    setPostIdea(!PostIdea);
-                    setButtonShow(!ButtonsShow);
-                    setResponses([]);
-                    setLoading(false);
-                    setvisibleTextarea(false);
-                    setIdeadload(false);
-                    setCopied(false);
-                    settextarea2reg(false);
-                  }}
-                >
-                  <img className="w-[14] h-[14]" src={Left} />
-                  <p
-                    className="text-[#19224C]"
-                    style={{
-                      fontSize: '14px',
+
+                {!textarea2reg ? (
+                  <div
+                    className="flex gap-[8px] mb-[12px] justify-start items-center cursor-pointer sticky top-[-15px] right-0 left-0 bg-white z-[99]"
+                    onClick={() => {
+                      setVisible(false);
+                      setVisible2(false);
+                      setIdeasValue('');
+                      setSpeechLength(0);
+                      setSocialHome(true);
+                      setPostIdea(!PostIdea);
+                      setButtonShow(!ButtonsShow);
+                      setResponses([]);
+                      setLoading(false);
+                      setvisibleTextarea(false);
+                      setIdeadload(false);
+                      setCopied(false);
+                      settextarea2reg(false);
                     }}
                   >
-                    Back
-                  </p>
-                </div>
-                {textarea2reg ? (
+                    <img className="w-[14] h-[14]" src={Left} />
+                    <p className="text-[#19224C]" style={{ fontSize: '14px' }}> Back </p>
+                  </div>
+                ) : (
                   <div className="flex justify-start items-center gap-1 my-2">
                     <img src={Loader} className="w-[12px]" />
                     <p className="text-blue-600 text-[12px] font-medium font-['DM Sans']">Working on it...</p>
                   </div>
-                ) : (
-                  ''
                 )}
+
                 <div className="h-[auto] overflow-y-scroll ">
                   {/* todo loader */}
 
@@ -1669,12 +1981,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                           {/* textarea 2 */}
                           <textarea
                             placeholder={selectedIdea.placeholder}
-                            className={` 'p-[1px] textArea resize-none text-[#8C90A5] h-auto min-h-[130px]`}
-                            style={{ width: '100%', boxShadow: 'none', fontSize: '14px', height: 'auto' }}
+                            className={` 'p-[1px] textArea resize-none text-[#8C90A5] h-auto min-h-[130px] !bg-white`}
+                            style={{ width: '100%', boxShadow: 'none', fontSize: '14px', height: 'auto', background: 'white' }}
                             value={IdeasValue}
                             ref={textAreaRef}
                             id="socialTextarea"
+                            maxLength={1000}
                             name="socialTextarea"
+                            disabled={ButtonsShow}
                             onChange={(e) => {
                               handleChange(e);
                               setvisibleTextarea(true);
@@ -1692,16 +2006,20 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               Insert
                             </div>
                             <div
-                              className="text-[#5F6583] px-[10px] flex justify-center items-center  h-[30px] text-[12px]  rounded-[4px] border border-[#DFE4EC] w-[90px]  cursor-pointer hoverEffectIdeas"
-                              onClick={() => {
+                              className="text-[#5F6583] px-[10px] font-[500] flex justify-center items-center  h-[30px] text-[12px]  rounded-[4px] border border-[#DFE4EC] w-[90px]  cursor-pointer hoverEffectIdeas"
+                              onClick={(e) => {
                                 copy(IdeasValue);
                                 setCopied(true);
+                                setTimeout(() => {
+                                  setCopied(false);
+                                }, 3000);
+                                e.preventDefault();
                               }}
                             >
                               {copied ? 'Copied' : 'Copy'}
                             </div>
                             <div
-                              className="text-[#5F6583] px-[10px] flex justify-center items-center  h-[30px] text-[12px] rounded-[4px] border border-[#DFE4EC]  cursor-pointer hoverEffectIdeas"
+                              className="text-[#5F6583] px-[10px] font-[500] text-[12px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC]  cursor-pointer hoverEffectIdeas"
                               onClick={handlePostIdeaRegenerate}
                             >
                               Regenerate
@@ -1710,13 +2028,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                         </div>
                       </div>
                       <div className="flex flex-col justify-between items-end pt-[2px] ">
-                        <div className="w-[30px] h-[20px] cursor-pointer" onClick={handlePostIdeas}>
+                        <div className="w-[30px] h-[20px]" >
                           {Ideadload ? (
                             ''
                           ) : (
-                            <img className={`${!PostIdea ? 'hidden' : 'block'} cursor-pointer `} src={Send} />
+                            <img className={`${!PostIdea ? 'hidden' : 'block'} cursor-pointer `} onClick={handlePostIdeas} src={Send} />
                           )}
                         </div>
+
                         <div>
                           {ButtonsShow && (
                             <CustomTooltip
@@ -1779,13 +2098,26 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                                   Insert
                                 </div>
                                 <div
-                                  className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] text-[12px] border border-[#DFE4EC] w-[90px] h-[30px]  cursor-pointer hoverEffectIdeas"
-                                  onClick={() => copy(IdeasValue)}
+                                  className="text-[#5F6583] px-[10px] flex justify-center items-center font-[500]  rounded-[4px] text-[12px] border border-[#DFE4EC] w-[90px] h-[30px]  cursor-pointer hoverEffectIdeas"
+                                  onClick={() => {
+                                    copy(IdeasValue)
+                                    const updatedCopiedStates = [...copiedStates1];
+                                    updatedCopiedStates[index] = true;
+                                    setCopiedStates1(updatedCopiedStates);
+
+                                    setTimeout(() => {
+                                      const updated = [...copiedStates1];
+                                      updated[index] = false;
+                                      setCopiedStates1(updated);
+                                      console.log(updated[index]);
+                                    }, 3000);
+                                  }
+                                  }
                                 >
-                                  {copied ? 'Copy' : 'Copied'}
+                                  {copiedStates1[index] ? 'Copied' : 'Copy'}
                                 </div>
                                 <div
-                                  className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] text-[12px] border border-[#DFE4EC] h-[30px]  cursor-pointer hoverEffectIdeas"
+                                  className="text-[#5F6583] px-[10px] font-[500]  flex justify-center items-center  rounded-[4px] text-[12px] border border-[#DFE4EC] h-[30px]  cursor-pointer hoverEffectIdeas"
                                   onClick={handlePostIdeaRegenerate}
                                 >
                                   Regenerate
@@ -1816,37 +2148,38 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
               </div>
             </>
           )}
+
+
           {visible2 && (
             <>
               <div id="" className="relative">
-                <div
-                  className="flex gap-[8px] mb-[12px] justify-start items-center cursor-pointer stickyBack sticky top-[-25px] right-0 left-0 bg-white z-[99]"
-                  onClick={() => {
-                    setVisible(false);
-                    setVisible2(false);
-                    setIdeasValueHome1('');
-                    setIdeasValueHome('');
-                    setSpeechLength(0);
-                    setSocialHome(true);
-                    setButtonShow(!ButtonsShow);
-                    setButtonShowHome(!ButtonsShowHome);
-                    setResponsesText([]);
-                    setLoading(false);
-                    setvisibleTextarea(false);
-                    setCopied(false);
-                    settextarea2reg(false);
-                  }}
-                >
-                  <img className="w-[14] h-[14]" src={Left} />
-                  <p className="text-[#19224C]">Back</p>
-                </div>
-                {loadingText ? (
+                {!loadingText ? (
+                  <div
+                    className="flex gap-[8px] mb-[12px] justify-start items-center cursor-pointer stickyBack sticky top-[-25px] right-0 left-0 bg-white z-[99]"
+                    onClick={() => {
+                      setVisible(false);
+                      setVisible2(false);
+                      setIdeasValueHome1('');
+                      setIdeasValueHome('');
+                      setSpeechLength(0);
+                      setSocialHome(true);
+                      setButtonShow(!ButtonsShow);
+                      setButtonShowHome(!ButtonsShowHome);
+                      setResponsesText([]);
+                      setLoading(false);
+                      setvisibleTextarea(false);
+                      setCopied(false);
+                      settextarea2reg(false);
+                    }}
+                  >
+                    <img className="w-[14] h-[14]" src={Left} />
+                    <p className="text-[#19224C]">Back</p>
+                  </div>
+                ) : (
                   <div className="flex justify-start items-center gap-1 my-2">
                     <img src={Loader} className="w-[12px]" />
                     <p className="text-blue-600 text-[12px] font-medium font-['DM Sans']">Working on it...</p>
                   </div>
-                ) : (
-                  ''
                 )}
                 <div className="h-auto overflow-y-scroll ">
                   <div id="mainContentArea1" className="mb-[15px]">
@@ -1872,26 +2205,26 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                         <div className={`${!ButtonsShowHome ? 'hidden' : 'block'} `}>
                           <div className={`flex gap-[8px]`}>
                             <div
-                              className={`bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-white w-[90px]  cursor-pointer`}
+                              className={`bg-[#1678F2] px-[10px] flex justify-center items-center h-[30px] text-[12px] rounded-[4px] text-white w-[90px]  cursor-pointer`}
                               onClick={InsertedValue}
                             >
                               Insert
                             </div>
                             <div
-                              className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]  cursor-pointer hoverEffectIdeas"
+                              className="text-[#5F6583] px-[10px] font-[500] text-[12px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]  cursor-pointer hoverEffectIdeas"
                               onClick={() => {
                                 copy(IdeasValueHome);
                                 setCopied(true);
-                                // const updatedCopiedStates = [...copiedStates];
-                                // updatedCopiedStates[index] = true; // Update the copied state for this element
-                                // setCopiedStates(updatedCopiedStates);
+                                setTimeout(() => {
+                                  setCopied(false);
+                                }, 3000);
                               }}
                             >
                               {copied ? 'Copied' : 'Copy'}
                               {/* {copiedStates[index] ? 'Copied' : 'Copy'} */}
                             </div>
                             <div
-                              className="text-[#5F6583] px-[10px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC]  cursor-pointer hoverEffectIdeas"
+                              className="text-[#5F6583] px-[10px] font-[500] flex justify-center items-center  text-[12px]  rounded-[4px] border border-[#DFE4EC]  cursor-pointer hoverEffectIdeas"
                               onClick={handleRegenerate}
                             >
                               Regenerate
@@ -2115,9 +2448,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         </div>
 
         <div
-          className={`${SocialHome ? 'block' : 'hidden'} p-[16px] ${
-            audioInput ? 'pb-[16px]' : 'pb-[2px]'
-          } absolute bottom-[0px] flex border border-white flex-col w-[100%]`}
+          className={`${SocialHome ? 'block' : 'hidden'} p-[16px] ${audioInput ? 'pb-[16px]' : 'pb-[2px]'
+            } absolute bottom-[0px] flex border border-white flex-col w-[100%]`}
         >
           {audioInput ? (
             <div className="flex flex-col border border-gray p-[10px]">
@@ -2278,17 +2610,19 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
               {(micPermission === 'granted' || micPermission !== 'granted') && startSpeech && !micClicked && (
                 <div
                   className={`flex justify-between gap-2 items-center bg-primaryBlue px-[8px] py-[12px] text-[12px] text-white rounded-[6px] cursor-pointer`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    listenContinuously();
+                  }}
                 >
-                  <div
-                    className="flex gap-2 items-center"
-                    onClick={() => {
-                      listenContinuously();
-                    }}
-                  >
+                  <div className="flex gap-2 items-center">
                     <img src={MicrophoneWhiteIcon} />
                     <span>Hold Space or Click button to speak</span>
                   </div>
-                  <div className="cursor-pointer" onClick={() => closeSpeechRecognition()}>
+                  <div className="cursor-pointer" onClick={(del) => {
+                    del.stopPropagation();
+                    closeSpeechRecognition();
+                    }}>
                     <img src={SmallClose} />
                   </div>
                 </div>
@@ -2367,10 +2701,11 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 {/* textarea 1 */}
                 <textarea
                   placeholder="Tell me what to write for you"
-                  className="p-[1px] textArea resize-none min-5-[50px]"
+                  className="p-[1px] textArea resize-none min-5-[50px] bg-white"
                   id="socialTextarea"
                   ref={textAreaRef}
                   value={IdeasValueHome1}
+                  maxLength="1000"
                   onChange={(e) => {
                     setIdeasValueHome1(e.target.value);
                     const { name, value } = e.target;
@@ -2386,7 +2721,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     }
                     if (value.length >= maxCharacterCount) {
                       e.preventDefault();
-                      e.stopPropogation();
+                      // e.stopPropogation();
                     }
                   }}
                   onPaste={handlePaste}
