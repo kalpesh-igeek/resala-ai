@@ -298,6 +298,21 @@ const FileUpload = ({
     setChatData(tempArr);
   }, [summeriseContent]);
 
+
+  const  formatFileSize = (fileSizeBytes) => {
+    if (fileSizeBytes < 1024) {
+      return `${fileSizeBytes} bytes`;
+    } else {
+      const fileSizeKB = fileSizeBytes / 1024;
+      if (fileSizeKB < 1024) {
+        return `${fileSizeKB.toFixed(2)} KB`;
+      } else {
+        const fileSizeMB = fileSizeKB / 1024;
+        return `${fileSizeMB.toFixed(2)} MB`;
+      }
+    }
+  }
+
   return (
     <>
       {selectedFile ? (
@@ -327,7 +342,7 @@ const FileUpload = ({
               <img className='w-[50px] h-[50px]' src={DocumentUpload} />
               <div className='flex flex-col items-start text-start pl-[10px]'>
                 <span className='font-[500] text-[14px] text-[#5F6583]'>{selectedFile.name}</span>
-                <span className='font-[400] text-[12px] text-[#5F6583] mt-[8px]'>{Number(selectedFile.size / 1024).toFixed(2)} MB</span>
+                <span className='font-[400] text-[12px] text-[#5F6583] mt-[8px]'>{formatFileSize(selectedFile.size)}</span>
               </div>
             </div>
             {counter < 100 && <div>{counter}%</div>}
