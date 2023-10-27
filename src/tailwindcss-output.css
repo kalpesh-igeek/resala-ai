@@ -543,14 +543,17 @@ video {
   .left-0 {
     left: 0px;
   }
-  .top-\[-163px\] {
-    top: -163px;
+  .top-\[-175px\] {
+    top: -175px;
   }
   .top-\[-15px\] {
     top: -15px;
   }
   .top-\[-25px\] {
     top: -25px;
+  }
+  .top-\[-183px\] {
+    top: -183px;
   }
   .bottom-\[0px\] {
     bottom: 0px;
@@ -714,6 +717,9 @@ video {
   .z-\[80\] {
     z-index: 80;
   }
+  .z-\[999999\] {
+    z-index: 999999;
+  }
   .z-\[99\] {
     z-index: 99;
   }
@@ -807,11 +813,17 @@ video {
   .ml-\[3px\] {
     margin-left: 3px;
   }
+  .mb-\[24px\] {
+    margin-bottom: 24px;
+  }
   .mb-\[12px\] {
     margin-bottom: 12px;
   }
   .mb-\[15px\] {
     margin-bottom: 15px;
+  }
+  .mt-\[10px\] {
+    margin-top: 10px;
   }
   .mt-\[3px\] {
     margin-top: 3px;
@@ -870,14 +882,8 @@ video {
   .mb-\[40px\] {
     margin-bottom: 40px;
   }
-  .mb-\[24px\] {
-    margin-bottom: 24px;
-  }
   .mr-3 {
     margin-right: 0.75rem;
-  }
-  .mt-\[10px\] {
-    margin-top: 10px;
   }
   .mr-\[30px\] {
     margin-right: 30px;
@@ -1034,20 +1040,20 @@ video {
   .h-\[30px\] {
     height: 30px;
   }
-  .h-\[150px\] {
-    height: 150px;
-  }
-  .h-\[108px\] {
-    height: 108px;
-  }
-  .h-\[auto\] {
-    height: auto;
+  .h-\[160px\] {
+    height: 160px;
   }
   .h-auto {
     height: auto;
   }
+  .h-\[auto\] {
+    height: auto;
+  }
   .h-\[20px\] {
     height: 20px;
+  }
+  .h-\[165px\] {
+    height: 165px;
   }
   .h-\[189px\] {
     height: 189px;
@@ -1154,6 +1160,10 @@ video {
   .max-h-\[554px\] {
     max-height: 554px;
   }
+  .max-h-max {
+    max-height: -moz-max-content;
+    max-height: max-content;
+  }
   .max-h-\[480px\] {
     max-height: 480px;
   }
@@ -1166,14 +1176,17 @@ video {
   .min-h-\[24px\] {
     min-height: 24px;
   }
-  .min-h-\[365px\] {
-    min-height: 365px;
+  .min-h-\[340px\] {
+    min-height: 340px;
   }
-  .min-h-\[172px\] {
-    min-height: 172px;
+  .min-h-\[160px\] {
+    min-height: 160px;
   }
   .min-h-\[130px\] {
     min-height: 130px;
+  }
+  .min-h-\[35px\] {
+    min-height: 35px;
   }
   .min-h-\[90px\] {
     min-height: 90px;
@@ -1572,6 +1585,9 @@ video {
   .gap-\[8px\] {
     gap: 8px;
   }
+  .gap-\[16px\] {
+    gap: 16px;
+  }
   .gap-2\.5 {
     gap: 0.625rem;
   }
@@ -1595,9 +1611,6 @@ video {
   }
   .gap-\[24px\] {
     gap: 24px;
-  }
-  .gap-\[16px\] {
-    gap: 16px;
   }
   .gap-\[10px\] {
     gap: 10px;
@@ -2070,13 +2083,13 @@ video {
     padding-top: 14px;
     padding-bottom: 14px;
   }
-  .py-\[4px\] {
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
   .px-\[6px\] {
     padding-left: 6px;
     padding-right: 6px;
+  }
+  .py-\[4px\] {
+    padding-top: 4px;
+    padding-bottom: 4px;
   }
   .px-\[15px\] {
     padding-left: 15px;
@@ -2248,8 +2261,17 @@ video {
   .pb-\[40px\] {
     padding-bottom: 40px;
   }
+  .pt-\[0px\] {
+    padding-top: 0px;
+  }
+  .pt-\[10px\] {
+    padding-top: 10px;
+  }
   .pt-\[2px\] {
     padding-top: 2px;
+  }
+  .pb-\[12px\] {
+    padding-bottom: 12px;
   }
   .pb-\[16px\] {
     padding-bottom: 16px;
@@ -2428,17 +2450,17 @@ video {
   .font-normal {
     font-weight: 400;
   }
-  .font-\[700\] {
-    font-weight: 700;
-  }
   .font-\[500\] {
     font-weight: 500;
   }
-  .font-semibold {
-    font-weight: 600;
+  .font-\[700\] {
+    font-weight: 700;
   }
   .font-\[400\] {
     font-weight: 400;
+  }
+  .font-semibold {
+    font-weight: 600;
   }
   .uppercase {
     text-transform: uppercase;
@@ -2494,21 +2516,17 @@ video {
     --tw-text-opacity: 1;
     color: rgb(37 99 235 / var(--tw-text-opacity));
   }
-  .text-\[\#5F6583\] {
+  .text-\[\#19224C\] {
     --tw-text-opacity: 1;
-    color: rgb(95 101 131 / var(--tw-text-opacity));
+    color: rgb(25 34 76 / var(--tw-text-opacity));
   }
   .text-\[\#8C90A5\] {
     --tw-text-opacity: 1;
     color: rgb(140 144 165 / var(--tw-text-opacity));
   }
-  .text-\[\#19224C\] {
+  .text-\[\#5F6583\] {
     --tw-text-opacity: 1;
-    color: rgb(25 34 76 / var(--tw-text-opacity));
-  }
-  .text-\[\#8c90a5\] {
-    --tw-text-opacity: 1;
-    color: rgb(140 144 165 / var(--tw-text-opacity));
+    color: rgb(95 101 131 / var(--tw-text-opacity));
   }
   .text-primaryBlue {
     --tw-text-opacity: 1;
