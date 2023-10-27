@@ -162,6 +162,7 @@ const QuickReply = ({
       // Extract the email content from the element
       const content = emailContentElement.textContent.trim().replace(/\s+/g, ' '); // Replace multiple spaces and line breaks with a single space
 
+      setSenderIntent("Loading....")
       try {
         const response = await fetch('https://api-qa.resala.ai/quick_reply/stream_sender_intent', {
           method: 'POST',
@@ -308,6 +309,9 @@ const QuickReply = ({
           sender_intent: senderIntent.trim(),
           generate_mail: resultText[newResultText?.length],
         });
+        if(customIdea){
+          setSelectedIdea(null);
+        }
         // setHasResultText(true);
       }
     } catch (error) {
@@ -872,7 +876,7 @@ const QuickReply = ({
             )}
             <textarea
               ref={draftPreviewTextareaRef}
-              style={{ resize: 'none', minHeight: '3em' }}
+              style={{ resize: 'none', minHeight: '3em', marginTop:'10px' }}
               id="draftPreview"
               name="draftPreview"
               // rows={calculateTextareaRows() || 2}

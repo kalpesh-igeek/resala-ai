@@ -2149,6 +2149,7 @@ const MainScreen = ({
     // }
   };
   const handleSelectItems = (id) => {
+    setIsRetry(false)
     if (id === 'chat') {
       handleNewChat();
       setReadPage(false);
@@ -2449,8 +2450,22 @@ const MainScreen = ({
                         // } else {
                         //   navigate('/');
                         // }
-                        setAiToolsLength(0);
-                        navigate('/savedtemplates');
+                        // setAiToolsLength(0);
+                        // navigate('/savedtemplates');
+                        if(editTemplateName?.input_text || editTemplateName?.templatename){
+                          setAiToolsLength(0);
+                          setIsConfirmExit(true)
+                          setIfOpenConfirmBox(true)
+                          // setIfOpenConfirmBox(true)
+                          // console.log("onConfirmClick => ",onConfirmClick)
+                          // if(onConfirmClick){
+                          //   setIfOpenConfirmBox(false)
+                          //   navigate('/savedtemplates');
+                          // }
+                        }else{
+                          setAiToolsLength(0);
+                          navigate('/savedtemplates');
+                        }
                       }}
                     >
                       <img src={ArrowLeft} />
@@ -3749,7 +3764,7 @@ const MainScreen = ({
                         </div>
                       )}
                       {composeRes && hasResultText && !state?.edit && selectTab === 1 && (
-                        <div className="mt-1 fixed bottom-[18px] w-[459px]">
+                        <div className="mt-1">
                           <div className="flex gap-2 items-center">
                             <button
                               className="w-full rounded-md focus:outline-none bg-white px-1 py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
@@ -3898,7 +3913,7 @@ const MainScreen = ({
                         </div>
                       )}
                       {composeRes && hasResultTextRep && !state?.edit && selectTab === 2 && (
-                        <div className="mt-1 fixed bottom-[18px] w-[459px]">
+                        <div className="mt-1">
                           <div className="flex gap-2 items-center">
                             <button
                               className="w-full rounded-md focus:outline-none bg-white px-1 py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
@@ -3931,7 +3946,7 @@ const MainScreen = ({
                         </div>
                       )}
                       {selectedTemplate && (
-                        <div className="mt-1 fixed bottom-[18px] w-[459px]">
+                        <div className="mt-1">
                           <div className="flex gap-2 items-center">
                             <button
                               className="w-full rounded-md bg-white focus:outline-none px-1 py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
