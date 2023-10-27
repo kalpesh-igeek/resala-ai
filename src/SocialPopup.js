@@ -1906,7 +1906,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   return (
     <>
       <div
-        className={`hidden rounded-[10px] bg-white fixed w-[600px] min-h-[340px] h-[max-content] max-h-[650px] relative shadow border border-white overflow-hidden !font-['DM Sans']`}
+        className={`hidden rounded-[10px] bg-white fixed w-[600px] min-h-[375px] h-[max-content] max-h-[650px] relative shadow border border-white overflow-hidden !font-['DM Sans']`}
         id="SocialPopup"
         style={{
           top: fromPosition.top,
