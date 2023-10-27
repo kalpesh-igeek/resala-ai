@@ -1028,6 +1028,8 @@ const MainScreen = ({
   };
   useEffect(() => {
     if (isChatHistory) {
+      setChatData([]);
+      setChatData((prevMessages) => [...prevMessages, { msg: 'Loading...', type: 'loading' }]);
       fetchChatHistory();
     }
   }, [historyId]);

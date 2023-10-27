@@ -635,7 +635,7 @@ const ChatHistory = ({
                             >
                               {item.chat_dict?.ai_answer}
                             </div>
-                            {lastSelectedChat && item.chat_id != lastSelectedChat && 
+                            {item.chat_id != lastSelectedChat && 
                             <CustomTooltip
                               maxWidth="430px"
                               place="top"
