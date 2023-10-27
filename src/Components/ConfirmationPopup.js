@@ -1,13 +1,24 @@
 import React from 'react';
 import Close from '../utils/MainScreen/Icons/Close.svg';
 import WarningIcon from '../utils/MainScreen/Icons/WarningIcon.svg';
+import { useNavigate } from 'react-router-dom';
 
-export default function ConfirmationPopup({ ifOpenConfirmBox, setIsOpen, setIfOpenConfirmBox, setIfConfirmClose }) {
+export default function ConfirmationPopup({ ifOpenConfirmBox, setIsOpen, setIfOpenConfirmBox, setIfConfirmClose,onConfirmClick,setOnConfirmClick ,setIsConfirmExit,isConfirmExit}) {
+  const navigate = useNavigate()
   const SocialButton = document.getElementById('SocialButton');
-  const handleCloseClick = () => {
-    setIfConfirmClose(true);
-    setIfOpenConfirmBox(false);
-    setIsOpen(false);
+  const handleClick = (value) => {
+    if(value && isConfirmExit){
+      setIfOpenConfirmBox(false)
+      setIsConfirmExit(false)
+      navigate(-1)
+    }else if(value && !isConfirmExit){
+      setOnConfirmClick(true)
+    }else{
+      setIfOpenConfirmBox(false)
+    }
+    // setIfConfirmClose(true);
+    // setIfOpenConfirmBox(false);
+    // setIsOpen(false);
     // SocialButton.classList.remove('hidden');
   };
 
@@ -41,13 +52,14 @@ export default function ConfirmationPopup({ ifOpenConfirmBox, setIsOpen, setIfOp
           <div className="flex gap-2 items-center">
             <button
               className="rounded-md bg-white px-[16px] py-[10px] text-[16px] font-medium text-darkBlue border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
-              onClick={() => setIfOpenConfirmBox(false)}
+              onClick={() => handleClick(false)}
             >
               No
             </button>
             <button
               className="rounded-md bg-primaryBlue px-[16px] py-[10px] text-[16px] font-medium text-white hover:opacity-90 disabled:cursor-none disabled:opacity-50"
-              onClick={handleCloseClick}
+              // onClick={handleCloseClick}
+              onClick={() => {handleClick(true)}}
             >
               Yes
             </button>

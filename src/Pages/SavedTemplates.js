@@ -146,17 +146,25 @@ const SavedTemplates = ({
             >
               <img src={ArrowLeft} />
             </div>
-            <span>Templates</span>
+            <span className="cursor-pointer"
+              onClick={() => {
+                if (editTemplate) {
+                  navigate('/savedtemplates');
+                  setEditTemplate(false);
+                } else {
+                  navigate('/');
+                }
+              }}>Templates</span>
             {editTemplate && (
               <>
                 <img src={ArrowRight} />
-                <span>{selectedTemplate?.name}</span>
+                <span>{selectedTemplate?.name.length >= 40 ? selectedTemplate?.name.substring(1, 40) + "..." : selectedTemplate?.name}</span>
               </>
             )}
           </div>
-          <div className="cursor-pointer" onClick={handleClose}>
+          {/* <div className="cursor-pointer" onClick={handleClose}>
             <img className="w-[14px] h-[14px]" src={Close} />
-          </div>
+          </div> */}
         </div>
 
         {editTemplate ? (
@@ -223,7 +231,7 @@ const SavedTemplates = ({
                             <img src={TemplateDocIcon} />
                           </div>
                           <div className="flex flex-col gap-[4px]">
-                            <div className="text-[16px] text-darkBlue font-medium">{template.name}</div>
+                            <div className="text-[16px] text-darkBlue font-medium">{template.name.length >= 40 ? template.name.substring(1, 40) + "..." : template.name}</div>
                             <div className="text-[12px] text-darkgray1">{template.type?.name}</div>
                           </div>
                         </div>

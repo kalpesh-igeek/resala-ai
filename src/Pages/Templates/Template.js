@@ -122,6 +122,7 @@ const Template = ({ selectedTemplate, setActiveTab }) => {
               TEMPLATE NAME
             </label>
             <input
+              readOnly
               id="requestedText"
               name="input_text"
               value={selectedTemplate?.name}
@@ -186,6 +187,7 @@ const Template = ({ selectedTemplate, setActiveTab }) => {
               }}
             /> */}
             <input
+              readOnly
               id="requestedText"
               name="input_text"
               // value={selectedText.input_text}
@@ -220,16 +222,19 @@ const Template = ({ selectedTemplate, setActiveTab }) => {
               </button>
             </div>
           </div>
-          <textarea
+          <div className='text-[14px] border-gray block w-full rounded-md border p-[10px] !min-h-[100px] !h-[auto]'>
+            {selectedTemplate.output_text}
+          </div>
+          {/* <textarea
+            readOnly
             style={{ resize: 'none' }}
             id="requestedText"
             name="reply"
-            rows="30"
             value={selectedTemplate.output_text}
             // onChange={(e) => handleChangeCompose(e)}
             placeholder="Lorem ipsum dolor sit amet consectetur."
-            className="text-[14px] border-gray block w-full rounded-md border p-1.5"
-          />
+            className="text-[14px] border-gray block w-full rounded-md border pr-[10px] pl-[10px] !min-h-[100px] !h-[auto]"
+          /> */}
         </div>
       </div>
 

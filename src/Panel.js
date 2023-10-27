@@ -1031,9 +1031,9 @@ export default function Panel({ local }) {
     dispatch(handleToggle(true));
   };
 
-  useEffect(() => {
-    if (ifConfirmClose) setIsOpen(false);
-  }, [ifConfirmClose]);
+  // useEffect(() => {
+  //   if (ifConfirmClose) setIsOpen(false);
+  // }, [ifConfirmClose]);
 
   const handleClick = () => {
     console.log('dklsdjdskl');
@@ -1089,17 +1089,63 @@ export default function Panel({ local }) {
   });
   const [composeSelectedText, setComposeSelectedText] = useState({ input_text: requestedText });
   const [replyText, setReplyText] = useState({ original_text: '', reply: '' });
+  const [editTemplateName, setEditTemplateName] = useState({
+    templatename: '',
+    input_text: '',
+  });
+  const [onConfirmClick,setOnConfirmClick] = useState(false);
+  const [clickClose,setClickClose] = useState(false);
+  const [isConfirmExit,setIsConfirmExit] = useState(false);
 
+  // const isConfirmExit = (route) =>{
+  //   setIfOpenConfirmBox(true)
+  //   if()
+  // }
+
+  useEffect(() => {
+    if(clickClose && onConfirmClick){
+      setIfOpenConfirmBox(false)
+      dispatch(handleToggle(false));
+      console.log('remove extension width');
+      document.getElementById('resala_style_right_space') ?document.getElementById('resala_style_right_space').remove() : ''  
+      setChatInput({
+        chatText: '',
+      })
+      setComposeSelectedText({ input_text: requestedText })
+      setReplyText({ original_text: '', reply: '' })
+      setEditTemplateName({
+        templatename: '',
+        input_text: '',
+      })
+      setClickClose(false)
+      setOnConfirmClick(false)
+    }
+  }, [clickClose, onConfirmClick])
+  
+  
   const handlePopUpCloseClick = () => {
     console.log("handlePopUpCloseClick");
-    if(chatInput.chatText || composeSelectedText.input_text || replyText.original_text || replyText.reply){
+    if(chatInput.chatText || composeSelectedText.input_text || replyText.original_text || replyText.reply || editTemplateName.templatename || editTemplateName.input_text){
       console.log("Abort");
+      setClickClose(true)
       setIfOpenConfirmBox(true)
     }else{
       dispatch(handleToggle(false));
       console.log('remove extension width');
       document.getElementById('resala_style_right_space') ?document.getElementById('resala_style_right_space').remove() : ''
+      setChatInput({
+        chatText: '',
+      })
+      setComposeSelectedText({ input_text: requestedText })
+      setReplyText({ original_text: '', reply: '' })
+      setEditTemplateName({
+        templatename: '',
+        input_text: '',
+      })
+      setClickClose(false)
+      setOnConfirmClick(false)
     }
+
   };
 
   // useEffect(() => {
@@ -1335,6 +1381,12 @@ export default function Panel({ local }) {
                             setReplyText={setReplyText}
                             selectTab={selectTab}
                             setSelectTab={setSelectTab}
+                            editTemplateName={editTemplateName}
+                            setEditTemplateName={setEditTemplateName}
+                            setIfOpenConfirmBox={setIfOpenConfirmBox}
+                            onConfirmClick={onConfirmClick}
+                            isConfirmExit={isConfirmExit}
+                            setIsConfirmExit={setIsConfirmExit}
                           />
                         }
                       />
@@ -1383,6 +1435,10 @@ export default function Panel({ local }) {
                       setIfOpenConfirmBox={setIfOpenConfirmBox}
                       ifConfirmClose={ifConfirmClose}
                       setIfConfirmClose={setIfConfirmClose}
+                      onConfirmClick={onConfirmClick}
+                      setOnConfirmClick={setOnConfirmClick}
+                      isConfirmExit={isConfirmExit}
+                      setIsConfirmExit={setIsConfirmExit}
                     />
                     {/* <DeletePopup ifOpenDeleteBox={ifOpenDeleteBox} setIfOpenDeleteBox={setIfOpenDeleteBox} /> */}
                   </>

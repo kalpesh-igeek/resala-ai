@@ -635,6 +635,7 @@ const QuickReply = ({
           </label>
           <div className="mt-2">
             <textarea
+            readOnly
               style={{ resize: 'none' }}
               id="requestedText"
               name="requestedText"
@@ -648,8 +649,8 @@ const QuickReply = ({
         </div>
 
         <div className="mb-[20px]">
-          <div className="flex px-[10px] py-[12px] bg-lightblue1 font-medium rounded-md items-center justify-between gap-2">
-            <div className="cursor-pointer w-full text-[12px]" onClick={handlePlanInfo}>
+          <div className="flex px-[10px] py-[12px] bg-lightblue1 font-medium rounded-md items-center justify-between gap-2 cursor-pointer" onClick={handlePlanInfo}>
+            <div className="cursor-pointer w-full text-[12px]">
               IDEAS FOR REPLY
             </div>
             {isReplies ? (

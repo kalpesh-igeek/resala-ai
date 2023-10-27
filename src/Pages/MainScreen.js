@@ -204,9 +204,13 @@ const MainScreen = ({
   chatInput,setChatInput,
   composeSelectedText, setComposeSelectedText,
   replyText, setReplyText,
-  selectTab,setSelectTab
+  selectTab,setSelectTab,
+  editTemplateName, setEditTemplateName,
+  setIfOpenConfirmBox,
+  onConfirmClick,
+  isConfirmExit,
+  setIsConfirmExit
 }) => {
-  console.log(activeTab,SELECTION);
   const { isExtensionOpen } = useSelector((state) => state.extension);
   const localContext = useContext(LocalContext);
   //  const TOKEN = await getToken();
@@ -328,10 +332,7 @@ const MainScreen = ({
   const selectRef = useRef(null);
   const [templateType, setTemplateType] = useState([]);
   const [selectedTemplateType, setSelectedTemplateType] = useState();
-  const [editTemplateName, setEditTemplateName] = useState({
-    templatename: '',
-    input_text: '',
-  });
+  
   const [languageList, setLanguageList] = useState([]);
   const [defaultLang, setDefaultLang] = useState();
   const debouncedSearch = useDebounce(search, 1000);
@@ -963,9 +964,7 @@ const MainScreen = ({
   };
 
   const fetchLastChatHistory = async () => {
-    console.log("fetchLastChatHistory");
     const res = await dispatch(lastChatHistory());
-    console.log({res});
     if (!res.payload) {
       return;
     }
@@ -1256,7 +1255,7 @@ const MainScreen = ({
 
   const handleGenerateDraft = async (e) => {
     // setIsActivity(true);
-    setInputButtonBox(!inputButtonBox);
+    setInputButtonBox(false);
     setIsDraftPrev(true);
     setIsStreamingComp(true);
 
@@ -2384,7 +2383,7 @@ const MainScreen = ({
                       className={({ selected }) =>
                         classNames(
                           selected ? 'after:bg-primaryBlue text-[#19224C]' : 'bg-transparent text-gray1',
-                            'relative outline-none text-[16px] font-medium mr-[30px] py-[14px] after:absolute after:h-[3px] after:w-[30px] after:left-[2px] after:bottom-0'
+                            'relative outline-none text-[16px] font-medium mr-[30px] py-[14px] after:absolute after:h-[3px] after:w-[30px] after:left-[3px] after:bottom-0'
                         )
                       }
                       onClick={() => {
@@ -2403,7 +2402,7 @@ const MainScreen = ({
                         className={({ selected }) =>
                           classNames(
                             selected ? 'after:bg-primaryBlue text-[#19224C]' : 'bg-transparent text-gray1',
-                            'relative outline-none text-[16px] font-medium mr-[30px] py-[14px] after:absolute after:h-[3px] after:w-[30px] after:left-[25px] after:bottom-0'
+                            'relative outline-none text-[16px] font-medium mr-[30px] py-[14px] after:absolute after:h-[3px] after:w-[30px] after:left-[22px] after:bottom-0'
                           )
                         }
                         onClick={() => {
@@ -2423,7 +2422,7 @@ const MainScreen = ({
                         className={({ selected }) =>
                           classNames(
                             selected ? 'after:bg-primaryBlue text-[#19224C]' : 'bg-transparent text-gray1',
-                            'relative outline-none text-[16px] font-medium mr-[30px] py-[14px] after:absolute after:h-[3px] after:w-[30px] after:left-[25px] after:bottom-0'
+                            'relative outline-none text-[16px] font-medium mr-[30px] py-[14px] after:absolute after:h-[3px] after:w-[30px] after:left-[22px] after:bottom-0'
                           )
                         }
                         onClick={() => {
@@ -2456,7 +2455,29 @@ const MainScreen = ({
                     >
                       <img src={ArrowLeft} />
                     </div>
-                    <span>Templates</span>
+                    <span className="cursor-pointer"
+                      onClick={() => {
+                        // if (editTemplate) {
+                        //   navigate('/savedtemplates');
+                        //   setEditTemplate(false);
+                        // } else {
+                        //   navigate('/');
+                        // }
+                        if(editTemplateName?.input_text || editTemplateName?.templatename){
+                          setAiToolsLength(0);
+                          setIsConfirmExit(true)
+                          setIfOpenConfirmBox(true)
+                          // setIfOpenConfirmBox(true)
+                          // console.log("onConfirmClick => ",onConfirmClick)
+                          // if(onConfirmClick){
+                          //   setIfOpenConfirmBox(false)
+                          //   navigate('/savedtemplates');
+                          // }
+                        }else{
+                          setAiToolsLength(0);
+                          navigate('/savedtemplates');
+                        }
+                      }}>Templates</span>
                     {state?.edit && (
                       <>
                         <img src={ArrowRight} />
@@ -2464,9 +2485,9 @@ const MainScreen = ({
                       </>
                     )}
                   </div>
-                  <div className="cursor-pointer" onClick={handleClose}>
+                  {/* <div className="cursor-pointer" onClick={handleClose}>
                     <img className="w-[14px] h-[14px]" src={Close} />
-                  </div>
+                  </div> */}
                 </div>
               )}
               <Tab.Panels as={Fragment}>
@@ -2599,7 +2620,7 @@ const MainScreen = ({
                                 <div ref={selectRef}>
                                   <Select
                                    isSearchable={false}
-                                    className="border border-gray text-gray1 hover:text-darkBlue rounded-md text-[14px] py-[4px] px-[6px]"
+                                    className="border border-gray text-gray1 hover:text-darkBlue rounded-md text-[14px] py-[4px] px-[6px] !h-[31px] !pt-[0px]"
                                     menuPlacement="top"
                                     defaultValue={'English'}
                                     onChange={setSelectedOption}
@@ -3140,7 +3161,7 @@ const MainScreen = ({
 
                                 <Select
                                  isSearchable={false}
-                                  className="border border-gray rounded-md p-[9px] text-[14px] placeholder:text-gray1"
+                                  className="border border-gray rounded-md p-[9px] pl-[0px] pt-[3px] h-[40px] text-[14px] placeholder:text-gray1"
                                   menuPlacement="bottom"
                                   name="templateType"
                                   defaultValue={{
@@ -3272,7 +3293,7 @@ const MainScreen = ({
                               {/* {errors.input_text && <p className="text-red text-[12px]">{errors.input_text}</p>} */}
                             </div>
                           ) : (
-                            <div className="col-span-full">
+                            <div className="col-span-full mb-[16px]">
                               <label for="input" className="block text-[12px] font-bold leading-6 text-[#19224C]">
                                 ORIGINAL INPUT
                               </label>
@@ -3310,19 +3331,19 @@ const MainScreen = ({
                           )}
                         </>
                       )}
-                      <div className="pt-[16px] pb-[10px] flex gap-2 justify-between items-center h-[34px]">
+                      <div className={`pt-[16px] pb-[10px] flex gap-2 justify-between items-center h-[34px] ${compLoading || compRepLoading ? 'pointer-events-none' : 'pointer-events-auto'}`}>
                         <div className="flex text-[14px] font-medium text-darkBlue whitespace-nowrap">AI Tools</div>
 
                         {!inputButtonBox && (
                           <div
                             className={`${inputButtonBox && selectedItems.length === 0 ? 'hidden' : 'block animate-fade-in'
-                              } transition duration-500 flex gap-2 items-center w-full`}
+                              } transition duration-500 flex gap-2 items-center w-full ${compLoading || compRepLoading ? 'pointer-events-none' : 'pointer-events-auto'}`}
                             onClick={handleInputButtonBox}
                           >
                             {selectedItems
                               .filter((itm) => itm.name)
                               .map((item) => (
-                                <button className="w-full rounded-md px-1 py-2 text-[12px] font-medium text-darkBlue border bg-lightblue1 border-lightblue">
+                                <button className={`w-full rounded-md px-1 py-2 text-[12px] font-medium text-darkBlue border bg-lightblue1 border-lightblue ${compLoading || compRepLoading ? 'pointer-events-none' : 'pointer-events-auto'}`}>
                                   {item.name}
                                 </button>
                               ))}
@@ -3331,7 +3352,7 @@ const MainScreen = ({
 
                         <div
                           className={`w-[20px] flex text-[14px] font-medium text-darkBlue whitespace-nowrap justify-center cursor-pointer ${!inputButtonBox ? '-rotate-90' : ''
-                            }`}
+                            } ${compLoading || compRepLoading ? 'pointer-events-none' : 'pointer-events-auto'}`}
                           onClick={handleInputButtonBox}
                         >
                           <img src={ArrowDown} />
@@ -3342,7 +3363,7 @@ const MainScreen = ({
                         className={`${!inputButtonBox ? `hidden` : 'block animate-fade-in'} transition duration-500 `}
                       >
                         {selectTab === 1 ? (
-                          <div className="pb-[20px]">
+                          <div className="pb-[20px] pt-[18px]">
                             <div className="flex gap-1 items-center">
                               <img src={actionIcon} />
                               <label for="actions" className="block text-[12px] font-bold leading-6 text-gray1">
@@ -3350,7 +3371,7 @@ const MainScreen = ({
                               </label>
                             </div>
                             <RadioGroup value={selectedAction} onChange={setSelectedAction}>
-                              <div className="inline-flex gap-2 items-center">
+                              <div className={`inline-flex gap-2 items-center ${compLoading || compRepLoading ? 'pointer-events-none' : 'pointer-events-auto'}`}>
                                 {actions.map((action, index) => (
                                   <RadioGroup.Option
                                     name="action"
@@ -3374,15 +3395,15 @@ const MainScreen = ({
                             </RadioGroup>
                           </div>
                         ) : (
-                          <div className="pb-[20px]">
-                            <div className="flex gap-1 items-center">
+                          <div className="pb-[20px] pt-[18px]">
+                            <div className="flex gap-1 items-center mb-[6px]">
                               <img src={formatIcon} />
                               <label for="format" className="block text-[12px] font-bold leading-6 text-gray1">
                                 FORMAT
                               </label>
                             </div>
                             <RadioGroup value={selectedFormat} onChange={setSelectedFormat}>
-                              <div className="inline-flex gap-2 items-center">
+                              <div className={`inline-flex gap-2 items-center ${compLoading || compRepLoading ? 'pointer-events-none' : 'pointer-events-auto'}`}>
                                 {format.map((action, index) => (
                                   <RadioGroup.Option
                                     name="action"
@@ -3408,14 +3429,14 @@ const MainScreen = ({
                         )}
 
                         <div className="pb-[20px]">
-                          <div className="flex gap-1 items-center">
+                          <div className="flex gap-1 items-center mb-[6px]">
                             <img src={lengthIcon} />
                             <label for="actions" className="block text-[12px] font-bold leading-6 text-gray1">
                               LENGTH
                             </label>
                           </div>
                           <RadioGroup value={selectedLength} onChange={setSelectedLength}>
-                            <div className="inline-flex gap-2 items-center">
+                            <div className={`inline-flex gap-2 items-center ${compLoading || compRepLoading ? 'pointer-events-none' : 'pointer-events-auto'}`}>
                               {lengths.map((length, index) => (
                                 <RadioGroup.Option
                                   name="length"
@@ -3439,14 +3460,14 @@ const MainScreen = ({
                           </RadioGroup>
                         </div>
                         <div className="pb-[20px]">
-                          <div className="flex gap-1 items-center">
+                          <div className="flex gap-1 items-center mb-[6px]">
                             <img src={toneIcon} />
                             <label for="actions" className="block text-[12px] font-bold leading-6 text-gray1">
                               TONE
                             </label>
                           </div>
                           <RadioGroup value={selectedTone} onChange={setSelectedTone}>
-                            <div className="inline-flex gap-2 items-center">
+                            <div className={`inline-flex gap-2 items-center ${compLoading || compRepLoading ? 'pointer-events-none' : 'pointer-events-auto'}`}>
                               {tones.map((tone, index) => (
                                 <RadioGroup.Option
                                   name="length"
@@ -3470,14 +3491,14 @@ const MainScreen = ({
                           </RadioGroup>
                         </div>
                         <div className="pb-[10px]">
-                          <div className="flex gap-1 items-center">
+                          <div className="flex gap-1 items-center mb-[6px]">
                             <img src={languageIcon} />
                             <label for="actions" className="block text-[12px] font-bold leading-6 text-gray1 uppercase">
                               LANGUAGE
                             </label>
                           </div>
                           <RadioGroup value={selectedLanguage} onChange={setSelectedLanguage}>
-                            <div className="inline-flex gap-2 items-center">
+                            <div className={`inline-flex gap-2 items-center ${compLoading || compRepLoading ? 'pointer-events-none' : 'pointer-events-auto'}`}>
                               {languages.map((language, index) => (
                                 <RadioGroup.Option
                                   name="length"
@@ -3684,6 +3705,7 @@ const MainScreen = ({
                           {/* {!selectedTemplate ? ( */}
                           {activeTab === 'chat' && isNewDraft ? (
                             <textarea
+                              readOnly
                               ref={draftPreviewTextareaRef}
                               style={{ resize: 'none',  minHeight: '8em', maxHeight: '300px', height:'auto'}}
                               id="draftPreview"
@@ -3699,21 +3721,27 @@ const MainScreen = ({
                             />
                           ) : (
                             // </div>
-                            <textarea
-                              ref={draftPreviewTextareaRef}
-                              style={{ resize: 'none', minHeight: '8em', maxHeight: '300px', height:'auto' }}
-                              id="draftPreview"
-                              name="draftPreview"
-                              // rows="22"
-                              // rows={calculateTextareaRows() || 2}
-                              value={
-                                resultText[currentPageIndexTab1]?.output_text
+                            <div className={`text-[14px] border-gray block ${inputButtonBox ? `h-[calc(100vh-884px)]` : `h-[auto] max-h-[calc(100vh-534px)]`}  w-full rounded-md border p-1  overflow-y-auto mb-[50px]`}>
+                              {resultText[currentPageIndexTab1]?.output_text
                                   ? resultText[currentPageIndexTab1]?.output_text
-                                  : selectedTemplate?.output_text
-                              }
-                              placeholder=" "
-                              className="text-[14px] border-gray block h-[306px] w-full rounded-md border p-1.5"
-                            />
+                                  : selectedTemplate?.output_text}
+                            </div>
+                            // <textarea
+                            //   readOnly
+                            //   ref={draftPreviewTextareaRef}
+                            //   style={{ resize: 'none', minHeight: '8em', maxHeight: '300px', height:'auto' }}
+                            //   id="draftPreview"
+                            //   name="draftPreview"
+                            //   // rows="22"
+                            //   // rows={calculateTextareaRows() || 2}
+                            //   value={
+                            //     resultText[currentPageIndexTab1]?.output_text
+                            //       ? resultText[currentPageIndexTab1]?.output_text
+                            //       : selectedTemplate?.output_text
+                            //   }
+                            //   placeholder=" "
+                            //   className="text-[14px] border-gray block h-[306px] w-full rounded-md border p-1.5"
+                            // />
                           )}
                           {/* ) : ( */}
 
@@ -3721,7 +3749,7 @@ const MainScreen = ({
                         </div>
                       )}
                       {composeRes && hasResultText && !state?.edit && selectTab === 1 && (
-                        <div className="mt-1">
+                        <div className="mt-1 fixed bottom-[18px] w-[459px]">
                           <div className="flex gap-2 items-center">
                             <button
                               className="w-full rounded-md focus:outline-none bg-white px-1 py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
@@ -3829,6 +3857,7 @@ const MainScreen = ({
                           {/* {!selectedTemplate ? ( */}
                           {activeTab === 'chat' && isNewDraft ? (
                             <textarea
+                              readOnly
                               ref={draftPreviewTextareaRef}
                               style={{ resize: 'none',  minHeight: '8em', maxHeight: '300px', height:'auto' }}
                               id="draftPreview"
@@ -3843,19 +3872,25 @@ const MainScreen = ({
                               className="text-[14px] border-gray block w-full rounded-md border p-1.5"
                             />
                           ) : (
-                            <textarea
-                              style={{ resize: 'none', minHeight: '8em', maxHeight: '300px' ,height:'auto'}}
-                              id="draftPreview"
-                              name="draftPreview"
-                              // rows="22"
-                              value={
-                                resultTextRep[currentPageIndexTab2]?.output_text
+                            <div className={`text-[14px] border-gray block ${inputButtonBox ? `h-[calc(100vh-884px)]` : `h-[auto] max-h-[calc(100vh-534px)]`}  w-full rounded-md border p-1  overflow-y-auto mb-[50px]`}>
+                              {resultTextRep[currentPageIndexTab2]?.output_text
                                   ? resultTextRep[currentPageIndexTab2]?.output_text
-                                  : selectedTemplate?.output_text
-                              }
-                              placeholder=" "
-                              className="text-[14px] border-gray block h-[306px] w-full rounded-md border p-1.5"
-                            />
+                                  : selectedTemplate?.output_text}
+                            </div>
+                            // <textarea
+                            //   readOnly
+                            //   style={{ resize: 'none', minHeight: '8em', maxHeight: '300px' ,height:'auto'}}
+                            //   id="draftPreview"
+                            //   name="draftPreview"
+                            //   // rows="22"
+                            //   value={
+                            //     resultTextRep[currentPageIndexTab2]?.output_text
+                            //       ? resultTextRep[currentPageIndexTab2]?.output_text
+                            //       : selectedTemplate?.output_text
+                            //   }
+                            //   placeholder=" "
+                            //   className="text-[14px] border-gray block h-[306px] w-full rounded-md border p-1.5"
+                            // />
                           )}
                           {/* ) : ( */}
 
@@ -3863,7 +3898,7 @@ const MainScreen = ({
                         </div>
                       )}
                       {composeRes && hasResultTextRep && !state?.edit && selectTab === 2 && (
-                        <div className="mt-1">
+                        <div className="mt-1 fixed bottom-[18px] w-[459px]">
                           <div className="flex gap-2 items-center">
                             <button
                               className="w-full rounded-md focus:outline-none bg-white px-1 py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
@@ -3896,7 +3931,7 @@ const MainScreen = ({
                         </div>
                       )}
                       {selectedTemplate && (
-                        <div className="mt-1">
+                        <div className="mt-1 fixed bottom-[18px] w-[459px]">
                           <div className="flex gap-2 items-center">
                             <button
                               className="w-full rounded-md bg-white focus:outline-none px-1 py-[10px] text-[16px] font-medium text-darkgray1 border border-gray hover:!bg-lightblue1 hover:!border-lightblue disabled:cursor-none disabled:opacity-50"
