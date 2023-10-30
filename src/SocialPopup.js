@@ -32,6 +32,8 @@ import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 
 export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, delay }) => {
+  const [isStreaming, setIsStreaming] = useState(true);
+
   const [language, setLanguage] = useState(false);
   const [abortController, setAbortController] = useState(null);
   const dispatch = useDispatch();
@@ -39,6 +41,21 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   const languageSelectorRef = useRef(null);
   const professionSelectorRef = useRef(null);
   const popupRef = useRef(null);
+  const MainDiv = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (MainDiv.current && !MainDiv.current.contains(event.target)) {
+        handleClose();
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -238,6 +255,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     if (IdeasValueHome1.trim() === '') {
       return;
     }
+    setIsStreaming(true);
     setPostIdea(!PostIdea);
     setLoadingText(!loadingText);
     setVisible2(true);
@@ -298,7 +316,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
           if (line.includes('connection closed')) {
             setIsTypewriterDone(false);
             // setAllreadyStreamed(false);
-            // setIsStreaming(false);
+            setIsStreaming(false);
           } else {
             accumulatedMessage += data + '';
             setIdeasValueHome(accumulatedMessage);
@@ -320,6 +338,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   const [LoadRegenerate, setLoadRegenerate] = useState(false);
   const [ResponsesText, setResponsesText] = useState([]);
   const handleRegenerate = async () => {
+    setIsStreaming(true);
+
     setLoadingText(true);
     setLoadRegenerate(!LoadImprove1);
     const hostname = window.location.hostname;
@@ -407,11 +427,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
           data = line.replace(/#@#/g, '\n');
           if (line.includes('connection closed')) {
             setIsTypewriterDone(false);
+            setIsStreaming(false);
+
           } else {
             accumulatedMessage += data + '';
             setIdeasValueHome(accumulatedMessage);
           }
         }
+        // setIsStreaming(false);
         setLoadingText(false);
         setButtonShowHome(true);
         setLoadRegenerate(false);
@@ -429,6 +452,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   const [LoadImprove1, setloadImprove1] = useState(false);
 
   const handlePostIdeaAction = async (Action) => {
+
 
     setloadImprove1(!LoadImprove1);
     setLoadingText(true);
@@ -505,6 +529,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       const reader = response.body.getReader();
       let accumulatedMessage = '';
       setResponsesText((state) => [...state, IdeasValueHome]);
+      setIsStreaming(true);
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -514,6 +539,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
           data = line.replace(/#@#/g, '\n');
           if (line.includes('connection closed')) {
             setIsTypewriterDone(false);
+            setIsStreaming(false);
           } else {
             accumulatedMessage += data + '';
             setIdeasValueHome(accumulatedMessage);
@@ -794,10 +820,12 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     if (IdeasValue.trim() === '') {
       return;
     }
+    setIsStreaming(true);
     setIdeadload(true);
     settextarea2reg(true);
     setPostIdea(!PostIdea);
     setInitialIdeasValue(IdeasValue);
+
     const hostname = window.location.hostname;
     const textArea = document.getElementById('socialTextarea');
 
@@ -880,6 +908,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
           data = line.replace(/#@#/g, '\n');
           if (line.includes('connection closed')) {
             setIsTypewriterDone(false);
+            setIsStreaming(false);
+            setButtonShow(true);
           } else {
             accumulatedMessage += data + '';
             setIdeasValue(accumulatedMessage);
@@ -888,7 +918,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         setIdeadload(false);
         settextarea2reg(false);
         settypeWriter(true);
-        setButtonShow(!ButtonsShow);
+
         setPostIdea(!PostIdea);
       }
     } catch (error) {
@@ -936,44 +966,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
     const hostname = window.location.hostname;
     const textArea = document.getElementById('socialTextarea');
-
-    let response;
-
     const postData = { text: InitialIdeasValue, action: 'string', language: languages, tone: professions };
-
-    // if (hostname === 'www.linkedin.com') {
-    //   response = await postRequest('/linkedin/regenrate_post_streaming', postData);
-    // } else if (hostname === 'www.facebook.com') {
-    //   response = await postRequest('/facebook/regenrate_facebook_post_streaming', postData);
-    // } else if (hostname === 'twitter.com') {
-    //   response = await postRequest('/twitter/regenrate_post_streaming', postData);
-    // }
-
-    // if (response && response.status === 200) {
-    //   let text = response.data
-    //     .replace(/#@#/g, '')
-    //     .replace(/POST :/g, '')
-    //     .replace(/Action :/g, '')
-    //     .replace(/Post :/g, '')
-    //     .replace(/connection closed/g, '');
-    //   text = text.toString().replace('POST :', '');
-    //   const words = text.split(/\s+/).filter((word) => word.trim() !== '');
-
-    //   const textArea1 = textAreaRef.current;
-    //   const paragraph = words.join(' ');
-    //   const lines = paragraph.split(/[\.,]/);
-    //   const lineCount = lines.length;
-    //   textArea1.rows = lineCount + 1;
-    //   typewriterEffect(paragraph, textArea, 20);
-    //   setIdeasValue(paragraph);
-    //   settextarea2reg(false);
-    //   setIdeadload(false);
-
-    //   setButtonShow(true);
-
-    //   setResponses((state) => [...state, IdeasValue]);
-    // }
-    // setRegenerate1(false);
 
     if (abortController) {
       abortController.abort();
@@ -1010,6 +1003,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       const reader = response.body.getReader();
       let accumulatedMessage = '';
       setResponses((state) => [...state, IdeasValue]);
+      setIsStreaming(true);
 
       while (true) {
         const { done, value } = await reader.read();
@@ -1020,6 +1014,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
           data = line.replace(/#@#/g, '\n');
           if (line.includes('connection closed')) {
             setIsTypewriterDone(false);
+            setIsStreaming(false);
           } else {
             accumulatedMessage += data + '';
             setIdeasValue(accumulatedMessage);
@@ -1044,6 +1039,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   const handlePostIdeaImprove = async () => {
     setloadImprove(!LoadImprove);
     settextarea2reg(true);
+    setIsStreaming(true)
 
     const hostname = window.location.hostname;
     const textArea = document.getElementById('socialTextarea');
@@ -1128,6 +1124,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
           data = line.replace(/#@#/g, '\n');
           if (line.includes('connection closed')) {
             setIsTypewriterDone(false);
+            setIsStreaming(false)
+
           } else {
             accumulatedMessage += data + '';
             setIdeasValue(accumulatedMessage);
@@ -1148,6 +1146,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   const handlePostIdeaActionHome = async (action) => {
     setloadImprove(!LoadImprove);
     settextarea2reg(true);
+
 
     const hostname = window.location.hostname;
     const textArea = document.getElementById('socialTextarea');
@@ -1191,6 +1190,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       const reader = response.body.getReader();
       let accumulatedMessage = '';
       setResponses((state) => [...state, IdeasValue]);
+      setIsStreaming(true);
 
       while (true) {
         const { done, value } = await reader.read();
@@ -1201,6 +1201,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
           data = line.replace(/#@#/g, '\n');
           if (line.includes('connection closed')) {
             setIsTypewriterDone(false);
+            setIsStreaming(false);
           } else {
             accumulatedMessage += data + '';
             setIdeasValue(accumulatedMessage);
@@ -1419,9 +1420,36 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   const handleEmpty12 = () => {
     setSpeechLength(0);
     setIdeasValue('');
+    setIdeasValueHome('')
     setButtonShow(!ButtonsShow)
     setIdeadload(false);
     setPostIdea(true);
+  };
+
+  const handleEmpty13 = () => {
+    console.log("Called ");
+    setSpeechLength(0);
+    setIdeasValue('');
+    setIdeasValueHome('')
+    setButtonShow(!ButtonsShow)
+    setIdeadload(false);
+    setPostIdea(true);
+    if (ResponsesText.length == 0) {
+      setIsStreaming(true);
+      setVisible(false);
+      setVisible2(false);
+      setIdeasValueHome1('');
+      setIdeasValueHome('');
+      setSpeechLength(0);
+      setSocialHome(true);
+      setButtonShow(!ButtonsShow);
+      setButtonShowHome(!ButtonsShowHome);
+      setResponsesText([]);
+      setLoading(false);
+      setvisibleTextarea(false);
+      setCopied(false);
+      settextarea2reg(false);
+    }
   };
   // empty
 
@@ -1436,19 +1464,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     if (hostname == 'www.linkedin.com') {
       const LinkedInText = LinkedInClass[0].children[0];
       LinkedInText.textContent = `${insertValue}`;
+      handleClose();
     } else if (hostname == 'www.facebook.com') {
-      let FacebookText = FacebookClass[0];
-      if (
-        FacebookText.childNodes[0]?.childNodes[0]?.children?.length > 0 &&
-        FacebookText.childNodes[0]?.childNodes[0]?.children[0]?.tagName == 'SPAN'
-      ) {
-        FacebookText.childNodes[0].childNodes[0].children[0].firstChild.textContent = `${insertValue}`;
-      } else {
-        const newSpan = document.createElement('span');
-        newSpan.textContent = insertValue;
-        newSpan.setAttribute('data-lexical-text', 'true');
-        FacebookText.childNodes[0].childNodes[0].appendChild(newSpan);
-      }
+      FacebookInput(insertValue);
+      handleClose();
     } else if (hostname == 'twitter.com') {
       // const TwitterText =
       //   twitterClass[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0];
@@ -1479,6 +1498,32 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
   }
 
+  const FacebookInput = (IdeasValue) => {
+    const FacebookClass = document.querySelectorAll('p.xdj266r.x11i5rnm.xat24cr.x1mh8g0r.x16tdsg8');
+    if (FacebookClass) {
+      let FacebookText = FacebookClass[0];
+      if (FacebookText) {
+        if (IdeasValue) {
+          const data = new DataTransfer();
+          data.setData(
+            "text/plain",
+            IdeasValue.replace(/(\r\n|\n|\r)/gm, "")
+          );
+          FacebookText.dispatchEvent(
+            new ClipboardEvent("paste", {
+              dataType: "text/plain",
+              data: IdeasValue.replace(/(\r\n|\n|\r)/gm, ""),
+              bubbles: true,
+              clipboardData: data,
+              cancelable: true,
+            })
+          );
+          return true;
+        }
+      }
+    }
+  }
+
   const handleInsert = (divfd2, index) => {
     const LinkedInClass = document.getElementsByClassName('ql-editor');
     const FacebookClass = document.getElementsByClassName('xha3pab');
@@ -1488,19 +1533,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     if (hostname == 'www.linkedin.com') {
       const LinkedInText = LinkedInClass[0].children[0];
       LinkedInText.textContent = `${divfd2}`;
+      handleClose();
     } else if (hostname == 'www.facebook.com') {
-      let FacebookText = FacebookClass[0];
-      if (
-        FacebookText.childNodes[0]?.childNodes[0]?.children?.length > 0 &&
-        FacebookText.childNodes[0]?.childNodes[0]?.children[0]?.tagName == 'SPAN'
-      ) {
-        FacebookText.childNodes[0].childNodes[0].children[0].firstChild.textContent = `${divfd2}`;
-      } else {
-        const newSpan = document.createElement('span');
-        newSpan.textContent = divfd2;
-        newSpan.setAttribute('data-lexical-text', 'true');
-        FacebookText.childNodes[0].childNodes[0].appendChild(newSpan);
-      }
+      FacebookInput(divfd2);
+      handleClose();
     } else if (hostname == 'twitter.com') {
       // const TwitterText =
       //   twitterClass[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0];
@@ -1756,6 +1792,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
       } catch (error) {
         console.error('An error occurred:', error);
       }
+
     } else if (message && !isDocChat) {
       setChatData((prevMessages) => [...prevMessages, { msg: message, type: 'user' }]);
       let accumulatedMessage = '';
@@ -1892,10 +1929,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   }, [myPromptRef, setIsAudioInfoPopup]);
 
   const socialMediaPreference = () => {
-    console.log('socialMediaPreference');
     const SocialPopup = document.getElementById('SocialPopup');
     const SocialButton = document.getElementById('SocialButton');
-    console.log({ SocialPopup, SocialButton });
     SocialButton.classList.remove('hidden');
     SocialPopup.classList.add('hidden');
     handleSidebar('chat');
@@ -1905,7 +1940,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
   return (
     <>
-      <div
+      <div ref={MainDiv}
         className={`hidden rounded-[10px] bg-white fixed w-[600px] min-h-[375px] h-[max-content] max-h-[650px] relative shadow border border-white overflow-hidden !font-['DM Sans']`}
         id="SocialPopup"
         style={{
@@ -1942,7 +1977,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                   className="h-[14px] w-[14px]"
                   src={Setting}
                   id="socialMediaPreference"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     socialMediaPreference();
                   }}
                 />
@@ -1951,7 +1987,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
             <div className="w-[1px] h-[22px] border border-slate-200"></div>
             <div id="closeSocialBtn" className="cursor-pointer relative">
-              <img className="rounded-full w-[24] h-[24]" src={Closed} onClick={handleClose} />
+              <img className="rounded-full w-[24] h-[24]" src={Closed} onClick={(e) => {
+                e.stopPropagation();
+                handleClose();
+              }} />
             </div>
           </div>
         </div>
@@ -1967,7 +2006,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
             <div ref={languageSelectorRef}
               className="p-[4px] pl-[8px] relative cursor-pointer w-[70px] bg-white rounded-[14px] border border-blue-600 justify-around items-center flex"
               onClick={(event) => {
-                console.log("Main arrow");
                 event.stopPropagation();
                 handleLanguage();
               }}
@@ -2144,7 +2182,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 {socialIdeas?.map((idea, index) => (
                   <div key={index} className={`${!SocialHome ? 'hidden' : 'block'}`}>
                     <div className="p-[8px] bg-blue-50 rounded-[6px] flex-col justify-start items-start gap-2.5 inline-flex  cursor-pointer hover:bg-[#D9EBFF] hoveringOver"
-                      onClick={() => handleIdeas(index)}>
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleIdeas(index)
+                      }}>
                       <div className="gap-[8px] justify-start items-start inline-flex">
                         <div className="text-white text-base font-medium font-['DM Sans'] w-[16px] h-[16px]">
                           <img src={idea.image_link} />
@@ -2167,7 +2208,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 >
                   <div
                     className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex !cursor-pointer hoverEffectIdeas"
-                    onClick={() => { handlePostIdeaActionHome('Improve it') }}
+                    onClick={(e) => { e.stopPropagation(); handlePostIdeaActionHome('Improve it'); }}
                   >
                     <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
                     <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer ">
@@ -2176,7 +2217,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                   </div>
                   <div
                     className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex hoverEffectIdeas"
-                    onClick={() => { handlePostIdeaActionHome('Add details') }}
+                    onClick={(e) => { e.stopPropagation(); handlePostIdeaActionHome('Add details'); }}
                   >
                     <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
                     <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
@@ -2185,7 +2226,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                   </div>
                   <div
                     className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] !cursor-pointer inline-flex hoverEffectIdeas"
-                    onClick={() => { handlePostIdeaActionHome('Humor') }
+                    onClick={(e) => { e.stopPropagation(); handlePostIdeaActionHome('Humor'); }
                     }
                   >
                     <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
@@ -2237,7 +2278,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                           >
                             <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
                             <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
-                              Improve it
+                              Improve it 33
                             </div>
                           </div>
 
@@ -2305,7 +2346,9 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 {!textarea2reg ? (
                   <div
                     className="flex gap-[8px] mb-[12px] justify-start items-center cursor-pointer sticky top-[-15px] right-0 left-0 bg-white z-[99]"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsStreaming(true);
                       setVisible(false);
                       setVisible2(false);
                       setIdeasValue('');
@@ -2365,17 +2408,20 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                         />
 
 
-                        <div className={`${!ButtonsShow ? 'hidden' : 'block'}  mt-[10px]`}>
+                        <div className={`${ButtonsShow && !isStreaming ? 'block' : 'hidden'}  mt-[10px]`}>
                           <div className={`flex gap-[8px] `}>
                             <div
                               className={`bg-[#1678F2] px-[10px] flex justify-center items-center h-[30px] text-[12px] rounded-[4px] text-white w-[90px]  cursor-pointer `}
-                              onClick={() => InsertedValue(IdeasValue)}
-                            >
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                InsertedValue(IdeasValue)
+                              }}>
                               Insert
                             </div>
                             <div
                               className="text-[#5F6583] px-[10px] font-[500] flex justify-center items-center  h-[30px] text-[12px]  rounded-[4px] border border-[#DFE4EC] w-[90px]  cursor-pointer hoverEffectIdeas"
                               onClick={(e) => {
+                                e.stopPropagation();
                                 copy(IdeasValue);
                                 setCopied(true);
                                 setTimeout(() => {
@@ -2388,7 +2434,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             </div>
                             <div
                               className="text-[#5F6583] px-[10px] font-[500] text-[12px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC]  cursor-pointer hoverEffectIdeas"
-                              onClick={handlePostIdeaRegenerate}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePostIdeaRegenerate();
+                              }}
                             >
                               Regenerate
                             </div>
@@ -2400,7 +2449,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                           {Ideadload ? (
                             ''
                           ) : (
-                            <img className={`${!PostIdea ? 'hidden' : 'block'} cursor-pointer pt-[10px]`} onClick={handlePostIdeas} src={Send} />
+                            <img className={`${!PostIdea ? 'hidden' : 'block'} cursor-pointer pt-[10px]`} onClick={(e) => {
+                              e.stopPropagation();
+                              handlePostIdeas();
+                            }} src={Send} />
                           )}
                         </div>
 
@@ -2412,7 +2464,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               id="SocialDelete"
                               content={`<div class="capitalize font-normal text-[12px] leading-[18px]" >Delete</div>`}
                             >
-                              <div onClick={handleEmpty12} className="relative" id="SocialDelete">
+                              <div onClick={(e) => {
+                                e.stopPropagation();
+                                handleEmpty12();
+                              }} className="relative" id="SocialDelete">
                                 <img className="w-[16px] cursor-pointer" src={Trash} />
                               </div>
                             </CustomTooltip>
@@ -2468,14 +2523,17 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                                 <div
                                   className={`bg-[#1678F2] px-[10px] flex justify-center items-center  rounded-[4px] text-[12px] text-white w-[90px] h-[30px]  cursor-pointer`}
                                   // onClick={InsertedValue}
-                                  onClick={() => InsertedValue(divfd)}
-                                >
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    InsertedValue(divfd);
+                                  }}>
                                   Insert
                                 </div>
                                 <div
                                   className="text-[#5F6583] px-[10px] flex justify-center items-center font-[500]  rounded-[4px] text-[12px] border border-[#DFE4EC] w-[90px] h-[30px]  cursor-pointer hoverEffectIdeas"
-                                  onClick={() => {
-                                    copy(divfd)
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    copy(divfd);
                                     const updatedCopiedStates = [...copiedStates1];
                                     updatedCopiedStates[index] = true;
                                     setCopiedStates1(updatedCopiedStates);
@@ -2484,7 +2542,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                                       const updated = [...copiedStates1];
                                       updated[index] = false;
                                       setCopiedStates1(updated);
-                                      console.log(updated[index]);
                                     }, 3000);
                                   }
                                   }
@@ -2493,8 +2550,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                                 </div>
                                 <div
                                   className="text-[#5F6583] px-[10px] font-[500]  flex justify-center items-center  rounded-[4px] text-[12px] border border-[#DFE4EC] h-[30px]  cursor-pointer hoverEffectIdeas"
-                                  onClick={handlePostIdeaRegenerate}
-                                >
+                                  onClick={() => {
+                                    e.stopPropagation();
+                                    handlePostIdeaRegenerate();
+                                  }}>
                                   Regenerate
                                 </div>
                               </div>
@@ -2508,7 +2567,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               id="SocialDelete"
                               content={`<div class="capitalize font-normal text-[12px] leading-[18px]" >Delete</div>`}
                             >
-                              <div onClick={() => handleEmpty(index)} className="relative" id="SocialDelete">
+                              <div onClick={(e) => {
+                                e.stopPropagation();
+                                handleEmpty(index);
+                              }} className="relative" id="SocialDelete">
                                 <img className="w-[16px] cursor-pointer" src={Trash} />
                               </div>
                             </CustomTooltip>
@@ -2530,8 +2592,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
               <div id="" className="relative">
                 {!loadingText ? (
                   <div
-                    className="flex gap-[8px] mb-[12px] justify-start items-center cursor-pointer stickyBack sticky top-[-25px] right-0 left-0 bg-white z-[99]"
-                    onClick={() => {
+                    className="flex gap-[8px] mb-[12px] justify-start items-center cursor-pointer stickyBack sticky !top-[-15px] !pb-[5px] right-0 left-0 bg-white z-[99]"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsStreaming(true);
                       setVisible(false);
                       setVisible2(false);
                       setIdeasValueHome1('');
@@ -2578,18 +2642,22 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             onPaste={handlePaste}
                           />
                         </div>
-                        <div className={`${!ButtonsShowHome ? 'hidden' : 'block'} mt-[10px] `}>
+                        <div className={`${isStreaming ? 'hidden' : 'block'} mt-[10px] `}>
                           <div className={`flex gap-[8px]`}>
                             <div
                               className={`bg-[#1678F2] px-[10px] flex justify-center items-center h-[30px] text-[12px] rounded-[4px] text-white w-[90px]  cursor-pointer`}
                               // onClick={InsertedValue}
-                              onClick={() => InsertedValue(IdeasValueHome)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                InsertedValue(IdeasValueHome);
+                              }}
                             >
                               Insert
                             </div>
                             <div
                               className="text-[#5F6583] px-[10px] font-[500] text-[12px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]  cursor-pointer hoverEffectIdeas"
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 copy(IdeasValueHome);
                                 setCopied(true);
                                 setTimeout(() => {
@@ -2602,7 +2670,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                             </div>
                             <div
                               className="text-[#5F6583] px-[10px] font-[500] flex justify-center items-center  text-[12px]  rounded-[4px] border border-[#DFE4EC]  cursor-pointer hoverEffectIdeas"
-                              onClick={handleRegenerate}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleRegenerate();
+                              }}
                             >
                               Regenerate
                             </div>
@@ -2621,7 +2692,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               id="SocialDelete"
                               content={`<div class="capitalize font-normal text-[12px] leading-[18px]" >Delete</div>`}
                             >
-                              <div onClick={handleEmpty12} className="relative" id="SocialDelete">
+                              <div onClick={(e) => {
+                                e.stopPropagation();
+                                handleEmpty13();
+                              }} className="relative" id="SocialDelete">
                                 <img className="w-[16px] cursor-pointer" src={Trash} />
                               </div>
                             </CustomTooltip>
@@ -2665,19 +2739,27 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               <div className={`flex gap-[8px] `}>
                                 <div
                                   className={`bg-[#1678F2] px-[10px] flex justify-center items-center h-[30px] text-[12px] rounded-[4px] text-white w-[90px]  cursor-pointer`}
-                                  onClick={() => handleInsert(divfd2, index)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleInsert(divfd2, index);
+                                  }}
                                 >
                                   Insert
                                 </div>
                                 <div
                                   className="text-[#5F6583] px-[10px] font-[500] text-[12px] flex justify-center items-center  rounded-[4px] border border-[#DFE4EC] w-[90px]  cursor-pointer hoverEffectIdeas"
-                                  onClick={() => { handleCopy(divfd2, index) }}>
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleCopy(divfd2, index);
+                                  }}>
                                   {copiedStates[index] ? 'Copied' : 'Copy'}
                                 </div>
                                 <div
                                   className="text-[#5F6583] px-[10px] font-[500] flex justify-center items-center  text-[12px]  rounded-[4px] border border-[#DFE4EC]  cursor-pointer hoverEffectIdeas"
-                                  onClick={handleRegenerate}
-                                >
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRegenerate();
+                                  }}>
                                   Regenerate
                                 </div>
                               </div>
@@ -2696,7 +2778,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                                   content={`<div class="capitalize font-normal text-[12px] leading-[18px]" >Delete</div>`}
                                 >
                                   <div
-                                    onClick={() => handleEmptyTextarea2(index)}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleEmptyTextarea2(index);
+                                    }}
                                     className="relative"
                                     id="SocialDelete"
                                   >
@@ -2724,7 +2809,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                   >
                     <div
                       className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex !cursor-pointer hoverEffectIdeas"
-                      onClick={() => handlePostIdeaAction('Improve it')}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePostIdeaAction('Improve it');
+                      }}
                     >
                       <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
                       <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
@@ -2733,7 +2821,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     </div>
                     <div
                       className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex  cursor-pointer hoverEffectIdeas"
-                      onClick={() => { handlePostIdeaAction('Add details') }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePostIdeaAction('Add details');
+                      }}
                     >
                       <div className="text-white text-base font-medium font-['DM Sans']">📝</div>
                       <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Details </div>
@@ -2741,7 +2832,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
                     <div
                       className="h-[30px] px-[8px] py-[6px] bg-white rounded border border-slate-200 justify-start items-center gap-[6px] inline-flex  cursor-pointer hoverEffectIdeas"
-                      onClick={() => { handlePostIdeaAction('Humor') }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePostIdeaAction('Humor');
+                      }}
                     >
                       <div className="text-white text-base font-medium font-['DM Sans']">😂</div>
                       <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']">Add Humor</div>
@@ -2850,11 +2944,14 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
             } absolute bottom-[0px] flex border border-white flex-col w-[100%]`}
         >
           {audioInput ? (
-            <div className="flex flex-col border border-gray p-[10px]">
+            <div className="flex flex-col border border-gray p-[10px] rounded-[6px]">
               <div className="flex items-center gap-4 mb-[16px]">
                 <div
                   className="flex items-center justify-center w-[24px] h-[24px] rounded-full cursor-pointer"
-                  onClick={() => handleAudioInput()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAudioInput()
+                  }}
                   style={{
                     boxShadow: '0px 0px 10px 0px #00000026',
                   }}
@@ -2864,7 +2961,8 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 <div className="flex items-center justify-between w-full bg-white ">
                   <div
                     className="flex items-center gap-2 cursor-pointer relative"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       handleAudioInfoPopup();
                     }}
                   >
@@ -2883,7 +2981,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                                 <img src={HowToIconBg} />
                                 <span>How to use voice input</span>
                               </div>
-                              <div className="cursor-pointer -mt-[30px]" onClick={() => handleCloseInfo()}>
+                              <div className="cursor-pointer -mt-[30px]" onClick={(e) => {
+                                e.stopPropagation();
+                                handleCloseInfo();
+                              }}>
                                 <img src={Close} />
                               </div>
                             </div>
@@ -3033,7 +3134,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     <img src={MicrophoneWhiteIcon} />
                     <span>Please allow Resala to use your microphone</span>
                   </div>
-                  <div className="cursor-pointer" onClick={() => closeSpeechRecognition()}>
+                  <div className="cursor-pointer" onClick={(e) => {
+                    e.stopPropagation();
+                    closeSpeechRecognition();
+                  }}>
                     <img src={SmallClose} />
                   </div>
                 </div>
@@ -3046,7 +3150,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     <img src={MicrophoneWhiteIcon} />
                     <span>Listening. Click again to submit, Esc to cancel</span>
                   </div>
-                  <div className="cursor-pointer" onClick={() => closeSpeechRecognition()}>
+                  <div className="cursor-pointer" onClick={(e) => {
+                    e.stopPropagation();
+                    closeSpeechRecognition();
+                  }}>
                     <img src={SmallClose} />
                   </div>
                 </div>
@@ -3058,6 +3165,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                   <div
                     className="flex gap-2 items-center"
                     onClick={(e) => {
+                      e.stopPropagation();
                       handleSendMessage(e, transcript);
                       setIsTypewriterDone(true);
                       setIsViewPrompts(false);
@@ -3078,19 +3186,25 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     <span className="cursor-pointer">{transcript}</span>
                     {/* )} */}
                   </div>
-                  <div className="cursor-pointer" onClick={() => closeSpeechRecognition()}>
+                  <div className="cursor-pointer" onClick={(e) => {
+                    e.stopPropagation();
+                    closeSpeechRecognition();
+                  }}>
                     <img src={SmallClose} />
                   </div>
                 </div>
               )}
             </div>
           ) : (
-            <div className="w-[565px] p-[14px] pb-[0px] flex border-[1px] border-slate-200 rounded-[6px] gap-[12px]">
+            <div className="w-[565px] p-[14px] pb-[0px] flex border-[1px] border-slate-200 rounded-[6px] gap-[12px]" >
               {/* todo mic*/}
               <div
-                className="rounded-full w-[24px] h-[20px] background-[#fff] flex justify-center items-center"
+                className="rounded-full w-[24px] h-[20px] background-[#fff] flex justify-center items-center cursor-pointer"
                 style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.15)' }}
-                onClick={handleAudioInput}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAudioInput()
+                }}
               >
                 <img className="w-[16px] h-[16px]" src={Mic} />
               </div>
@@ -3132,7 +3246,10 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                 />
               </div>
               <div className="flex flex-col justify-between items-end pt-[2px] pb-[10px] ml-[27px]">
-                <div className="w-[20px] h-[20px]  cursor-pointer" onClick={handleTextArea}>
+                <div className="w-[20px] h-[20px]  cursor-pointer" onClick={(e) => {
+                  e.stopPropagation();
+                  handleTextArea();
+                }}>
                   <img className=" cursor-pointer " src={Send} />
                 </div>
               </div>

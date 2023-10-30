@@ -552,8 +552,8 @@ video {
   .top-\[-15px\] {
     top: -15px;
   }
-  .top-\[-25px\] {
-    top: -25px;
+  .\!top-\[-15px\] {
+    top: -15px !important;
   }
   .top-\[-183px\] {
     top: -183px;
@@ -2287,6 +2287,9 @@ video {
   }
   .pt-\[2px\] {
     padding-top: 2px;
+  }
+  .\!pb-\[5px\] {
+    padding-bottom: 5px !important;
   }
   .pb-\[12px\] {
     padding-bottom: 12px;
