@@ -75,7 +75,7 @@ const ChatData = ({
         }
       }
 
-      return <>{item.msg}</>;
+      return <div dangerouslySetInnerHTML={{__html:item.msg}} />;
     }
   };
 
@@ -107,9 +107,9 @@ const ChatData = ({
               case 'ai':
                 return (
                   <>
-                    <div id="chat-container" className={`flex justify-start ${index == 0 ? 'mb-[12px]' : 'mb-[30px]'}`}>
+                    <div id="chat-container" className={`flex justify-start`}>
                       <div
-                        className="message  bg-lightgray max-w-[370px] border-0 border-gray p-[12px] flex flex-col mb-[8px] rounded-tl-[6px] rounded-tr-[6px] rounded-br-[6px] rounded-br-0 rounded-bl-0 relative "
+                        className={`message  bg-lightgray max-w-[370px] border-0 border-gray p-[12px] flex flex-col rounded-tl-[6px] rounded-tr-[6px] rounded-br-[6px] rounded-br-0 rounded-bl-0 relative ${chatData.length - 1 == index ? 'mb-[40px]' : 'mb-[16px]'}`}
                         style={{
                           overflowWrap: 'break-word',
                         }}
@@ -152,7 +152,7 @@ const ChatData = ({
                           </CustomTooltip>
                         </div>
 
-                        <pre className="font-dmsans text-[#19224C] font-[400] text-[14px]" style={{ textWrap: 'wrap' }}>
+                        <pre className="font-dmsans text-[#19224C] font-[400] text-[14px] leading-[1.5]" style={{ textWrap: 'wrap' }}>
                           {renderMessage(item,index)}
                         </pre>
                       </div>
@@ -183,7 +183,7 @@ const ChatData = ({
             }
           })}
         </div>
-        {!isTypewriterDone && !isRetry && chatData?.length >= 2 && (
+        {!isTypewriterDone && !isRetry && chatData?.length >= 2 && !isStreaming && (
           <div className="text-[12px] text-lightgray2 mb-[16px] absolute bottom-0 right-0 left-0">
             <span
               className="flex items-center gap-2"

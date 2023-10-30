@@ -909,9 +909,6 @@ video {
   .mt-\[30px\] {
     margin-top: 30px;
   }
-  .mb-\[30px\] {
-    margin-bottom: 30px;
-  }
   .mb-\[70px\] {
     margin-bottom: 70px;
   }
@@ -2518,6 +2515,9 @@ video {
   }
   .leading-6 {
     line-height: 1.5rem;
+  }
+  .leading-\[1\.5\] {
+    line-height: 1.5;
   }
   .leading-3 {
     line-height: .75rem;

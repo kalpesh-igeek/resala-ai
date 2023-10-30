@@ -49,6 +49,7 @@ import DocIconHover from '../utils/Chat/Icons/Controls/DocIconHover.svg';
 import HistoryIcon from '../utils/Chat/Icons/Controls/HistoryIcon.svg';
 import MuteIcon from '../utils/Chat/Icons/Controls/MuteIcon.svg';
 import UnMuteIcon from '../utils/Chat/Icons/Controls/UnMuteIcon.svg';
+import BookFrame from '../utils/Chat/Icons/BookFrame.svg';
 
 import TranslateIcon from '../utils/Chat/Icons/TranslateIcon.svg';
 import ReadIcon from '../utils/Chat/Icons/ReadIcon.svg';
@@ -687,6 +688,7 @@ const MainScreen = ({
 
           for (const line of lines) {
             data = line.replace(/#@#/g, '\n');
+            data = data.replaceAll("?\n","?")
             // console.log('data', data);
 
             if (line.includes('connection closed')) {
@@ -698,7 +700,15 @@ const MainScreen = ({
               // If the line starts with the summarizing string, skip it
               continue;
             } else {
-              accumulatedMessage += data + ''; // Add the line to the accumulated message
+              if(data == 'Questions\n\n:'){
+                accumulatedMessage += '<hr style="color: #DFE4EC; margin: 10px 0;"/><p style="color:#8C90A5; line-height:1">'+ data+'</p>'; 
+              }else if(data == '•' || data == '-' || data == '1' || data == '2' || data == '3' || data == '4' || data == '5' || data == '6'){
+                accumulatedMessage += '<span class="questions" style="color:#1678F2; cursor:pointer; margin-left: 5px; line-height:1.8">' + data; 
+              }else if(data == '?\n' || data == '?'){
+                accumulatedMessage += data + '</span> \n'; // Add the line to the accumulated message
+              }else{
+                accumulatedMessage += data; // Add the line to the accumulated message
+              }
             }
           }
           // Update the chat data with the accumulated message, without the "Loading..." message
@@ -994,7 +1004,7 @@ const MainScreen = ({
   };
 
   useEffect(() => {
-    fetchLastChatHistory()
+    // fetchLastChatHistory()
   }, [activeTab === 'chat'])
 
   const fetchChatHistory = async () => {
@@ -1777,6 +1787,37 @@ const MainScreen = ({
       });
   };
 
+  const [lastQuestion, setLastQuestion] = useState(null)
+
+  useEffect((e) => {
+    console.log(lastQuestion);
+    if(lastQuestion){
+      handleSendMessage(e,lastQuestion)
+      setLastQuestion(null);
+    }
+  },[lastQuestion])
+
+  useEffect(() => {
+    if(isStreaming) return
+    const span = document.querySelectorAll('.questions')
+    if(span.length > 0){
+      span.forEach(element => {
+        element.addEventListener('click', (e) => {
+          e.stopPropagation()
+          let text = element.innerHTML.replaceAll('• ','');
+          text = text.replaceAll('- ','');
+          text = text.replaceAll('1. ','');
+          text = text.replaceAll('2. ','');
+          text = text.replaceAll('3. ','');
+          text = text.replaceAll('4. ','');
+          text = text.replaceAll('5. ','');
+          text = text.replaceAll('6. ','');
+          setLastQuestion(text)
+        })
+      });
+    }
+  },[isStreaming])
+
   const handleSendMessage = async (e, message, language) => {
     if (message || message?.trim()) {
       setIsUsePrompt(false);
@@ -2109,7 +2150,15 @@ const MainScreen = ({
               setIsStreaming(false);
               break;
             } else {
-              accumulatedMessage += data + '';
+              if(data == 'Questions\n\n:'){
+                accumulatedMessage += '<hr style="color: #DFE4EC; margin: 10px 0;"/><p style="color:#8C90A5; line-height:1">'+ data+'</p>'; 
+              }else if(data == '•' || data == '-' || data == '1' || data == '2' || data == '3' || data == '4' || data == '5' || data == '6'){
+                accumulatedMessage += '<span class="questions" style="color:#1678F2; cursor:pointer; margin-left: 5px; line-height:1.8">' + data; 
+              }else if(data == '?\n' || data == '?'){
+                accumulatedMessage += data + '</span> \n'; // Add the line to the accumulated message
+              }else{
+                accumulatedMessage += data; // Add the line to the accumulated message
+              }
             }
           }
           // Remove the loading message and add the new AI message

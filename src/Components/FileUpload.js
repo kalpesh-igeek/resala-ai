@@ -59,7 +59,7 @@ const FileUpload = ({
         if (counter < 100) {
           setCounter(counter + 1);
         }
-      }, 100);
+      }, 10);
     }
 
     return () => clearInterval(interval);
@@ -201,6 +201,10 @@ const FileUpload = ({
     setSelectedFile();
   };
 
+  const handleQuestion = () => {
+    console.log("handleQuestion");
+  }
+
   const handleStartChatFile = async () => {
     setChatType('let-chat');
     setIsUploadDocument(false);
@@ -257,13 +261,26 @@ const FileUpload = ({
 
           for (const line of lines) {
             data = line.replace(/#@#/g, '\n');
+            data = data.replaceAll("?\n","?")
             // console.log('data', data);
 
             if (line.includes('connection closed')) {
               setIsStreaming(false);
               break;
             } else {
-              accumulatedMessage += data + ''; // Add the line to the accumulated message
+              if(data == 'https://resala-public.s3.amazonaws.com/resala/image/icon_image/documentupload.png'){
+                accumulatedMessage += '<span style="display: flex;"><img src="https://resala-public.s3.amazonaws.com/resala/image/icon_image/documentupload.png">'
+              }else if(data == 'Doc Summary'){
+                accumulatedMessage += '<span style="margin-left: 10px; color:#8C90A5;">Document summary</span></span>';
+              }else if(data == 'Questions you may be intrested in:'){
+                accumulatedMessage += '<hr style="color: #DFE4EC; margin: 10px 0;"/><p style="color:#8C90A5; line-height:1">'+ data+'</p>'; 
+              }else if(data == '•' || data == '-'){
+                accumulatedMessage += '<span class="questions" style="color:#1678F2; cursor:pointer; margin-left: 5px; line-height:1.8">' + data; 
+              }else if(data == '?\n' || data == '?'){
+                accumulatedMessage += data + '</span> \n'; // Add the line to the accumulated message
+              }else{
+                accumulatedMessage += data; // Add the line to the accumulated message
+              }
             }
           }
           // Update the chat data with the accumulated message, without the "Loading..." message
