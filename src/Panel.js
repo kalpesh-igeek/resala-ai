@@ -314,6 +314,38 @@ export default function Panel({ local }) {
       // console.log('mail is already');
 
       setInterval(() => {
+        const cloneQuickReplyButtonforReplay = document.getElementById('cloneQuickReplybottom');
+        if (cloneQuickReplyButtonforReplay) {
+          cloneQuickReplyButtonforReplay.addEventListener('click', () => {
+            dispatch(handleToggle(true));
+            handleSidebar('quickreply');
+          });
+        }
+      }, 1000);
+
+
+      const myTimer3 = () => {
+        let bottomClass = document.getElementsByClassName("btC");
+        if (bottomClass && !document.getElementById("cloneQuickReplybottom")) {
+          bottomClass = bottomClass[0]
+          if (bottomClass && bottomClass.cells) {
+            const quickReply = document.getElementById('quickButton');
+            //added btn
+            const cloneQuickReplyBottom = quickReply.cloneNode(true);
+            cloneQuickReplyBottom.id = 'cloneQuickReplybottom';
+            cloneQuickReplyBottom.classList = 'cloneQuickReplybottom';
+            cloneQuickReplyBottom.style = 'margin-left: 8px !important';
+            cloneQuickReplyBottom.style = 'z-index: 99999';
+            cloneQuickReplyBottom.style = 'cursor: pointer !important;';
+            let td = document.createElement("td");
+            td.append(cloneQuickReplyBottom);
+            myStopFunction(myInterval3)
+            bottomClass.cells[5].after(td);
+          }
+        }
+      }
+
+      const myTimer2 = () => {
         let presentation = document.getElementsByClassName('amn')[0];
         if (presentation) {
           const oldQuickReply = document.getElementById('cloneQuickReply');
@@ -325,14 +357,25 @@ export default function Panel({ local }) {
             cloneQuickReply.style = 'margin-left: 8px';
             cloneQuickReply.style = 'z-index: 9999999';
             presentation.append(cloneQuickReply);
+            myStopFunction(myInterval2)
             const cloneQuickReplyButton = document.getElementById('cloneQuickReply');
             cloneQuickReplyButton.addEventListener('click', () => {
+              const gmailReplay = document.getElementById(":1r");
+              gmailReplay.click();
               dispatch(handleToggle(true));
               handleSidebar('quickreply');
             });
           }
         }
-      }, 1000);
+      };
+
+      function myStopFunction(interval) {
+        clearInterval(interval);
+      }
+
+      // let myInterval1 = setInterval(myTimer1, 1000);
+      let myInterval2 = setInterval(myTimer2, 1000);
+      let myInterval3 = setInterval(myTimer3, 1000);
 
       // setTimeout(() => {
       //   // Get a reference to the scrollable element
@@ -458,7 +501,6 @@ export default function Panel({ local }) {
       }
 
       function myStopFunction() {
-        console.log('Close');
         clearInterval(myInterval);
       }
       let myInterval = setInterval(myTimer, 1000);
@@ -607,7 +649,6 @@ export default function Panel({ local }) {
       }
 
       function myStopFunction() {
-        console.log('Close');
         clearInterval(myInterval);
       }
       let myInterval = setInterval(myTimer, 1000);
@@ -990,7 +1031,7 @@ export default function Panel({ local }) {
   document.getElementsByTagName('body')[0].onmouseup = (e) => {
     if (e.detail > 1) {
       e.preventDefault();
-    }else{
+    } else {
       myFunction(e);
     }
   };
@@ -1016,7 +1057,7 @@ export default function Panel({ local }) {
 
   const handleSidebar = (tab, tool = undefined) => {
     console.log({ tab, tool });
-    if(tool){
+    if (tool) {
       setSelectTab(1)
     }
     setActiveTab(tab);
@@ -1093,9 +1134,9 @@ export default function Panel({ local }) {
     templatename: '',
     input_text: '',
   });
-  const [onConfirmClick,setOnConfirmClick] = useState(false);
-  const [clickClose,setClickClose] = useState(false);
-  const [isConfirmExit,setIsConfirmExit] = useState(false);
+  const [onConfirmClick, setOnConfirmClick] = useState(false);
+  const [clickClose, setClickClose] = useState(false);
+  const [isConfirmExit, setIsConfirmExit] = useState(false);
 
   // const isConfirmExit = (route) =>{
   //   setIfOpenConfirmBox(true)
@@ -1103,11 +1144,11 @@ export default function Panel({ local }) {
   // }
 
   useEffect(() => {
-    if(clickClose && onConfirmClick){
+    if (clickClose && onConfirmClick) {
       setIfOpenConfirmBox(false)
       dispatch(handleToggle(false));
       console.log('remove extension width');
-      document.getElementById('resala_style_right_space') ?document.getElementById('resala_style_right_space').remove() : ''  
+      document.getElementById('resala_style_right_space') ? document.getElementById('resala_style_right_space').remove() : ''
       setChatInput({
         chatText: '',
       })
@@ -1121,18 +1162,18 @@ export default function Panel({ local }) {
       setOnConfirmClick(false)
     }
   }, [clickClose, onConfirmClick])
-  
-  
+
+
   const handlePopUpCloseClick = () => {
     console.log("handlePopUpCloseClick");
-    if(chatInput.chatText || composeSelectedText.input_text || replyText.original_text || replyText.reply || editTemplateName.templatename || editTemplateName.input_text){
+    if (chatInput.chatText || composeSelectedText.input_text || replyText.reply || editTemplateName.templatename || editTemplateName.input_text) {
       console.log("Abort");
       setClickClose(true)
       setIfOpenConfirmBox(true)
-    }else{
+    } else {
       dispatch(handleToggle(false));
       console.log('remove extension width');
-      document.getElementById('resala_style_right_space') ?document.getElementById('resala_style_right_space').remove() : ''
+      document.getElementById('resala_style_right_space') ? document.getElementById('resala_style_right_space').remove() : ''
       setChatInput({
         chatText: '',
       })
@@ -1259,9 +1300,8 @@ export default function Panel({ local }) {
             transition: 'unset',
             display: isSideBarOpen ? 'none' : 'flex',
           }}
-          className={`fixed bottom-[20px] select-none ${
-            !isFloatIconClicked && 'new-btn-without-scale'
-          } group/icon right-[20px] cursor-pointer w-fit p-[5px] hover:pr-[8px] h-fit flex justify-center items-center !z-[99999999999] bg-lightblue1`}
+          className={`fixed bottom-[20px] select-none ${!isFloatIconClicked && 'new-btn-without-scale'
+            } group/icon right-[20px] cursor-pointer w-fit p-[5px] hover:pr-[8px] h-fit flex justify-center items-center !z-[99999999999] bg-lightblue1`}
         >
           <FloatBtn
             isClicked={isFloatIconClicked}
@@ -1411,8 +1451,8 @@ export default function Panel({ local }) {
                         element={
                           <Login
                             setActiveTab={setActiveTab}
-                            // isLogin={isLogin}
-                            // setIsLogin={setIsLogin}
+                          // isLogin={isLogin}
+                          // setIsLogin={setIsLogin}
                           />
                         }
                       />

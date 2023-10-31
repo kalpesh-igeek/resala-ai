@@ -61,7 +61,7 @@ const QuickReply = ({
   // const gmail = new Gmail();
   // gmail.load();
 
-  const [isReplies, setIsReplies] = useState(false);
+  const [isReplies, setIsReplies] = useState(true);
   const [selectedIdea, setSelectedIdea] = useState();
   const [ideasList, setIdeasList] = useState([]);
   const [senderIntent, setSenderIntent] = useState(null);
@@ -211,7 +211,7 @@ const QuickReply = ({
 
   useEffect(() => {
     // if (emailContent) {
-      setSenderIntent(null)
+    setSenderIntent(null)
     getSendersIntent();
     // }
   }, [isExtensionOpen]);
@@ -309,7 +309,7 @@ const QuickReply = ({
           sender_intent: senderIntent.trim(),
           generate_mail: resultText[newResultText?.length],
         });
-        if(customIdea){
+        if (customIdea) {
           setSelectedIdea(null);
         }
         // setHasResultText(true);
@@ -388,42 +388,136 @@ const QuickReply = ({
     setIsListening(false);
     setTranscript('');
   };
+  const [focusedTextarea, setFocusedTextarea] = useState(null);
 
-  const handleApply = () => {
-    const parentElement = document.querySelector('div[gmail_original="1"]');
+  const contentEditable = (element) => {
+    return element.isContentEditable;
+  };
 
-    if (parentElement) {
-      // Get the dynamic text from templatePayload.generate_mail
-      const dynamicText = templatePayload.generate_mail;
+  const findClosestButton = (element) => {
+    while (element) {
+      if (element.tagName === 'BUTTON') {
+        return element;
+      }
+      element = element.parentElement;
+    }
+    return null;
+  };
 
-      // Split the dynamic text into sections based on line breaks
-      const dynamicTextSections = dynamicText.split('\n');
+  const [buttonDisabled, setButtonDisabled] = useState(true);
 
-      // Clear any existing content in the parent element
-      parentElement.innerHTML = '';
+  const isElementInExtension = (element) => {
+    // Replace 'your-extension-id' with the actual ID of your extension's root element.
+    const extensionRootElement = document.getElementById('side-bar-extension-root');
+    return extensionRootElement?.contains(element);
+  };
 
-      // Create a new div element for each section and add it to the parent element
-      dynamicTextSections.forEach((sectionText, index) => {
-        if (sectionText.trim() === '') {
-          // Add a div element with a line break when there is a line break in the dynamic text
-          const newDiv = document.createElement('div');
-          newDiv.setAttribute('dir', 'ltr');
-          newDiv.setAttribute('gmail_original', '1');
-          newDiv.innerHTML = '<br>';
-          parentElement.appendChild(newDiv);
-        } else {
-          // Add a div element with the dynamic text
-          const newDiv = document.createElement('div');
-          newDiv.setAttribute('dir', 'ltr');
-          newDiv.setAttribute('gmail_original', '1');
-          newDiv.innerHTML = sectionText;
-          parentElement.appendChild(newDiv);
-        }
-      });
-    } else {
-      console.error('Element not found');
+  const isInputField = (element) => {
+    return element.tagName === 'INPUT' || element.tagName === 'TEXTAREA' || false;
+  };
+
+  const handleFocusIn = (event) => {
+    const focusedElement = event.target;
+
+    if (contentEditable(focusedElement)) {
+      const button = findClosestButton(focusedElement);
+
+      if (button) {
+        button.removeAttribute('disabled');
+      }
+
+      chrome.runtime.sendMessage({ enableButton: true });
+      setButtonDisabled(false);
+
+      setFocusedTextarea(focusedElement);
+
+      return;
+    }
+
+    if (!isElementInExtension(focusedElement) && isInputField(focusedElement)) {
+      const button = findClosestButton(focusedElement);
+
+      if (button) {
+        button.removeAttribute('disabled');
+      }
+
+      chrome.runtime.sendMessage({ enableButton: true });
+      setButtonDisabled(false);
+
+      if (focusedElement.tagName === 'TEXTAREA' || focusedElement.tagName === 'INPUT') {
+        setFocusedTextarea(focusedElement);
+      }
     }
   };
+
+
+  useEffect(() => {
+    document.addEventListener('focusin', handleFocusIn);
+
+    return () => {
+      document.removeEventListener('focusin', handleFocusIn);
+    };
+  }, []);
+
+  const handleApply = () => {
+    if (focusedTextarea) {
+      const valueToInsert = resultText[currentPageIndexTab1]?.output_text ? resultText[currentPageIndexTab1]?.output_text : ''
+
+      if (contentEditable(focusedTextarea)) {
+        focusedTextarea.innerText = valueToInsert;
+        focusedTextarea.focus();
+        return;
+      }
+
+      const selectionStart = focusedTextarea.selectionStart;
+      const selectionEnd = focusedTextarea.selectionEnd;
+      const currentValue = focusedTextarea.value;
+      const newValue = currentValue.substring(0, selectionStart) + valueToInsert + currentValue.substring(selectionEnd);
+
+      // Set the new value of the textarea
+      focusedTextarea.value = newValue;
+
+      // Restore focus and cursor position
+      focusedTextarea.focus();
+      focusedTextarea.setSelectionRange(selectionStart + valueToInsert.length, selectionStart + valueToInsert.length);
+    }
+  };
+
+  // const handleApply = () => {
+  //   const parentElement = document.querySelector('div[gmail_original="1"]');
+
+  //   if (parentElement) {
+  //     // Get the dynamic text from templatePayload.generate_mail
+  //     const dynamicText = templatePayload.generate_mail;
+
+  //     // Split the dynamic text into sections based on line breaks
+  //     const dynamicTextSections = dynamicText.split('\n');
+
+  //     // Clear any existing content in the parent element
+  //     parentElement.innerHTML = '';
+
+  //     // Create a new div element for each section and add it to the parent element
+  //     dynamicTextSections.forEach((sectionText, index) => {
+  //       if (sectionText.trim() === '') {
+  //         // Add a div element with a line break when there is a line break in the dynamic text
+  //         const newDiv = document.createElement('div');
+  //         newDiv.setAttribute('dir', 'ltr');
+  //         newDiv.setAttribute('gmail_original', '1');
+  //         newDiv.innerHTML = '<br>';
+  //         parentElement.appendChild(newDiv);
+  //       } else {
+  //         // Add a div element with the dynamic text
+  //         const newDiv = document.createElement('div');
+  //         newDiv.setAttribute('dir', 'ltr');
+  //         newDiv.setAttribute('gmail_original', '1');
+  //         newDiv.innerHTML = sectionText;
+  //         parentElement.appendChild(newDiv);
+  //       }
+  //     });
+  //   } else {
+  //     console.error('Element not found');
+  //   }
+  // };
 
   const handleCopyDraft = () => {
     navigator.clipboard.writeText(templatePayload?.generate_mail);
@@ -454,7 +548,7 @@ const QuickReply = ({
     <>
       <div className="px-[20px] py-[12px] relative">
         <div className="flex gap-2 right-[20px] -top-[38px] absolute z-30">
-        <div className="flex gap-[8px]">
+          <div className="flex gap-[8px]">
             <div
               className="p-[4px] pl-[8px] relative cursor-pointer w-[70px] bg-white rounded-[14px] border border-blue-600 justify-around items-center flex"
               onClick={handleLanguage}
@@ -467,9 +561,8 @@ const QuickReply = ({
               </div>
               {/* drop down */}
               <div
-                className={`${
-                  language ? 'block' : 'hidden'
-                } w-[121px] bg-white rounded-lg shadow flex-col justify-start items-start gap-[8px] inline-flex absolute top-[30px] right-0 p-[8px] pt-[10] pb-[10px]`}
+                className={`${language ? 'block' : 'hidden'
+                  } w-[121px] bg-white rounded-lg shadow flex-col justify-start items-start gap-[8px] inline-flex absolute top-[30px] right-0 p-[8px] pt-[10] pb-[10px]`}
                 style={{ zIndex: '99999999', boxShadow: '0px 2px 20px 0px rgba(0, 0, 0, 0.15)' }}
               >
                 {exeLang?.map((element, index) => (
@@ -497,9 +590,8 @@ const QuickReply = ({
               </div>
               {/* drop down */}
               <div
-                className={`${
-                  profession ? 'block' : 'hidden'
-                } w-[121px] bg-white rounded-lg shadow flex-col justify-start items-start gap-[8px] inline-flex absolute top-[30px] right-0 p-[8px] pt-[10] pb-[10px]`}
+                className={`${profession ? 'block' : 'hidden'
+                  } w-[121px] bg-white rounded-lg shadow flex-col justify-start items-start gap-[8px] inline-flex absolute top-[30px] right-0 p-[8px] pt-[10] pb-[10px]`}
                 style={{ zIndex: '99999999', boxShadow: '0px 2px 20px 0px rgba(0, 0, 0, 0.15)' }}
               >
                 {tones?.map((element, index) => (
@@ -639,7 +731,7 @@ const QuickReply = ({
           </label>
           <div className="mt-2">
             <textarea
-            readOnly
+              readOnly
               style={{ resize: 'none' }}
               id="requestedText"
               name="requestedText"
@@ -689,9 +781,8 @@ const QuickReply = ({
 
         <div className="flex relative items-top gap-4 border rounded-md  border-gray p-[10px] mt-[10px] mb-[20px]">
           <div
-            className={`flex items-center justify-center w-[24px] h-[24px] rounded-full cursor-pointer ${
-              isStreamingComp ? 'disabled cursor-default' : ''
-            }`}
+            className={`flex items-center justify-center w-[24px] h-[24px] rounded-full cursor-pointer ${isStreamingComp ? 'disabled cursor-default' : ''
+              }`}
             onClick={() => !isStreamingComp && handleAudioInput()}
             style={{
               boxShadow: '0px 0px 10px 0px #00000026',
@@ -721,9 +812,8 @@ const QuickReply = ({
           />
           {!isStreamingComp && (
             <button
-              className={`absolute top-[12px] right-[12px] w-[20px] h-[20px] cursor-pointer focus:outline-0  ${
-                isStreamingComp ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
+              className={`absolute top-[12px] right-[12px] w-[20px] h-[20px] cursor-pointer focus:outline-0  ${isStreamingComp ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               onClick={() => handleGetReply(customIdea)}
               type="submit"
               disabled={isStreamingComp}
@@ -876,7 +966,7 @@ const QuickReply = ({
             )}
             <textarea
               ref={draftPreviewTextareaRef}
-              style={{ resize: 'none', minHeight: '3em', marginTop:'10px' }}
+              style={{ resize: 'none', minHeight: '3em', marginTop: '10px' }}
               id="draftPreview"
               name="draftPreview"
               // rows={calculateTextareaRows() || 2}
@@ -898,7 +988,7 @@ const QuickReply = ({
                   handleGetReply(selectedIdea);
                   setComposeRes(false);
                 }}
-                // disabled={resultTextRep !== '' ? '' : 'disabled'}
+              // disabled={resultTextRep !== '' ? '' : 'disabled'}
               >
                 Regenerate
               </button>
@@ -911,9 +1001,8 @@ const QuickReply = ({
                 {copied ? 'Copied!' : 'Copy'}
               </button>
               <button
-                className={`w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 disabled:cursor-none disabled:opacity-50 ${
-                  isStreamingComp ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
-                }`}
+                className={`w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 disabled:cursor-none disabled:opacity-50 ${isStreamingComp ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
+                  }`}
                 disabled={isStreamingComp}
                 onClick={handleApply}
                 type="button"
