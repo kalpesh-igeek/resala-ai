@@ -16,7 +16,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["src/utils/*", "dist/*", "dist/*.ttf"],
+      "resources": ["src/utils/*", "dist/*", "dist/*.ttf", "src/icons/*"],
       "matches": ["<all_urls>"]
     }
   ],

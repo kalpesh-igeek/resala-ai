@@ -40,6 +40,13 @@ import { FloatOptions } from './Components/FloatIcon/FloatOptions';
 import { FloatBtn } from './Components/FloatIcon/FloatBtn';
 import { handleToggle } from './redux/reducers/extension/extension-slice';
 import { useLayoutEffect } from 'react';
+
+import positive from './icons/positive.svg';
+import humor from './icons/humor.svg';
+import oppose from './icons/oppose.svg';
+import inspire from './icons/inspire.svg';
+import curious from './icons/curious.svg';
+
 const QUICKREPLY = 'quickreply';
 const SELECTION = 'selection';
 const CHAT = 'chat';
@@ -323,11 +330,10 @@ export default function Panel({ local }) {
         }
       }, 1000);
 
-
       const myTimer3 = () => {
-        let bottomClass = document.getElementsByClassName("btC");
-        if (bottomClass && !document.getElementById("cloneQuickReplybottom")) {
-          bottomClass = bottomClass[0]
+        let bottomClass = document.getElementsByClassName('btC');
+        if (bottomClass && !document.getElementById('cloneQuickReplybottom')) {
+          bottomClass = bottomClass[0];
           if (bottomClass && bottomClass.cells) {
             const quickReply = document.getElementById('quickButton');
             //added btn
@@ -337,13 +343,13 @@ export default function Panel({ local }) {
             cloneQuickReplyBottom.style = 'margin-left: 8px !important';
             cloneQuickReplyBottom.style = 'z-index: 99999';
             cloneQuickReplyBottom.style = 'cursor: pointer !important;';
-            let td = document.createElement("td");
+            let td = document.createElement('td');
             td.append(cloneQuickReplyBottom);
-            myStopFunction(myInterval3)
+            myStopFunction(myInterval3);
             bottomClass.cells[5].after(td);
           }
         }
-      }
+      };
 
       const myTimer2 = () => {
         let presentation = document.getElementsByClassName('amn')[0];
@@ -355,12 +361,12 @@ export default function Panel({ local }) {
             cloneQuickReply.id = 'cloneQuickReply';
             cloneQuickReply.classList.add('hidden');
             cloneQuickReply.style = 'margin-left: 8px';
-            cloneQuickReply.style = 'z-index: 9999999';
+            cloneQuickReply.style = 'z-index: 99999';
             presentation.append(cloneQuickReply);
-            myStopFunction(myInterval2)
+            myStopFunction(myInterval2);
             const cloneQuickReplyButton = document.getElementById('cloneQuickReply');
             cloneQuickReplyButton.addEventListener('click', () => {
-              const gmailReplay = document.getElementById(":1r");
+              const gmailReplay = document.getElementById(':1r');
               gmailReplay.click();
               dispatch(handleToggle(true));
               handleSidebar('quickreply');
@@ -780,9 +786,9 @@ export default function Panel({ local }) {
                     SocialPopup.classList.remove('hidden');
                     let FormPosition = document.querySelectorAll('[data-testid="toolBar"]')[0];
                     // console.log('FormPosition', FormPosition);
-                    if (FormPosition) {
+                    if (FormPosition && FormPosition.parentElement) {
                       FormPosition = FormPosition.parentElement.getBoundingClientRect();
-                      let FormPosition1 = SocialPopup.parentElement.getBoundingClientRect();
+                      let FormPosition1 = SocialPopup && SocialPopup.parentElement ? SocialPopup.parentElement.getBoundingClientRect() : FormPosition;
                       // console.log('FormPosition', FormPosition);
                       setFromPosition({
                         bottom: FormPosition.bottom + 601,
@@ -1058,7 +1064,7 @@ export default function Panel({ local }) {
   const handleSidebar = (tab, tool = undefined) => {
     console.log({ tab, tool });
     if (tool) {
-      setSelectTab(1)
+      setSelectTab(1);
     }
     setActiveTab(tab);
     setIsOpen(true);
@@ -1145,48 +1151,56 @@ export default function Panel({ local }) {
 
   useEffect(() => {
     if (clickClose && onConfirmClick) {
-      setIfOpenConfirmBox(false)
+      setIfOpenConfirmBox(false);
       dispatch(handleToggle(false));
       console.log('remove extension width');
-      document.getElementById('resala_style_right_space') ? document.getElementById('resala_style_right_space').remove() : ''
+      document.getElementById('resala_style_right_space')
+        ? document.getElementById('resala_style_right_space').remove()
+        : '';
       setChatInput({
         chatText: '',
-      })
-      setComposeSelectedText({ input_text: requestedText })
-      setReplyText({ original_text: '', reply: '' })
+      });
+      setComposeSelectedText({ input_text: requestedText });
+      setReplyText({ original_text: '', reply: '' });
       setEditTemplateName({
         templatename: '',
         input_text: '',
-      })
-      setClickClose(false)
-      setOnConfirmClick(false)
+      });
+      setClickClose(false);
+      setOnConfirmClick(false);
     }
-  }, [clickClose, onConfirmClick])
-
+  }, [clickClose, onConfirmClick]);
 
   const handlePopUpCloseClick = () => {
-    console.log("handlePopUpCloseClick");
-    if (chatInput.chatText || composeSelectedText.input_text || replyText.reply || editTemplateName.templatename || editTemplateName.input_text) {
-      console.log("Abort");
-      setClickClose(true)
-      setIfOpenConfirmBox(true)
+    console.log('handlePopUpCloseClick');
+    if (
+      chatInput.chatText ||
+      composeSelectedText.input_text ||
+      replyText.reply ||
+      editTemplateName.templatename ||
+      editTemplateName.input_text
+    ) {
+      console.log('Abort');
+      setClickClose(true);
+      setIfOpenConfirmBox(true);
     } else {
       dispatch(handleToggle(false));
       console.log('remove extension width');
-      document.getElementById('resala_style_right_space') ? document.getElementById('resala_style_right_space').remove() : ''
+      document.getElementById('resala_style_right_space')
+        ? document.getElementById('resala_style_right_space').remove()
+        : '';
       setChatInput({
         chatText: '',
-      })
-      setComposeSelectedText({ input_text: requestedText })
-      setReplyText({ original_text: '', reply: '' })
+      });
+      setComposeSelectedText({ input_text: requestedText });
+      setReplyText({ original_text: '', reply: '' });
       setEditTemplateName({
         templatename: '',
         input_text: '',
-      })
-      setClickClose(false)
-      setOnConfirmClick(false)
+      });
+      setClickClose(false);
+      setOnConfirmClick(false);
     }
-
   };
 
   // useEffect(() => {
@@ -1288,6 +1302,187 @@ export default function Panel({ local }) {
     }
   }, [isExtensionOpen, !isExtensionOpen]);
 
+  // twitter code start
+  function readChildElement(element) {
+    var elements = [];
+    for (element = element.firstChild; element; element = element.nextSibling) {
+      if (element.nodeType == 3) elements.push(element);
+      else elements = elements.concat(readChildElement(element));
+    }
+    return elements;
+  }
+
+  function postContentText() {
+    let currentPopup = document.querySelector('[aria-labelledby="modal-header"]');
+
+    if (currentPopup) {
+      currentPopup =
+        currentPopup.querySelector('[data-testid="tweetText"]') || currentPopup.querySelector('[data-testid="tweet"]');
+    } else {
+      currentPopup = document.querySelector('[data-testid="tweetText"]');
+    }
+    let popupText = null;
+
+    if (currentPopup) {
+      popupText = readChildElement(currentPopup);
+    } else {
+      const contentTextElements = document.querySelectorAll('[data-testid="tweetText"]');
+      const contentText = Array.from(contentTextElements).filter((node) => {
+        const styles = getComputedStyle(node);
+        return parseInt(styles.fontSize) > 20;
+      });
+      if (contentText.length > 0) {
+        popupText = readChildElement(contentText[0]);
+      }
+    }
+    const finalPost = popupText
+      ? popupText
+          .map((node) => node.data)
+          .join(' ')
+          .trim()
+      : '';
+    return finalPost;
+  }
+
+  async function handleFetchedData(text, responseType, app_type, element = null) {
+    console.log({ text, responseType, app_type, element });
+    const input = document.querySelector('[data-testid="tweetTextarea_0"]');
+    const response = text;
+    if (response) {
+      const data = new DataTransfer();
+      data.setData('text/plain', response.replace(/(\r\n|\n|\r)/gm, ''));
+      input.dispatchEvent(
+        new ClipboardEvent('paste', {
+          dataType: 'text/plain',
+          data: response.replace(/(\r\n|\n|\r)/gm, ''),
+          bubbles: true,
+          clipboardData: data,
+          cancelable: true,
+        })
+      );
+      return true;
+    }
+  }
+
+  // disabled all button when one button click
+  function allBtnDisabled(btn_id, index_no = null, respond = null) {
+    positiveButton = document.getElementById(index_no ? `positive_${index_no}` : 'positive');
+    humorButton = document.getElementById(index_no ? `oppose_${index_no}` : 'oppose');
+    empatheticButton = document.getElementById(index_no ? `humor_${index_no}` : 'humor');
+    inspireButton = document.getElementById(index_no ? `inspire_${index_no}` : 'inspire');
+    curiousButton = document.getElementById(index_no ? `curious_${index_no}` : 'curious');
+
+    const btnIds = [positiveButton, humorButton, empatheticButton, inspireButton, curiousButton];
+
+    if (respond) {
+      if (document.querySelectorAll('.linkdinbtn')) {
+        document.querySelectorAll('.linkdinbtn').forEach((e) => {
+          let elemid = e.id;
+          document.getElementById(elemid).classList.remove('disabled');
+        });
+      }
+      btnIds.forEach((element) => {
+        element.disabled = false;
+        element.style.cursor = 'pointer';
+        element.classList.remove('disabled');
+      });
+    } else {
+      if (document.querySelectorAll('.linkdinbtn')) {
+        document.querySelectorAll('.linkdinbtn').forEach((e) => {
+          let elemid = e.id;
+          document.getElementById(elemid).classList.add('disabled');
+        });
+      }
+      btnIds.forEach((element) => {
+        element.disabled = true;
+        element.style.cursor = 'not-allowed';
+        element.classList.add('disabled');
+      });
+      document.getElementById(btn_id).style.cursor = 'wait';
+      document.getElementById(btn_id).classList.remove('disabled');
+    }
+  }
+
+  //Create Twitter Button
+  function createTwitterButton(buttonId, buttonTitle, responseType, icon) {
+    buttonBox = document.getElementById('replyButtonsBox');
+    const replybtn = document.createElement(responseType);
+    replybtn.id = buttonId;
+    replybtn.addClass = buttonId;
+    replybtn.style =
+      'align-items: center; display: flex; margin-right:5px; border-radius: 4px; border: 3px solid #F5FAFF; background: #F5FAFF; padding:5px; cursor:pointer';
+    replybtn.innerHTML = `<span class="tooltip" style="color:#1678F2">${buttonTitle}</span>`;
+
+    const btnimg = document.createElement('img');
+    // btnimg.src = chrome.runtime.getURL(`src/icons/${buttonId}.svg`);
+    btnimg.src = icon;
+    btnimg.style = 'width: 20px; height: 20px; margin-right:5px;';
+    replybtn.prepend(btnimg);
+    if (buttonBox) {
+      buttonBox.appendChild(replybtn);
+    }
+
+    replybtn.addEventListener('click', async (e) => {
+      document.querySelectorAll(`#${buttonId} span`)[0].innerText = 'Thinking...';
+      document.querySelectorAll(`#${buttonId} span`)[0].parentElement.classList.add('thinking');
+      allBtnDisabled(buttonId);
+      let postContent = postContentText();
+      const respond = await handleFetchedData(postContent, buttonId, 'twitter');
+      if (respond) {
+        allBtnDisabled(buttonId, null, respond);
+        document.querySelectorAll(`#${buttonId} span`)[0].innerText = buttonTitle;
+        document.querySelectorAll(`#${buttonId} span`)[0].parentElement.classList.remove('thinking');
+      }
+    });
+  }
+
+  const tweetBTN = (replyInputBox) => {
+    if (!postContentText()) return;
+    buttonBox = document.getElementById('replyButtonsBox');
+    const replyButtonsBox = document.createElement('div');
+    replyButtonsBox.id = 'replyButtonsBox';
+    replyButtonsBox.style = 'display : flex; padding: 10px; justify-content: end; padding-right: 0;';
+    replyButtonsBox.classList.add('replyButtonsBox');
+
+    if (replyInputBox && replyInputBox.parentNode) {
+      replyInputBox.parentNode.append(replyButtonsBox);
+    }
+
+    createTwitterButton('positive', 'Positive', 'button', positive);
+    createTwitterButton('humor', 'Humor', 'button', humor);
+    createTwitterButton('oppose', 'Oppose', 'button', oppose);
+    createTwitterButton('inspire', 'Inspire', 'button', inspire);
+    createTwitterButton('curious', 'Curious', 'button', curious);
+
+    var tweet_id = document.URL.split('/').slice(-1).pop();
+    const homebuttons = document.querySelector('[aria-label="Home timeline"]');
+    if (tweet_id == 'home') {
+      if (homebuttons) {
+        document
+          .querySelector('[aria-label="Home timeline"]')
+          .children[2].querySelector('.replyButtonsBox').style.display = 'none';
+      }
+    }
+  };
+
+  // Create TwitterButton Main Div
+  function createTwitterButtonBox() {
+    let currentPopup = document.querySelector('[aria-labelledby="modal-header"]');
+    const isButtonsBox = document.getElementById('replyButtonsBox');
+    let replyInputBox = document.querySelector('[data-testid="toolBar"]');
+    if (currentPopup) {
+      if (replyInputBox && replyInputBox.nextSibling && replyInputBox.nextSibling.id == 'replyButtonsBox') return;
+      tweetBTN(replyInputBox);
+    } else {
+      if (!replyInputBox) return;
+      if (isButtonsBox) return;
+    }
+  }
+
+  if (document.location.origin == 'https://twitter.com') {
+    window.setInterval(createTwitterButtonBox, 100);
+  }
+
   return (
     <>
       {/* FloatIcon */}
@@ -1300,8 +1495,9 @@ export default function Panel({ local }) {
             transition: 'unset',
             display: isSideBarOpen ? 'none' : 'flex',
           }}
-          className={`fixed bottom-[20px] select-none ${!isFloatIconClicked && 'new-btn-without-scale'
-            } group/icon right-[20px] cursor-pointer w-fit p-[5px] hover:pr-[8px] h-fit flex justify-center items-center !z-[99999999999] bg-lightblue1`}
+          className={`fixed bottom-[20px] select-none ${
+            !isFloatIconClicked && 'new-btn-without-scale'
+          } group/icon right-[20px] cursor-pointer w-fit p-[5px] hover:pr-[8px] h-fit flex justify-center items-center !z-[99999999999] bg-lightblue1`}
         >
           <FloatBtn
             isClicked={isFloatIconClicked}
@@ -1451,8 +1647,8 @@ export default function Panel({ local }) {
                         element={
                           <Login
                             setActiveTab={setActiveTab}
-                          // isLogin={isLogin}
-                          // setIsLogin={setIsLogin}
+                            // isLogin={isLogin}
+                            // setIsLogin={setIsLogin}
                           />
                         }
                       />
