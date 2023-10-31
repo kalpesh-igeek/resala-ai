@@ -99,6 +99,12 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
 
   // type writer effect
   const textAreaRef = useRef(null);
+
+  useEffect(() => {
+    // Focus on the textarea when the component mounts
+    textAreaRef.current.focus();
+  }, []);
+
   const textAreaRefForIdeas = useRef(null);
   function typewriterEffect(text, element, delay) {
     let charIndex = 0;
@@ -815,6 +821,22 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
     }
   }, [IdeasValue]);
 
+
+  useEffect(() => {
+    if (IdeasValueHome1) {
+      const input = textAreaRef.current;
+      const offset = input.offsetHeight - input.clientHeight;
+      input.style.height = 'auto';
+      console.log(input.scrollHeight + offset);
+      if ((input.scrollHeight + offset) > 86) {
+        input.style.height = '86px';
+      } else {
+        input.style.height = input.scrollHeight + offset + 'px';
+      }
+    }
+  }, [IdeasValueHome1]);
+
+
   // Handle POst Ideas 
   const handlePostIdeas = async () => {
     if (IdeasValue.trim() === '') {
@@ -1418,16 +1440,23 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
   };
 
   const handleEmpty12 = () => {
-    setSpeechLength(0);
-    setIdeasValue('');
-    setIdeasValueHome('')
-    setButtonShow(!ButtonsShow)
-    setIdeadload(false);
-    setPostIdea(true);
+    if (responses.length > 0) {
+      setIdeasValue(responses[0]);
+      let newArray = responses;
+      newArray.splice(0, 1);
+      setResponses(newArray);
+    } else {
+      setSpeechLength(0);
+      setIdeasValue('');
+      setIdeasValueHome('')
+      setButtonShow(!ButtonsShow)
+      setIdeadload(false);
+      setPostIdea(true);
+    }
   };
 
   const handleEmpty13 = () => {
-    console.log("Called ");
+
     setSpeechLength(0);
     setIdeasValue('');
     setIdeasValueHome('')
@@ -2165,7 +2194,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
           </p>
           {/* todo textarea  */}
 
-          <div className={`${visible || visible2 ? 'hidden' : ''} flex gap-[8px] flex-wrap h-[85px] overflow-y-scroll`}>
+          <div className={`${visible || visible2 ? 'hidden' : ''} flex gap-[8px] flex-wrap h-auto min-h-[85px] max-h-[130px] overflow-y-scroll`}>
             {socialIdeas.length == 0 ? (<>
               {Array.from({ length: 1 }, (_, index) => (
                 <div className="flex gap-[16px] px-[6px] items-center mb-[24px]">
@@ -2385,13 +2414,13 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                       <div className="text-[#19224C] text-[14px] font-[500] font-['DM Sans']">{selectedIdea.name}</div>
                     </div>
 
-                    <div className={`bg-white rounded-bl-md text-[#8C90A5] rounded-br-md border-l border-r border-b border-slate-200 p-[14px]  pt-[0px] ${IdeasValue ? 'h-[auto]' : 'min-h-[160px]'}  flex flex-row gap-[14px]`}>
+                    <div className={`bg-white rounded-bl-md rounded-br-md border-l border-r border-b border-slate-200 p-[14px]  pt-[0px] ${IdeasValue ? 'h-[auto]' : 'min-h-[160px]'}  flex flex-row gap-[14px]`}>
                       <div className="flex flex-col justify-between w-[508px]">
 
                         {/* textarea 2 */}
                         <textarea
                           placeholder={selectedIdea.placeholder}
-                          className={` textArea resize-none font-[400] text-[14px] text-[#19224C] ${IdeasValue && ButtonsShow ? 'h-auto min-[35px] max-h-max' : 'min-h-[130px] pt-[10px]'}   !bg-white`}
+                          className={` textArea resize-none font-[400] text-[14px] !text-[#19224C] ${IdeasValue && ButtonsShow ? 'h-auto min-[35px] max-h-max text-[#19224C] opacity-100' : 'min-h-[130px] pt-[10px]'}   !bg-white`}
                           style={{ width: '100%', boxShadow: 'none', fontSize: '14px', height: 'auto', background: 'white' }}
                           value={IdeasValue}
                           ref={textAreaRef}
@@ -2402,7 +2431,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                           onChange={(e) => {
                             handleChange(e);
                             setvisibleTextarea(true);
-
                           }}
                           onPaste={handlePaste}
                         />
@@ -2414,7 +2442,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               className={`bg-[#1678F2] px-[10px] flex justify-center items-center h-[30px] text-[12px] rounded-[4px] text-white w-[90px]  cursor-pointer `}
                               onClick={(e) => {
                                 e.stopPropagation();
-                                InsertedValue(IdeasValue)
+                                InsertedValue(IdeasValue);
                               }}>
                               Insert
                             </div>
@@ -2629,10 +2657,9 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                     <div className={` bg-white rounded-bl-md rounded-br-md border-l border-r border-b pt-[0px] border-slate-200 p-[14px] ${IdeasValueHome ? 'h-[auto]' : 'min-h-[160px]'} flex flex-row gap-[14px]`}>
                       <div className="flex flex-col justify-between w-[508px]">
                         <div>
-                          {/* textarea 3 */}
                           <textarea
                             readOnly
-                            className={` textArea  text-[14px] text-[#19224C] resize-none ${IdeasValueHome && ButtonsShowHome ? 'h-auto min-[35px] max-h-max' : 'min-h-[35px]'} pt-[10px]'}`}
+                            className={` textArea  text-[14px] text-[#19224C] resize-none ${IdeasValueHome && ButtonsShowHome ? 'h-auto min-[35px] max-h-max text-[#19224C] opacity-100' : 'min-h-[35px]'} pt-[10px]'}`}
                             style={{ width: '100%', boxShadow: 'none', height: 'auto' }}
                             ref={textAreaRef}
                             value={IdeasValueHome}
@@ -2666,7 +2693,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                               }}
                             >
                               {copied ? 'Copied' : 'Copy'}
-                              {/* {copiedStates[index] ? 'Copied' : 'Copy'} */}
                             </div>
                             <div
                               className="text-[#5F6583] px-[10px] font-[500] flex justify-center items-center  text-[12px]  rounded-[4px] border border-[#DFE4EC]  cursor-pointer hoverEffectIdeas"
@@ -2709,8 +2735,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                       </div>
                     )}
                   </div>
-
-                  {/* todo */}
                   {ResponsesText?.map((divfd2, index) => (
                     <>
                       <div id="mainContentArea1" className="mb-[15px]" key={index}>
@@ -2723,18 +2747,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                         <div className=" bg-white rounded-bl-md text-[#19224C]  rounded-br-md border-l border-r border-b border-slate-200 p-[14px] flex flex-row gap-[14px] ">
                           <div className="flex flex-col justify-between w-[508px]">
                             <div className='text-[14px]'>{divfd2}</div>
-                            {/* <div style={{ flex: '1', height: 'auto' }}>
-                              <textarea
-                                className={`textArea resize-none min-h-[130px]`}
-                                style={{ width: '100%', boxShadow: 'none' }}
-                                value={divfd2}
-                                ref={textAreaRef}
-                                id="socialTextarea"
-                                name="socialTextarea"
-                                onChange={(e) => handleChange(e)}
-                                onPaste={handlePaste}
-                              />
-                            </div> */}
                             <div className={`${!ButtonsShowHome ? 'hidden' : 'block'} mt-[10px] `}>
                               <div className={`flex gap-[8px] `}>
                                 <div
@@ -2802,7 +2814,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                   ))}
                 </div>
 
-                {/* todo button part   */}
                 <div className={`${!ButtonsShowHome ? 'hidden' : 'block'} `}>
                   <div
                     className={`flex justify-end items-center gap-[8px]  sticky bottom-[7px] right-0 left-0 bg-white`}
@@ -2940,328 +2951,56 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
         </div>
 
         <div
-          className={`${SocialHome ? 'block' : 'hidden'} p-[16px] ${audioInput ? 'pb-[16px]' : 'pb-[2px]'
-            } absolute bottom-[0px] flex border border-white flex-col w-[100%]`}
+          className={`${SocialHome ? 'flex' : 'hidden'}  absolute bottom-0 p-[16px] pt-[0px] ${audioInput ? 'pb-[16px]' : 'pb-[2px]'
+            }  bottom-[0px] flex border border-white flex-col w-[100%]`}
         >
-          {audioInput ? (
-            <div className="flex flex-col border border-gray p-[10px] rounded-[6px]">
-              <div className="flex items-center gap-4 mb-[16px]">
-                <div
-                  className="flex items-center justify-center w-[24px] h-[24px] rounded-full cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAudioInput()
-                  }}
-                  style={{
-                    boxShadow: '0px 0px 10px 0px #00000026',
-                  }}
-                >
-                  <img src={KeyboardIcon} />
-                </div>
-                <div className="flex items-center justify-between w-full bg-white ">
-                  <div
-                    className="flex items-center gap-2 cursor-pointer relative"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAudioInfoPopup();
-                    }}
-                  >
-                    <img src={HowToIcon} />
-                    <span className="text-[12px] text-darkBlue">How to use</span>
-                    {isAudioInfoPopup && (
-                      <div className="!overflow-y-scroll absolute top-[-205px] h-[189px] w-[460px] right-0 left-0 shadow-md">
-                        <div
-                          ref={myPromptRef}
-                          className=" rounded-[10px] bg-white p-[20px] z-[999202] w-[460px]"
-                          style={{ boxShadow: '0px 10px 30px 0px #3C425726' }}
-                        >
-                          <div className="pt-[8px] pb-[8px] mb-[20px] text-[20px] font-medium text-darkBlue">
-                            <div className="flex items-center justify-between">
-                              <div className="gap-2 flex items-center">
-                                <img src={HowToIconBg} />
-                                <span>How to use voice input</span>
-                              </div>
-                              <div className="cursor-pointer -mt-[30px]" onClick={(e) => {
-                                e.stopPropagation();
-                                handleCloseInfo();
-                              }}>
-                                <img src={Close} />
-                              </div>
-                            </div>
-                          </div>
-                          <div className="">
-                            <div className="text-[14px] rounded-md bg-lightblue1 px-[15px] py-[11px] text-gray1 mb-[16px]">
-                              Voice input requires microphone access, and only supports Chrome for now.
-                            </div>
-                            <div className="mb-[16px] flex flex-col gap-[4px]">
-                              <div className="text-[14px] font-medium text-darkBlue">Start recording:</div>
-                              <div className="text-[14px] text-gray1">
-                                Click the button or hold
-                                <span className="font-medium text-primaryBlue border border-primaryBlue rounded-[4px] py-[1px] px-[3px] mx-[3px]">
-                                  Space
-                                </span>
-                                to start recording.
-                              </div>
-                              <div className="text-gray1 text-[12px]">
-                                *real-time transcript will be display when speaking.
-                              </div>
-                            </div>
-                            <div className="mb-[16px] flex flex-col gap-[4px]">
-                              <div className="text-[14px] font-medium text-darkBlue">Stop recording:</div>
-                              <div className="text-[14px] text-gray1">
-                                Click the button again or release
-                                <span className="font-medium text-primaryBlue border border-primaryBlue rounded-[4px] py-[1px] px-[3px] mx-[3px]">
-                                  Space
-                                </span>
-                                to stop recording.
-                              </div>
-                              <div className="text-gray1 text-[12px]">
-                                *message will be send automatically after stop.
-                              </div>
-                            </div>
-                            <div className="mb-[16px] flex flex-col gap-[4px]">
-                              <div className="text-[14px] font-medium text-darkBlue">Cancel recording:</div>
-                              <div className="text-[14px] text-gray1">
-                                Click the Cancel icon or press
-                                <span className="font-medium text-primaryBlue border border-primaryBlue rounded-[4px] py-[1px] px-[3px] mx-[3px]">
-                                  Esc
-                                </span>
-                                to cancel recording.
-                              </div>
-                            </div>
-                            <div className="mb-[16px] flex flex-col gap-[4px]">
-                              <div className="text-[14px] font-medium text-darkBlue">Edit transcript</div>
-                              <div className="text-[14px] text-gray1">
-                                Click the Edit icon or press
-                                <span className="font-medium text-primaryBlue border border-primaryBlue rounded-[4px] py-[1px] px-[3px] mx-[3px]">
-                                  E
-                                </span>
-                                to put the current transcript into message input for edit.
-                              </div>
-                              <div className="text-gray1 text-[12px]">
-                                *only available when transcript is not empty.
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="inputLanguage flex items-center gap-2 text-[12px] relative text-darkBlue">
-                    <div className="">Language</div>
-
-                    <div ref={selectRef}>
-                      <Select
-                        className="border border-gray rounded-md text-[12px]"
-                        menuPlacement="top"
-                        defaultValue={outputLanguagesVoice[0]}
-                        onChange={setSelectedOption}
-                        options={outputLanguagesVoice}
-                        onBlur={handleBlur}
-                        onFocus={() => setIsMenuOpen(true)}
-                        isMenuOpen={isMenuOpen}
-                        isSearchable={false}
-                        styles={{
-                          control: (base) => ({
-                            ...base,
-
-                            height: '24px',
-                            minHeight: '24px',
-                            width: '100px',
-                            boxShadow: 'none',
-                            backgroundColor: 'unset',
-                            top: '-3px'
-                          }),
-                          menu: (base) => ({
-                            ...base,
-                            width: '100%',
-                            minWidth: '160px',
-                            height: 'auto',
-                            minHeight: '216px',
-                            right: '-9px',
-                            overflow: 'scroll',
-                          }),
-                          option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-                            return {
-                              ...styles,
-                              backgroundColor: isFocused ? '#F3F4F8' : null,
-                              color: !isFocused ? '#8C90A5' : '#19224C',
-                              margin: '8px',
-                              width: 'auto',
-                              borderRadius: '4px',
-                              height: '26px',
-                              lineHeight: '9px',
-                              fontSize: '14px'
-                            };
-                          },
-                          dropdownIndicator: (provided, state) => ({
-                            ...provided,
-                            transform: state.selectProps.menuIsOpen && 'rotate(180deg)',
-                          }),
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {(micPermission === 'granted' || micPermission !== 'granted') && startSpeech && !micClicked && (
-                <div
-                  className={`flex justify-between gap-2 items-center bg-primaryBlue px-[8px] py-[12px] text-[12px] text-white rounded-[6px] cursor-pointer`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    listenContinuously();
-                  }}
-                >
-                  <div className="flex gap-2 items-center">
-                    <img src={MicrophoneWhiteIcon} />
-                    <span>Hold Space or Click button to speak</span>
-                  </div>
-                  <div className="cursor-pointer" onClick={(del) => {
-                    del.stopPropagation();
-                    closeSpeechRecognition();
-                  }}>
-                    <img src={SmallClose} />
-                  </div>
-                </div>
-              )}
-              {micPermission !== 'granted' && micClicked && (
-                <div
-                  className={`flex justify-between gap-2 items-center bg-yellow px-[8px] py-[12px] text-[12px] text-white rounded-[6px] cursor-pointer`}
-                >
-                  <div className="flex gap-2 items-center" onClick={requestPermission}>
-                    <img src={MicrophoneWhiteIcon} />
-                    <span>Please allow Resala to use your microphone</span>
-                  </div>
-                  <div className="cursor-pointer" onClick={(e) => {
-                    e.stopPropagation();
-                    closeSpeechRecognition();
-                  }}>
-                    <img src={SmallClose} />
-                  </div>
-                </div>
-              )}
-              {startListen && micClicked && !transcript && permission && (
-                <div
-                  className={`flex justify-between gap-2 items-center bg-green px-[8px] py-[12px] text-[12px] text-white rounded-[6px] cursor-pointer`}
-                >
-                  <div className="flex gap-2 items-center">
-                    <img src={MicrophoneWhiteIcon} />
-                    <span>Listening. Click again to submit, Esc to cancel</span>
-                  </div>
-                  <div className="cursor-pointer" onClick={(e) => {
-                    e.stopPropagation();
-                    closeSpeechRecognition();
-                  }}>
-                    <img src={SmallClose} />
-                  </div>
-                </div>
-              )}
-              {transcript && (
-                <div
-                  className={`flex justify-between gap-2 items-center bg-green px-[8px] py-[12px] text-[12px] text-white rounded-[6px] cursor pointer`}
-                >
-                  <div
-                    className="flex gap-2 items-center"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSendMessage(e, transcript);
-                      setIsTypewriterDone(true);
-                      setIsViewPrompts(false);
-                      setAudioInput(false);
-                      setMicClicked(false);
-                      setAudioInput(false);
-                      SpeechRecognition.stopListening();
-                      setStartListen(true);
-                      setStartSpeech(true);
-                      setMicClicked(false);
-                      resetTranscript();
-                      setIsViewPrompts(false);
-                      // }
-                    }}
-                  >
-                    <img src={MicrophoneWhiteIcon} />
-
-                    <span className="cursor-pointer">{transcript}</span>
-                    {/* )} */}
-                  </div>
-                  <div className="cursor-pointer" onClick={(e) => {
-                    e.stopPropagation();
-                    closeSpeechRecognition();
-                  }}>
-                    <img src={SmallClose} />
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="w-[565px] p-[14px] pb-[0px] flex border-[1px] border-slate-200 rounded-[6px] gap-[12px]" >
-              {/* todo mic*/}
-              <div
-                className="rounded-full w-[24px] h-[20px] background-[#fff] flex justify-center items-center cursor-pointer"
-                style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.15)' }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAudioInput()
+          <div className="w-[565px] p-[10px] flex border-[1px] border-slate-200 rounded-[6px]" >
+            <div className="w-full flex items-center text-[#8C90A5] text-[14px] font-normal font-['Arial']">
+              <textarea
+                autoFocus
+                placeholder="Tell me what to write for you"
+                className="p-[1px] textArea resize-none min-5-[50px] bg-white"
+                id="socialTextarea"
+                rows="1"
+                ref={textAreaRef}
+                value={IdeasValueHome1}
+                maxLength="1000"
+                onChange={(e) => {
+                  setIdeasValueHome1(e.target.value);
+                  const { name, value } = e.target;
+                  const maxCharacterCount = 1000;
+                  if (name === 'socialTextarea') {
+                    if (value.length > maxCharacterCount) {
+                      const truncatedValue = value.substring(0, maxCharacterCount);
+                      e.target.value = truncatedValue;
+                      setSpeechLength(truncatedValue.length);
+                    } else {
+                      setSpeechLength(value.length);
+                    }
+                  }
+                  if (value.length >= maxCharacterCount) {
+                    e.preventDefault();
+                    // e.stopPropogation();
+                  }
                 }}
-              >
-                <img className="w-[16px] h-[16px]" src={Mic} />
+                onPaste={handlePaste}
+                name="socialTextarea"
+                style={{ width: '100%', boxShadow: 'none' }}
+              />
+            </div>
+            <div className="flex flex-col justify-end items-end pt-[2px] p-[0px] ml-[10px]">
+              <div className="w-[20px] h-[20px]  cursor-pointer" onClick={(e) => {
+                e.stopPropagation();
+                handleTextArea();
+              }}>
+                <img className=" cursor-pointer " src={Send} />
               </div>
-              {/* <div>
-              <img className="w-[16px] h-[16px]" src={MicSVG} />
-              </div> */}
+            </div>
+          </div>
 
-              <div className="min-w-[444px] min-h-[90px] text-[#8C90A5] text-[14px] font-normal font-['Arial']">
-                {/* textarea 1 */}
-                <textarea
-                  placeholder="Tell me what to write for you"
-                  className="p-[1px] textArea resize-none min-5-[50px] bg-white"
-                  id="socialTextarea"
-                  rows="5"
-                  ref={textAreaRef}
-                  value={IdeasValueHome1}
-                  maxLength="1000"
-                  onChange={(e) => {
-                    setIdeasValueHome1(e.target.value);
-                    const { name, value } = e.target;
-                    const maxCharacterCount = 1000;
-                    if (name === 'socialTextarea') {
-                      if (value.length > maxCharacterCount) {
-                        const truncatedValue = value.substring(0, maxCharacterCount);
-                        e.target.value = truncatedValue;
-                        setSpeechLength(truncatedValue.length);
-                      } else {
-                        setSpeechLength(value.length);
-                      }
-                    }
-                    if (value.length >= maxCharacterCount) {
-                      e.preventDefault();
-                      // e.stopPropogation();
-                    }
-                  }}
-                  onPaste={handlePaste}
-                  name="socialTextarea"
-                  style={{ width: '100%', boxShadow: 'none' }}
-                />
-              </div>
-              <div className="flex flex-col justify-between items-end pt-[2px] pb-[10px] ml-[27px]">
-                <div className="w-[20px] h-[20px]  cursor-pointer" onClick={(e) => {
-                  e.stopPropagation();
-                  handleTextArea();
-                }}>
-                  <img className=" cursor-pointer " src={Send} />
-                </div>
-              </div>
-            </div>
-          )}
-          {audioInput ? (
-            ''
-          ) : (
-            <div className="flex justify-end items-center mt-[3px] fsddfsd">
-              <span className="text-[#8C90A5] text-[12px]  font-['DM Sans'] ">{speechLength}/1000</span>
-            </div>
-          )}
+          <div className="flex justify-end items-center mt-[3px] fsddfsd">
+            <span className="text-[#8C90A5] text-[12px]  font-['DM Sans'] ">{speechLength}/1000</span>
+          </div>
         </div>
       </div>
     </>

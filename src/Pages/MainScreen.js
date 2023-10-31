@@ -3340,7 +3340,7 @@ const MainScreen = ({
                           {selectTab === 1 ? (
                             <div className="col-span-full">
                               <label for="input" className="block text-[12px] font-bold leading-6 text-[]">
-                                INPUT
+                                WRITE ABOUT
                               </label>
                               <div>
                                 <textarea
