@@ -2286,7 +2286,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                       >
                         <div className="flex justify-between items-center py-[4px]">
                           <p className="text-[#8C90A5] text-[12px] capitalize font-[700] font-['DM Sans']">
-                            IDEAS FOR TEXT Home
+                            IDEAS FOR TEXT
                           </p>
                           <div className="w-[12px] cursor-pointer" onClick={(e) => {
                             e.stopPropagation();
@@ -2307,7 +2307,7 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                           >
                             <div className="text-white text-base font-medium font-['DM Sans']">✍️</div>
                             <div className="text-[#5F6583] text-[12px] font-medium font-['DM Sans']  cursor-pointer">
-                              Improve it 33
+                              Improve it 
                             </div>
                           </div>
 
@@ -2434,7 +2434,6 @@ export default SocialPopup = ({ fromPosition, setSocialsButton, handleSidebar, d
                           }}
                           onPaste={handlePaste}
                         />
-
 
                         <div className={`${ButtonsShow && !isStreaming ? 'block' : 'hidden'}  mt-[10px]`}>
                           <div className={`flex gap-[8px] `}>

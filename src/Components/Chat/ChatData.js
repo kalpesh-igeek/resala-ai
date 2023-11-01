@@ -6,10 +6,12 @@ import CopiedIcon from '../../utils/Chat/Icons/CopiedIcon.svg';
 import Typewriter from '../Typewriter';
 import LoadingGif from '../../utils/Chat/Gif/loader.gif';
 import RegenerateIcon from '../../utils/Chat/Icons/RegenerateIcon.svg';
+import DocChatIcon from '../../utils/Chat/Icons/doc-chat.svg';
+
 import copy from 'copy-to-clipboard';
 import { useSpeechSynthesis } from 'react-speech-kit';
 import CustomTooltip from '../CustomTooltip/Tooltip';
-import { bookIcon } from '../../utils/Chat/Icons/book.svg' 
+import { bookIcon } from '../../utils/Chat/Icons/book.svg'
 
 const ChatData = ({
   chatData,
@@ -20,8 +22,10 @@ const ChatData = ({
   activeTabSub,
   isStreaming,
   isSpeechEnabled,
-  isRetry
+  isRetry,
+  chatType
 }) => {
+  console.log("chat types : ", chatType);
   const { speak, cancel, speaking } = useSpeechSynthesis();
   const [isCopied, setisCopied] = useState(undefined);
 
@@ -53,7 +57,7 @@ const ChatData = ({
     };
   }, [isTypewriterDone, isSpeechEnabled]);
 
-  const renderMessage = (item,index) => {
+  const renderMessage = (item, index) => {
     if (activeTabSub === 'chat' && item.isNew) {
       // Display typewriter component
       return <Typewriter text={item.msg} delay={50} setIsTypewriterDone={setIsTypewriterDone} contentType="chat" />;
@@ -75,7 +79,7 @@ const ChatData = ({
         }
       }
 
-      return <div dangerouslySetInnerHTML={{__html:item.msg}} />;
+      return <div dangerouslySetInnerHTML={{ __html: item.msg }} />;
     }
   };
 
@@ -83,11 +87,22 @@ const ChatData = ({
     <>
       <div
         ref={chatContainerRef}
-        style={{height:'calc(100vh - 320px)'}}
-        className={`text-[12px] overflow-y-auto flex flex-col-reverse ${
-          isStreaming ? '' : ''
-        } relative`}
+        style={{ height: 'calc(100vh - 320px)' }}
+        className={`text-[12px] overflow-y-auto flex flex-col-reverse ${isStreaming ? '' : ''
+          } relative`}
       >
+        {chatType === 'summarize' && !isStreaming && <>
+          <div className='absolute top-0 w-full  flex items-center justify-center'>
+            <CustomTooltip
+              maxWidth="430px"
+              place="bottom"
+              id='docChatTooltip'
+              content={`<div class="capitalize font-normal text-[12px] leading-[18px]">Start chat with this Document</div>`}>
+              <img id='docChatTooltip' src={DocChatIcon}></img>
+            </CustomTooltip>
+          </div>
+        </>}
+        <div></div>
         <div className="">
           {chatData.map((item, index) => {
             switch (item.type) {
@@ -119,9 +134,8 @@ const ChatData = ({
                             maxWidth="430px"
                             place="top"
                             id={`speak-${index + 1}`}
-                            content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > ${
-                              speaking ? 'Stop' : 'Speak'
-                            } </div>`}
+                            content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > ${speaking ? 'Stop' : 'Speak'
+                              } </div>`}
                           >
                             <span
                               id={`speak-${index + 1}`}
@@ -135,9 +149,8 @@ const ChatData = ({
                             maxWidth="430px"
                             place="top"
                             id={`copyTooltip-${index + 1}`}
-                            content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > ${
-                              isCopied !== index ? 'Copy' : 'Copied'
-                            } </div>`}
+                            content={`<div class="capitalize font-normal text-[12px] leading-[18px]" > ${isCopied !== index ? 'Copy' : 'Copied'
+                              } </div>`}
                           >
                             <span
                               id={`copyTooltip-${index + 1}`}
@@ -153,7 +166,7 @@ const ChatData = ({
                         </div>
 
                         <pre className="font-dmsans text-[#19224C] font-[400] text-[14px] leading-[1.5]" style={{ textWrap: 'wrap' }}>
-                          {renderMessage(item,index)}
+                          {renderMessage(item, index)}
                         </pre>
                       </div>
                     </div>
@@ -172,7 +185,7 @@ const ChatData = ({
                         }}
                       >
                         <pre className="font-dmsans bg-[transparent] text-[#ff0000] font-[400] text-[14px]" style={{ textWrap: 'wrap' }}>
-                          {renderMessage(item,index)}
+                          {renderMessage(item, index)}
                         </pre>
                       </div>
                     </div>

@@ -242,6 +242,9 @@ const MainScreen = ({
   const [selectedTone, setSelectedTone] = useState();
   const [selectedLanguage, setSelectedLanguage] = useState();
 
+  const [isDocChatIcon, setisDocChatIcon] = useState(true);
+
+
   const [selectedItems, setSelectedItems] = useState([
     { name: selectTab === 1 ? selectedAction?.name : selectedFormat?.name },
     { name: selectedLength?.name },
@@ -2570,6 +2573,7 @@ const MainScreen = ({
                       isStreaming={isStreaming}
                       isSpeechEnabled={isSpeechEnabled}
                       isRetry={isRetry}
+                      chatType={chatType}
                     />
 
                     {isUsePrompt ? (
@@ -2678,7 +2682,7 @@ const MainScreen = ({
                                 <div className="text-[12px] font-[700] text-[#8C90A5] px-[8px] py-[4px]">
                                   CHAT SETTING
                                 </div>
-                                <div className="text-[14px] text-[#19224C] flex items-center gap-2 text-darkBlue bg-gray4 px-[6px] py-[4px] rounded-[4px]">
+                                <div className="text-[14px] flex items-center gap-2 text-darkBlue bg-gray4 px-[6px] py-[4px] rounded-[4px]">
                                   <img src={TranslateIcon} />
                                   Response Language
                                 </div>
@@ -3840,7 +3844,7 @@ const MainScreen = ({
                               {copied ? 'Copied!' : 'Copy'}
                             </button>
                             <button
-                              className={`w-full relative group rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 ${buttonDisabled ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
+                              className={`w-full relative group rounded-md bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 ${buttonDisabled ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
                                 }`}
                               disabled={buttonDisabled}
                               onClick={handleApply}
@@ -3984,7 +3988,7 @@ const MainScreen = ({
                               {copied ? 'Copied!' : 'Copy'}
                             </button>
                             <button
-                              className={`w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white focus:outline-none hover:opacity-90 ${buttonDisabled ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
+                              className={`w-full rounded-md focus:outline-none bg-primaryBlue px-1 py-[10px] text-[16px] font-medium text-white  hover:opacity-90 ${buttonDisabled ? 'opacity-50 bg-lightblue4 cursor-not-allowed' : ''
                                 }`}
                               disabled={buttonDisabled}
                               onClick={handleApply}
